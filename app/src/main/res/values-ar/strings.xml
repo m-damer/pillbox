@@ -150,4 +150,73 @@
         <item quantity="zero">%1$s يوم</item><item quantity="one">يوم واحد</item><item quantity="two">يومين</item>
         <item quantity="few">%1$s أيام</item><item quantity="many">%1$s يوماً</item><item quantity="other">%1$s يوم</item>
     </plurals>
+
+    <!-- Today -->
+    <string name="today">اليوم</string>
+    <string name="tomorrow">غداً</string>
+    <string name="sub_taken">%1$s · %2$s من %3$s مأخوذة</string>
+    <string name="sub_planned">%1$s · %2$s مخططة</string>
+    <string name="back_to_today">العودة إلى اليوم</string>
+    <string name="nothing_planned">لا توجد جرعات مخططة لهذا اليوم.</string>
+    <string name="future_note">هذه جرعات مخططة. يمكنك تسجيلها في يومها.</string>
+    <string name="group_next">التالية</string>
+    <string name="late_h">متأخرة %1$s س</string>
+    <string name="late_min">متأخرة %1$s د</string>
+    <string name="late_banner">هل أخذت هذه الجرعات؟ كان موعدها %1$s.</string>
+    <string name="take">خذها</string>
+    <string name="skip">تخطَّ</string>
+    <string name="take_all">خذ الكل</string>
+    <string name="skip_all">تخطَّ الكل</string>
+    <string name="take_med">خذ %1$s</string>
+    <string name="skip_med">تخطَّ %1$s</string>
+    <string name="skipped">تم التخطي</string>
+    <string name="missed">فائتة</string>
+    <string name="said_taken_at">أُخذت عند %1$s</string>
+    <string name="said_not_taken">لم تؤخذ</string>
+    <string name="dot_sep">" · "</string>
+    <string name="food_line_before">قبل الأكل</string>
+    <string name="food_line_with">مع الأكل</string>
+    <string name="food_line_after">بعد الأكل</string>
+    <string name="undo">تراجع</string>
+    <string name="toast_taken">تم أخذ %1$s</string>
+    <string name="toast_skipped">تم تخطي %1$s</string>
+    <plurals name="toast_taken_n">
+        <item quantity="one">تم أخذ جرعة واحدة</item><item quantity="two">تم أخذ جرعتين</item>
+        <item quantity="few">تم أخذ %1$d جرعات</item><item quantity="many">تم أخذ %1$d جرعة</item><item quantity="other">تم أخذ %1$d جرعة</item>
+    </plurals>
+    <plurals name="toast_skipped_n">
+        <item quantity="one">تم تخطي جرعة واحدة</item><item quantity="two">تم تخطي جرعتين</item>
+        <item quantity="few">تم تخطي %1$d جرعات</item><item quantity="many">تم تخطي %1$d جرعة</item><item quantity="other">تم تخطي %1$d جرعة</item>
+    </plurals>
+    <plurals name="n_minutes">
+        <item quantity="zero">%1$s دقيقة</item><item quantity="one">دقيقة واحدة</item><item quantity="two">دقيقتين</item>
+        <item quantity="few">%1$s دقائق</item><item quantity="many">%1$s دقيقة</item><item quantity="other">%1$s دقيقة</item>
+    </plurals>
+    <string name="empty_title">علبة الدواء فارغة</string>
+    <string name="empty_body">أضف أول دواء. يستغرق ذلك دقيقة تقريباً.</string>
+
+    <!-- Skip, too soon, out of stock -->
+    <string name="skip_title">لماذا تتخطى %1$s؟</string>
+    <string name="skip_title_many">لماذا تتخطى هذه الجرعات؟</string>
+    <string name="skip_sub">اختياري. يظهر في تقرير طبيبك.</string>
+    <string name="skip_dose">تخطي الجرعة</string>
+    <string name="reason_not_well">لا أشعر أنني بخير</string>
+    <string name="reason_side_effects">آثار جانبية</string>
+    <string name="reason_ran_out">نفدت الأقراص</string>
+    <string name="reason_doctor">قال طبيبي ذلك</string>
+    <string name="reason_other">سبب آخر</string>
+    <string name="too_soon_title">الوقت مبكر لهذه الجرعة؟</string>
+    <string name="too_soon_body">آخر مرة أخذت فيها %1$s كانت قبل %2$s. أقل فاصل هو %3$s. أخذها الآن قد يكون كثيراً.</string>
+    <string name="wait_dont_take">انتظر، لا تأخذها</string>
+    <string name="take_anyway_long">سآخذها على أي حال</string>
+    <string name="out_title">لا توجد %1$s متبقية</string>
+    <string name="out_body">%1$s يظهر 0 متبقٍ. يمكنك مع ذلك تسجيل هذه الجرعة كمأخوذة.</string>
+    <string name="take_anyway">خذها على أي حال</string>
+
+    <!-- Navigation -->
+    <string name="nav_today">اليوم</string>
+    <string name="nav_meds">الأدوية</string>
+    <string name="nav_people">الأشخاص</string>
+    <string name="nav_settings">الإعدادات</string>
+    <string name="coming_soon">قريباً.</string>
 </resources>

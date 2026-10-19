@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
@@ -20,16 +19,15 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.pillbox.R
 import com.pillbox.data.MedicineWithSchedule
-import com.pillbox.ui.components.PrimaryButton
 import com.pillbox.ui.theme.Dimens
 import com.pillbox.ui.theme.PillBox
 import com.pillbox.ui.theme.Space
 
 /** Temporary home for M2 so the new medicines can be seen. Today (M3) and Medicines (M5) replace it. */
 @Composable
-fun MedicinesPreviewScreen(medicines: List<MedicineWithSchedule>, onAdd: () -> Unit, modifier: Modifier = Modifier) {
+fun MedicinesPreviewScreen(medicines: List<MedicineWithSchedule>, modifier: Modifier = Modifier) {
     val colors = PillBox.colors
-    Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).safeDrawingPadding()) {
+    Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Text(
             stringResource(R.string.medicines_title),
             style = MaterialTheme.typography.titleLarge,
@@ -64,9 +62,5 @@ fun MedicinesPreviewScreen(medicines: List<MedicineWithSchedule>, onAdd: () -> U
                 }
             }
         }
-        PrimaryButton(
-            stringResource(R.string.add_medicine), onAdd,
-            Modifier.padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12),
-        )
     }
 }
