@@ -158,7 +158,8 @@
     "switchWidth": 52,
     "switchHeight": 32,
     "icon": 24,
-    "iconSmall": 18
+    "iconSmall": 18,
+    "logo": 128
   },
   "rules": {
     "contrastMin": "4.5:1 for text",
