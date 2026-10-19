@@ -67,6 +67,9 @@ interface DoseEventDao {
     @Query("SELECT * FROM dose_event WHERE medicineId = :medicineId AND plannedAt >= :fromAt AND plannedAt < :toAt ORDER BY plannedAt")
     suspend fun plannedBetween(medicineId: Long, fromAt: String, toAt: String): List<DoseEventEntity>
 
+    @Query("SELECT * FROM dose_event WHERE plannedAt >= :fromAt AND plannedAt < :toAt ORDER BY plannedAt")
+    suspend fun allPlannedBetween(fromAt: String, toAt: String): List<DoseEventEntity>
+
     /** Actual taken times since [sinceAt], newest first. Used by the minimum gap and daily maximum rules. */
     @Query("SELECT takenAt FROM dose_event WHERE medicineId = :medicineId AND status = 'TAKEN' AND takenAt >= :sinceAt ORDER BY takenAt DESC")
     suspend fun takenSince(medicineId: Long, sinceAt: String): List<String>

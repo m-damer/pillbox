@@ -93,7 +93,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun TodayScreen(vm: TodayViewModel, onAddMedicine: () -> Unit, modifier: Modifier = Modifier) {
+fun TodayScreen(
+    vm: TodayViewModel, onAddMedicine: () -> Unit, modifier: Modifier = Modifier,
+    remindersOff: Boolean = false, onFixReminders: () -> Unit = {},
+) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
     val snackbar = remember { SnackbarHostState() }
@@ -113,6 +116,7 @@ fun TodayScreen(vm: TodayViewModel, onAddMedicine: () -> Unit, modifier: Modifie
         TodayContent(
             state = state, fmt = fmt, onSelectDate = vm::selectDate, onBackToToday = vm::backToToday,
             onTake = vm::take, onSkip = vm::skip, onAddMedicine = onAddMedicine,
+            remindersOff = remindersOff, onFixReminders = onFixReminders,
         )
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) { data ->
             val c = PillBox.colors
@@ -148,6 +152,8 @@ fun TodayContent(
     onSkip: (List<DoseRow>) -> Unit,
     onAddMedicine: () -> Unit,
     modifier: Modifier = Modifier,
+    remindersOff: Boolean = false,
+    onFixReminders: () -> Unit = {},
 ) {
     val today = state.now.toLocalDate()
     val model = state.model
@@ -163,6 +169,7 @@ fun TodayContent(
         verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
     ) {
         item { Header(state.selectedDate, today, model, fmt) }
+        if (remindersOff) item { RemindersOffBanner(onFixReminders) }
         item { WeekStrip(state.selectedDate, today, fmt, onSelectDate) }
         if (state.selectedDate != today) item { BackToToday(onBackToToday) }
         if (state.selectedDate == today && model != null && model.groups.isNotEmpty()) item { Timeline(model, fmt) }
@@ -227,6 +234,26 @@ private fun WeekStrip(selected: LocalDate, today: LocalDate, fmt: Formatter, onS
                 )
                 Text(fmt.number(day.dayOfMonth), style = MaterialTheme.typography.labelLarge, color = if (on) c.onPrimary else c.text)
             }
+        }
+    }
+}
+
+@Composable
+private fun RemindersOffBanner(onFix: () -> Unit) {
+    val c = PillBox.colors
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = Dimens.TouchTargetMin)
+            .background(c.warningContainer, MaterialTheme.shapes.medium)
+            .clickable(role = Role.Button, onClick = onFix)
+            .padding(Space.S12),
+        horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(24.dp))
+        Column(Modifier.weight(1f)) {
+            Text(stringResource(R.string.banner_off_title), style = MaterialTheme.typography.labelLarge, color = c.warning)
+            Text(stringResource(R.string.banner_off_body), style = MaterialTheme.typography.bodySmall, color = c.warning)
         }
     }
 }
@@ -373,7 +400,7 @@ private fun PillIcon(unit: DoseUnit, tint: Color) {
 }
 
 @Composable
-private fun foodText(f: WithFood): String? = when (f) {
+internal fun foodText(f: WithFood): String? = when (f) {
     WithFood.ANY -> null
     WithFood.BEFORE_MEAL -> stringResource(R.string.food_line_before)
     WithFood.WITH_MEAL -> stringResource(R.string.food_line_with)
@@ -470,7 +497,7 @@ private fun DoseRowItem(
 }
 
 @Composable
-private fun RowButton(label: String, description: String, filled: Boolean, onClick: () -> Unit) {
+internal fun RowButton(label: String, description: String, filled: Boolean, onClick: () -> Unit) {
     val c = PillBox.colors
     Box(
         Modifier

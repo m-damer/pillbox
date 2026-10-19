@@ -27,11 +27,14 @@ data class AddMedUiState(
     val showErrors: Boolean = false,
     val dialog: AddMedDialog? = null,
     val saving: Boolean = false,
+    /** At least one medicine was saved in this session of the flow. */
+    val savedAny: Boolean = false,
 )
 
 class AddMedicineViewModel(
     private val repo: PillBoxRepository,
     private val meName: String,
+    private val onChanged: suspend () -> Unit = {},
     private val now: () -> LocalDateTime = { LocalDateTime.now() },
 ) : ViewModel() {
 
@@ -76,9 +79,10 @@ class AddMedicineViewModel(
                 val at = now()
                 val schedule = s.form.schedule(at.toLocalDate())
                 repo.addMedicine(s.form.medicine(me.id), schedule)
+                runCatching { onChanged() } // arm the next reminder; a failure here must not undo the save
                 val first = ScheduleEngine.nextDose(schedule, emptyList(), at)
                 _state.update {
-                    it.copy(saving = false, dialog = AddMedDialog.Added(s.form.name.trim(), first, s.form.freq == FreqChoice.AS_NEEDED))
+                    it.copy(saving = false, savedAny = true, dialog = AddMedDialog.Added(s.form.name.trim(), first, s.form.freq == FreqChoice.AS_NEEDED))
                 }
             } catch (e: Exception) {
                 _state.update { it.copy(saving = false, dialog = AddMedDialog.SaveFailed) }
@@ -101,6 +105,6 @@ class AddMedicineViewModel(
     /** "Add another medicine" after a success. */
     fun startOver() {
         duplicateAccepted = false
-        _state.value = AddMedUiState()
+        _state.value = AddMedUiState(savedAny = _state.value.savedAny)
     }
 }

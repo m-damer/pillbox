@@ -111,6 +111,10 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
     suspend fun doseEventsFor(medicineId: Long, from: LocalDateTime, to: LocalDateTime): List<DoseEvent> =
         db.doseEvents().plannedBetween(medicineId, Mappers.dt(from), Mappers.dt(to)).map(Mappers::toDomain)
 
+    /** Every medicine's events planned in [from, to). Used by reminders. */
+    suspend fun allDoseEventsFor(from: LocalDateTime, to: LocalDateTime): List<DoseEvent> =
+        db.doseEvents().allPlannedBetween(Mappers.dt(from), Mappers.dt(to)).map(Mappers::toDomain)
+
     fun observeDoseEvents(personId: Long, from: LocalDateTime, to: LocalDateTime): Flow<List<DoseEvent>> =
         db.doseEvents().observePlannedBetween(personId, Mappers.dt(from), Mappers.dt(to)).map { l -> l.map(Mappers::toDomain) }
 
