@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +47,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -68,9 +70,9 @@ import com.pillbox.domain.DoseUnit
 import com.pillbox.domain.GroupState
 import com.pillbox.domain.RowStatus
 import com.pillbox.domain.Pause
+import com.pillbox.domain.StockLevel
 import com.pillbox.domain.TodayModel
 import com.pillbox.domain.WithFood
-import com.pillbox.ui.Block
 import com.pillbox.ui.Formatter
 import com.pillbox.ui.blockColors
 import com.pillbox.ui.blockName
@@ -82,12 +84,12 @@ import com.pillbox.ui.quantityFor
 import com.pillbox.ui.rememberFormatter
 import com.pillbox.ui.theme.Dimens
 import com.pillbox.ui.theme.PillBox
+import com.pillbox.ui.theme.illustration
 import com.pillbox.ui.theme.Space
 import com.pillbox.ui.unitPlural
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
@@ -177,8 +179,9 @@ fun TodayContent(
         EmptyToday(today, onAddMedicine, modifier)
         return
     }
+    Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
     LazyColumn(
-        modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
+        Modifier.fillMaxSize(),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(
             start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Dimens.ScreenPaddingTop, bottom = 96.dp,
         ),
@@ -198,6 +201,39 @@ fun TodayContent(
             }
             if (state.selectedDate > today && model.groups.isNotEmpty()) item { InfoNote(stringResource(R.string.future_note)) }
         }
+    }
+    if (state.lowStock.isNotEmpty()) {
+        Column(
+            Modifier.align(Alignment.BottomCenter).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S8),
+            verticalArrangement = Arrangement.spacedBy(Space.S8),
+        ) { state.lowStock.take(2).forEach { LowStockStrip(it, onGoToMeds) } }
+    }
+    }
+}
+
+/** "Metformin · 4 days left · Buy soon". Opens the Medicines tab. */
+@Composable
+private fun LowStockStrip(item: LowStock, onClick: () -> Unit) {
+    val c = PillBox.colors
+    val what = if (item.level == StockLevel.BUY_SOON && item.daysLeft != null)
+        pluralStringResource(R.plurals.stock_days_left, item.daysLeft.coerceAtLeast(0), rememberFormatter().number(item.daysLeft))
+    else stringResource(R.string.stock_out)
+    val label = stringResource(if (item.level == StockLevel.OUT) R.string.out_update else R.string.stock_buy_soon)
+    val text = stringResource(R.string.low_stock_strip, item.name, what)
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = Dimens.TouchTargetMin)
+            .background(c.warningContainer, MaterialTheme.shapes.medium)
+            .clickable(role = Role.Button, onClick = onClick)
+            .semantics(mergeDescendants = true) { contentDescription = "$text. $label" }
+            .padding(horizontal = Space.S12, vertical = Space.S10),
+        horizontalArrangement = Arrangement.spacedBy(Space.S10), verticalAlignment = Alignment.CenterVertically,
+    ) {
+        PillIcon(item.unit, null, 26.dp)
+        Text(text, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
+        Text(label, style = MaterialTheme.typography.labelMedium, color = c.warning)
+        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
     }
 }
 
@@ -292,10 +328,7 @@ private fun BackToToday(onClick: () -> Unit) {
 private fun Timeline(model: TodayModel, fmt: Formatter) {
     val c = PillBox.colors
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val segments = listOf(
-        0 to Block.NIGHT, 5 to Block.MORNING, 12 to Block.NOON, 17 to Block.EVENING, 21 to Block.NIGHT,
-    )
-    val colors = segments.map { (_, b) -> blockColors(b).first }
+    val stops = PillBox.illustration.dayBar.map { (p, color) -> (if (rtl) 1f - p else p) to color }.sortedBy { it.first }.toTypedArray()
     val ink = c.text
     val done = c.success
     val ring = c.primary
@@ -312,13 +345,10 @@ private fun Timeline(model: TodayModel, fmt: Formatter) {
             val barH = 18.dp.toPx()
             val top = (size.height - barH) / 2
             fun x(min: Int): Float = (min / 1440f * size.width).let { if (rtl) size.width - it else it }
-            for (i in segments.indices) {
-                val from = segments[i].first * 60
-                val to = (segments.getOrNull(i + 1)?.first ?: 24) * 60
-                val x1 = x(from); val x2 = x(to)
-                drawRect(colors[i], Offset(minOf(x1, x2), top), Size(kotlin.math.abs(x2 - x1), barH))
-            }
-            drawRoundRect(ink.copy(alpha = 0.25f), Offset(0f, top), Size(size.width, barH), CornerRadius(barH / 2), Stroke(2.dp.toPx()))
+            drawRoundRect(
+                androidx.compose.ui.graphics.Brush.horizontalGradient(colorStops = stops),
+                Offset(0f, top), Size(size.width, barH), CornerRadius(barH / 2),
+            )
             for ((min, state, finished) in dots) {
                 val center = Offset(x(min).coerceIn(10.dp.toPx(), size.width - 10.dp.toPx()), size.height / 2)
                 when {
@@ -331,8 +361,8 @@ private fun Timeline(model: TodayModel, fmt: Formatter) {
             }
         }
         Row(Modifier.fillMaxWidth().padding(top = Space.S4), horizontalArrangement = Arrangement.SpaceBetween) {
-            listOf(0, 6, 12, 18, 0).forEach { h ->
-                Text(fmt.time(LocalTime.of(h, 0)), style = MaterialTheme.typography.labelSmall, color = c.textMuted)
+            listOf(0, 6, 12, 18, 24).forEach { h ->
+                Text(fmt.hour(h), style = MaterialTheme.typography.labelSmall, color = c.textMuted)
             }
         }
     }
@@ -397,19 +427,29 @@ private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) 
     }
 }
 
+/** The medicine's shape as the design draws it: a blue round tablet with a dash, an orange diagonal capsule. */
 @Composable
-internal fun PillIcon(unit: DoseUnit, tint: Color) {
-    val line = PillBox.colors.card
-    Canvas(Modifier.size(28.dp)) {
+internal fun PillIcon(unit: DoseUnit, tint: Color? = null, size: androidx.compose.ui.unit.Dp = 32.dp) {
+    val ill = PillBox.illustration
+    val white = PillBox.colors.card
+    Canvas(Modifier.size(size)) {
+        val u = this.size.minDimension / 24f
         when (unit) {
             DoseUnit.CAPSULE -> {
-                val w = size.width; val h = size.height * 0.5f
-                drawRoundRect(tint, Offset(0f, (size.height - h) / 2), Size(w, h), CornerRadius(h / 2))
-                drawLine(line, Offset(w / 2, (size.height - h) / 2), Offset(w / 2, (size.height + h) / 2), 2.dp.toPx())
+                val color = tint ?: ill.capsule
+                rotate(-45f, center) {
+                    val left = androidx.compose.ui.graphics.Path().apply {
+                        moveTo(12 * u, 7 * u); lineTo(6.5f * u, 7 * u)
+                        arcTo(androidx.compose.ui.geometry.Rect(1.5f * u, 7 * u, 11.5f * u, 17 * u), 270f, -180f, false)
+                        lineTo(12 * u, 17 * u); close()
+                    }
+                    drawPath(left, color)
+                    drawRoundRect(color, Offset(1.5f * u, 7 * u), Size(21 * u, 10 * u), CornerRadius(5 * u), Stroke(1.6f * u))
+                }
             }
             else -> {
-                drawCircle(tint, size.minDimension / 2.2f)
-                drawLine(line, Offset(size.width * 0.28f, size.height / 2), Offset(size.width * 0.72f, size.height / 2), 3.dp.toPx())
+                drawCircle(tint ?: ill.tablet, 9.5f * u, center)
+                drawLine(white, Offset(5.5f * u, 12 * u), Offset(18.5f * u, 12 * u), 2 * u, androidx.compose.ui.graphics.StrokeCap.Round)
             }
         }
     }
@@ -462,11 +502,10 @@ private fun DoseRowItem(
     val sentence = listOf(med.name, amount, foodText(row.schedule.withFood), plannedText, statusText).filterNotNull().joinToString(", ")
     val actionable = group.actionable && status == RowStatus.PENDING
     val big = LocalDensity.current.fontScale > 1.3f
-    val tint = if (status == RowStatus.TAKEN) c.textMuted else c.accent
 
     val text: @Composable (Modifier) -> Unit = { m ->
         Row(m.semantics(mergeDescendants = true) { contentDescription = sentence }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S10)) {
-            PillIcon(med.unit, tint)
+            PillIcon(med.unit, if (status == RowStatus.TAKEN) c.textMuted else null, 36.dp)
             Column(Modifier.weight(1f)) {
                 Text(med.name, style = MaterialTheme.typography.labelLarge, color = c.text)
                 Text(subline, style = MaterialTheme.typography.bodySmall, color = c.textMuted)

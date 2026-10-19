@@ -81,6 +81,7 @@ import com.pillbox.ui.rememberFormatter
 import com.pillbox.ui.shortDate
 import com.pillbox.ui.theme.Dimens
 import com.pillbox.ui.theme.PillBox
+import com.pillbox.ui.theme.illustration
 import com.pillbox.ui.theme.Space
 import java.time.LocalTime
 import java.time.format.TextStyle
@@ -287,14 +288,14 @@ private fun PausedBanner(pause: Pause, fmt: Formatter) {
     else stringResource(R.string.paused_until, shortDate(until.toLocalDate(), fmt))
     val body = stringResource(R.string.paused_banner_body)
     Row(
-        Modifier.fillMaxWidth().background(c.warningContainer, MaterialTheme.shapes.medium).padding(Space.S16)
+        Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(horizontal = Space.S16, vertical = Space.S12)
             .semantics(mergeDescendants = true) { contentDescription = "$title. $body" },
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
     ) {
-        PauseGlyph(c.warning, Modifier.size(24.dp))
+        PauseGlyph(c.accent, Modifier.size(24.dp))
         Column(Modifier.weight(1f)) {
-            Text(title, style = MaterialTheme.typography.labelLarge, color = c.warning)
-            Text(body, style = MaterialTheme.typography.bodyMedium, color = c.warning)
+            Text(title, style = MaterialTheme.typography.labelLarge, color = c.accent)
+            Text(body, style = MaterialTheme.typography.bodyMedium, color = c.accent)
         }
     }
 }
@@ -370,17 +371,18 @@ private fun ScheduleCard(item: MedicineWithSchedule, fmt: Formatter) {
     }
 }
 
-/** The 24-hour bar with the four parts of the day and a ring at each dose time. Mirrors in right-to-left. */
+/** The 24-hour bar: night, sunrise, day and sunset as a gradient, with a ring (and the time above it) at each dose. Mirrors in right-to-left. */
 @Composable
 private fun DayBar(times: List<LocalTime>, fmt: Formatter) {
     val c = PillBox.colors
+    val ill = PillBox.illustration
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val segments = listOf(0 to c.night, 5 to c.morning, 12 to c.noon, 17 to c.evening, 21 to c.night)
     val ink = c.text
     val white = c.card
     fun frac(t: LocalTime) = (t.hour * 60 + t.minute) / 1440f
     fun at(f: Float) = if (rtl) 1f - f else f
     val label = times.size <= 4
+    val stops = ill.dayBar.map { (p, color) -> at(p) to color }.sortedBy { it.first }.toTypedArray()
     Column(Modifier.fillMaxWidth().clearAndSetSemantics { }) {
         BoxWithConstraints(Modifier.fillMaxWidth().height(if (label) 66.dp else 36.dp)) {
             val w = maxWidth
@@ -393,26 +395,29 @@ private fun DayBar(times: List<LocalTime>, fmt: Formatter) {
                     )
                 }
             }
-            Canvas(Modifier.fillMaxWidth().height(36.dp).align(Alignment.BottomStart)) {
-                val barH = 18.dp.toPx()
-                val top = (size.height - barH) / 2
+            Canvas(Modifier.fillMaxWidth().height(if (label) 42.dp else 36.dp).align(Alignment.BottomStart)) {
+                val barH = 20.dp.toPx()
+                val top = size.height - barH - 2.dp.toPx()
                 fun x(f: Float) = at(f) * size.width
-                for (i in segments.indices) {
-                    val from = segments[i].first / 24f
-                    val to = (segments.getOrNull(i + 1)?.first ?: 24) / 24f
-                    val x1 = x(from); val x2 = x(to)
-                    drawRect(segments[i].second, Offset(minOf(x1, x2), top), Size(kotlin.math.abs(x2 - x1), barH))
+                if (label) {
+                    for (t in times) {
+                        val cx = x(frac(t)).coerceIn(13.dp.toPx(), size.width - 13.dp.toPx())
+                        drawLine(ink, Offset(cx, 0f), Offset(cx, top), 2.dp.toPx())
+                    }
                 }
-                drawRoundRect(ink.copy(alpha = 0.25f), Offset(0f, top), Size(size.width, barH), androidx.compose.ui.geometry.CornerRadius(barH / 2), Stroke(2.dp.toPx()))
+                drawRoundRect(
+                    androidx.compose.ui.graphics.Brush.horizontalGradient(colorStops = stops),
+                    Offset(0f, top), Size(size.width, barH), androidx.compose.ui.geometry.CornerRadius(barH / 2),
+                )
                 for (t in times) {
-                    val center = Offset(x(frac(t)).coerceIn(10.dp.toPx(), size.width - 10.dp.toPx()), size.height / 2)
-                    drawCircle(white, 10.dp.toPx(), center)
-                    drawCircle(ink, 10.dp.toPx(), center, style = Stroke(3.dp.toPx()))
+                    val center = Offset(x(frac(t)).coerceIn(13.dp.toPx(), size.width - 13.dp.toPx()), top + barH / 2)
+                    drawCircle(white, 13.dp.toPx(), center)
+                    drawCircle(ink, 11.dp.toPx(), center, style = Stroke(4.dp.toPx()))
                 }
             }
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            listOf(0, 6, 12, 18, 0).forEach { h -> Text(fmt.time(LocalTime.of(h, 0)), style = MaterialTheme.typography.labelSmall, color = c.textMuted) }
+            listOf(0, 6, 12, 18, 24).forEach { h -> Text(fmt.hour(h), style = MaterialTheme.typography.labelSmall, color = c.textMuted) }
         }
     }
 }
@@ -421,18 +426,19 @@ private fun DayBar(times: List<LocalTime>, fmt: Formatter) {
 @Composable
 private fun DayLegend() {
     val c = PillBox.colors
+    val ill = PillBox.illustration
     FlowRow(
         Modifier.fillMaxWidth().clearAndSetSemantics { },
         horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalArrangement = Arrangement.spacedBy(Space.S4),
     ) {
         listOf(
-            com.pillbox.ui.Block.NIGHT to c.night, com.pillbox.ui.Block.MORNING to c.morning,
-            com.pillbox.ui.Block.NOON to c.noon, com.pillbox.ui.Block.EVENING to c.evening,
-        ).forEach { (block, color) ->
+            R.string.legend_night to ill.legendNight, R.string.legend_sunrise to ill.legendSunrise,
+            R.string.legend_day to ill.legendDay, R.string.legend_sunset to ill.legendSunset,
+        ).forEach { (name, color) ->
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(Modifier.size(14.dp).background(color, CircleShape).border(1.dp, c.textMuted.copy(alpha = 0.4f), CircleShape))
+                Box(Modifier.size(14.dp).background(color, CircleShape))
                 Box(Modifier.width(Space.S6))
-                Text(com.pillbox.ui.blockName(block), style = MaterialTheme.typography.labelSmall, color = c.textMuted)
+                Text(stringResource(name), style = MaterialTheme.typography.labelSmall, color = c.textMuted)
             }
         }
     }

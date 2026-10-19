@@ -13,6 +13,7 @@ import com.pillbox.domain.DoseUnit
 import com.pillbox.domain.Medicine
 import com.pillbox.domain.Pause
 import com.pillbox.domain.Schedule
+import com.pillbox.domain.StockLevel
 import com.pillbox.domain.StockMath
 import com.pillbox.ui.medicines.StockResult
 import com.pillbox.domain.RowStatus
@@ -61,6 +62,9 @@ data class TodayToast(val id: Int, val kind: ToastKind, val undo: List<Undo>)
 
 data class Undo(val medicine: Medicine, val eventId: Long, val wasTake: Boolean, val restore: Double = 0.0)
 
+/** A medicine that is running low, for the strip at the bottom of Today. */
+data class LowStock(val name: String, val unit: DoseUnit, val daysLeft: Int?, val level: StockLevel)
+
 data class TodayUiState(
     val loaded: Boolean = false,
     val hasMedicines: Boolean = false,
@@ -71,6 +75,7 @@ data class TodayUiState(
     val toast: TodayToast? = null,
     /** Set when every medicine is paused: Today shows the "All medicines paused" screen. */
     val allPaused: AllPaused? = null,
+    val lowStock: List<LowStock> = emptyList(),
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -104,6 +109,13 @@ class TodayViewModel(
         TodayUiState(
             loaded = true,
             allPaused = allPaused,
+            lowStock = medicines
+                .filter { Pause.activeAt(it.pauses, now) == null }
+                .mapNotNull { m ->
+                    val info = StockMath.info(m.medicine, m.schedule, now.toLocalDate())
+                    if (info.level == StockLevel.ENOUGH) null else LowStock(m.medicine.name, m.medicine.unit, info.daysLeft, info.level)
+                }
+                .sortedBy { if (it.level == StockLevel.OUT) -1 else it.daysLeft ?: Int.MAX_VALUE },
             hasMedicines = medicines.isNotEmpty(),
             model = TodayBuilder.build(items, events, day, now),
             selectedDate = day, now = now, sheet = sheet, toast = toast,
