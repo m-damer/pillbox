@@ -125,9 +125,9 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
         id
     }
 
-    /** Undo of [takeDose]: removes the event and puts the stock back. */
-    suspend fun undoTake(medicine: Medicine, eventId: Long) = db.withTransaction {
+    /** Undo of [takeDose]: removes the event and puts back [restore] (less than a full dose if stock ran out). */
+    suspend fun undoTake(medicine: Medicine, eventId: Long, restore: Double = medicine.doseAmount) = db.withTransaction {
         db.doseEvents().delete(eventId)
-        db.medicines().get(medicine.id)?.let { db.medicines().update(it.copy(stock = it.stock + medicine.doseAmount)) }
+        db.medicines().get(medicine.id)?.let { db.medicines().update(it.copy(stock = it.stock + restore)) }
     }
 }

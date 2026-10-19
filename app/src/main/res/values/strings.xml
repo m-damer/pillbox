@@ -143,4 +143,64 @@
     <plurals name="n_hours"><item quantity="one">%1$s hour</item><item quantity="other">%1$s hours</item></plurals>
     <plurals name="n_doses"><item quantity="one">%1$s dose</item><item quantity="other">%1$s doses</item></plurals>
     <plurals name="n_days"><item quantity="one">%1$s day</item><item quantity="other">%1$s days</item></plurals>
+
+    <!-- Today -->
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="sub_taken">%1$s · %2$s of %3$s taken</string>
+    <string name="sub_planned">%1$s · %2$s planned</string>
+    <string name="back_to_today">Back to today</string>
+    <string name="nothing_planned">No doses are planned for this day.</string>
+    <string name="future_note">These are planned doses. You can mark them on the day.</string>
+    <string name="group_next">next</string>
+    <string name="late_h">%1$s h late</string>
+    <string name="late_min">%1$s min late</string>
+    <string name="late_banner">Did you take these? They were due at %1$s.</string>
+    <string name="take">Take</string>
+    <string name="skip">Skip</string>
+    <string name="take_all">Take all</string>
+    <string name="skip_all">Skip all</string>
+    <string name="take_med">Take %1$s</string>
+    <string name="skip_med">Skip %1$s</string>
+    <string name="skipped">Skipped</string>
+    <string name="missed">Missed</string>
+    <string name="said_taken_at">taken at %1$s</string>
+    <string name="said_not_taken">not taken</string>
+    <string name="dot_sep">" · "</string>
+    <string name="food_line_before">before meal</string>
+    <string name="food_line_with">with food</string>
+    <string name="food_line_after">after meal</string>
+    <string name="undo">Undo</string>
+    <string name="toast_taken">%1$s taken</string>
+    <string name="toast_skipped">%1$s skipped</string>
+    <plurals name="toast_taken_n"><item quantity="one">%1$d dose taken</item><item quantity="other">%1$d doses taken</item></plurals>
+    <plurals name="toast_skipped_n"><item quantity="one">%1$d dose skipped</item><item quantity="other">%1$d doses skipped</item></plurals>
+    <plurals name="n_minutes"><item quantity="one">%1$s minute</item><item quantity="other">%1$s minutes</item></plurals>
+    <string name="empty_title">Your pill box is empty</string>
+    <string name="empty_body">Add your first medicine. It takes about a minute.</string>
+
+    <!-- Skip, too soon, out of stock -->
+    <string name="skip_title">Why skip %1$s?</string>
+    <string name="skip_title_many">Why skip these doses?</string>
+    <string name="skip_sub">Optional. It shows in your doctor report.</string>
+    <string name="skip_dose">Skip dose</string>
+    <string name="reason_not_well">Not feeling well</string>
+    <string name="reason_side_effects">Side effects</string>
+    <string name="reason_ran_out">Ran out of tablets</string>
+    <string name="reason_doctor">My doctor said so</string>
+    <string name="reason_other">Another reason</string>
+    <string name="too_soon_title">Too soon for this dose?</string>
+    <string name="too_soon_body">Your last %1$s was %2$s ago. The minimum gap is %3$s. Taking it now may be too much.</string>
+    <string name="wait_dont_take">Wait, do not take</string>
+    <string name="take_anyway_long">I will take it anyway</string>
+    <string name="out_title">No %1$s left</string>
+    <string name="out_body">%1$s shows 0 left. You can still mark this dose as taken.</string>
+    <string name="take_anyway">Take anyway</string>
+
+    <!-- Navigation -->
+    <string name="nav_today">Today</string>
+    <string name="nav_meds">Meds</string>
+    <string name="nav_people">People</string>
+    <string name="nav_settings">Settings</string>
+    <string name="coming_soon">Coming soon.</string>
 </resources>

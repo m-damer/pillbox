@@ -86,7 +86,13 @@ import com.pillbox.ui.components.PrimaryButton
 import com.pillbox.ui.components.Segmented
 import com.pillbox.ui.components.StepHeader
 import com.pillbox.ui.components.Stepper
+import com.pillbox.ui.Block
+import com.pillbox.ui.blockColors
+import com.pillbox.ui.blockName
+import com.pillbox.ui.blockOf
+import com.pillbox.ui.quantityFor
 import com.pillbox.ui.rememberFormatter
+import com.pillbox.ui.unitPlural
 import com.pillbox.ui.theme.Dimens
 import com.pillbox.ui.theme.PillBox
 import com.pillbox.ui.theme.Space
@@ -98,7 +104,6 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
-import kotlin.math.floor
 
 /** The 3-step Add medicine flow, with its prompts. [onClose] leaves the flow. */
 @Composable
@@ -246,18 +251,6 @@ private fun fieldColors() = OutlinedTextFieldDefaults.colors(
     cursorColor = PillBox.colors.primary, errorCursorColor = PillBox.colors.danger,
 )
 
-private fun unitPlural(t: DoseUnit) = when (t) {
-    DoseUnit.TABLET -> R.plurals.unit_tablet
-    DoseUnit.CAPSULE -> R.plurals.unit_capsule
-    DoseUnit.ML -> R.plurals.unit_ml
-    DoseUnit.DROPS -> R.plurals.unit_drops
-    DoseUnit.INJECTION -> R.plurals.unit_injection
-    DoseUnit.OTHER -> R.plurals.unit_other
-}
-
-/** 1 is singular; whole numbers use themselves; halves count as plural. */
-private fun quantityFor(v: Double): Int = if (v == 1.0) 1 else if (v == floor(v)) v.toInt() else 2
-
 @Composable
 private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, edit: ((AddMedicineForm) -> AddMedicineForm) -> Unit) {
     val errors = form.step1Errors()
@@ -337,36 +330,6 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
 }
 
 // ---------------------------------------------------------------- step 2
-
-private enum class Block { MORNING, NOON, EVENING, NIGHT }
-
-private fun blockOf(t: LocalTime) = when (t.hour) {
-    in 5..11 -> Block.MORNING
-    in 12..16 -> Block.NOON
-    in 17..20 -> Block.EVENING
-    else -> Block.NIGHT
-}
-
-@Composable
-private fun blockColors(b: Block): Pair<androidx.compose.ui.graphics.Color, androidx.compose.ui.graphics.Color> {
-    val c = PillBox.colors
-    return when (b) {
-        Block.MORNING -> c.morning to c.morningText
-        Block.NOON -> c.noon to c.noonText
-        Block.EVENING -> c.evening to c.eveningText
-        Block.NIGHT -> c.night to c.nightText
-    }
-}
-
-@Composable
-private fun blockName(b: Block, afternoon: Boolean = false) = stringResource(
-    when (b) {
-        Block.MORNING -> R.string.block_morning
-        Block.NOON -> if (afternoon) R.string.block_afternoon else R.string.block_noon
-        Block.EVENING -> R.string.block_evening
-        Block.NIGHT -> R.string.block_night
-    },
-)
 
 @Composable
 private fun Step2(
