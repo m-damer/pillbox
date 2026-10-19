@@ -92,7 +92,7 @@ class PillBoxRepositoryTest {
     @Test fun stockNeverGoesNegative() = runBlocking {
         val me = repo.ensureMe("Me")
         val id = repo.addMedicine(med(me.id, stock = 0.0), sched)
-        repo.takeDose(repo.getMedicine(id)!!, DoseEvent(taken = day.atTime(8, 0), status = DoseStatus.TAKEN))
+        repo.takeDose(repo.getMedicine(id)!!, DoseEvent(planned = null, taken = day.atTime(8, 0), status = DoseStatus.TAKEN))
         assertEquals(0.0, repo.getMedicine(id)!!.stock, 0.0)
     }
 
