@@ -3,4 +3,144 @@
     <string name="app_name">Pill Box</string>
     <string name="app_tagline">Never miss a dose</string>
     <string name="app_version">Version %1$s</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="next">Next</string>
+    <string name="time_am">AM</string>
+    <string name="time_pm">PM</string>
+    <string name="list_sep">", "</string>
+    <string name="list_and">" and "</string>
+    <string name="stepper_decrease">Decrease %1$s</string>
+    <string name="stepper_increase">Increase %1$s</string>
+    <string name="state_selected">Selected</string>
+    <string name="state_not_selected">Not selected</string>
+    <string name="person_me">Me</string>
+
+    <!-- Temporary medicines list (replaced by Today and Medicines) -->
+    <string name="medicines_title">Medicines</string>
+    <string name="medicines_empty">No medicines yet. Add your first one.</string>
+
+    <!-- Add medicine -->
+    <string name="add_medicine">Add medicine</string>
+    <string name="add_med_step">Step %1$s of 3 · %2$s</string>
+    <string name="step1_sub">What is it?</string>
+    <string name="step2_sub">When do you take it?</string>
+    <string name="step3_sub">How long?</string>
+    <string name="save_medicine">Save medicine</string>
+
+    <string name="medicine_name">Medicine name</string>
+    <string name="name_hint">Type the name from the box</string>
+    <string name="name_error">Type the medicine name to continue.</string>
+    <string name="type_label">Type</string>
+    <string name="type_tablet">Tablet</string>
+    <string name="type_capsule">Capsule</string>
+    <string name="type_syrup">Syrup</string>
+    <string name="type_injection">Injection</string>
+    <string name="type_drops">Drops</string>
+    <string name="type_other">Other</string>
+    <string name="strength_label">Strength</string>
+    <string name="unit_mg">mg</string>
+    <string name="unit_g">g</string>
+    <string name="unit_ml">ml</string>
+    <string name="dose_label">How much each time?</string>
+    <string name="dose_half_hint">Use − and + to take half a tablet.</string>
+    <string name="box_label">How many are in the box?</string>
+    <string name="box_error">Type how many are in the box.</string>
+
+    <string name="how_often">How often?</string>
+    <string name="freq_once">Once a day</string>
+    <string name="freq_twice">Twice a day</string>
+    <string name="freq_three">3 times a day</string>
+    <string name="freq_hours">Every few hours</string>
+    <string name="freq_prn">Only when needed</string>
+    <string name="first_dose">Time of the first dose</string>
+    <string name="one_dose">Time of the dose</string>
+    <string name="tap_to_change">Tap to change the time</string>
+    <string name="doses_auto">Your doses (automatic)</string>
+    <string name="once_hint">Once a day, every day at this time. Tap to change it.</string>
+    <string name="twice_hint">Every 12 hours. Tap a dose to change its time.</string>
+    <string name="three_hint">About every 6 hours while you are awake. Tap a dose to change its time.</string>
+    <string name="hours_label">Every how many hours?</string>
+    <string name="hours_hint">Choose from 1 to 24 hours.</string>
+    <string name="hours_summary">Starts at your first dose (%1$s), then every %2$s, day and night: %3$s a day.</string>
+    <string name="prn_max">Most doses in one day</string>
+    <string name="prn_gap">Least time between doses</string>
+    <string name="prn_info">No reminders ring for this medicine. Tap Take now when you take it. We warn you if it is too soon.</string>
+    <string name="with_food">With food?</string>
+    <string name="food_before">Before</string>
+    <string name="food_with">With</string>
+    <string name="food_after">After</string>
+    <string name="food_any">Any</string>
+    <string name="block_morning">Morning</string>
+    <string name="block_noon">Noon</string>
+    <string name="block_afternoon">Afternoon</string>
+    <string name="block_evening">Evening</string>
+    <string name="block_night">Night</string>
+
+    <string name="which_days">Which days?</string>
+    <string name="days_every_day">Every day</string>
+    <string name="days_specific">Specific days</string>
+    <string name="days_every_n">Every few days</string>
+    <string name="days_none">Choose at least one day.</string>
+    <string name="days_picked">%1$s.</string>
+    <string name="repeat_every">Repeat every</string>
+    <string name="repeat_hint">Doses on %1$s and so on.</string>
+    <string name="starts">Starts</string>
+    <string name="start_today">Today</string>
+    <string name="start_tomorrow">Tomorrow</string>
+    <string name="start_pick">Pick date</string>
+    <string name="how_long">For how long?</string>
+    <string name="len_ongoing">Ongoing</string>
+    <string name="len_7">7 days</string>
+    <string name="len_other">Other</string>
+    <string name="select_time">Select time</string>
+
+    <string name="sum_full">%1$s, %2$s, %3$s.</string>
+    <string name="sum_short">%1$s, %2$s.</string>
+    <string name="sum_hours">Every %1$s from %2$s, %3$s a day</string>
+    <string name="sum_every_day">every day</string>
+    <string name="sum_on">on %1$s</string>
+    <string name="sum_specific_none">on chosen days</string>
+    <string name="sum_every_n">every %1$s</string>
+    <string name="sum_ongoing">ongoing</string>
+    <string name="sum_for">for %1$s</string>
+
+    <!-- Messages -->
+    <string name="added_title">%1$s was added</string>
+    <string name="added_body_today">Your reminders are on. The first one rings today at %1$s. You can change anything from Medicines.</string>
+    <string name="added_body_tomorrow">Your reminders are on. The first one rings tomorrow at %1$s. You can change anything from Medicines.</string>
+    <string name="added_body_date">Your reminders are on. The first one rings on %1$s at %2$s. You can change anything from Medicines.</string>
+    <string name="added_body_prn">No reminders ring for this medicine. Tap Take now when you need it. You can change anything from Medicines.</string>
+    <string name="added_body_none">Your medicine was saved. You can change anything from Medicines.</string>
+    <string name="go_today">Go to Today</string>
+    <string name="add_another">Add another medicine</string>
+    <string name="dup_title">%1$s is already in your list</string>
+    <string name="dup_body">Add a second one only if it is a different strength.</string>
+    <string name="dup_open">Open my %1$s</string>
+    <string name="dup_add_anyway">Add anyway</string>
+    <string name="unsaved_title">Leave without saving?</string>
+    <string name="unsaved_body">Your changes to this medicine will be lost.</string>
+    <string name="keep_editing">Keep editing</string>
+    <string name="leave">Leave</string>
+    <string name="save_failed_title">Could not save</string>
+    <string name="save_failed_body">The phone may be low on storage. Free some space and try again. Nothing was lost.</string>
+    <string name="try_again">Try again</string>
+
+    <!-- Units (the number is shown separately next to the word) -->
+    <plurals name="unit_tablet"><item quantity="one">tablet</item><item quantity="other">tablets</item></plurals>
+    <plurals name="unit_capsule"><item quantity="one">capsule</item><item quantity="other">capsules</item></plurals>
+    <plurals name="unit_ml"><item quantity="one">ml</item><item quantity="other">ml</item></plurals>
+    <plurals name="unit_drops"><item quantity="one">drop</item><item quantity="other">drops</item></plurals>
+    <plurals name="unit_injection"><item quantity="one">injection</item><item quantity="other">injections</item></plurals>
+    <plurals name="unit_other"><item quantity="one">dose</item><item quantity="other">doses</item></plurals>
+    <plurals name="unit_dose"><item quantity="one">dose</item><item quantity="other">doses</item></plurals>
+    <plurals name="unit_hours"><item quantity="one">hour</item><item quantity="other">hours</item></plurals>
+    <plurals name="unit_days"><item quantity="one">day</item><item quantity="other">days</item></plurals>
+    <!-- Number plus word, for sentences -->
+    <plurals name="n_hours"><item quantity="one">%1$s hour</item><item quantity="other">%1$s hours</item></plurals>
+    <plurals name="n_doses"><item quantity="one">%1$s dose</item><item quantity="other">%1$s doses</item></plurals>
+    <plurals name="n_days"><item quantity="one">%1$s day</item><item quantity="other">%1$s days</item></plurals>
 </resources>

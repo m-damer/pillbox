@@ -4,6 +4,7 @@
     <!-- allowBackup is off so medicine data never goes to Google's Auto Backup.
          Pill Box has its own backup (M9). -->
     <application
+        android:name=".PillBoxApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"

@@ -180,6 +180,8 @@ object Dimens {
     val SwitchWidth = 52.dp; val SwitchHeight = 32.dp
     val ButtonShape = RoundedCornerShape(percent = 50)
     val LogoSize = 128.dp
+    val StepperButton = 56.dp
+    val ChipBorder = 2.dp
 }
 
 /** The "space" scale in pillbox-tokens.json. */
