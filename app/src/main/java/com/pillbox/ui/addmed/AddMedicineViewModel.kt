@@ -2,6 +2,7 @@ package com.pillbox.ui.addmed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pillbox.data.MedicineWithSchedule
 import com.pillbox.data.PillBoxRepository
 import com.pillbox.domain.AddMedicineForm
 import com.pillbox.domain.FreqChoice
@@ -29,16 +30,30 @@ data class AddMedUiState(
     val saving: Boolean = false,
     /** At least one medicine was saved in this session of the flow. */
     val savedAny: Boolean = false,
-)
+    /** Edit mode: the name shown in the header, and the form as it was when opened. */
+    val editingName: String? = null,
+    val original: AddMedicineForm? = null,
+    /** Edit mode: the changes were saved. The screen closes. */
+    val saved: Boolean = false,
+) {
+    val isEdit get() = editingName != null
+}
 
 class AddMedicineViewModel(
     private val repo: PillBoxRepository,
     private val meName: String,
     private val onChanged: suspend () -> Unit = {},
     private val now: () -> LocalDateTime = { LocalDateTime.now() },
+    /** Set to edit this medicine instead of adding a new one. */
+    private val editing: MedicineWithSchedule? = null,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(AddMedUiState())
+    private val _state = MutableStateFlow(
+        if (editing?.schedule != null) {
+            val form = AddMedicineForm.fromExisting(editing.medicine, editing.schedule)
+            AddMedUiState(form = form, editingName = editing.medicine.name, original = form)
+        } else AddMedUiState(),
+    )
     val state: StateFlow<AddMedUiState> = _state.asStateFlow()
 
     /** Set when the user chose "Add anyway", so the duplicate prompt is not shown twice. */
@@ -53,7 +68,8 @@ class AddMedicineViewModel(
                 if (s.form.step1Errors().isNotEmpty()) { _state.update { it.copy(showErrors = true) }; return }
                 viewModelScope.launch {
                     val me = repo.ensureMe(meName)
-                    if (!duplicateAccepted && repo.isDuplicateName(me.id, s.form.name)) {
+                    val renamed = editing == null || !editing.medicine.name.equals(s.form.name.trim(), ignoreCase = true)
+                    if (renamed && !duplicateAccepted && repo.isDuplicateName(me.id, s.form.name)) {
                         _state.update { it.copy(dialog = AddMedDialog.Duplicate(s.form.name.trim())) }
                     } else {
                         goTo(2)
@@ -75,9 +91,15 @@ class AddMedicineViewModel(
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {
             try {
-                val me = repo.ensureMe(meName)
                 val at = now()
                 val schedule = s.form.schedule(at.toLocalDate())
+                if (editing != null) {
+                    repo.updateMedicine(s.form.updated(editing.medicine), schedule)
+                    runCatching { onChanged() }
+                    _state.update { it.copy(saving = false, saved = true) }
+                    return@launch
+                }
+                val me = repo.ensureMe(meName)
                 repo.addMedicine(s.form.medicine(me.id), schedule)
                 runCatching { onChanged() } // arm the next reminder; a failure here must not undo the save
                 val first = ScheduleEngine.nextDose(schedule, emptyList(), at)
@@ -95,7 +117,7 @@ class AddMedicineViewModel(
         val s = _state.value
         return when {
             s.step > 1 -> { _state.update { it.copy(step = s.step - 1, showErrors = false) }; false }
-            s.form.isDirty() -> { _state.update { it.copy(dialog = AddMedDialog.Unsaved) }; false }
+            (if (s.isEdit) s.form != s.original else s.form.isDirty()) -> { _state.update { it.copy(dialog = AddMedDialog.Unsaved) }; false }
             else -> true
         }
     }

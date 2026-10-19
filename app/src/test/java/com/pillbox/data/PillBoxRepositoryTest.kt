@@ -144,6 +144,26 @@ class PillBoxRepositoryTest {
         assertTrue(db.pauses().all().isEmpty())
     }
 
+    @Test fun savingAnEditKeepsHistoryPausesAndStartDate() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val id = repo.addMedicine(med(me.id, stock = 7.5), sched)
+        val existing = repo.getMedicine(id)!!
+        repo.takeDose(existing, DoseEvent(planned = day.atTime(8, 0), taken = day.atTime(8, 1), status = DoseStatus.TAKEN))
+        repo.pause(id, Pause.untilResumed(day.atTime(12, 0)))
+
+        val fresh = repo.getMedicine(id)!!
+        val form = com.pillbox.domain.AddMedicineForm.fromExisting(fresh, repo.getSchedule(id)!!)
+            .copy(name = "Metformin XR", firstDose = LocalTime.of(9, 0))
+        repo.updateMedicine(form.updated(fresh), form.schedule(day.plusDays(3)))
+
+        val after = repo.allActiveWithSchedules().single()
+        assertEquals("Metformin XR", after.medicine.name)
+        assertEquals(day, after.schedule!!.start)
+        assertEquals(1, after.pauses.size)
+        assertEquals(1, repo.takenTimesSince(id, day.atStartOfDay()).size)
+        assertEquals(fresh.stock, after.medicine.stock, 0.0001)
+    }
+
     @Test fun deletingMedicineRemovesEverything() = runBlocking {
         val me = repo.ensureMe("Me")
         val id = repo.addMedicine(med(me.id), sched)

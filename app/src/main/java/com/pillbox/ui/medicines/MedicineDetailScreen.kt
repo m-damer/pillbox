@@ -94,6 +94,10 @@ fun MedicineDetailScreen(
     onBack: () -> Unit,
     /** Stop or Restart finished: go back to the list and show this toast there. */
     onDone: (ListToast, finishedTab: Boolean) -> Unit,
+    onEdit: () -> Unit = {},
+    /** A toast to show when this screen appears (after Edit medicine saved). */
+    toast: ListToast? = null,
+    onToastShown: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
@@ -103,6 +107,12 @@ fun MedicineDetailScreen(
     val res = LocalContext.current.resources
     val bg = MaterialTheme.colorScheme.background
     BackHandler(onBack = onBack)
+    LaunchedEffect(toast) {
+        if (toast != null) {
+            snackbar.showToast(toast.title, toast.body)
+            onToastShown()
+        }
+    }
 
     val item = state.item
     if (item == null) {
@@ -123,6 +133,7 @@ fun MedicineDetailScreen(
                 }
             },
             onDelete = { vm.showDelete(true) },
+            onEdit = onEdit,
             onRestart = {
                 vm.restart { name ->
                     onDone(ListToast(res.getString(R.string.toast_restarted_title, name), res.getString(R.string.toast_restarted_body)), false)
@@ -190,12 +201,13 @@ fun MedicineDetailContent(
     onPause: () -> Unit = {},
     onResume: () -> Unit = {},
     onDelete: () -> Unit = {},
+    onEdit: () -> Unit = {},
     onRestart: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val item = state.item ?: return
     Box(modifier) {
-        if (item.medicine.status == MedicineStatus.ACTIVE) ActiveDetail(state, item, fmt, onBack, onAddStock, onStop, onPause, onResume, onDelete)
+        if (item.medicine.status == MedicineStatus.ACTIVE) ActiveDetail(state, item, fmt, onBack, onAddStock, onStop, onPause, onResume, onDelete, onEdit)
         else FinishedDetail(state, item, fmt, onBack, onRestart, onDelete)
     }
 }
@@ -203,7 +215,7 @@ fun MedicineDetailContent(
 // ---------------------------------------------------------------- active medicine
 
 @Composable
-private fun TopBar(title: String, onBack: () -> Unit, onDelete: (() -> Unit)? = null) {
+private fun TopBar(title: String, onBack: () -> Unit, onDelete: (() -> Unit)? = null, onEdit: (() -> Unit)? = null) {
     val c = PillBox.colors
     Row(Modifier.fillMaxWidth().padding(horizontal = Space.S8), verticalAlignment = Alignment.CenterVertically) {
         Box(
@@ -211,6 +223,17 @@ private fun TopBar(title: String, onBack: () -> Unit, onDelete: (() -> Unit)? = 
             contentAlignment = Alignment.Center,
         ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = c.text) }
         Text(title, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, modifier = Modifier.weight(1f).semantics { heading() })
+        if (onEdit != null) {
+            Box(
+                Modifier
+                    .heightIn(min = Dimens.TouchTargetMin)
+                    .background(c.card, androidx.compose.foundation.shape.RoundedCornerShape(24.dp))
+                    .clickable(role = Role.Button, onClick = onEdit)
+                    .padding(horizontal = Space.S16),
+                contentAlignment = Alignment.Center,
+            ) { Text(stringResource(R.string.btn_edit), style = MaterialTheme.typography.labelLarge, color = c.accent) }
+            Box(Modifier.size(Space.S8))
+        }
         if (onDelete != null) {
             Box(
                 Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onDelete),
@@ -231,6 +254,7 @@ private fun ActiveDetail(
     onPause: () -> Unit,
     onResume: () -> Unit,
     onDelete: () -> Unit,
+    onEdit: () -> Unit,
 ) {
     val c = PillBox.colors
     val m = item.medicine
@@ -239,7 +263,7 @@ private fun ActiveDetail(
     val sep = stringResource(R.string.dot_sep)
     val paused = state.pause
     Column(Modifier.fillMaxSize()) {
-        TopBar(stringResource(R.string.detail_title), onBack, onDelete)
+        TopBar(stringResource(R.string.detail_title), onBack, onDelete, onEdit)
         Column(
             Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH),
             verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
