@@ -3,4 +3,151 @@
     <string name="app_name">علبة الدواء</string>
     <string name="app_tagline">لا تفوّت جرعة أبداً</string>
     <string name="app_version">الإصدار %1$s</string>
+
+    <!-- Common -->
+    <string name="back">رجوع</string>
+    <string name="cancel">إلغاء</string>
+    <string name="ok">موافق</string>
+    <string name="next">التالي</string>
+    <string name="time_am">ص</string>
+    <string name="time_pm">م</string>
+    <string name="list_sep">"، "</string>
+    <string name="list_and">" و"</string>
+    <string name="stepper_decrease">إنقاص %1$s</string>
+    <string name="stepper_increase">زيادة %1$s</string>
+    <string name="state_selected">محدد</string>
+    <string name="state_not_selected">غير محدد</string>
+    <string name="person_me">أنا</string>
+
+    <!-- Temporary medicines list -->
+    <string name="medicines_title">الأدوية</string>
+    <string name="medicines_empty">لا توجد أدوية بعد. أضف أول دواء.</string>
+
+    <!-- Add medicine -->
+    <string name="add_medicine">إضافة دواء</string>
+    <string name="add_med_step">الخطوة %1$s من 3 · %2$s</string>
+    <string name="step1_sub">ما هو؟</string>
+    <string name="step2_sub">متى تأخذه؟</string>
+    <string name="step3_sub">لكم من الوقت؟</string>
+    <string name="save_medicine">حفظ الدواء</string>
+
+    <string name="medicine_name">اسم الدواء</string>
+    <string name="name_hint">اكتب الاسم كما في العلبة</string>
+    <string name="name_error">اكتب اسم الدواء للمتابعة.</string>
+    <string name="type_label">النوع</string>
+    <string name="type_tablet">أقراص</string>
+    <string name="type_capsule">كبسولات</string>
+    <string name="type_syrup">شراب</string>
+    <string name="type_injection">حقنة</string>
+    <string name="type_drops">قطرة</string>
+    <string name="type_other">آخر</string>
+    <string name="strength_label">التركيز</string>
+    <string name="unit_mg">ملغ</string>
+    <string name="unit_g">غ</string>
+    <string name="unit_ml">مل</string>
+    <string name="dose_label">كم في كل مرة؟</string>
+    <string name="dose_half_hint">استخدم − و + لأخذ نصف قرص.</string>
+    <string name="box_label">كم عدد ما في العلبة؟</string>
+    <string name="box_error">اكتب كم عدد ما في العلبة.</string>
+
+    <string name="how_often">كم مرة؟</string>
+    <string name="freq_once">مرة في اليوم</string>
+    <string name="freq_twice">مرتان في اليوم</string>
+    <string name="freq_three">3 مرات في اليوم</string>
+    <string name="freq_hours">كل بضع ساعات</string>
+    <string name="freq_prn">عند الحاجة فقط</string>
+    <string name="first_dose">وقت الجرعة الأولى</string>
+    <string name="one_dose">وقت الجرعة</string>
+    <string name="tap_to_change">المس لتغيير الوقت</string>
+    <string name="doses_auto">جرعاتك (تلقائي)</string>
+    <string name="once_hint">مرة في اليوم، كل يوم في هذا الوقت. المس لتغييره.</string>
+    <string name="twice_hint">كل 12 ساعة. المس جرعة لتغيير وقتها.</string>
+    <string name="three_hint">تقريباً كل 6 ساعات وأنت مستيقظ. المس جرعة لتغيير وقتها.</string>
+    <string name="hours_label">كل كم ساعة؟</string>
+    <string name="hours_hint">اختر من 1 إلى 24 ساعة.</string>
+    <string name="hours_summary">تبدأ عند جرعتك الأولى (%1$s)، ثم كل %2$s، ليلاً ونهاراً: %3$s في اليوم.</string>
+    <string name="prn_max">أقصى عدد جرعات في اليوم</string>
+    <string name="prn_gap">أقل مدة بين الجرعات</string>
+    <string name="prn_info">لا تنبيهات لهذا الدواء. المس «خذها الآن» عندما تأخذه. نحذرك إن كان الوقت مبكراً.</string>
+    <string name="with_food">مع الأكل؟</string>
+    <string name="food_before">قبل</string>
+    <string name="food_with">مع</string>
+    <string name="food_after">بعد</string>
+    <string name="food_any">لا يهم</string>
+    <string name="block_morning">الصباح</string>
+    <string name="block_noon">الظهر</string>
+    <string name="block_afternoon">بعد الظهر</string>
+    <string name="block_evening">المساء</string>
+    <string name="block_night">الليل</string>
+
+    <string name="which_days">أي الأيام؟</string>
+    <string name="days_every_day">كل يوم</string>
+    <string name="days_specific">أيام محددة</string>
+    <string name="days_every_n">كل بضعة أيام</string>
+    <string name="days_none">اختر يوماً واحداً على الأقل.</string>
+    <string name="days_picked">%1$s.</string>
+    <string name="repeat_every">كرر كل</string>
+    <string name="repeat_hint">الجرعات في %1$s وهكذا.</string>
+    <string name="starts">يبدأ</string>
+    <string name="start_today">اليوم</string>
+    <string name="start_tomorrow">غداً</string>
+    <string name="start_pick">اختر تاريخاً</string>
+    <string name="how_long">لكم من الوقت؟</string>
+    <string name="len_ongoing">مستمر</string>
+    <string name="len_7">7 أيام</string>
+    <string name="len_other">آخر</string>
+    <string name="select_time">اختر الوقت</string>
+
+    <string name="sum_full">%1$s، %2$s، %3$s.</string>
+    <string name="sum_short">%1$s، %2$s.</string>
+    <string name="sum_hours">كل %1$s من %2$s، %3$s في اليوم</string>
+    <string name="sum_every_day">كل يوم</string>
+    <string name="sum_on">في %1$s</string>
+    <string name="sum_specific_none">في أيام محددة</string>
+    <string name="sum_every_n">كل %1$s</string>
+    <string name="sum_ongoing">مستمر</string>
+    <string name="sum_for">لمدة %1$s</string>
+
+    <!-- Messages -->
+    <string name="added_title">تمت إضافة %1$s</string>
+    <string name="added_body_today">التنبيهات تعمل. أول تنبيه اليوم عند %1$s. يمكنك تغيير أي شيء من الأدوية.</string>
+    <string name="added_body_tomorrow">التنبيهات تعمل. أول تنبيه غداً عند %1$s. يمكنك تغيير أي شيء من الأدوية.</string>
+    <string name="added_body_date">التنبيهات تعمل. أول تنبيه في %1$s عند %2$s. يمكنك تغيير أي شيء من الأدوية.</string>
+    <string name="added_body_prn">لا تنبيهات لهذا الدواء. المس «خذها الآن» عندما تحتاجه. يمكنك تغيير أي شيء من الأدوية.</string>
+    <string name="added_body_none">تم حفظ الدواء. يمكنك تغيير أي شيء من الأدوية.</string>
+    <string name="go_today">الذهاب إلى اليوم</string>
+    <string name="add_another">إضافة دواء آخر</string>
+    <string name="dup_title">%1$s موجود في قائمتك</string>
+    <string name="dup_body">أضف نسخة ثانية فقط إذا كان التركيز مختلفاً.</string>
+    <string name="dup_open">فتح %1$s الخاص بي</string>
+    <string name="dup_add_anyway">أضف على أي حال</string>
+    <string name="unsaved_title">المغادرة دون حفظ؟</string>
+    <string name="unsaved_body">ستضيع تغييراتك على هذا الدواء.</string>
+    <string name="keep_editing">متابعة التعديل</string>
+    <string name="leave">مغادرة</string>
+    <string name="save_failed_title">تعذر الحفظ</string>
+    <string name="save_failed_body">قد تكون مساحة الهاتف ممتلئة. وفّر بعض المساحة وحاول مجدداً. لم يضع شيء.</string>
+    <string name="try_again">حاول مجدداً</string>
+
+    <plurals name="unit_tablet"><item quantity="one">قرص</item><item quantity="other">أقراص</item></plurals>
+    <plurals name="unit_capsule"><item quantity="one">كبسولة</item><item quantity="other">كبسولات</item></plurals>
+    <plurals name="unit_ml"><item quantity="one">مل</item><item quantity="other">مل</item></plurals>
+    <plurals name="unit_drops"><item quantity="one">قطرة</item><item quantity="other">قطرات</item></plurals>
+    <plurals name="unit_injection"><item quantity="one">حقنة</item><item quantity="other">حقن</item></plurals>
+    <plurals name="unit_other"><item quantity="one">جرعة</item><item quantity="other">جرعات</item></plurals>
+    <plurals name="unit_dose"><item quantity="one">جرعة</item><item quantity="other">جرعات</item></plurals>
+    <plurals name="unit_hours"><item quantity="one">ساعة</item><item quantity="other">ساعات</item></plurals>
+    <plurals name="unit_days"><item quantity="one">يوم</item><item quantity="other">أيام</item></plurals>
+    <plurals name="n_hours">
+        <item quantity="zero">%1$s ساعة</item><item quantity="one">ساعة واحدة</item><item quantity="two">ساعتين</item>
+        <item quantity="few">%1$s ساعات</item><item quantity="many">%1$s ساعة</item><item quantity="other">%1$s ساعة</item>
+    </plurals>
+    <plurals name="n_doses">
+        <item quantity="zero">%1$s جرعة</item><item quantity="one">جرعة واحدة</item><item quantity="two">جرعتان</item>
+        <item quantity="few">%1$s جرعات</item><item quantity="many">%1$s جرعة</item><item quantity="other">%1$s جرعة</item>
+    </plurals>
+    <plurals name="n_days">
+        <item quantity="zero">%1$s يوم</item><item quantity="one">يوم واحد</item><item quantity="two">يومين</item>
+        <item quantity="few">%1$s أيام</item><item quantity="many">%1$s يوماً</item><item quantity="other">%1$s يوم</item>
+    </plurals>
 </resources>

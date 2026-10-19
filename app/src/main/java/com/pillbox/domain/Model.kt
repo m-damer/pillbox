@@ -7,7 +7,7 @@ import java.time.LocalTime
 
 /** Pure Kotlin domain model. No Android imports, so every rule can be unit tested on the JVM. */
 
-enum class DoseUnit { TABLET, CAPSULE, ML, DROPS, INJECTION }
+enum class DoseUnit { TABLET, CAPSULE, ML, DROPS, INJECTION, OTHER }
 
 enum class WithFood { ANY, BEFORE_MEAL, WITH_MEAL, AFTER_MEAL }
 
@@ -40,8 +40,8 @@ sealed interface Frequency {
         init { require(times.isNotEmpty()) { "At least one time" } }
     }
 
-    /** First dose, then every [hours] hours, wrapping past midnight (1..24). */
-    data class EveryNHours(val first: LocalTime, val hours: Int) : Frequency {
+    /** First dose, then every [hours] hours, wrapping past midnight (1..24), on the days [days] allows. */
+    data class EveryNHours(val first: LocalTime, val hours: Int, val days: DayPattern = DayPattern.EveryDay) : Frequency {
         init { require(hours in 1..24) { "Hours must be 1..24" } }
     }
 

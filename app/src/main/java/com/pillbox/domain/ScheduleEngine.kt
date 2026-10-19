@@ -29,9 +29,20 @@ object ScheduleEngine {
      * so the gap is never below N. That gives floor(24 / N) doses.
      */
     fun cycle(schedule: Schedule, f: Frequency.EveryNHours, cycleDay: LocalDate): List<LocalDateTime> {
-        if (!schedule.isActiveOn(cycleDay)) return emptyList()
+        if (!schedule.isActiveOn(cycleDay) || !f.days.matches(cycleDay)) return emptyList()
         val first = cycleDay.atTime(f.first)
         return (0 until 24 / f.hours).map { first.plusHours((it * f.hours).toLong()) }
+    }
+
+    /** First visible planned dose strictly after [after], looking up to a year ahead. Null for as-needed or when none is left. */
+    fun nextDose(schedule: Schedule, pauses: List<Pause>, after: LocalDateTime): LocalDateTime? {
+        val firstDay = after.toLocalDate()
+        for (i in 0..400L) {
+            val day = firstDay.plusDays(i)
+            if (schedule.end != null && day.isAfter(schedule.end.plusDays(1))) return null
+            visibleDoses(schedule, pauses, day).firstOrNull { it.isAfter(after) }?.let { return it }
+        }
+        return null
     }
 
     /** Planned doses on [date] that are not hidden by a pause. */

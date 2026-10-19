@@ -43,32 +43,28 @@ object Mappers {
             kind = "", timesCsv = null, dayPattern = null, daysMask = null, everyNDays = null, anchorDate = null,
             firstMinute = null, hours = null, minGapMinutes = null, maxPerDay = null, withFood = s.withFood.name,
         )
+        fun withDays(b: ScheduleEntity, d: DayPattern) = when (d) {
+            DayPattern.EveryDay -> b.copy(dayPattern = "EVERY_DAY")
+            is DayPattern.DaysOfWeek -> b.copy(dayPattern = "DAYS_OF_WEEK", daysMask = d.days.fold(0) { m, day -> m or (1 shl (day.value - 1)) })
+            is DayPattern.EveryNDays -> b.copy(dayPattern = "EVERY_N_DAYS", everyNDays = d.n, anchorDate = d.anchor.toEpochDay())
+        }
         return when (val f = s.frequency) {
-            is Frequency.FixedTimes -> {
-                val withTimes = base.copy(kind = "FIXED", timesCsv = f.times.sorted().joinToString(",") { minutes(it).toString() })
-                when (val d = f.days) {
-                    DayPattern.EveryDay -> withTimes.copy(dayPattern = "EVERY_DAY")
-                    is DayPattern.DaysOfWeek -> withTimes.copy(dayPattern = "DAYS_OF_WEEK", daysMask = d.days.fold(0) { m, day -> m or (1 shl (day.value - 1)) })
-                    is DayPattern.EveryNDays -> withTimes.copy(dayPattern = "EVERY_N_DAYS", everyNDays = d.n, anchorDate = d.anchor.toEpochDay())
-                }
-            }
-            is Frequency.EveryNHours -> base.copy(kind = "HOURS", firstMinute = minutes(f.first), hours = f.hours)
+            is Frequency.FixedTimes ->
+                withDays(base.copy(kind = "FIXED", timesCsv = f.times.sorted().joinToString(",") { minutes(it).toString() }), f.days)
+            is Frequency.EveryNHours -> withDays(base.copy(kind = "HOURS", firstMinute = minutes(f.first), hours = f.hours), f.days)
             is Frequency.AsNeeded -> base.copy(kind = "AS_NEEDED", minGapMinutes = f.minGapMinutes, maxPerDay = f.maxPerDay)
         }
     }
 
     fun toDomain(e: ScheduleEntity): Schedule {
+        val days: DayPattern = when (e.dayPattern) {
+            "DAYS_OF_WEEK" -> DayPattern.DaysOfWeek(DayOfWeek.values().filter { (e.daysMask!! shr (it.value - 1)) and 1 == 1 }.toSet())
+            "EVERY_N_DAYS" -> DayPattern.EveryNDays(e.everyNDays!!, LocalDate.ofEpochDay(e.anchorDate!!))
+            else -> DayPattern.EveryDay
+        }
         val frequency: Frequency = when (e.kind) {
-            "FIXED" -> {
-                val times = e.timesCsv!!.split(",").map { time(it.trim().toInt()) }
-                val days: DayPattern = when (e.dayPattern) {
-                    "DAYS_OF_WEEK" -> DayPattern.DaysOfWeek(DayOfWeek.values().filter { (e.daysMask!! shr (it.value - 1)) and 1 == 1 }.toSet())
-                    "EVERY_N_DAYS" -> DayPattern.EveryNDays(e.everyNDays!!, LocalDate.ofEpochDay(e.anchorDate!!))
-                    else -> DayPattern.EveryDay
-                }
-                Frequency.FixedTimes(times, days)
-            }
-            "HOURS" -> Frequency.EveryNHours(time(e.firstMinute!!), e.hours!!)
+            "FIXED" -> Frequency.FixedTimes(e.timesCsv!!.split(",").map { time(it.trim().toInt()) }, days)
+            "HOURS" -> Frequency.EveryNHours(time(e.firstMinute!!), e.hours!!, days)
             "AS_NEEDED" -> Frequency.AsNeeded(e.minGapMinutes ?: (6 * 60), e.maxPerDay)
             else -> error("Unknown schedule kind ${e.kind}")
         }
