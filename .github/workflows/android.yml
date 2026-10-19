@@ -2,6 +2,7 @@ name: Android build
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -24,7 +25,12 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Unit tests, screenshots and debug APK
-        run: ./gradlew testDebugUnitTest assembleDebug -Proborazzi.test.record=true --stacktrace
+        run: ./gradlew testDebugUnitTest assembleDebug -Proborazzi.test.record=true --stacktrace 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
+
+      - name: Show first errors in the run summary
+        if: failure()
+        run: |
+          grep -E "^e: |What went wrong|FAILED|Caused by|error:" -A3 build.log | head -40 | while IFS= read -r l; do echo "::error::${l}"; done
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4

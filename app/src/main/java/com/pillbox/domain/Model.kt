@@ -58,9 +58,28 @@ data class Schedule(
     fun isActiveOn(date: LocalDate) = !date.isBefore(start) && (end == null || !date.isAfter(end))
 }
 
+enum class MedicineStatus { ACTIVE, STOPPED, FINISHED }
+
+data class Person(val id: Long = 0, val name: String, val isMe: Boolean = false, val sortOrder: Int = 0)
+
+/** [packSize] is tablets (or doses) per box, used by Add stock. Frequency details live in [Schedule]. */
+data class Medicine(
+    val id: Long = 0,
+    val personId: Long,
+    val name: String,
+    val strength: String? = null,
+    val unit: DoseUnit = DoseUnit.TABLET,
+    val doseAmount: Double = 1.0,
+    val stock: Double = 0.0,
+    val packSize: Int? = null,
+    val status: MedicineStatus = MedicineStatus.ACTIVE,
+)
+
 enum class DoseStatus { PLANNED, TAKEN, SKIPPED, MISSED }
 
 data class DoseEvent(
+    val id: Long = 0,
+    val medicineId: Long = 0,
     val planned: LocalDateTime?,       // null for as-needed doses
     val taken: LocalDateTime? = null,
     val status: DoseStatus = DoseStatus.PLANNED,
