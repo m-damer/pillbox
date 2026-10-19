@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Copied from design/tokens/pillbox-tokens.json (color.light) for the few places
+         Compose cannot reach: window background and launcher icon. -->
+    <color name="pb_background">#F3F5FA</color>
+    <color name="pb_primary">#4338CA</color>
+    <color name="pb_on_primary">#FFFFFF</color>
+</resources>

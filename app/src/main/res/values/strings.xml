@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pill Box</string>
+    <string name="app_tagline">Never miss a dose</string>
+    <string name="app_version">Version %1$s</string>
+</resources>
