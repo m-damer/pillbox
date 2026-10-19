@@ -1,7 +1,8 @@
 # Milestones (one session and one PR each)
 
 - [ ] M0 Skeleton: Gradle project, Compose, theme from tokens, en/ar strings, RTL, dark mode, CI workflow that builds and uploads a debug APK
-- [ ] M1 Data layer + schedule engine (Room; fixed times, chosen days, every N days, every few hours, as needed; late dose, pause, min gap, daily max) with unit tests
+- [ ] M1a Schedule engine and rules, pure Kotlin with unit tests (done in PR: claude/m1a-schedule-engine)
+- [ ] M1b Room database (person, medicine, schedule, dose event, settings, schema version), DAOs, repository, migrations test
 - [ ] M2 Add medicine flow (steps 1-3 for every frequency, review plan, success)
 - [ ] M3 Today screen (Take, Skip with reason, Undo, past and future days, empty and paused states)
 - [ ] M4 Reminders: exact alarms, channels, notification with 3 actions, full-screen reminder, permissions screens, re-arm on boot/update/time change, quiet hours
