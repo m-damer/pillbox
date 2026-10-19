@@ -157,7 +157,7 @@ fun Segmented(options: List<String>, selectedIndex: Int, onSelect: (Int) -> Unit
 }
 
 @Composable
-private fun RoundStepButton(glyph: String, description: String, enabled: Boolean, onClick: () -> Unit) {
+internal fun RoundStepButton(glyph: String, description: String, enabled: Boolean, onClick: () -> Unit) {
     val colors = PillBox.colors
     Box(
         modifier = Modifier
@@ -253,6 +253,19 @@ fun DangerButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifie
         onClick = onClick,
         shape = Dimens.ButtonShape,
         colors = ButtonDefaults.buttonColors(containerColor = colors.danger, contentColor = colors.onPrimary),
+        modifier = modifier.fillMaxWidth().heightIn(min = Dimens.PrimaryButtonHeight),
+    ) { Text(text, style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center) }
+}
+
+/** Outlined red button for Stop: less loud than the filled Danger button. */
+@Composable
+fun DangerOutlineButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val colors = PillBox.colors
+    OutlinedButton(
+        onClick = onClick,
+        shape = Dimens.ButtonShape,
+        border = BorderStroke(Dimens.ChipBorder, colors.danger),
+        colors = ButtonDefaults.outlinedButtonColors(containerColor = colors.dangerContainer, contentColor = colors.danger),
         modifier = modifier.fillMaxWidth().heightIn(min = Dimens.PrimaryButtonHeight),
     ) { Text(text, style = MaterialTheme.typography.labelLarge, textAlign = TextAlign.Center) }
 }

@@ -126,4 +126,44 @@ class PillBoxRepositoryTest {
         assertNotNull(repo.getMedicine(id))
         assertEquals(1, db.schedules().allActive().size)
     }
+
+    @Test fun stopThenRestart() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val id = repo.addMedicine(med(me.id), sched.copy(end = day.plusDays(6)))
+        repo.stop(id, day.plusDays(2))
+        val stopped = repo.getMedicine(id)!!
+        assertEquals(MedicineStatus.STOPPED, stopped.status)
+        assertEquals(day.plusDays(2), stopped.endedOn)
+        assertTrue(repo.allActiveWithSchedules().isEmpty())
+
+        val now = LocalDateTime.of(2026, 10, 25, 9, 30)
+        repo.restart(id, now)
+        val back = repo.getMedicine(id)!!
+        assertEquals(MedicineStatus.ACTIVE, back.status)
+        assertNull(back.endedOn)
+        val s = repo.getSchedule(id)!!
+        assertEquals(now.toLocalDate(), s.start)
+        assertEquals(now.toLocalDate().plusDays(6), s.end)
+        assertEquals(LocalTime.of(9, 30), s.startTime)
+    }
+
+    @Test fun endedCoursesMoveToFinished() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val ended = repo.addMedicine(med(me.id, "Amoxicillin"), sched.copy(end = day.plusDays(1)))
+        val ongoing = repo.addMedicine(med(me.id, "Metformin"), sched)
+        assertEquals(1, repo.finishEndedCourses(day.plusDays(2)))
+        assertEquals(MedicineStatus.FINISHED, repo.getMedicine(ended)!!.status)
+        assertEquals(day.plusDays(1), repo.getMedicine(ended)!!.endedOn)
+        assertEquals(MedicineStatus.ACTIVE, repo.getMedicine(ongoing)!!.status)
+        assertEquals(0, repo.finishEndedCourses(day.plusDays(2)))
+    }
+
+    @Test fun addStockRemembersBoxSize() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val id = repo.addMedicine(med(me.id, stock = 8.0), sched)
+        repo.addStock(id, 60.0, packSize = 60)
+        val m = repo.getMedicine(id)!!
+        assertEquals(68.0, m.stock, 0.0)
+        assertEquals(60, m.packSize)
+    }
 }

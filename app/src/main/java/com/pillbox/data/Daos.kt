@@ -67,6 +67,9 @@ interface DoseEventDao {
     @Query("SELECT * FROM dose_event WHERE medicineId = :medicineId AND plannedAt >= :fromAt AND plannedAt < :toAt ORDER BY plannedAt")
     suspend fun plannedBetween(medicineId: Long, fromAt: String, toAt: String): List<DoseEventEntity>
 
+    @Query("SELECT * FROM dose_event WHERE medicineId = :medicineId AND plannedAt >= :fromAt AND plannedAt < :toAt ORDER BY plannedAt")
+    fun observePlannedBetweenFor(medicineId: Long, fromAt: String, toAt: String): Flow<List<DoseEventEntity>>
+
     @Query("SELECT * FROM dose_event WHERE plannedAt >= :fromAt AND plannedAt < :toAt ORDER BY plannedAt")
     suspend fun allPlannedBetween(fromAt: String, toAt: String): List<DoseEventEntity>
 

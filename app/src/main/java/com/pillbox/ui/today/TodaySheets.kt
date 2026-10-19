@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.pillbox.R
 import com.pillbox.ui.Formatter
 import com.pillbox.ui.components.LinkButton
+import com.pillbox.ui.medicines.AddStockSheet
 import com.pillbox.ui.components.OutlineButton
 import com.pillbox.ui.components.PrimaryButton
 import com.pillbox.ui.quantityFor
@@ -54,6 +55,10 @@ import java.time.LocalDateTime
 @Composable
 fun TodaySheets(sheet: TodaySheet?, vm: TodayViewModel, fmt: Formatter) {
     if (sheet == null) return
+    if (sheet is TodaySheet.AddStock) {
+        AddStockSheet(sheet.medicine, sheet.schedule, fmt, onSave = vm::saveStock, onDismiss = vm::dismissSheet)
+        return
+    }
     ModalBottomSheet(
         onDismissRequest = vm::dismissSheet,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
@@ -67,6 +72,7 @@ fun TodaySheets(sheet: TodaySheet?, vm: TodayViewModel, fmt: Formatter) {
                 is TodaySheet.Skip -> SkipSheet(sheet, vm)
                 is TodaySheet.TooSoon -> TooSoonSheet(sheet, vm, fmt)
                 is TodaySheet.OutOfStock -> OutOfStockSheet(sheet, vm, fmt)
+                is TodaySheet.AddStock -> Unit
             }
             Box(Modifier.size(Space.S12))
         }
@@ -141,5 +147,6 @@ private fun OutOfStockSheet(sheet: TodaySheet.OutOfStock, vm: TodayViewModel, fm
     val unit = pluralStringResource(unitPlural(sheet.medicine.unit), quantityFor(2.0))
     SheetTitle(stringResource(R.string.out_title, unit), stringResource(R.string.out_body, sheet.medicine.name))
     PrimaryButton(stringResource(R.string.take_anyway), vm::takeWithoutStock)
+    OutlineButton(stringResource(R.string.out_update), vm::updateStock)
     LinkButton(stringResource(R.string.cancel), vm::dismissSheet)
 }

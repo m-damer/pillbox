@@ -10,13 +10,11 @@ object ScheduleEngine {
      * Doses that ring on [date], sorted. A dose that rings after midnight belongs to the day it rings.
      * As-needed medicines have no planned doses.
      */
-    fun plannedDoses(schedule: Schedule, date: LocalDate): List<LocalDateTime> =
-        when (val f = schedule.frequency) {
+    fun plannedDoses(schedule: Schedule, date: LocalDate): List<LocalDateTime> {
+        val from = schedule.startTime?.let { schedule.start.atTime(it) }
+        val all = when (val f = schedule.frequency) {
             is Frequency.FixedTimes ->
-                if (schedule.isActiveOn(date) && f.days.matches(date)) {
-                    val from = schedule.startTime?.let { schedule.start.atTime(it) }
-                    f.times.sorted().map { date.atTime(it) }.filter { from == null || !it.isBefore(from) }
-                } else emptyList()
+                if (schedule.isActiveOn(date) && f.days.matches(date)) f.times.sorted().map { date.atTime(it) } else emptyList()
 
             is Frequency.EveryNHours ->
                 (cycle(schedule, f, date.minusDays(1)) + cycle(schedule, f, date))
@@ -25,6 +23,8 @@ object ScheduleEngine {
 
             is Frequency.AsNeeded -> emptyList()
         }
+        return all.filter { from == null || !it.isBefore(from) }
+    }
 
     /**
      * Every-few-hours cycle that starts on [cycleDay]: first dose, then first + N, first + 2N ...
@@ -81,5 +81,24 @@ object ScheduleEngine {
             return schedule.copy(frequency = f.copy(days = f.days.copy(anchor = resumeDate)))
         }
         return schedule
+    }
+
+    /**
+     * Restart a stopped or finished medicine with the same details: starts now, keeps the course length,
+     * and has no doses earlier than the restart time on the first day.
+     */
+    fun restarted(schedule: Schedule, now: LocalDateTime): Schedule {
+        val today = now.toLocalDate()
+        val length = schedule.end?.let { java.time.temporal.ChronoUnit.DAYS.between(schedule.start, it) }
+        val f = schedule.frequency
+        val frequency = when {
+            f is Frequency.FixedTimes && f.days is DayPattern.EveryNDays -> f.copy(days = f.days.copy(anchor = today))
+            f is Frequency.EveryNHours && f.days is DayPattern.EveryNDays -> f.copy(days = f.days.copy(anchor = today))
+            else -> f
+        }
+        return schedule.copy(
+            start = today, end = length?.let { today.plusDays(it) }, frequency = frequency,
+            startTime = now.toLocalTime().withSecond(0).withNano(0),
+        )
     }
 }

@@ -8,6 +8,8 @@ import com.pillbox.domain.MedicineStatus
 import com.pillbox.domain.Pause
 import com.pillbox.domain.Person
 import com.pillbox.domain.Schedule
+import com.pillbox.domain.ScheduleEngine
+import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -57,9 +59,39 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
         db.medicines().update(m.copy(status = status.name))
     }
 
-    suspend fun addStock(medicineId: Long, amount: Double) {
+    /** Adds [amount] to stock. [packSize] (tablets per box) is remembered for next time when given. */
+    suspend fun addStock(medicineId: Long, amount: Double, packSize: Int? = null) {
         val m = db.medicines().get(medicineId) ?: return
-        db.medicines().update(m.copy(stock = m.stock + amount))
+        db.medicines().update(m.copy(stock = m.stock + amount, packSize = packSize ?: m.packSize))
+    }
+
+    /** Stop: reminders end and the medicine moves to Finished. History and stock are kept. */
+    suspend fun stop(medicineId: Long, today: LocalDate) {
+        val m = db.medicines().get(medicineId) ?: return
+        db.medicines().update(m.copy(status = MedicineStatus.STOPPED.name, endedOn = today.toEpochDay()))
+    }
+
+    /** Restart a stopped or finished medicine with the same details, starting now. */
+    suspend fun restart(medicineId: Long, now: LocalDateTime) = db.withTransaction {
+        val m = db.medicines().get(medicineId) ?: return@withTransaction
+        val s = db.schedules().forMedicine(medicineId)
+        if (s != null) db.schedules().upsert(Mappers.toEntity(medicineId, ScheduleEngine.restarted(Mappers.toDomain(s), now), s.id))
+        db.medicines().update(m.copy(status = MedicineStatus.ACTIVE.name, endedOn = null))
+    }
+
+    /** Courses whose last day is before [today] move to Finished. Returns how many moved. */
+    suspend fun finishEndedCourses(today: LocalDate): Int = db.withTransaction {
+        var moved = 0
+        for (item in allActiveWithSchedules()) {
+            val end = item.schedule?.end ?: continue
+            if (end.isBefore(today)) {
+                db.medicines().get(item.medicine.id)?.let {
+                    db.medicines().update(it.copy(status = MedicineStatus.FINISHED.name, endedOn = end.toEpochDay()))
+                    moved++
+                }
+            }
+        }
+        moved
     }
 
     suspend fun getMedicine(id: Long): Medicine? = db.medicines().get(id)?.let(Mappers::toDomain)
@@ -75,6 +107,22 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
                 )
             }
         }
+
+    /** One medicine with its schedule and pauses; emits again on any change. Null if it was deleted. */
+    fun observeMedicine(id: Long): Flow<MedicineWithSchedule?> =
+        combine(db.medicines().observe(id), db.schedules().observeForMedicine(id), db.pauses().observeForMedicine(id)) { m, s, p ->
+            m?.let { MedicineWithSchedule(Mappers.toDomain(it), s?.let(Mappers::toDomain), p.map(Mappers::toDomain)) }
+        }
+
+    /** Stopped and finished medicines together, most recently ended first. */
+    fun observeFinished(personId: Long): Flow<List<MedicineWithSchedule>> =
+        combine(observeMedicines(personId, MedicineStatus.STOPPED), observeMedicines(personId, MedicineStatus.FINISHED)) { a, b ->
+            (a + b).sortedByDescending { it.medicine.endedOn?.toEpochDay() ?: 0L }
+        }
+
+    /** Events for one medicine planned in [from, to). */
+    fun observeDoseEventsFor(medicineId: Long, from: LocalDateTime, to: LocalDateTime): Flow<List<DoseEvent>> =
+        db.doseEvents().observePlannedBetweenFor(medicineId, Mappers.dt(from), Mappers.dt(to)).map { l -> l.map(Mappers::toDomain) }
 
     /** Every active medicine with its schedule and pauses. Used to (re)arm alarms in M4. */
     suspend fun allActiveWithSchedules(): List<MedicineWithSchedule> {

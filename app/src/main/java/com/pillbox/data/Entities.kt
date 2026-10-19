@@ -35,6 +35,8 @@ data class MedicineEntity(
     val stock: Double,
     val packSize: Int?,
     val status: String,
+    /** Epoch day the course finished or was stopped (null while active). */
+    val endedOn: Long? = null,
 )
 
 @Entity(
