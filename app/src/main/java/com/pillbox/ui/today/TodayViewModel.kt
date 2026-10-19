@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.PillBoxRepository
 import com.pillbox.domain.DoseEvent
+import com.pillbox.domain.AllPaused
 import com.pillbox.domain.DoseRow
 import com.pillbox.domain.DoseStatus
 import com.pillbox.domain.Frequency
 import com.pillbox.domain.LateRules
 import com.pillbox.domain.DoseUnit
 import com.pillbox.domain.Medicine
+import com.pillbox.domain.Pause
 import com.pillbox.domain.Schedule
 import com.pillbox.domain.StockMath
 import com.pillbox.ui.medicines.StockResult
@@ -67,10 +69,18 @@ data class TodayUiState(
     val now: LocalDateTime = LocalDateTime.now(),
     val sheet: TodaySheet? = null,
     val toast: TodayToast? = null,
+    /** Set when every medicine is paused: Today shows the "All medicines paused" screen. */
+    val allPaused: AllPaused? = null,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class TodayViewModel(private val repo: PillBoxRepository, meName: String) : ViewModel() {
+class TodayViewModel(
+    private val repo: PillBoxRepository,
+    meName: String,
+    /** Called after anything that changes reminders. */
+    private val onChanged: suspend () -> Unit = {},
+) : ViewModel() {
+    private var pausedIds: List<Long> = emptyList()
     private val selected = MutableStateFlow(LocalDate.now())
     private val sheet = MutableStateFlow<TodaySheet?>(null)
     private val toast = MutableStateFlow<TodayToast?>(null)
@@ -89,13 +99,26 @@ class TodayViewModel(private val repo: PillBoxRepository, meName: String) : View
 
     val state: StateFlow<TodayUiState> = combine(data, selected, tick, sheet, toast) { (medicines, events), day, now, sheet, toast ->
         val items = medicines.mapNotNull { m -> m.schedule?.let { Triple(m.medicine, it, m.pauses) } }
+        val allPaused = Pause.allPaused(medicines.map { it.pauses }, now)
+        pausedIds = medicines.map { it.medicine.id }
         TodayUiState(
             loaded = true,
+            allPaused = allPaused,
             hasMedicines = medicines.isNotEmpty(),
             model = TodayBuilder.build(items, events, day, now),
             selectedDate = day, now = now, sheet = sheet, toast = toast,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TodayUiState())
+
+    /** "Resume now" on the all-paused screen. */
+    fun resumeAll() {
+        val ids = pausedIds
+        viewModelScope.launch {
+            val now = LocalDateTime.now()
+            ids.forEach { repo.resume(it, now) }
+            onChanged()
+        }
+    }
 
     fun selectDate(day: LocalDate) { selected.value = day }
     fun backToToday() { selected.value = LocalDate.now() }

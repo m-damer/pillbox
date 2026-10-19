@@ -106,6 +106,44 @@ class PillBoxRepositoryTest {
         assertEquals(now, repo.allActiveWithSchedules().single().pauses.single().until)
     }
 
+    private val everyThreeDays = Schedule(day, null, Frequency.FixedTimes(listOf(LocalTime.of(8, 0)), DayPattern.EveryNDays(3, day)), WithFood.ANY)
+
+    private suspend fun anchorOf(id: Long) =
+        ((repo.getSchedule(id)!!.frequency as Frequency.FixedTimes).days as DayPattern.EveryNDays).anchor
+
+    @Test fun timedPauseRestartsEveryNDaysCountingOnTheResumeDay() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val id = repo.addMedicine(med(me.id), everyThreeDays)
+        repo.pause(id, Pause.forDays(day.atTime(12, 0), 5))
+        assertEquals(day.plusDays(5), anchorOf(id))
+    }
+
+    @Test fun pauseUntilResumedKeepsAnchorUntilResume() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val id = repo.addMedicine(med(me.id), everyThreeDays)
+        repo.pause(id, Pause.untilResumed(day.atTime(12, 0)))
+        assertEquals(day, anchorOf(id))
+        assertTrue(repo.resume(id, day.plusDays(9).atTime(10, 0)))
+        assertEquals(day.plusDays(9), anchorOf(id))
+    }
+
+    @Test fun resumeNowBeforeTheEndDateMovesTheAnchorBack() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val id = repo.addMedicine(med(me.id), everyThreeDays)
+        repo.pause(id, Pause.forDays(day.atTime(12, 0), 5))
+        repo.resume(id, day.plusDays(1).atTime(8, 0))
+        assertEquals(day.plusDays(1), anchorOf(id))
+    }
+
+    @Test fun deletingMedicineAlsoRemovesItsPauses() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val id = repo.addMedicine(med(me.id), sched)
+        repo.pause(id, Pause.untilResumed(day.atTime(12, 0)))
+        repo.deleteMedicine(repo.getMedicine(id)!!)
+        assertTrue(repo.allActiveWithSchedules().isEmpty())
+        assertTrue(db.pauses().all().isEmpty())
+    }
+
     @Test fun deletingMedicineRemovesEverything() = runBlocking {
         val me = repo.ensureMe("Me")
         val id = repo.addMedicine(med(me.id), sched)

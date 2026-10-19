@@ -120,10 +120,11 @@ class MainActivity : ComponentActivity() {
                         Box(Modifier.weight(1f).statusBarsPadding()) {
                             when (tab) {
                                 Tab.TODAY -> {
-                                    val vm: TodayViewModel = viewModel(factory = viewModelFactory { initializer { TodayViewModel(repo, meName) } })
+                                    val vm: TodayViewModel = viewModel(factory = viewModelFactory { initializer { TodayViewModel(repo, meName, onChanged = { reminders.rearm() }) } })
                                     TodayScreen(
                                         vm, onAddMedicine = { adding = true },
                                         remindersOff = !permissions.remindersWork, onFixReminders = { showPermissions = true },
+                                        onGoToMeds = { tab = Tab.MEDS },
                                     )
                                 }
                                 Tab.MEDS -> {

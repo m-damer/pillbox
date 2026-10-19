@@ -92,6 +92,9 @@ data class DoseEvent(
     val lateMinutes: Int? = null,
 )
 
+/** Every medicine is paused. [until] is when the first one resumes, or null if all wait for the user. */
+data class AllPaused(val until: LocalDateTime?)
+
 /** A pause. [until] == null means "until I resume". */
 data class Pause(val from: LocalDateTime, val until: LocalDateTime?) {
     fun covers(moment: LocalDateTime) = !moment.isBefore(from) && (until == null || moment.isBefore(until))
@@ -106,5 +109,18 @@ data class Pause(val from: LocalDateTime, val until: LocalDateTime?) {
         }
 
         fun untilResumed(start: LocalDateTime) = Pause(start, null)
+
+        /** The pause that is on at [now], if any. */
+        fun activeAt(pauses: List<Pause>, now: LocalDateTime): Pause? = pauses.firstOrNull { it.covers(now) }
+
+        /**
+         * When every medicine is paused: the moment the first one comes back (null = all wait for the user).
+         * Returns [AllPaused] only if there is at least one medicine and each has a pause on at [now].
+         */
+        fun allPaused(pausesPerMedicine: List<List<Pause>>, now: LocalDateTime): AllPaused? {
+            if (pausesPerMedicine.isEmpty()) return null
+            val active = pausesPerMedicine.map { activeAt(it, now) ?: return null }
+            return AllPaused(active.mapNotNull { it.until }.minOrNull())
+        }
     }
 }

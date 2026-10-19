@@ -83,6 +83,22 @@ class MedicinesScreenshotTest {
         loaded = true, item = MedicineWithSchedule(ended, amoxSchedule, emptyList()), courseTaken = 19, courseTotal = 21,
     )
 
+    private val pause = com.pillbox.domain.Pause.forDays(today.atTime(10, 0), 8)
+    private val pausedItem = metformItem.copy(pauses = listOf(pause))
+    private val pausedDetail = detail.copy(item = pausedItem, pause = pause)
+    private val pausedList = listState.copy(
+        active = listOf(pausedItem, amoxItem).mapIndexed { i, it ->
+            MedRow(it, StockMath.info(it.medicine, it.schedule, today), if (i == 0) pause else null)
+        },
+        pausedCount = 1,
+    )
+
+    @Test fun en_detail_paused() = shoot("en_detail_paused", "en") { f -> MedicineDetailContent(pausedDetail, f) }
+    @Test fun en_list_paused() = shoot("en_list_paused", "en") { f -> MedicinesContent(pausedList, f, false, {}, {}, {}) }
+    @Test fun en_dark_2x_detail_paused() = shoot("en_dark_2x_detail_paused", "en", ThemeMode.Dark, 2f) { f -> MedicineDetailContent(pausedDetail, f) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun ar_detail_paused() = shoot("ar_detail_paused", "ar") { f -> MedicineDetailContent(pausedDetail, f) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun ar_list_paused() = shoot("ar_list_paused", "ar") { f -> MedicinesContent(pausedList, f, false, {}, {}, {}) }
+
     @Test fun en_list() = shoot("en_list", "en") { f -> MedicinesContent(listState, f, false, {}, {}, {}) }
     @Test fun en_list_finished() = shoot("en_list_finished", "en") { f -> MedicinesContent(listState, f, true, {}, {}, {}) }
     @Test fun en_detail() = shoot("en_detail", "en") { f -> MedicineDetailContent(detail, f) }

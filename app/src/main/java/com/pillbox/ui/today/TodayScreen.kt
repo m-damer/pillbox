@@ -67,6 +67,7 @@ import com.pillbox.domain.DoseRow
 import com.pillbox.domain.DoseUnit
 import com.pillbox.domain.GroupState
 import com.pillbox.domain.RowStatus
+import com.pillbox.domain.Pause
 import com.pillbox.domain.TodayModel
 import com.pillbox.domain.WithFood
 import com.pillbox.ui.Block
@@ -97,7 +98,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TodayScreen(
     vm: TodayViewModel, onAddMedicine: () -> Unit, modifier: Modifier = Modifier,
-    remindersOff: Boolean = false, onFixReminders: () -> Unit = {},
+    remindersOff: Boolean = false, onFixReminders: () -> Unit = {}, onGoToMeds: () -> Unit = {},
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
@@ -121,6 +122,7 @@ fun TodayScreen(
             state = state, fmt = fmt, onSelectDate = vm::selectDate, onBackToToday = vm::backToToday,
             onTake = vm::take, onSkip = vm::skip, onAddMedicine = onAddMedicine,
             remindersOff = remindersOff, onFixReminders = onFixReminders,
+            onResumeAll = vm::resumeAll, onGoToMeds = onGoToMeds,
         )
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) { data ->
             val c = PillBox.colors
@@ -162,9 +164,15 @@ fun TodayContent(
     modifier: Modifier = Modifier,
     remindersOff: Boolean = false,
     onFixReminders: () -> Unit = {},
+    onResumeAll: () -> Unit = {},
+    onGoToMeds: () -> Unit = {},
 ) {
     val today = state.now.toLocalDate()
     val model = state.model
+    if (state.loaded && state.allPaused != null) {
+        AllPausedToday(today, state.allPaused, fmt, onResumeAll, onGoToMeds, modifier)
+        return
+    }
     if (state.loaded && !state.hasMedicines) {
         EmptyToday(today, onAddMedicine, modifier)
         return
@@ -529,6 +537,55 @@ private fun InfoNote(text: String) {
     ) {
         Icon(Icons.Filled.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
         Text(text, style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
+    }
+}
+
+// ---------------------------------------------------------------- all medicines paused
+
+@Composable
+private fun AllPausedToday(
+    today: LocalDate, paused: com.pillbox.domain.AllPaused, fmt: Formatter,
+    onResume: () -> Unit, onGoToMeds: () -> Unit, modifier: Modifier = Modifier,
+) {
+    val c = PillBox.colors
+    val until = paused.until
+    val sub = if (until == null) stringResource(R.string.today_paused_sub_open)
+    else stringResource(
+        R.string.today_paused_sub, com.pillbox.ui.shortDate(until.toLocalDate(), fmt), fmt.time(java.time.LocalTime.of(Pause.AUTO_RESUME_HOUR, 0)),
+    )
+    val banner = stringResource(R.string.today_paused_banner)
+    val link = stringResource(R.string.today_paused_link)
+    Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(Dimens.ScreenPaddingH)) {
+        Text(stringResource(R.string.today), style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.padding(top = Space.S4).semantics { heading() })
+        Text(fmt.digits(today.format(DateTimeFormatter.ofPattern("EEEE, d MMMM", locale()))), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+        Spacer(Modifier.size(Space.S12))
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = Dimens.TouchTargetMin)
+                .background(c.warningContainer, MaterialTheme.shapes.medium)
+                .clickable(role = Role.Button, onClick = onGoToMeds)
+                .semantics(mergeDescendants = true) { contentDescription = "$banner $link" }
+                .padding(Space.S12),
+            horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.CenterVertically,
+        ) {
+            com.pillbox.ui.medicines.PauseGlyph(c.warning, Modifier.size(24.dp))
+            Column(Modifier.weight(1f)) {
+                Text(banner, style = MaterialTheme.typography.labelLarge, color = c.warning)
+                Text(link, style = MaterialTheme.typography.bodyMedium, color = c.warning, textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline)
+            }
+        }
+        Column(Modifier.weight(1f).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            Box(Modifier.size(80.dp).background(c.warningContainer, androidx.compose.foundation.shape.CircleShape), contentAlignment = Alignment.Center) {
+                com.pillbox.ui.medicines.PauseGlyph(c.warning, Modifier.size(40.dp))
+            }
+            Spacer(Modifier.size(Space.S16))
+            Text(stringResource(R.string.today_paused_title), style = MaterialTheme.typography.titleMedium, color = c.text, textAlign = TextAlign.Center, modifier = Modifier.semantics { heading() })
+            Spacer(Modifier.size(Space.S8))
+            Text(sub, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.Center)
+        }
+        PrimaryButton(stringResource(R.string.btn_resume), onResume)
+        Spacer(Modifier.size(Space.S12))
     }
 }
 

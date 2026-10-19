@@ -107,7 +107,10 @@ fun MedicinesContent(
                 stringResource(R.string.medicines_title), style = MaterialTheme.typography.titleLarge, color = c.text,
                 modifier = Modifier.semantics { heading() },
             )
-            Text(stringResource(R.string.meds_sub, fmt.number(state.active.size)), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+            Text(
+                if (state.pausedCount > 0) stringResource(R.string.meds_sub_paused, fmt.number(state.active.size - state.pausedCount), fmt.number(state.pausedCount))
+                else stringResource(R.string.meds_sub, fmt.number(state.active.size)),
+                style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
         }
         Segmented(
             options = listOf(stringResource(R.string.tab_active), stringResource(R.string.tab_finished)),
@@ -121,7 +124,10 @@ fun MedicinesContent(
             verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
         ) {
             if (!showFinished) {
-                items(state.active, key = { it.item.medicine.id }) { row -> ActiveCard(row, fmt) { onOpen(row.item.medicine.id) } }
+                items(state.active, key = { it.item.medicine.id }) { row ->
+                    if (row.pause != null) PausedCard(row, fmt) { onOpen(row.item.medicine.id) }
+                    else ActiveCard(row, fmt) { onOpen(row.item.medicine.id) }
+                }
                 item { AddMedicineButton(onAddMedicine) }
             } else {
                 if (state.loaded && state.finished.isEmpty()) {
@@ -181,6 +187,55 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
             Text(left, style = MaterialTheme.typography.labelLarge, color = color, modifier = Modifier.weight(1f))
             Spacer4()
             Text(right, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.End)
+        }
+    }
+}
+
+/** A paused medicine: dashed card, no stock bar. Opens the detail screen where Resume now is the main button. */
+@Composable
+private fun PausedCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
+    val c = PillBox.colors
+    val m = row.item.medicine
+    val sep = stringResource(R.string.dot_sep)
+    val sub = listOfNotNull(m.strength, lengthText(row.item.schedule, fmt)).joinToString(sep)
+    val until = row.pause?.until
+    val status = if (until == null) stringResource(R.string.paused_until_resume)
+    else stringResource(R.string.paused_until, shortDate(until.toLocalDate(), fmt))
+    val tap = stringResource(R.string.paused_tap)
+    val tag = stringResource(R.string.tag_paused)
+    val dash = c.placeholder
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .background(c.card, MaterialTheme.shapes.large)
+            .drawBehind {
+                drawRoundRect(
+                    dash, size = Size(size.width, size.height), cornerRadius = CornerRadius(16.dp.toPx()),
+                    style = Stroke(2.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(14f, 10f))),
+                )
+            }
+            .clickable(role = Role.Button, onClick = onClick)
+            .semantics(mergeDescendants = true) { contentDescription = "${m.name}, $sub, $tag, $status, $tap" }
+            .padding(Space.S16),
+        verticalArrangement = Arrangement.spacedBy(Space.S10),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12)) {
+            Box(Modifier.size(48.dp).background(c.divider, CircleShape), contentAlignment = Alignment.Center) {
+                PauseGlyph(c.textMuted, Modifier.size(24.dp))
+            }
+            Column(Modifier.weight(1f)) {
+                Text(m.name, style = MaterialTheme.typography.titleMedium, color = c.textMuted)
+                Text(sub, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+            }
+            Text(
+                tag, style = MaterialTheme.typography.labelMedium, color = c.text,
+                modifier = Modifier.background(c.divider, MaterialTheme.shapes.small).padding(horizontal = Space.S10, vertical = Space.S6),
+            )
+        }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(status, style = MaterialTheme.typography.labelLarge, color = c.accent, modifier = Modifier.weight(1f))
+            Spacer4()
+            Text(tap, style = MaterialTheme.typography.labelLarge, color = c.accent, textAlign = TextAlign.End)
         }
     }
 }
