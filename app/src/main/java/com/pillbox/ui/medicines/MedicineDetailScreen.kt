@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
@@ -62,6 +64,7 @@ import com.pillbox.data.MedicineWithSchedule
 import com.pillbox.domain.DayMark
 import com.pillbox.domain.Frequency
 import com.pillbox.domain.MedicineStatus
+import com.pillbox.domain.Pause
 import com.pillbox.domain.StockLevel
 import com.pillbox.domain.WeekSummary
 import com.pillbox.ui.Formatter
@@ -112,6 +115,13 @@ fun MedicineDetailScreen(
     Box(modifier.fillMaxSize().background(bg)) {
         MedicineDetailContent(
             state, fmt, onBack, onAddStock = { vm.showStock(true) }, onStop = { vm.showStop(true) },
+            onPause = { vm.showPause(true) },
+            onResume = {
+                vm.resume { name ->
+                    scope.launch { snackbar.showToast(res.getString(R.string.toast_resumed_title, name), res.getString(R.string.toast_resumed_body)) }
+                }
+            },
+            onDelete = { vm.showDelete(true) },
             onRestart = {
                 vm.restart { name ->
                     onDone(ListToast(res.getString(R.string.toast_restarted_title, name), res.getString(R.string.toast_restarted_body)), false)
@@ -129,6 +139,29 @@ fun MedicineDetailScreen(
                 }
             })
             OutlineButton(stringResource(R.string.stop_keep), { vm.showStop(false) })
+        }
+    }
+    if (state.showPause) {
+        PauseSheet(
+            medicineName = m.name, today = java.time.LocalDate.now(), fmt = fmt,
+            onPause = { days ->
+                vm.pause(days) { name, until ->
+                    val body = if (until == null) res.getString(R.string.toast_paused_body_open)
+                    else res.getString(R.string.toast_paused_body, shortDate(until, fmt))
+                    scope.launch { snackbar.showToast(res.getString(R.string.toast_paused_title, name), body) }
+                }
+            },
+            onDismiss = { vm.showPause(false) },
+        )
+    }
+    if (state.showDelete) {
+        MessageDialog(DialogKind.Danger, stringResource(R.string.delete_title, m.name), stringResource(R.string.delete_body), onDismiss = { vm.showDelete(false) }) {
+            DangerButton(stringResource(R.string.delete_confirm, m.name), {
+                vm.delete { name ->
+                    onDone(ListToast(res.getString(R.string.toast_deleted_title, name), res.getString(R.string.toast_deleted_body)), !active)
+                }
+            })
+            OutlineButton(stringResource(R.string.delete_keep, m.name), { vm.showDelete(false) })
         }
     }
     if (state.showStock) {
@@ -153,27 +186,36 @@ fun MedicineDetailContent(
     onBack: () -> Unit = {},
     onAddStock: () -> Unit = {},
     onStop: () -> Unit = {},
+    onPause: () -> Unit = {},
+    onResume: () -> Unit = {},
+    onDelete: () -> Unit = {},
     onRestart: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val item = state.item ?: return
     Box(modifier) {
-        if (item.medicine.status == MedicineStatus.ACTIVE) ActiveDetail(state, item, fmt, onBack, onAddStock, onStop)
-        else FinishedDetail(state, item, fmt, onBack, onRestart)
+        if (item.medicine.status == MedicineStatus.ACTIVE) ActiveDetail(state, item, fmt, onBack, onAddStock, onStop, onPause, onResume, onDelete)
+        else FinishedDetail(state, item, fmt, onBack, onRestart, onDelete)
     }
 }
 
 // ---------------------------------------------------------------- active medicine
 
 @Composable
-private fun TopBar(title: String, onBack: () -> Unit) {
+private fun TopBar(title: String, onBack: () -> Unit, onDelete: (() -> Unit)? = null) {
     val c = PillBox.colors
     Row(Modifier.fillMaxWidth().padding(horizontal = Space.S8), verticalAlignment = Alignment.CenterVertically) {
         Box(
             Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onBack),
             contentAlignment = Alignment.Center,
         ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = c.text) }
-        Text(title, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, modifier = Modifier.semantics { heading() })
+        Text(title, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, modifier = Modifier.weight(1f).semantics { heading() })
+        if (onDelete != null) {
+            Box(
+                Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onDelete),
+                contentAlignment = Alignment.Center,
+            ) { Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_a11y), tint = c.danger) }
+        }
     }
 }
 
@@ -185,14 +227,18 @@ private fun ActiveDetail(
     onBack: () -> Unit,
     onAddStock: () -> Unit,
     onStop: () -> Unit,
+    onPause: () -> Unit,
+    onResume: () -> Unit,
+    onDelete: () -> Unit,
 ) {
     val c = PillBox.colors
     val m = item.medicine
     val schedule = item.schedule
     val info = state.info
     val sep = stringResource(R.string.dot_sep)
+    val paused = state.pause
     Column(Modifier.fillMaxSize()) {
-        TopBar(stringResource(R.string.detail_title), onBack)
+        TopBar(stringResource(R.string.detail_title), onBack, onDelete)
         Column(
             Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH),
             verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
@@ -207,13 +253,48 @@ private fun ActiveDetail(
                     )
                 }
             }
+            if (paused != null) PausedBanner(paused, fmt)
             StatTiles(item, info?.daysLeft, info?.level ?: StockLevel.ENOUGH, fmt)
-            if (schedule != null) ScheduleCard(item, fmt)
-            WeekCard(state.week, fmt)
+            // Paused: the cards stay readable but fade, so it is clear nothing will ring.
+            Column(Modifier.alpha(if (paused != null) 0.6f else 1f), verticalArrangement = Arrangement.spacedBy(Dimens.CardGap)) {
+                if (schedule != null) ScheduleCard(item, fmt)
+                WeekCard(state.week, fmt)
+            }
         }
         Column(Modifier.padding(Dimens.ScreenPaddingH), verticalArrangement = Arrangement.spacedBy(Space.S10)) {
-            PrimaryButton(stringResource(R.string.btn_add_stock), onAddStock)
-            DangerOutlineButton(stringResource(R.string.btn_stop), onStop)
+            if (paused != null) {
+                PrimaryButton(stringResource(R.string.btn_resume), onResume)
+                Row(horizontalArrangement = Arrangement.spacedBy(Space.S10)) {
+                    OutlineButton(stringResource(R.string.btn_add_stock), onAddStock, Modifier.weight(1f))
+                    DangerOutlineButton(stringResource(R.string.btn_stop), onStop, Modifier.weight(1f))
+                }
+            } else {
+                PrimaryButton(stringResource(R.string.btn_add_stock), onAddStock)
+                Row(horizontalArrangement = Arrangement.spacedBy(Space.S10)) {
+                    OutlineButton(stringResource(R.string.btn_pause), onPause, Modifier.weight(1f))
+                    DangerOutlineButton(stringResource(R.string.btn_stop), onStop, Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PausedBanner(pause: Pause, fmt: Formatter) {
+    val c = PillBox.colors
+    val until = pause.until
+    val title = if (until == null) stringResource(R.string.paused_until_resume)
+    else stringResource(R.string.paused_until, shortDate(until.toLocalDate(), fmt))
+    val body = stringResource(R.string.paused_banner_body)
+    Row(
+        Modifier.fillMaxWidth().background(c.warningContainer, MaterialTheme.shapes.medium).padding(Space.S16)
+            .semantics(mergeDescendants = true) { contentDescription = "$title. $body" },
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
+    ) {
+        PauseGlyph(c.warning, Modifier.size(24.dp))
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.labelLarge, color = c.warning)
+            Text(body, style = MaterialTheme.typography.bodyMedium, color = c.warning)
         }
     }
 }
@@ -428,6 +509,7 @@ private fun FinishedDetail(
     fmt: Formatter,
     onBack: () -> Unit,
     onRestart: () -> Unit,
+    onDelete: () -> Unit,
 ) {
     val c = PillBox.colors
     val m = item.medicine
@@ -471,7 +553,10 @@ private fun FinishedDetail(
                 )
             }
         }
-        Column(Modifier.padding(Dimens.ScreenPaddingH)) { PrimaryButton(stringResource(R.string.btn_restart), onRestart) }
+        Column(Modifier.padding(Dimens.ScreenPaddingH), verticalArrangement = Arrangement.spacedBy(Space.S10)) {
+            PrimaryButton(stringResource(R.string.btn_restart), onRestart)
+            DangerOutlineButton(stringResource(R.string.btn_delete_history), onDelete)
+        }
     }
 }
 

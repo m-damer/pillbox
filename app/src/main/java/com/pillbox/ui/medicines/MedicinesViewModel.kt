@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.MedicineWithSchedule
 import com.pillbox.data.PillBoxRepository
+import com.pillbox.domain.Pause
 import com.pillbox.domain.StockInfo
 import com.pillbox.domain.StockMath
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,11 +18,12 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-data class MedRow(val item: MedicineWithSchedule, val info: StockInfo)
+data class MedRow(val item: MedicineWithSchedule, val info: StockInfo, val pause: Pause? = null)
 
 data class MedicinesUiState(
     val loaded: Boolean = false,
     val active: List<MedRow> = emptyList(),
+    val pausedCount: Int = 0,
     val finished: List<MedicineWithSchedule> = emptyList(),
 )
 
@@ -38,9 +41,12 @@ class MedicinesViewModel(private val repo: PillBoxRepository, meName: String) : 
             .flatMapLatest { me ->
                 combine(repo.observeMedicines(me.id), repo.observeFinished(me.id)) { active, finished ->
                     val today = LocalDate.now()
+                    val now = LocalDateTime.now()
+                    val rows = active.map { MedRow(it, StockMath.info(it.medicine, it.schedule, today), Pause.activeAt(it.pauses, now)) }
                     MedicinesUiState(
                         loaded = true,
-                        active = active.map { MedRow(it, StockMath.info(it.medicine, it.schedule, today)) },
+                        active = rows,
+                        pausedCount = rows.count { it.pause != null },
                         finished = finished,
                     )
                 }

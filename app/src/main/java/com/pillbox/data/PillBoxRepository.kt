@@ -134,7 +134,15 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
     }
 
     // ---- pause ----
-    suspend fun pause(medicineId: Long, pause: Pause) { db.pauses().insert(Mappers.toEntity(medicineId, pause)) }
+    /**
+     * Pauses a medicine. A timed pause on an "every N days" schedule restarts its counting on the day
+     * reminders come back.
+     */
+    suspend fun pause(medicineId: Long, pause: Pause) = db.withTransaction {
+        db.pauses().insert(Mappers.toEntity(medicineId, pause))
+        val until = pause.until
+        if (until != null) restartCounting(medicineId, until.toLocalDate())
+    }
 
     /** Ends every open pause now. Returns true if something was resumed. */
     suspend fun resume(medicineId: Long, now: LocalDateTime): Boolean = db.withTransaction {
@@ -146,7 +154,13 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
                 resumed = true
             }
         }
+        if (resumed) restartCounting(medicineId, now.toLocalDate())
         resumed
+    }
+
+    private suspend fun restartCounting(medicineId: Long, date: LocalDate) {
+        val s = db.schedules().forMedicine(medicineId) ?: return
+        db.schedules().upsert(Mappers.toEntity(medicineId, ScheduleEngine.resumedOn(Mappers.toDomain(s), date), s.id))
     }
 
     // ---- dose events ----

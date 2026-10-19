@@ -39,6 +39,21 @@ fun MedicineBadge(unit: DoseUnit, modifier: Modifier = Modifier, size: Dp = 48.d
     ) { PillIcon(unit, if (muted) c.textMuted else c.accent) }
 }
 
+/** Two bars. The core icon set has no pause symbol. */
+@Composable
+fun PauseGlyph(color: androidx.compose.ui.graphics.Color, modifier: Modifier = Modifier) {
+    androidx.compose.foundation.Canvas(modifier) {
+        val stroke = size.width / 8f
+        for (x in listOf(0.375f, 0.625f)) {
+            drawLine(
+                color, androidx.compose.ui.geometry.Offset(size.width * x, size.height * 0.2f),
+                androidx.compose.ui.geometry.Offset(size.width * x, size.height * 0.8f),
+                strokeWidth = stroke, cap = androidx.compose.ui.graphics.StrokeCap.Round,
+            )
+        }
+    }
+}
+
 /** "850 mg" style strength is stored as text; this is "1 tablet", "0.5 tablets". */
 @Composable
 fun doseText(m: Medicine, fmt: Formatter): String =

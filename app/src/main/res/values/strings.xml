@@ -274,9 +274,9 @@
     <string name="stop_confirm">Stop medicine</string>
     <string name="stop_keep">Keep taking</string>
     <string name="toast_stopped_title">%1$s stopped</string>
-    <string name="toast_stopped_body">No more reminders. Find it under Finished.</string>
+    <string name="toast_stopped_body">Find it under Finished. You can restart it any time.</string>
     <string name="toast_restarted_title">%1$s restarted</string>
-    <string name="toast_restarted_body">Reminders are on again.</string>
+    <string name="toast_restarted_body">It is back in your Active list and reminders are on.</string>
     <string name="fin_banner_course">This course is finished. No reminders will ring.</string>
     <string name="fin_banner_stopped">This medicine is stopped. No reminders will ring.</string>
     <string name="fin_dose">Dose</string>
@@ -302,4 +302,43 @@
     <string name="toast_stock_body_nodays">%1$s: %2$s.</string>
     <string name="out_update">Update my stock</string>
     <plurals name="every_n_days"><item quantity="one">Every day</item><item quantity="other">Every %1$s days</item></plurals>
+
+    <!-- M5b: pause, resume, delete -->
+    <string name="btn_pause">Pause</string>
+    <string name="btn_resume">Resume now</string>
+    <string name="pause_title">Pause %1$s</string>
+    <string name="pause_sub">No reminders while paused. Stock days stop counting.</string>
+    <string name="pause_1_day">1 day</string>
+    <string name="pause_other">Other</string>
+    <string name="pause_until_resume">Until I resume</string>
+    <string name="pause_days_label">Days</string>
+    <plurals name="pause_days_unit"><item quantity="one">day</item><item quantity="other">days</item></plurals>
+    <string name="pause_restart_on">Reminders restart on %1$s.</string>
+    <string name="pause_stays_off">Reminders stay off until you resume.</string>
+    <string name="pause_confirm">Pause</string>
+    <string name="pause_cancel">Cancel</string>
+    <string name="paused_until">Paused until %1$s</string>
+    <string name="paused_until_resume">Paused until you resume</string>
+    <string name="paused_banner_body">No reminders. Stock days stop counting.</string>
+    <string name="toast_paused_title">%1$s is paused</string>
+    <string name="toast_paused_body">Reminders are off until %1$s.</string>
+    <string name="toast_paused_body_open">Reminders are off until you resume.</string>
+    <string name="toast_resumed_title">%1$s resumed</string>
+    <string name="toast_resumed_body">Reminders are on again.</string>
+    <string name="delete_a11y">Delete this medicine</string>
+    <string name="delete_title">Delete %1$s?</string>
+    <string name="delete_body">Its history will be deleted from this phone and from your 30-day doctor report. This cannot be undone.</string>
+    <string name="delete_confirm">Delete %1$s</string>
+    <string name="delete_keep">Keep %1$s</string>
+    <string name="btn_delete_history">Delete from history</string>
+    <string name="toast_deleted_title">%1$s was deleted</string>
+    <string name="toast_deleted_body">Its history was deleted from this phone.</string>
+    <string name="tag_paused">Paused</string>
+    <string name="paused_tap">Tap to resume</string>
+    <string name="meds_sub_paused">Me · %1$s active · %2$s paused</string>
+    <string name="today_paused_banner">All your medicines are paused. No reminders will ring.</string>
+    <string name="today_paused_link">Resume in Meds</string>
+    <string name="today_paused_title">All medicines paused</string>
+    <string name="today_paused_sub">Paused until %1$s. Doses will start again at %2$s</string>
+    <string name="today_paused_sub_open">Paused until you resume.</string>
 </resources>

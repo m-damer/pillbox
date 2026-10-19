@@ -299,9 +299,9 @@
     <string name="stop_confirm">إيقاف الدواء</string>
     <string name="stop_keep">متابعة الأخذ</string>
     <string name="toast_stopped_title">تم إيقاف %1$s</string>
-    <string name="toast_stopped_body">لا مزيد من التذكيرات. ستجده ضمن المنتهية.</string>
-    <string name="toast_restarted_title">أُعيد تشغيل %1$s</string>
-    <string name="toast_restarted_body">التذكيرات تعمل من جديد.</string>
+    <string name="toast_stopped_body">تجده في المنتهية ويمكنك إعادة تشغيله في أي وقت.</string>
+    <string name="toast_restarted_title">تمت إعادة تشغيل %1$s</string>
+    <string name="toast_restarted_body">عاد إلى قائمة النشطة والتذكيرات تعمل.</string>
     <string name="fin_banner_course">انتهت هذه الكمية. لن ترنّ تذكيرات.</string>
     <string name="fin_banner_stopped">هذا الدواء متوقف. لن ترنّ تذكيرات.</string>
     <string name="fin_dose">الجرعة</string>
@@ -330,4 +330,43 @@
         <item quantity="zero">كل %1$s يوم</item><item quantity="one">كل يوم</item><item quantity="two">كل يومين</item>
         <item quantity="few">كل %1$s أيام</item><item quantity="many">كل %1$s يوماً</item><item quantity="other">كل %1$s يوم</item>
     </plurals>
+
+    <!-- M5b: pause, resume, delete -->
+    <string name="btn_pause">إيقاف مؤقت</string>
+    <string name="btn_resume">استئناف الآن</string>
+    <string name="pause_title">إيقاف %1$s مؤقتاً</string>
+    <string name="pause_sub">لا تذكيرات أثناء الإيقاف، وتتوقف أيام المخزون عن العدّ.</string>
+    <string name="pause_1_day">يوم</string>
+    <string name="pause_other">أخرى</string>
+    <string name="pause_until_resume">حتى أستأنف</string>
+    <string name="pause_days_label">الأيام</string>
+    <plurals name="pause_days_unit"><item quantity="zero">أيام</item><item quantity="one">يوم</item><item quantity="two">يومان</item><item quantity="few">أيام</item><item quantity="many">يوماً</item><item quantity="other">يوم</item></plurals>
+    <string name="pause_restart_on">تعود التذكيرات %1$s.</string>
+    <string name="pause_stays_off">تبقى التذكيرات متوقفة حتى تستأنف.</string>
+    <string name="pause_confirm">إيقاف مؤقت</string>
+    <string name="pause_cancel">إلغاء</string>
+    <string name="paused_until">متوقف مؤقتاً حتى %1$s</string>
+    <string name="paused_until_resume">متوقف مؤقتاً حتى تستأنف</string>
+    <string name="paused_banner_body">لا تذكيرات. وتتوقف أيام المخزون عن العدّ.</string>
+    <string name="toast_paused_title">تم إيقاف %1$s مؤقتاً</string>
+    <string name="toast_paused_body">التذكيرات متوقفة حتى %1$s.</string>
+    <string name="toast_paused_body_open">التذكيرات متوقفة حتى تستأنف.</string>
+    <string name="toast_resumed_title">تم استئناف %1$s</string>
+    <string name="toast_resumed_body">عادت التذكيرات للعمل.</string>
+    <string name="delete_a11y">حذف هذا الدواء</string>
+    <string name="delete_title">حذف %1$s؟</string>
+    <string name="delete_body">سيُحذف سجله من هذا الهاتف ومن تقرير الطبيب لآخر ٣٠ يوماً. لا يمكن التراجع عن ذلك.</string>
+    <string name="delete_confirm">حذف %1$s</string>
+    <string name="delete_keep">إبقاء %1$s</string>
+    <string name="btn_delete_history">حذف من السجل</string>
+    <string name="toast_deleted_title">تم حذف %1$s</string>
+    <string name="toast_deleted_body">حُذف سجله من هذا الهاتف.</string>
+    <string name="tag_paused">متوقف مؤقتاً</string>
+    <string name="paused_tap">اضغط للاستئناف</string>
+    <string name="meds_sub_paused">أنا · %1$s نشطة · %2$s متوقفة</string>
+    <string name="today_paused_banner">كل أدويتك متوقفة مؤقتاً. لن تصلك تذكيرات.</string>
+    <string name="today_paused_link">استئناف من أدويتي</string>
+    <string name="today_paused_title">كل الأدوية متوقفة مؤقتاً</string>
+    <string name="today_paused_sub">متوقفة حتى %1$s. تبدأ الجرعات من جديد الساعة %2$s</string>
+    <string name="today_paused_sub_open">متوقفة حتى تستأنف.</string>
 </resources>
