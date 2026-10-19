@@ -54,6 +54,8 @@ data class Schedule(
     val end: LocalDate? = null,
     val frequency: Frequency,
     val withFood: WithFood = WithFood.ANY,
+    /** Time of the first dose on [start]. Doses earlier than this on the start day do not exist. Null = from the start of the day. */
+    val startTime: LocalTime? = null,
 ) {
     fun isActiveOn(date: LocalDate) = !date.isBefore(start) && (end == null || !date.isAfter(end))
 }

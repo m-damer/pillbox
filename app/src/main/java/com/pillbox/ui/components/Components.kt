@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -209,13 +210,13 @@ fun Stepper(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     textStyle = MaterialTheme.typography.headlineSmall.copy(color = colors.text, textAlign = TextAlign.Center),
                     cursorBrush = SolidColor(colors.primary),
-                    modifier = Modifier.widthIn(min = 56.dp).semantics { contentDescription = label },
+                    modifier = Modifier.width(IntrinsicSize.Min).widthIn(min = 56.dp).semantics { contentDescription = label },
                 )
             } else {
                 Text(valueText, style = MaterialTheme.typography.headlineSmall, color = colors.text)
             }
             Spacer(Modifier.width(Space.S8))
-            Text(unit, style = MaterialTheme.typography.bodyMedium, color = colors.textMuted)
+            Text(unit, style = MaterialTheme.typography.bodyMedium, color = colors.textMuted, modifier = Modifier.weight(1f, fill = false))
         }
         RoundStepButton("+", stringResource(R.string.stepper_increase, label), plusEnabled, onPlus)
     }

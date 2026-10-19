@@ -64,6 +64,8 @@ data class ScheduleEntity(
     val minGapMinutes: Int?,
     val maxPerDay: Int?,
     val withFood: String,
+    /** Minute of the day of the first dose on the start date (null = whole day). */
+    val startMinute: Int? = null,
 )
 
 @Entity(

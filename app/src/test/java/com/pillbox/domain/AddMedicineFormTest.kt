@@ -126,4 +126,10 @@ class AddMedicineFormTest {
         val pause = Pause.forDays(today.atTime(7, 0), 1) // until 9:00 tomorrow
         assertEquals(today.plusDays(1).atTime(20, 0), ScheduleEngine.nextDose(s, listOf(pause), today.atTime(6, 0)))
     }
+
+    @Test fun scheduleRemembersTheFirstDoseTime() {
+        val s = base.withFreq(FreqChoice.THREE).withFirstDose(t(21, 47)).schedule(today)
+        assertEquals(t(21, 47), s.startTime)
+        assertEquals(listOf(today.atTime(21, 47)), ScheduleEngine.plannedDoses(s, today))
+    }
 }

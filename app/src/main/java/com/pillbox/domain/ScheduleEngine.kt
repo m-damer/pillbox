@@ -13,7 +13,10 @@ object ScheduleEngine {
     fun plannedDoses(schedule: Schedule, date: LocalDate): List<LocalDateTime> =
         when (val f = schedule.frequency) {
             is Frequency.FixedTimes ->
-                if (schedule.isActiveOn(date) && f.days.matches(date)) f.times.sorted().map { date.atTime(it) } else emptyList()
+                if (schedule.isActiveOn(date) && f.days.matches(date)) {
+                    val from = schedule.startTime?.let { schedule.start.atTime(it) }
+                    f.times.sorted().map { date.atTime(it) }.filter { from == null || !it.isBefore(from) }
+                } else emptyList()
 
             is Frequency.EveryNHours ->
                 (cycle(schedule, f, date.minusDays(1)) + cycle(schedule, f, date))

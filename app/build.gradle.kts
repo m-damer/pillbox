@@ -22,6 +22,17 @@ android {
         resourceConfigurations += listOf("en", "ar")
     }
 
+    // One fixed debug key (the public Android debug key pattern) so every CI build is signed the same
+    // and a new test build installs over the old one. NOT for release builds.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
