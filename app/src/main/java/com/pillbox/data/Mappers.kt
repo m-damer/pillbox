@@ -32,9 +32,9 @@ object Mappers {
     fun toDomain(e: PersonEntity) = Person(e.id, e.name, e.isMe, e.sortOrder)
 
     // ---- medicine ----
-    fun toEntity(m: Medicine) = MedicineEntity(m.id, m.personId, m.name, m.strength, m.unit.name, m.doseAmount, m.stock, m.packSize, m.status.name)
+    fun toEntity(m: Medicine) = MedicineEntity(m.id, m.personId, m.name, m.strength, m.unit.name, m.doseAmount, m.stock, m.packSize, m.status.name, m.endedOn?.toEpochDay())
     fun toDomain(e: MedicineEntity) =
-        Medicine(e.id, e.personId, e.name, e.strength, DoseUnit.valueOf(e.unit), e.doseAmount, e.stock, e.packSize, MedicineStatus.valueOf(e.status))
+        Medicine(e.id, e.personId, e.name, e.strength, DoseUnit.valueOf(e.unit), e.doseAmount, e.stock, e.packSize, MedicineStatus.valueOf(e.status), e.endedOn?.let { LocalDate.ofEpochDay(it) })
 
     // ---- schedule ----
     fun toEntity(medicineId: Long, s: Schedule, id: Long = 0): ScheduleEntity {

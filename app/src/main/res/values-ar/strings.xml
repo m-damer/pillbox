@@ -247,4 +247,87 @@
     <string name="off_continue">المتابعة بدون تذكيرات</string>
     <string name="banner_off_title">التذكيرات متوقفة</string>
     <string name="banner_off_body">اضغط للإصلاح حتى لا تفوتك جرعة.</string>
+
+    <!-- M5a: Medicines list, detail, stock -->
+    <string name="meds_sub">أنا · %1$s نشطة</string>
+    <string name="tab_active">النشطة</string>
+    <string name="tab_finished">المنتهية</string>
+    <string name="meds_ongoing">مستمر</string>
+    <plurals name="stock_days_left">
+        <item quantity="zero">لم يتبقَّ أي يوم</item><item quantity="one">بقي يوم واحد</item><item quantity="two">بقي يومان</item>
+        <item quantity="few">بقيت %1$s أيام</item><item quantity="many">بقي %1$s يوماً</item><item quantity="other">بقي %1$s يوم</item>
+    </plurals>
+    <string name="stock_buy_soon">اشترِ قريباً</string>
+    <string name="stock_enough">يكفي</string>
+    <string name="stock_out">لا يوجد</string>
+    <string name="stock_left">المتبقي %1$s</string>
+    <string name="ends_on">ينتهي %1$s</string>
+    <string name="meds_finished_empty">لا توجد أدوية منتهية بعد.</string>
+    <string name="finished_on">انتهى %1$s</string>
+    <string name="stopped_on">أُوقف %1$s</string>
+    <string name="tag_course_done">انتهت الكمية</string>
+    <string name="tag_stopped">متوقف</string>
+    <string name="finished_info">يبقى السجل محفوظاً. أعد تشغيل الدواء لاستخدام التفاصيل نفسها.</string>
+    <string name="open_medicine">فتح %1$s</string>
+    <string name="detail_title">الدواء</string>
+    <plurals name="tile_days_left">
+        <item quantity="zero">يوم متبقٍ</item><item quantity="one">يوم متبقٍ</item><item quantity="two">يومان متبقيان</item>
+        <item quantity="few">أيام متبقية</item><item quantity="many">يوماً متبقياً</item><item quantity="other">يوم متبقٍ</item>
+    </plurals>
+    <string name="tile_use">الاستخدام</string>
+    <string name="tile_per_day">%1$s/يوم</string>
+    <string name="tile_as_needed">عند الحاجة</string>
+    <string name="sched_title">الجدول</string>
+    <string name="sched_prn">عند الحاجة فقط. لا تنبيهات.</string>
+    <string name="sched_every_hours">كل %1$s</string>
+    <string name="sched_legend">الألوان تبيّن جزء اليوم</string>
+    <string name="week_title">آخر 7 أيام</string>
+    <string name="week_none">لا توجد جرعات لعرضها بعد.</string>
+    <string name="week_taken">تم أخذ %1$s من %2$s جرعات.</string>
+    <plurals name="week_missed">
+        <item quantity="zero">فاتتك %1$s جرعة.</item><item quantity="one">فاتتك جرعة واحدة يوم %2$s.</item><item quantity="two">فاتتك جرعتان.</item>
+        <item quantity="few">فاتتك %1$s جرعات.</item><item quantity="many">فاتتك %1$s جرعة.</item><item quantity="other">فاتتك %1$s جرعة.</item>
+    </plurals>
+    <string name="week_day_taken">%1$s: أُخذت كل الجرعات</string>
+    <string name="week_day_missed">%1$s: فاتت جرعة</string>
+    <string name="week_day_pending">%1$s: لم يحن بعد</string>
+    <string name="week_day_none">%1$s: لا جرعات</string>
+    <string name="btn_add_stock">إضافة مخزون</string>
+    <string name="btn_stop">إيقاف</string>
+    <string name="stop_title">إيقاف %1$s؟</string>
+    <string name="stop_body">ستتوقف التذكيرات وينتقل إلى المنتهية. يمكنك إعادة تشغيله في أي وقت.</string>
+    <string name="stop_confirm">إيقاف الدواء</string>
+    <string name="stop_keep">متابعة الأخذ</string>
+    <string name="toast_stopped_title">تم إيقاف %1$s</string>
+    <string name="toast_stopped_body">لا مزيد من التذكيرات. ستجده ضمن المنتهية.</string>
+    <string name="toast_restarted_title">أُعيد تشغيل %1$s</string>
+    <string name="toast_restarted_body">التذكيرات تعمل من جديد.</string>
+    <string name="fin_banner_course">انتهت هذه الكمية. لن ترنّ تذكيرات.</string>
+    <string name="fin_banner_stopped">هذا الدواء متوقف. لن ترنّ تذكيرات.</string>
+    <string name="fin_dose">الجرعة</string>
+    <string name="fin_schedule">الجدول</string>
+    <string name="fin_taken">المأخوذ</string>
+    <string name="fin_taken_value">%1$s من %2$s</string>
+    <string name="btn_restart">إعادة تشغيل هذا الدواء</string>
+    <string name="stock_title">إضافة مخزون</string>
+    <string name="stock_boxes">عدد العلب المشتراة</string>
+    <string name="stock_bottles">عدد القوارير المشتراة</string>
+    <string name="per_tablet">عدد الأقراص في العلبة</string>
+    <string name="per_capsule">عدد الكبسولات في العلبة</string>
+    <string name="per_ml">مل في القارورة</string>
+    <string name="per_drops">عدد القطرات في القارورة</string>
+    <string name="per_injection">عدد الحقن في العلبة</string>
+    <string name="per_other">الكمية في العلبة</string>
+    <string name="stock_per_error">أدخل عدد %1$s في العلبة.</string>
+    <string name="stock_new_total">المجموع الجديد {total} · يكفي نحو {days}</string>
+    <string name="stock_new_total_only">المجموع الجديد {total}</string>
+    <string name="stock_save">حفظ</string>
+    <string name="toast_stock_title">تم تحديث المخزون</string>
+    <string name="toast_stock_body">%1$s: %2$s، يكفي نحو %3$s.</string>
+    <string name="toast_stock_body_nodays">%1$s: %2$s.</string>
+    <string name="out_update">تحديث المخزون</string>
+    <plurals name="every_n_days">
+        <item quantity="zero">كل %1$s يوم</item><item quantity="one">كل يوم</item><item quantity="two">كل يومين</item>
+        <item quantity="few">كل %1$s أيام</item><item quantity="many">كل %1$s يوماً</item><item quantity="other">كل %1$s يوم</item>
+    </plurals>
 </resources>

@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
@@ -74,6 +75,7 @@ import com.pillbox.ui.blockColors
 import com.pillbox.ui.blockName
 import com.pillbox.ui.blockOf
 import com.pillbox.ui.components.OutlineButton
+import com.pillbox.ui.medicines.stockToastText
 import com.pillbox.ui.components.PrimaryButton
 import com.pillbox.ui.quantityFor
 import com.pillbox.ui.rememberFormatter
@@ -107,7 +109,9 @@ fun TodayScreen(
     LaunchedEffect(toast?.id) {
         if (toast == null || toastText == null) return@LaunchedEffect
         val job = launch { delay(5_000); snackbar.currentSnackbarData?.dismiss() }
-        val result = snackbar.showSnackbar(toastText, actionLabel = undoLabel, duration = SnackbarDuration.Indefinite)
+        val result = snackbar.showSnackbar(
+            toastText, actionLabel = if (toast.kind is ToastKind.StockUpdated) null else undoLabel, duration = SnackbarDuration.Indefinite,
+        )
         job.cancel()
         if (result == SnackbarResult.ActionPerformed) vm.undo() else vm.toastShown()
     }
@@ -137,6 +141,10 @@ private fun toastMessage(kind: ToastKind): String = when (kind) {
     is ToastKind.Skipped ->
         if (kind.names.size == 1) stringResource(R.string.toast_skipped, kind.names[0])
         else pluralStringResource(R.plurals.toast_skipped_n, kind.names.size, kind.names.size)
+    is ToastKind.StockUpdated -> {
+        val (title, body) = stockToastText(LocalContext.current.resources, rememberFormatter(), kind.unit, kind.result)
+        "$title. $body"
+    }
 }
 
 private fun locale(): Locale = Locale.getDefault()
@@ -382,7 +390,7 @@ private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) 
 }
 
 @Composable
-private fun PillIcon(unit: DoseUnit, tint: Color) {
+internal fun PillIcon(unit: DoseUnit, tint: Color) {
     val line = PillBox.colors.card
     Canvas(Modifier.size(28.dp)) {
         when (unit) {

@@ -75,6 +75,8 @@ data class Medicine(
     val stock: Double = 0.0,
     val packSize: Int? = null,
     val status: MedicineStatus = MedicineStatus.ACTIVE,
+    /** Day the course finished or the user stopped it. Null while active. */
+    val endedOn: LocalDate? = null,
 )
 
 enum class DoseStatus { PLANNED, TAKEN, SKIPPED, MISSED }

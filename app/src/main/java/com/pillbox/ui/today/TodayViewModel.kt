@@ -8,7 +8,11 @@ import com.pillbox.domain.DoseRow
 import com.pillbox.domain.DoseStatus
 import com.pillbox.domain.Frequency
 import com.pillbox.domain.LateRules
+import com.pillbox.domain.DoseUnit
 import com.pillbox.domain.Medicine
+import com.pillbox.domain.Schedule
+import com.pillbox.domain.StockMath
+import com.pillbox.ui.medicines.StockResult
 import com.pillbox.domain.RowStatus
 import com.pillbox.domain.TakeCheck
 import com.pillbox.domain.TodayBuilder
@@ -40,11 +44,14 @@ sealed interface TodaySheet {
         val rows: List<DoseRow>, val medicine: String, val lastTaken: LocalDateTime, val minGapHours: Int, val earlyMedicineIds: Set<Long>,
     ) : TodaySheet
     data class OutOfStock(val rows: List<DoseRow>, val medicine: Medicine, val earlyMedicineIds: Set<Long>) : TodaySheet
+    /** Add stock, opened from "Update my stock" on the out-of-stock sheet. */
+    data class AddStock(val medicine: Medicine, val schedule: Schedule?) : TodaySheet
 }
 
 sealed interface ToastKind {
     data class Taken(val names: List<String>) : ToastKind
     data class Skipped(val names: List<String>) : ToastKind
+    data class StockUpdated(val unit: DoseUnit, val result: StockResult) : ToastKind
 }
 
 /** [undo] removes what the action created. [id] is new for every toast so the same text can show twice. */
@@ -125,6 +132,24 @@ class TodayViewModel(private val repo: PillBoxRepository, meName: String) : View
             sheet.value = TodaySheet.OutOfStock(rows, out.medicine, early)
         } else {
             commitTake(rows, early)
+        }
+    }
+
+    /** "Update my stock" on the out-of-stock sheet. */
+    fun updateStock() {
+        val s = sheet.value as? TodaySheet.OutOfStock ?: return
+        viewModelScope.launch { sheet.value = TodaySheet.AddStock(s.medicine, repo.getSchedule(s.medicine.id)) }
+    }
+
+    fun saveStock(boxes: Int, perBox: Int) {
+        val s = sheet.value as? TodaySheet.AddStock ?: return
+        sheet.value = null
+        viewModelScope.launch {
+            val amount = boxes.toLong() * perBox
+            repo.addStock(s.medicine.id, amount.toDouble(), perBox)
+            val total = s.medicine.stock + amount
+            val result = StockResult(s.medicine.name, total, StockMath.daysFor(total, s.medicine, s.schedule))
+            toast.value = TodayToast(++toastCounter, ToastKind.StockUpdated(s.medicine.unit, result), emptyList())
         }
     }
 

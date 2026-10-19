@@ -231,4 +231,75 @@
     <string name="off_continue">Continue without reminders</string>
     <string name="banner_off_title">Reminders are off</string>
     <string name="banner_off_body">Tap to fix, so you don\'t miss a dose.</string>
+
+    <!-- M5a: Medicines list, detail, stock -->
+    <string name="meds_sub">Me · %1$s active</string>
+    <string name="tab_active">Active</string>
+    <string name="tab_finished">Finished</string>
+    <string name="meds_ongoing">ongoing</string>
+    <plurals name="stock_days_left"><item quantity="one">%1$s day left</item><item quantity="other">%1$s days left</item></plurals>
+    <string name="stock_buy_soon">Buy soon</string>
+    <string name="stock_enough">Enough</string>
+    <string name="stock_out">None left</string>
+    <string name="stock_left">%1$s left</string>
+    <string name="ends_on">Ends %1$s</string>
+    <string name="meds_finished_empty">No finished medicines yet.</string>
+    <string name="finished_on">Finished %1$s</string>
+    <string name="stopped_on">Stopped %1$s</string>
+    <string name="tag_course_done">Course done</string>
+    <string name="tag_stopped">Stopped</string>
+    <string name="finished_info">History is kept. Restart a medicine to use the same details again.</string>
+    <string name="open_medicine">Open %1$s</string>
+    <string name="detail_title">Medicine</string>
+    <plurals name="tile_days_left"><item quantity="one">day left</item><item quantity="other">days left</item></plurals>
+    <string name="tile_use">use</string>
+    <string name="tile_per_day">%1$s/day</string>
+    <string name="tile_as_needed">as needed</string>
+    <string name="sched_title">Schedule</string>
+    <string name="sched_prn">Only when needed. No reminders ring.</string>
+    <string name="sched_every_hours">Every %1$s</string>
+    <string name="sched_legend">Colors show the part of the day</string>
+    <string name="week_title">Last 7 days</string>
+    <string name="week_none">No doses to show yet.</string>
+    <string name="week_taken">%1$s of %2$s doses taken.</string>
+    <plurals name="week_missed"><item quantity="one">One missed on %2$s.</item><item quantity="other">%1$s missed.</item></plurals>
+    <string name="week_day_taken">%1$s: all doses taken</string>
+    <string name="week_day_missed">%1$s: a dose was missed</string>
+    <string name="week_day_pending">%1$s: still to come</string>
+    <string name="week_day_none">%1$s: no doses</string>
+    <string name="btn_add_stock">Add stock</string>
+    <string name="btn_stop">Stop</string>
+    <string name="stop_title">Stop %1$s?</string>
+    <string name="stop_body">Reminders will stop and it moves to Finished. You can restart it any time.</string>
+    <string name="stop_confirm">Stop medicine</string>
+    <string name="stop_keep">Keep taking</string>
+    <string name="toast_stopped_title">%1$s stopped</string>
+    <string name="toast_stopped_body">No more reminders. Find it under Finished.</string>
+    <string name="toast_restarted_title">%1$s restarted</string>
+    <string name="toast_restarted_body">Reminders are on again.</string>
+    <string name="fin_banner_course">This course is finished. No reminders will ring.</string>
+    <string name="fin_banner_stopped">This medicine is stopped. No reminders will ring.</string>
+    <string name="fin_dose">Dose</string>
+    <string name="fin_schedule">Schedule</string>
+    <string name="fin_taken">Taken</string>
+    <string name="fin_taken_value">%1$s of %2$s</string>
+    <string name="btn_restart">Restart this medicine</string>
+    <string name="stock_title">Add stock</string>
+    <string name="stock_boxes">Boxes bought</string>
+    <string name="stock_bottles">Bottles bought</string>
+    <string name="per_tablet">Tablets per box</string>
+    <string name="per_capsule">Capsules per box</string>
+    <string name="per_ml">ml per bottle</string>
+    <string name="per_drops">Drops per bottle</string>
+    <string name="per_injection">Injections per box</string>
+    <string name="per_other">Amount per box</string>
+    <string name="stock_per_error">Enter how many %1$s are in a box.</string>
+    <string name="stock_new_total">New total {total} · about {days}</string>
+    <string name="stock_new_total_only">New total {total}</string>
+    <string name="stock_save">Save</string>
+    <string name="toast_stock_title">Stock updated</string>
+    <string name="toast_stock_body">%1$s: %2$s, about %3$s left.</string>
+    <string name="toast_stock_body_nodays">%1$s: %2$s.</string>
+    <string name="out_update">Update my stock</string>
+    <plurals name="every_n_days"><item quantity="one">Every day</item><item quantity="other">Every %1$s days</item></plurals>
 </resources>

@@ -29,13 +29,16 @@ import com.pillbox.data.Mappers
 import com.pillbox.reminder.PermissionsRoute
 import com.pillbox.reminder.ReminderPermissions
 import com.pillbox.reminder.Reminders
-import com.pillbox.ui.MedicinesPreviewScreen
-import com.pillbox.ui.MedicinesViewModel
 import com.pillbox.ui.PlaceholderScreen
 import com.pillbox.ui.addmed.AddMedicineScreen
 import com.pillbox.ui.addmed.AddMedicineViewModel
 import com.pillbox.ui.components.PillBoxBottomBar
 import com.pillbox.ui.components.Tab
+import com.pillbox.ui.medicines.ListToast
+import com.pillbox.ui.medicines.MedicineDetailScreen
+import com.pillbox.ui.medicines.MedicineDetailViewModel
+import com.pillbox.ui.medicines.MedicinesScreen
+import com.pillbox.ui.medicines.MedicinesViewModel
 import com.pillbox.ui.theme.PillBoxTheme
 import com.pillbox.ui.today.TodayScreen
 import com.pillbox.ui.today.TodayViewModel
@@ -60,13 +63,21 @@ class MainActivity : ComponentActivity() {
                 // A new Add medicine flow every time, so an old "was added" prompt never comes back.
                 var addSession by rememberSaveable { mutableIntStateOf(0) }
                 var showPermissions by rememberSaveable { mutableStateOf(false) }
+                // Medicines tab: which medicine is open, which list tab, and a toast to show after Stop or Restart.
+                var detailId by rememberSaveable { mutableStateOf<Long?>(null) }
+                var showFinishedTab by rememberSaveable { mutableStateOf(false) }
+                var listToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
+                var listToastBody by rememberSaveable { mutableStateOf<String?>(null) }
                 var tab by rememberSaveable { mutableStateOf(Tab.TODAY) }
                 var permissions by remember { mutableStateOf(ReminderPermissions.state(context)) }
 
                 // Coming back from system settings: re-check permissions and arm the next reminder again.
                 LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
                     permissions = ReminderPermissions.state(context)
-                    scope.launch { reminders.rearm() }
+                    scope.launch {
+                        repo.finishEndedCourses(java.time.LocalDate.now())
+                        reminders.rearm()
+                    }
                 }
 
                 if (showPermissions) {
@@ -87,6 +98,23 @@ class MainActivity : ComponentActivity() {
                             showPermissions = true
                         }
                     })
+                } else if (detailId != null) {
+                    val id = detailId!!
+                    val vm: MedicineDetailViewModel = viewModel(
+                        key = "detail-$id",
+                        factory = viewModelFactory { initializer { MedicineDetailViewModel(repo, id, onChanged = { reminders.rearm() }) } },
+                    )
+                    Box(Modifier.fillMaxSize().statusBarsPadding()) {
+                        MedicineDetailScreen(
+                            vm, onBack = { detailId = null },
+                            onDone = { toast, finishedTab ->
+                                listToastTitle = toast.title; listToastBody = toast.body
+                                showFinishedTab = finishedTab
+                                tab = Tab.MEDS
+                                detailId = null
+                            },
+                        )
+                    }
                 } else {
                     Column(Modifier.fillMaxSize()) {
                         Box(Modifier.weight(1f).statusBarsPadding()) {
@@ -100,8 +128,12 @@ class MainActivity : ComponentActivity() {
                                 }
                                 Tab.MEDS -> {
                                     val vm: MedicinesViewModel = viewModel(factory = viewModelFactory { initializer { MedicinesViewModel(repo, meName) } })
-                                    val medicines by vm.medicines.collectAsStateWithLifecycle()
-                                    MedicinesPreviewScreen(medicines)
+                                    MedicinesScreen(
+                                        vm, showFinished = showFinishedTab, onShowFinished = { showFinishedTab = it },
+                                        onOpen = { detailId = it }, onAddMedicine = { adding = true },
+                                        toast = listToastTitle?.let { ListToast(it, listToastBody) },
+                                        onToastShown = { listToastTitle = null; listToastBody = null },
+                                    )
                                 }
                                 Tab.PEOPLE -> PlaceholderScreen(stringResource(R.string.nav_people))
                                 Tab.SETTINGS -> PlaceholderScreen(stringResource(R.string.nav_settings))
