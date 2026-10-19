@@ -341,4 +341,12 @@
     <string name="today_paused_title">All medicines paused</string>
     <string name="today_paused_sub">Paused until %1$s. Doses will start again at %2$s</string>
     <string name="today_paused_sub_open">Paused until you resume.</string>
+
+    <!-- M5c: match the canvas -->
+    <string name="legend_night">Night</string>
+    <string name="legend_sunrise">Sunrise</string>
+    <string name="legend_day">Day</string>
+    <string name="legend_sunset">Sunset</string>
+    <plurals name="meds_remind_note"><item quantity="one">We remind you %1$s day before a medicine runs out.</item><item quantity="other">We remind you %1$s days before a medicine runs out.</item></plurals>
+    <string name="low_stock_strip">%1$s · %2$s</string>
 </resources>

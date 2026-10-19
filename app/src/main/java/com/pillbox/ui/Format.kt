@@ -50,6 +50,14 @@ class Formatter(val arabicDigits: Boolean, val is24Hour: Boolean, private val am
     fun amount(v: Double): String =
         digits(if (v == floor(v)) v.toLong().toString() else String.format(Locale.ROOT, "%.1f", v))
 
+    /** Whole hours for the day bar: "12 AM", "6 PM", or "06:00" in 24-hour time. */
+    fun hour(h: Int): String {
+        val hh = h % 24
+        val text = if (is24Hour) digits(hh.toString().padStart(2, '0') + ":00")
+        else digits((if (hh % 12 == 0) 12 else hh % 12).toString()) + " " + (if (hh < 12) am else pm)
+        return if (rtl) "⁧$text⁩" else "⁦$text⁩"
+    }
+
     /** "8:00 AM", "20:00", and in Arabic digits then ص or م (the letter ends up on the left in RTL). */
     fun time(t: LocalTime): String {
         val minute = t.minute.toString().padStart(2, '0')

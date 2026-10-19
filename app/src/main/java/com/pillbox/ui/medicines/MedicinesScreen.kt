@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -58,6 +59,7 @@ import com.pillbox.ui.rememberFormatter
 import com.pillbox.ui.shortDate
 import com.pillbox.ui.theme.Dimens
 import com.pillbox.ui.theme.PillBox
+import com.pillbox.ui.theme.illustration
 import com.pillbox.ui.theme.Space
 import androidx.compose.ui.res.pluralStringResource
 
@@ -129,6 +131,12 @@ fun MedicinesContent(
                     else ActiveCard(row, fmt) { onOpen(row.item.medicine.id) }
                 }
                 item { AddMedicineButton(onAddMedicine) }
+                item {
+                    InfoNote(
+                        pluralStringResource(R.plurals.meds_remind_note, com.pillbox.domain.StockMath.DEFAULT_REMIND_DAYS, fmt.number(com.pillbox.domain.StockMath.DEFAULT_REMIND_DAYS)),
+                        Icons.Filled.Notifications,
+                    )
+                }
             } else {
                 if (state.loaded && state.finished.isEmpty()) {
                     item { Text(stringResource(R.string.meds_finished_empty), style = MaterialTheme.typography.bodyLarge, color = c.textMuted) }
@@ -150,6 +158,7 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
     val sub = listOfNotNull(m.strength, lengthText(schedule, fmt)).joinToString(sep)
     val label = levelLabel(info.level)
     val color = levelColor(info.level)
+    val barColor = if (info.level == StockLevel.BUY_SOON) PillBox.illustration.stockLow else color
     val end = schedule?.end
     val left = when {
         info.level == StockLevel.OUT -> label
@@ -165,7 +174,6 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
         Modifier
             .fillMaxWidth()
             .background(c.card, MaterialTheme.shapes.large)
-            .border(Dimens.ChipBorder, c.border, MaterialTheme.shapes.large)
             .clickable(role = Role.Button, onClick = onClick)
             .semantics(mergeDescendants = true) { contentDescription = sentence }
             .padding(Space.S16),
@@ -181,7 +189,7 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
         }
         // Stock bar: the words under it carry the meaning, the color only supports them.
         Box(Modifier.fillMaxWidth().height(8.dp).background(c.divider, CircleShape)) {
-            if (fraction > 0f) Box(Modifier.fillMaxWidth(fraction).height(8.dp).background(color, CircleShape))
+            if (fraction > 0f) Box(Modifier.fillMaxWidth(fraction).height(8.dp).background(barColor, CircleShape))
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(left, style = MaterialTheme.typography.labelLarge, color = color, modifier = Modifier.weight(1f))
@@ -207,7 +215,7 @@ private fun PausedCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()
-            .background(c.card, MaterialTheme.shapes.large)
+            .background(c.background, MaterialTheme.shapes.large)
             .drawBehind {
                 drawRoundRect(
                     dash, size = Size(size.width, size.height), cornerRadius = CornerRadius(16.dp.toPx()),
@@ -220,8 +228,8 @@ private fun PausedCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(Space.S10),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12)) {
-            Box(Modifier.size(48.dp).background(c.divider, CircleShape), contentAlignment = Alignment.Center) {
-                PauseGlyph(c.textMuted, Modifier.size(24.dp))
+            Box(Modifier.size(36.dp).background(PillBox.illustration.paused, CircleShape), contentAlignment = Alignment.Center) {
+                PauseGlyph(c.card, Modifier.size(22.dp))
             }
             Column(Modifier.weight(1f)) {
                 Text(m.name, style = MaterialTheme.typography.titleMedium, color = c.textMuted)
@@ -306,14 +314,14 @@ private fun AddMedicineButton(onClick: () -> Unit) {
 }
 
 @Composable
-internal fun InfoNote(text: String) {
+internal fun InfoNote(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Filled.Info) {
     val c = PillBox.colors
     Row(
         Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S16),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Space.S12),
     ) {
-        Icon(Icons.Filled.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+        Icon(icon, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
         Text(text, style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
     }
 }

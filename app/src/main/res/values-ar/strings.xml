@@ -369,4 +369,12 @@
     <string name="today_paused_title">كل الأدوية متوقفة مؤقتاً</string>
     <string name="today_paused_sub">متوقفة حتى %1$s. تبدأ الجرعات من جديد الساعة %2$s</string>
     <string name="today_paused_sub_open">متوقفة حتى تستأنف.</string>
+
+    <!-- M5c: match the canvas -->
+    <string name="legend_night">الليل</string>
+    <string name="legend_sunrise">الشروق</string>
+    <string name="legend_day">النهار</string>
+    <string name="legend_sunset">الغروب</string>
+    <plurals name="meds_remind_note"><item quantity="zero">نذكّرك قبل %1$s أيام من نفاد الدواء.</item><item quantity="one">نذكّرك قبل يوم من نفاد الدواء.</item><item quantity="two">نذكّرك قبل يومين من نفاد الدواء.</item><item quantity="few">نذكّرك قبل %1$s أيام من نفاد الدواء.</item><item quantity="many">نذكّرك قبل %1$s يوماً من نفاد الدواء.</item><item quantity="other">نذكّرك قبل %1$s يوم من نفاد الدواء.</item></plurals>
+    <string name="low_stock_strip">%1$s · %2$s</string>
 </resources>

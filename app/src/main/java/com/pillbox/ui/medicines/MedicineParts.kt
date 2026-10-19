@@ -21,6 +21,7 @@ import com.pillbox.domain.StockLevel
 import com.pillbox.ui.Formatter
 import com.pillbox.ui.quantityFor
 import com.pillbox.ui.theme.PillBox
+import com.pillbox.ui.theme.illustration
 import com.pillbox.ui.today.PillIcon
 import com.pillbox.ui.today.foodText
 import com.pillbox.ui.unitPlural
@@ -29,14 +30,12 @@ import java.time.temporal.ChronoUnit
 import java.time.format.TextStyle
 import java.util.Locale
 
-/** The round badge with the medicine's shape. [muted] is for finished medicines. */
+/** The medicine's shape. [muted] is for finished medicines. */
 @Composable
-fun MedicineBadge(unit: DoseUnit, modifier: Modifier = Modifier, size: Dp = 48.dp, muted: Boolean = false) {
-    val c = PillBox.colors
-    Box(
-        modifier.size(size).background(if (muted) c.divider else c.primaryContainer, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) { PillIcon(unit, if (muted) c.textMuted else c.accent) }
+fun MedicineBadge(unit: DoseUnit, modifier: Modifier = Modifier, size: Dp = 36.dp, muted: Boolean = false) {
+    Box(modifier.size(maxOf(size, 36.dp)), contentAlignment = Alignment.Center) {
+        PillIcon(unit, if (muted) PillBox.illustration.paused else null, size)
+    }
 }
 
 /** Two bars. The core icon set has no pause symbol. */
