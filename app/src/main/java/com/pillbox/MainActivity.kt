@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,6 +57,8 @@ class MainActivity : ComponentActivity() {
                 val prefs = remember { context.getSharedPreferences("pillbox", Context.MODE_PRIVATE) }
                 // Simple state-based navigation until there are more real destinations.
                 var adding by rememberSaveable { mutableStateOf(false) }
+                // A new Add medicine flow every time, so an old "was added" prompt never comes back.
+                var addSession by rememberSaveable { mutableIntStateOf(0) }
                 var showPermissions by rememberSaveable { mutableStateOf(false) }
                 var tab by rememberSaveable { mutableStateOf(Tab.TODAY) }
                 var permissions by remember { mutableStateOf(ReminderPermissions.state(context)) }
@@ -70,10 +73,12 @@ class MainActivity : ComponentActivity() {
                     PermissionsRoute(onDone = { showPermissions = false; permissions = ReminderPermissions.state(context) })
                 } else if (adding) {
                     val vm: AddMedicineViewModel = viewModel(
+                        key = "add-$addSession",
                         factory = viewModelFactory { initializer { AddMedicineViewModel(repo, meName, onChanged = { reminders.rearm() }) } },
                     )
                     AddMedicineScreen(vm, onClose = {
                         adding = false
+                        addSession++
                         tab = Tab.TODAY
                         // First medicine saved: offer to let reminders ring, once.
                         val state = ReminderPermissions.state(context)

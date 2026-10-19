@@ -42,6 +42,7 @@ object Mappers {
             id = id, medicineId = medicineId, startDate = s.start.toEpochDay(), endDate = s.end?.toEpochDay(),
             kind = "", timesCsv = null, dayPattern = null, daysMask = null, everyNDays = null, anchorDate = null,
             firstMinute = null, hours = null, minGapMinutes = null, maxPerDay = null, withFood = s.withFood.name,
+            startMinute = s.startTime?.let { minutes(it) },
         )
         fun withDays(b: ScheduleEntity, d: DayPattern) = when (d) {
             DayPattern.EveryDay -> b.copy(dayPattern = "EVERY_DAY")
@@ -68,7 +69,7 @@ object Mappers {
             "AS_NEEDED" -> Frequency.AsNeeded(e.minGapMinutes ?: (6 * 60), e.maxPerDay)
             else -> error("Unknown schedule kind ${e.kind}")
         }
-        return Schedule(LocalDate.ofEpochDay(e.startDate), e.endDate?.let { LocalDate.ofEpochDay(it) }, frequency, WithFood.valueOf(e.withFood))
+        return Schedule(LocalDate.ofEpochDay(e.startDate), e.endDate?.let { LocalDate.ofEpochDay(it) }, frequency, WithFood.valueOf(e.withFood), e.startMinute?.let { time(it) })
     }
 
     // ---- pause ----

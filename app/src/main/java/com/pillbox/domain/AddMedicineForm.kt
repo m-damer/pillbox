@@ -89,7 +89,8 @@ data class AddMedicineForm(
             FreqChoice.HOURS -> Frequency.EveryNHours(firstDose, hours, pattern)
             FreqChoice.AS_NEEDED -> Frequency.AsNeeded(minGapHours * 60, maxPerDay)
         }
-        return Schedule(startDate(today), endDate(today), frequency, withFood)
+        val startTime = if (freq == FreqChoice.ONCE || freq == FreqChoice.TWICE || freq == FreqChoice.THREE) times().firstOrNull() else null
+        return Schedule(startDate(today), endDate(today), frequency, withFood, startTime)
     }
 
     fun medicine(personId: Long): Medicine {
