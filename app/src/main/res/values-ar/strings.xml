@@ -121,7 +121,7 @@
     <string name="dup_body">أضف نسخة ثانية فقط إذا كان التركيز مختلفاً.</string>
     <string name="dup_open">فتح %1$s الخاص بي</string>
     <string name="dup_add_anyway">أضف على أي حال</string>
-    <string name="unsaved_title">المغادرة دون حفظ؟</string>
+    <string name="unsaved_title">المغادرة بدون حفظ؟</string>
     <string name="unsaved_body">ستضيع تغييراتك على هذا الدواء.</string>
     <string name="keep_editing">متابعة التعديل</string>
     <string name="leave">مغادرة</string>
@@ -377,4 +377,15 @@
     <string name="legend_sunset">الغروب</string>
     <plurals name="meds_remind_note"><item quantity="zero">نذكّرك قبل %1$s أيام من نفاد الدواء.</item><item quantity="one">نذكّرك قبل يوم من نفاد الدواء.</item><item quantity="two">نذكّرك قبل يومين من نفاد الدواء.</item><item quantity="few">نذكّرك قبل %1$s أيام من نفاد الدواء.</item><item quantity="many">نذكّرك قبل %1$s يوماً من نفاد الدواء.</item><item quantity="other">نذكّرك قبل %1$s يوم من نفاد الدواء.</item></plurals>
     <string name="low_stock_strip">%1$s · %2$s</string>
+
+    <!-- M5d: edit medicine -->
+    <string name="btn_edit">تعديل</string>
+    <string name="edit_title">تعديل الدواء</string>
+    <string name="edit_med_step">%1$s · الخطوة %2$s من ٣</string>
+    <string name="box_label_now">كم لديك الآن؟</string>
+    <string name="started_label">بدأ</string>
+    <string name="start_fixed">لا يمكن تغيير تاريخ البدء.</string>
+    <string name="save_changes">حفظ التغييرات</string>
+    <string name="toast_edit_title">تم حفظ التغييرات</string>
+    <string name="toast_edit_body">تم تحديث %1$s. تُطبّق المواعيد الجديدة من اليوم.</string>
 </resources>

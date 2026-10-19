@@ -349,4 +349,15 @@
     <string name="legend_sunset">Sunset</string>
     <plurals name="meds_remind_note"><item quantity="one">We remind you %1$s day before a medicine runs out.</item><item quantity="other">We remind you %1$s days before a medicine runs out.</item></plurals>
     <string name="low_stock_strip">%1$s · %2$s</string>
+
+    <!-- M5d: edit medicine -->
+    <string name="btn_edit">Edit</string>
+    <string name="edit_title">Edit medicine</string>
+    <string name="edit_med_step">%1$s · Step %2$s of 3</string>
+    <string name="box_label_now">How many do you have now?</string>
+    <string name="started_label">Started</string>
+    <string name="start_fixed">The start date cannot be changed.</string>
+    <string name="save_changes">Save changes</string>
+    <string name="toast_edit_title">Changes saved</string>
+    <string name="toast_edit_body">%1$s was updated. New times apply from today.</string>
 </resources>

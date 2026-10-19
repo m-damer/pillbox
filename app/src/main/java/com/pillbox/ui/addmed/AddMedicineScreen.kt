@@ -112,6 +112,7 @@ fun AddMedicineScreen(vm: AddMedicineViewModel, onClose: () -> Unit, modifier: M
     val fmt = rememberFormatter()
     val back = { if (vm.back()) onClose() }
     BackHandler(onBack = back)
+    androidx.compose.runtime.LaunchedEffect(state.saved) { if (state.saved) onClose() }
 
     AddMedicineContent(
         state = state, fmt = fmt, today = LocalDate.now(),
@@ -182,8 +183,9 @@ fun AddMedicineContent(
     ) {
         Column(Modifier.padding(start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Dimens.ScreenPaddingTop)) {
             StepHeader(
-                title = stringResource(R.string.add_medicine),
-                subtitle = stringResource(R.string.add_med_step, fmt.number(state.step), stringResource(subtitles[state.step - 1])),
+                title = stringResource(if (state.isEdit) R.string.edit_title else R.string.add_medicine),
+                subtitle = if (state.isEdit) stringResource(R.string.edit_med_step, state.editingName.orEmpty(), fmt.number(state.step))
+                else stringResource(R.string.add_med_step, fmt.number(state.step), stringResource(subtitles[state.step - 1])),
                 step = state.step, steps = 3, backLabel = stringResource(R.string.back), onBack = onBack,
             )
         }
@@ -202,7 +204,7 @@ fun AddMedicineContent(
         }
         Box(Modifier.padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) {
             if (state.step < 3) PrimaryButton(stringResource(R.string.next), onNext)
-            else PrimaryButton(stringResource(R.string.save_medicine), onSave, enabled = !state.saving)
+            else PrimaryButton(stringResource(if (state.isEdit) R.string.save_changes else R.string.save_medicine), onSave, enabled = !state.saving)
         }
     }
 
@@ -314,7 +316,7 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
     )
     if (form.type == DoseUnit.TABLET) HelperText(stringResource(R.string.dose_half_hint))
 
-    val boxLabel = stringResource(R.string.box_label)
+    val boxLabel = stringResource(if (form.isEdit) R.string.box_label_now else R.string.box_label)
     FieldLabel(boxLabel)
     val boxError = showErrors && FormError.BOX_MISSING in errors
     Stepper(
@@ -606,6 +608,23 @@ private fun Step3(
         }
     }
 
+    if (form.isEdit) {
+        FieldLabel(stringResource(R.string.started_label))
+        val date = fmt.digits(shortDate(form.startDate(today)))
+        val hint = stringResource(R.string.start_fixed)
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = Dimens.ListRowMinHeight)
+                .background(PillBox.colors.card, MaterialTheme.shapes.large)
+                .padding(horizontal = Space.S16, vertical = Space.S10)
+                .semantics(mergeDescendants = true) { contentDescription = "$date. $hint" },
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(date, style = MaterialTheme.typography.labelLarge, color = PillBox.colors.text)
+            Text(hint, style = MaterialTheme.typography.bodyMedium, color = PillBox.colors.textMuted)
+        }
+    } else {
     FieldLabel(stringResource(R.string.starts))
     Segmented(
         options = listOf(
@@ -621,6 +640,7 @@ private fun Step3(
             }
         },
     )
+    }
 
     FieldLabel(stringResource(R.string.how_long))
     Segmented(

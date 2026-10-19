@@ -37,7 +37,16 @@ data class AddMedicineForm(
     val pickedDate: LocalDate? = null,
     val length: LengthChoice = LengthChoice.ONGOING,
     val lengthDays: Int = 10,
+    /** Edit mode: the start date cannot change. */
+    val fixedStart: LocalDate? = null,
+    /** Edit mode: where "every N days" counting began, kept unless the user changes the day pattern. */
+    val everyNAnchor: LocalDate? = null,
+    /** Edit mode: the stock the medicine had when the form was opened. Null when adding. */
+    val originalStock: Double? = null,
+    val originalPackSize: Int? = null,
 ) {
+    val isEdit get() = originalStock != null
+
     // ---- edits that reset dependent fields ----
     fun withType(t: DoseUnit) = copy(type = t, dose = defaultDose(t), boxCount = defaultBox(t))
     fun withFreq(f: FreqChoice) = copy(freq = f, customTimes = null)
@@ -61,7 +70,7 @@ data class AddMedicineForm(
 
     fun hasDays() = freq != FreqChoice.AS_NEEDED
 
-    fun startDate(today: LocalDate): LocalDate = when (start) {
+    fun startDate(today: LocalDate): LocalDate = fixedStart ?: when (start) {
         StartChoice.TODAY -> today
         StartChoice.TOMORROW -> today.plusDays(1)
         StartChoice.PICK -> pickedDate ?: today
@@ -79,7 +88,7 @@ data class AddMedicineForm(
     private fun dayPattern(today: LocalDate): DayPattern = when (days) {
         DaysChoice.EVERY_DAY -> DayPattern.EveryDay
         DaysChoice.SPECIFIC -> DayPattern.DaysOfWeek(weekdays)
-        DaysChoice.EVERY_N -> DayPattern.EveryNDays(everyN.coerceAtLeast(2), startDate(today))
+        DaysChoice.EVERY_N -> DayPattern.EveryNDays(everyN.coerceAtLeast(2), everyNAnchor ?: maxOf(startDate(today), today))
     }
 
     fun schedule(today: LocalDate): Schedule {
@@ -102,6 +111,20 @@ data class AddMedicineForm(
         )
     }
 
+    /**
+     * The medicine after an edit. Stock is kept exactly as it was unless the user changed the number
+     * (the form shows whole units, so 7.5 tablets would otherwise round).
+     */
+    fun updated(existing: Medicine): Medicine {
+        val strengthText = strength.trim().takeIf { it.isNotEmpty() }?.let { "$it ${strengthUnit.name.lowercase()}" }
+        val shown = originalStock?.let { Math.round(it).toInt() }
+        val box = boxCount ?: 0
+        return existing.copy(
+            name = name.trim(), strength = strengthText, unit = type, doseAmount = dose,
+            stock = if (originalStock != null && box == shown) originalStock else box.toDouble(),
+        )
+    }
+
     // ---- validation ----
     fun step1Errors(): Set<FormError> = buildSet {
         if (name.isBlank()) add(FormError.NAME_MISSING)
@@ -116,6 +139,48 @@ data class AddMedicineForm(
     fun isDirty() = name.isNotBlank() || strength.isNotBlank()
 
     companion object {
+        /** Fills the form from a saved medicine, for Edit medicine. */
+        fun fromExisting(m: Medicine, s: Schedule): AddMedicineForm {
+            val parts = m.strength?.trim()?.split(" ", limit = 2)
+            val unit = parts?.getOrNull(1)?.let { u -> StrengthUnit.values().firstOrNull { it.name.equals(u, ignoreCase = true) } }
+            val (strengthNumber, strengthUnit) = when {
+                m.strength.isNullOrBlank() -> "" to StrengthUnit.MG
+                unit != null -> parts[0] to unit
+                else -> m.strength to StrengthUnit.MG
+            }
+            var f = AddMedicineForm(
+                name = m.name, type = m.unit, strength = strengthNumber, strengthUnit = strengthUnit, dose = m.doseAmount,
+                boxCount = Math.round(m.stock).toInt().coerceAtLeast(0).takeIf { it > 0 },
+                withFood = s.withFood, fixedStart = s.start, originalStock = m.stock, originalPackSize = m.packSize,
+            )
+            val days: DayPattern? = when (val fr = s.frequency) {
+                is Frequency.FixedTimes -> {
+                    val freq = when (fr.times.size) { 1 -> FreqChoice.ONCE; 2 -> FreqChoice.TWICE; else -> FreqChoice.THREE }
+                    val first = s.startTime ?: fr.times.minOrNull() ?: LocalTime.of(8, 0)
+                    f = f.copy(freq = freq, firstDose = first)
+                    if (f.times().sorted() != fr.times.sorted()) f = f.copy(customTimes = fr.times.sorted())
+                    fr.days
+                }
+                is Frequency.EveryNHours -> { f = f.copy(freq = FreqChoice.HOURS, firstDose = fr.first, hours = fr.hours); fr.days }
+                is Frequency.AsNeeded -> {
+                    f = f.copy(freq = FreqChoice.AS_NEEDED, maxPerDay = fr.maxPerDay ?: 4, minGapHours = (fr.minGapMinutes / 60).coerceAtLeast(1))
+                    null
+                }
+            }
+            when (days) {
+                is DayPattern.DaysOfWeek -> f = f.copy(days = DaysChoice.SPECIFIC, weekdays = days.days)
+                is DayPattern.EveryNDays -> f = f.copy(days = DaysChoice.EVERY_N, everyN = days.n, everyNAnchor = days.anchor)
+                else -> Unit
+            }
+            val end = s.end
+            if (end == null) f = f.copy(length = LengthChoice.ONGOING)
+            else {
+                val n = (java.time.temporal.ChronoUnit.DAYS.between(s.start, end) + 1).toInt().coerceAtLeast(1)
+                f = f.copy(length = if (n == 7) LengthChoice.SEVEN else LengthChoice.OTHER, lengthDays = n)
+            }
+            return f
+        }
+
         fun defaultDose(t: DoseUnit) = when (t) {
             DoseUnit.ML -> 5.0
             DoseUnit.DROPS -> 2.0

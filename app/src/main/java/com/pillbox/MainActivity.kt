@@ -68,6 +68,11 @@ class MainActivity : ComponentActivity() {
                 var showFinishedTab by rememberSaveable { mutableStateOf(false) }
                 var listToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
                 var listToastBody by rememberSaveable { mutableStateOf<String?>(null) }
+                // Edit medicine: the medicine being edited (lost if the process dies, which just returns to the detail screen).
+                var editItem by remember { mutableStateOf<com.pillbox.data.MedicineWithSchedule?>(null) }
+                var editSession by rememberSaveable { mutableIntStateOf(0) }
+                var detailToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
+                var detailToastBody by rememberSaveable { mutableStateOf<String?>(null) }
                 var tab by rememberSaveable { mutableStateOf(Tab.TODAY) }
                 var permissions by remember { mutableStateOf(ReminderPermissions.state(context)) }
 
@@ -98,6 +103,19 @@ class MainActivity : ComponentActivity() {
                             showPermissions = true
                         }
                     })
+                } else if (editItem != null) {
+                    val item = editItem!!
+                    val vm: AddMedicineViewModel = viewModel(
+                        key = "edit-$editSession",
+                        factory = viewModelFactory { initializer { AddMedicineViewModel(repo, meName, onChanged = { reminders.rearm() }, editing = item) } },
+                    )
+                    AddMedicineScreen(vm, onClose = {
+                        if (vm.state.value.saved) {
+                            detailToastTitle = context.getString(R.string.toast_edit_title)
+                            detailToastBody = context.getString(R.string.toast_edit_body, item.medicine.name)
+                        }
+                        editItem = null
+                    })
                 } else if (detailId != null) {
                     val id = detailId!!
                     val vm: MedicineDetailViewModel = viewModel(
@@ -107,6 +125,9 @@ class MainActivity : ComponentActivity() {
                     Box(Modifier.fillMaxSize().statusBarsPadding()) {
                         MedicineDetailScreen(
                             vm, onBack = { detailId = null },
+                            onEdit = { vm.state.value.item?.let { editItem = it; editSession++ } },
+                            toast = detailToastTitle?.let { ListToast(it, detailToastBody) },
+                            onToastShown = { detailToastTitle = null; detailToastBody = null },
                             onDone = { toast, finishedTab ->
                                 listToastTitle = toast.title; listToastBody = toast.body
                                 showFinishedTab = finishedTab
