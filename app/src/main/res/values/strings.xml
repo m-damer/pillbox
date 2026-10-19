@@ -236,7 +236,7 @@
     <string name="meds_sub">Me · %1$s active</string>
     <string name="tab_active">Active</string>
     <string name="tab_finished">Finished</string>
-    <string name="len_ongoing">ongoing</string>
+    <string name="meds_ongoing">ongoing</string>
     <plurals name="stock_days_left"><item quantity="one">%1$s day left</item><item quantity="other">%1$s days left</item></plurals>
     <string name="stock_buy_soon">Buy soon</string>
     <string name="stock_enough">Enough</string>

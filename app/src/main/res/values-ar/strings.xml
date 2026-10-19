@@ -252,7 +252,7 @@
     <string name="meds_sub">أنا · %1$s نشطة</string>
     <string name="tab_active">النشطة</string>
     <string name="tab_finished">المنتهية</string>
-    <string name="len_ongoing">مستمر</string>
+    <string name="meds_ongoing">مستمر</string>
     <plurals name="stock_days_left">
         <item quantity="zero">لم يتبقَّ أي يوم</item><item quantity="one">بقي يوم واحد</item><item quantity="two">بقي يومان</item>
         <item quantity="few">بقيت %1$s أيام</item><item quantity="many">بقي %1$s يوماً</item><item quantity="other">بقي %1$s يوم</item>

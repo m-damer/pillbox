@@ -52,7 +52,7 @@ fun stockAmountText(m: Medicine, fmt: Formatter): String =
 /** "ongoing" or "7 days". */
 @Composable
 fun lengthText(schedule: Schedule?, fmt: Formatter): String {
-    val end = schedule?.end ?: return stringResource(R.string.len_ongoing)
+    val end = schedule?.end ?: return stringResource(R.string.meds_ongoing)
     val days = (ChronoUnit.DAYS.between(schedule.start, end) + 1).toInt().coerceAtLeast(1)
     return pluralStringResource(R.plurals.n_days, days, fmt.number(days))
 }
