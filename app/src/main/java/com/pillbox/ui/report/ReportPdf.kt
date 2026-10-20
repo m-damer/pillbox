@@ -187,7 +187,7 @@ class ReportPdf(context: Context, private val fmt: Formatter) {
     }
 
     /** As-needed medicines say how often they were taken, since they have no planned doses to count. */
-    private fun whenCell(r: ReportMedicine): String {
+    private fun whenCell(r: com.pillbox.domain.ReportMedicine): String {
         val base = scheduleSummaryText(res, r.schedule, fmt)
         if (r.schedule.frequency !is com.pillbox.domain.Frequency.AsNeeded) return base
         return res.getQuantityString(R.plurals.report_as_needed_taken, r.asNeeded, fmt.number(r.asNeeded))
