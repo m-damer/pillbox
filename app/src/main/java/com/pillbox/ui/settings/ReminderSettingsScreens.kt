@@ -262,6 +262,8 @@ fun MealTimesContent(meals: MealTimes, fmt: Formatter, onBack: () -> Unit, onCha
     val c = PillBox.colors
     val tints = PillBox.illustration.avatars
     var picking by rememberSaveable { mutableStateOf(-1) }
+    // The day filling up: a quarter, half, three quarters, then night.
+    val glyphs = listOf("◔", "◑", "◕", "☾")
     val rows = listOf(
         Triple(MealTimes.Meal.BREAKFAST, R.string.meal_breakfast, R.string.meal_breakfast_sub),
         Triple(MealTimes.Meal.LUNCH, R.string.meal_lunch, R.string.meal_lunch_sub),
@@ -286,7 +288,7 @@ fun MealTimesContent(meals: MealTimes, fmt: Formatter, onBack: () -> Unit, onCha
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
                     ) {
                         Box(Modifier.size(40.dp).background(tints[i], androidx.compose.foundation.shape.RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
-                            Text(name.take(1).uppercase(), style = MaterialTheme.typography.labelLarge, color = c.accent)
+                            RowGlyph(glyphs[i], large = true)
                         }
                         Column(Modifier.weight(1f)) {
                             Text(name, style = MaterialTheme.typography.labelLarge, color = c.text)

@@ -65,7 +65,7 @@ import java.util.Locale
 @Composable
 internal fun SubHeader(title: String, onBack: () -> Unit) {
     val c = PillBox.colors
-    Row(Modifier.fillMaxWidth().padding(horizontal = Space.S8), verticalAlignment = Alignment.CenterVertically) {
+    Row(Modifier.fillMaxWidth().padding(horizontal = Space.S8, vertical = Space.S8), verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onBack), contentAlignment = Alignment.Center) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = c.text)
         }

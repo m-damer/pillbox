@@ -78,7 +78,7 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
             Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.semantics { heading() })
             Section(stringResource(R.string.settings_sec_reminders))
             Group {
-                SettingsRow(stringResource(R.string.settings_sound), stringResource(toneName(state.reminder.tone)), tints[0], { RowGlyph("♪") }, { onOpen(SettingsTarget.SOUND) })
+                SettingsRow(stringResource(R.string.settings_sound), stringResource(toneName(state.reminder.tone)), tints[0], { RowGlyph("♪", large = true) }, { onOpen(SettingsTarget.SOUND) })
                 Divider()
                 SettingsRow(
                     stringResource(R.string.settings_refill),
@@ -90,12 +90,12 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                 SettingsRow(
                     stringResource(R.string.settings_quiet),
                     if (q.enabled) stringResource(R.string.settings_quiet_range, fmt.time(q.from), fmt.time(q.until)) else stringResource(R.string.settings_off),
-                    tints[2], { RowGlyph("☾") }, { onOpen(SettingsTarget.QUIET) },
+                    tints[2], { RowGlyph("☾", large = true) }, { onOpen(SettingsTarget.QUIET) },
                 )
                 Divider()
                 SettingsRow(
                     stringResource(R.string.settings_meals), pluralStringResource(R.plurals.meals_count, 4, fmt.number(4)),
-                    tints[3], { RowGlyph("◔") }, { onOpen(SettingsTarget.MEALS) },
+                    tints[3], { RowGlyph("◔", large = true) }, { onOpen(SettingsTarget.MEALS) },
                 )
             }
             Section(stringResource(R.string.settings_sec_display))
@@ -160,14 +160,14 @@ private fun Divider() { Box(Modifier.fillMaxWidth().padding(start = Space.S16).h
 private fun RowIcon(icon: ImageVector) = Icon(icon, contentDescription = null, tint = PillBox.colors.accent, modifier = Modifier.size(22.dp))
 
 @Composable
-private fun RowGlyph(text: String) = Text(text, style = MaterialTheme.typography.labelMedium, color = PillBox.colors.accent, maxLines = 1)
+internal fun RowGlyph(text: String, large: Boolean = false) = Text(text, style = if (large) MaterialTheme.typography.titleLarge else MaterialTheme.typography.labelMedium, color = PillBox.colors.accent, maxLines = 1)
 
 @Composable
 private fun SettingsRow(title: String, value: String, tint: Color, icon: @Composable () -> Unit, onClick: () -> Unit) {
     val c = PillBox.colors
     val desc = stringResource(R.string.settings_row_a11y, title, value)
-    // At big text the value goes under the title, so no word is squeezed into a few letters per line.
-    val big = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f
+    // At big text, or with a long value, the value goes under the title, so no word is squeezed into a few letters per line.
+    val big = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f || value.length > 14
     Row(
         Modifier
             .fillMaxWidth()
