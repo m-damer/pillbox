@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.media.AudioAttributes
+import com.pillbox.ui.ReminderState
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -53,12 +55,29 @@ class Reminders(
 
     // ---------------------------------------------------------------- channels
 
+    /**
+     * Android fixes a channel's sound and vibration when it is created, so each tone and vibration choice has its own
+     * channel; the one in use is created and the others are removed. The quiet channel has no sound, for quiet hours.
+     */
     fun createChannels() {
         val nm = context.getSystemService(NotificationManager::class.java)
+        val s = ReminderState.current
+        val doses = doseChannelId(s)
+        val sound = Uri.parse("android.resource://" + context.packageName + "/" + toneResource(s.tone))
+        val attrs = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
         nm.createNotificationChannel(
-            NotificationChannel(CHANNEL_DOSES, context.getString(R.string.channel_doses), NotificationManager.IMPORTANCE_HIGH).apply {
+            NotificationChannel(doses, context.getString(R.string.channel_doses), NotificationManager.IMPORTANCE_HIGH).apply {
                 description = context.getString(R.string.channel_doses_desc)
-                enableVibration(true)
+                enableVibration(s.vibration)
+                setSound(sound, attrs)
+                lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
+            },
+        )
+        nm.createNotificationChannel(
+            NotificationChannel(CHANNEL_DOSES_QUIET, context.getString(R.string.channel_doses_quiet), NotificationManager.IMPORTANCE_DEFAULT).apply {
+                description = context.getString(R.string.channel_doses_quiet_desc)
+                enableVibration(false)
+                setSound(null, null)
                 lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
             },
         )
@@ -67,6 +86,8 @@ class Reminders(
                 description = context.getString(R.string.channel_refills_desc)
             },
         )
+        val keep = setOf(doses, CHANNEL_DOSES_QUIET, CHANNEL_REFILLS)
+        nm.notificationChannels.filter { it.id.startsWith(CHANNEL_DOSES) && it.id !in keep }.forEach { nm.deleteNotificationChannel(it.id) }
     }
 
     // ---------------------------------------------------------------- data
@@ -104,6 +125,8 @@ class Reminders(
     /** The daily refill alarm fired: one quiet notification per medicine that is low or out, then arm tomorrow's. */
     suspend fun onRefillDue() {
         val now = LocalDateTime.now()
+        // Quiet hours can mute refill alerts. The alert for today is skipped; tomorrow's comes as usual.
+        if (ReminderState.current.quiet.silencesRefillAt(now.toLocalTime())) { rearmRefill(now.plusMinutes(1)); return }
         val items = repo.allActiveWithSchedules().map { Triple(it.medicine, it.schedule, it.pauses) }
         val alerts = RefillPlanner.due(items, refillSettings.current(), now, repo.myPersonId())
         val shown = alerts.map { notificationIdForRefill(it.medicine.id) }.toSet()
@@ -205,8 +228,9 @@ class Reminders(
         val rows = pendingRows(at)
         if (rows.isEmpty()) { dismiss(at); return }
         show(rows, at)
-        if (count < ReminderPlanner.MAX_NAGS) {
-            schedule(Kind.NAG, LocalDateTime.now().plusMinutes(ReminderPlanner.NAG_MINUTES), at, count + 1)
+        val settings = ReminderState.current
+        if (count < settings.maxRepeats) {
+            schedule(Kind.NAG, LocalDateTime.now().plusMinutes(settings.repeatMinutes.toLong()), at, count + 1)
         }
     }
 
@@ -284,7 +308,7 @@ class Reminders(
             val line = r.medicine.name + (com.pillbox.ui.localizedStrength(r.medicine.strength, context.resources)?.let { " $it" } ?: "")
             owners[r.medicine.personId]?.let { context.getString(R.string.notif_dose_for, it, line) } ?: line
         }
-        val builder = NotificationCompat.Builder(context, CHANNEL_DOSES)
+        val builder = NotificationCompat.Builder(context, channelFor(LocalDateTime.now().toLocalTime()))
             .setSmallIcon(R.drawable.ic_stat_pill)
             .setContentTitle(title)
             .setContentText(text)
@@ -304,8 +328,23 @@ class Reminders(
         runCatching { nm.notify(notificationId(at), builder.build()) }
     }
 
+    /** The channel a dose reminder uses now: silent during quiet hours only when the user turned "Medicine reminders still ring" off. */
+    private fun channelFor(now: java.time.LocalTime): String {
+        val s = ReminderState.current
+        return if (s.quiet.silencesDoseAt(now)) CHANNEL_DOSES_QUIET else doseChannelId(s)
+    }
+
     companion object {
         const val CHANNEL_DOSES = "doses"
+        const val CHANNEL_DOSES_QUIET = "doses_quiet"
+
+        fun doseChannelId(s: com.pillbox.domain.ReminderSettings) = CHANNEL_DOSES + "_" + s.tone.name.lowercase() + if (s.vibration) "_v" else "_n"
+
+        fun toneResource(tone: com.pillbox.domain.Tone) = when (tone) {
+            com.pillbox.domain.Tone.GENTLE_BELL -> R.raw.tone_gentle_bell
+            com.pillbox.domain.Tone.MORNING_CHIME -> R.raw.tone_morning_chime
+            com.pillbox.domain.Tone.LOUD_ALARM -> R.raw.tone_loud_alarm
+        }
         const val CHANNEL_REFILLS = "refills"
         const val EXTRA_AT = "at"
         const val EXTRA_COUNT = "count"

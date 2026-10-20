@@ -53,7 +53,7 @@ import com.pillbox.ui.theme.Space
 import com.pillbox.ui.theme.illustration
 
 /** Where a Settings row leads. */
-enum class SettingsTarget { REFILL, ACCESSIBILITY, LANGUAGE, PEOPLE }
+enum class SettingsTarget { SOUND, REFILL, QUIET, MEALS, ACCESSIBILITY, LANGUAGE, PEOPLE }
 
 @Composable
 fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier) {
@@ -78,10 +78,24 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
             Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.semantics { heading() })
             Section(stringResource(R.string.settings_sec_reminders))
             Group {
+                SettingsRow(stringResource(R.string.settings_sound), stringResource(toneName(state.reminder.tone)), tints[0], { RowGlyph("♪") }, { onOpen(SettingsTarget.SOUND) })
+                Divider()
                 SettingsRow(
                     stringResource(R.string.settings_refill),
                     pluralStringResource(R.plurals.n_days, state.refillDays, fmt.number(state.refillDays)),
                     tints[1], { RowIcon(Icons.Filled.Notifications) }, { onOpen(SettingsTarget.REFILL) },
+                )
+                Divider()
+                val q = state.reminder.quiet
+                SettingsRow(
+                    stringResource(R.string.settings_quiet),
+                    if (q.enabled) stringResource(R.string.settings_quiet_range, fmt.time(q.from), fmt.time(q.until)) else stringResource(R.string.settings_off),
+                    tints[2], { RowGlyph("☾") }, { onOpen(SettingsTarget.QUIET) },
+                )
+                Divider()
+                SettingsRow(
+                    stringResource(R.string.settings_meals), pluralStringResource(R.plurals.meals_count, 4, fmt.number(4)),
+                    tints[3], { RowGlyph("◔") }, { onOpen(SettingsTarget.MEALS) },
                 )
             }
             Section(stringResource(R.string.settings_sec_display))
@@ -110,6 +124,12 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
             )
         }
     }
+}
+
+internal fun toneName(t: com.pillbox.domain.Tone) = when (t) {
+    com.pillbox.domain.Tone.GENTLE_BELL -> R.string.tone_gentle_bell
+    com.pillbox.domain.Tone.MORNING_CHIME -> R.string.tone_morning_chime
+    com.pillbox.domain.Tone.LOUD_ALARM -> R.string.tone_loud_alarm
 }
 
 @Composable
@@ -146,6 +166,8 @@ private fun RowGlyph(text: String) = Text(text, style = MaterialTheme.typography
 private fun SettingsRow(title: String, value: String, tint: Color, icon: @Composable () -> Unit, onClick: () -> Unit) {
     val c = PillBox.colors
     val desc = stringResource(R.string.settings_row_a11y, title, value)
+    // At big text the value goes under the title, so no word is squeezed into a few letters per line.
+    val big = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f
     Row(
         Modifier
             .fillMaxWidth()
@@ -157,8 +179,15 @@ private fun SettingsRow(title: String, value: String, tint: Color, icon: @Compos
         horizontalArrangement = Arrangement.spacedBy(Space.S12),
     ) {
         Box(Modifier.size(40.dp).background(tint, RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) { icon() }
-        Text(title, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
-        Text(value, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+        if (big) {
+            Column(Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.labelLarge, color = c.text)
+                Text(value, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+            }
+        } else {
+            Text(title, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
+            Text(value, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+        }
         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.textMuted)
     }
 }

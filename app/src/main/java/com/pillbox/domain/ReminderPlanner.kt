@@ -13,6 +13,5 @@ object ReminderPlanner {
         TodayBuilder.build(items, events, at.toLocalDate(), at).groups.firstOrNull { it.time == at }?.pending.orEmpty()
 
     const val SNOOZE_MINUTES = 15L
-    const val NAG_MINUTES = 5L
     const val MAX_NAGS = 3
 }

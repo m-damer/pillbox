@@ -63,7 +63,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-private fun SubHeader(title: String, onBack: () -> Unit) {
+internal fun SubHeader(title: String, onBack: () -> Unit) {
     val c = PillBox.colors
     Row(Modifier.fillMaxWidth().padding(horizontal = Space.S8), verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onBack), contentAlignment = Alignment.Center) {
@@ -74,7 +74,7 @@ private fun SubHeader(title: String, onBack: () -> Unit) {
 }
 
 @Composable
-private fun Caption(text: String) {
+internal fun Caption(text: String) {
     Text(
         text.uppercase(), style = MaterialTheme.typography.labelSmall, color = PillBox.colors.textMuted,
         modifier = Modifier.padding(start = Space.S8, top = Space.S16, bottom = Space.S6).semantics { heading() },
@@ -82,12 +82,12 @@ private fun Caption(text: String) {
 }
 
 @Composable
-private fun Card(content: @Composable () -> Unit) {
+internal fun Card(content: @Composable () -> Unit) {
     Column(Modifier.fillMaxWidth().background(PillBox.colors.card, MaterialTheme.shapes.large)) { content() }
 }
 
 @Composable
-private fun Note(text: String) {
+internal fun Note(text: String) {
     val c = PillBox.colors
     Row(
         Modifier.padding(top = Space.S12).fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S12),
@@ -114,6 +114,7 @@ fun AccessibilityScreen(vm: SettingsViewModel, onBack: () -> Unit, onOpenTheme: 
         AccessibilityContent(
             state.display, onBack, onOpenTheme,
             onTextSize = { vm.setTextSize(it); changes++ }, onHighContrast = { vm.setHighContrast(it); changes++ },
+            reminder = state.reminder, onKeepRinging = { vm.setKeepRinging(it); changes++ },
         )
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
@@ -126,15 +127,18 @@ fun AccessibilityContent(
     onOpenTheme: () -> Unit,
     onTextSize: (TextSize) -> Unit,
     onHighContrast: (Boolean) -> Unit,
+    reminder: com.pillbox.domain.ReminderSettings = com.pillbox.domain.ReminderSettings(),
+    onKeepRinging: (Boolean) -> Unit = {},
 ) {
     val c = PillBox.colors
+    val fmt = com.pillbox.ui.rememberFormatter()
     val sizes = listOf(TextSize.STANDARD to R.string.acc_size_standard, TextSize.LARGE to R.string.acc_size_large, TextSize.LARGEST to R.string.acc_size_largest)
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         SubHeader(stringResource(R.string.acc_title), onBack)
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH), verticalArrangement = Arrangement.spacedBy(Dimens.CardGap)) {
             Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S16), verticalArrangement = Arrangement.spacedBy(Space.S12)) {
                 Text(stringResource(R.string.acc_text_size), style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.semantics { heading() })
-                Segmented(sizes.map { stringResource(it.second) }, sizes.indexOfFirst { it.first == display.textSize }, { onTextSize(sizes[it].first) })
+                Segmented(sizes.map { stringResource(it.second) }, sizes.indexOfFirst { it.first == display.textSize }, { onTextSize(sizes[it].first) }, stackWhenLarge = true)
                 Row(
                     Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S12),
                     horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.CenterVertically,
@@ -149,6 +153,13 @@ fun AccessibilityContent(
             }
             Card {
                 SwitchRow(stringResource(R.string.acc_high_contrast), display.highContrast, onHighContrast, subtitle = stringResource(R.string.acc_high_contrast_sub))
+            }
+            Card {
+                SwitchRow(
+                    stringResource(R.string.acc_keep), reminder.keepRinging, onKeepRinging,
+                    subtitle = if (reminder.keepRinging) stringResource(R.string.acc_keep_sub, androidx.compose.ui.res.pluralStringResource(R.plurals.n_minutes, reminder.repeatMinutes, fmt.number(reminder.repeatMinutes)))
+                    else stringResource(R.string.acc_keep_off_sub),
+                )
             }
             Card {
                 val value = stringResource(themeName(display.theme))
@@ -247,16 +258,16 @@ fun LanguageContent(
             Card {
                 Box(Modifier.padding(Space.S8)) {
                     // The labels are the numbers themselves, drawn the way they will look.
-                    Segmented(listOf("123", "١٢٣"), if (arabicDigits) 1 else 0, { onDigits(it == 1) })
+                    Segmented(listOf("123", "١٢٣"), if (arabicDigits) 1 else 0, { onDigits(it == 1) }, stackWhenLarge = true)
                 }
             }
             Caption(stringResource(R.string.lang_time))
-            Card { Box(Modifier.padding(Space.S8)) { Segmented(times.map { stringResource(it.second) }, times.indexOfFirst { it.first == time }, { onTime(times[it].first) }) } }
+            Card { Box(Modifier.padding(Space.S8)) { Segmented(times.map { stringResource(it.second) }, times.indexOfFirst { it.first == time }, { onTime(times[it].first) }, stackWhenLarge = true) } }
             Caption(stringResource(R.string.lang_week))
             Card {
                 Box(Modifier.padding(Space.S8)) {
                     val days = DisplaySettings.WEEK_STARTS
-                    Segmented(days.map { it.getDisplayName(TextStyle.SHORT, locale) }, days.indexOf(week).coerceAtLeast(0), { onWeek(days[it]) })
+                    Segmented(days.map { it.getDisplayName(TextStyle.SHORT, locale) }, days.indexOf(week).coerceAtLeast(0), { onWeek(days[it]) }, stackWhenLarge = true)
                 }
             }
             Note(stringResource(R.string.lang_note))

@@ -46,13 +46,15 @@ class AddMedicineViewModel(
     private val now: () -> LocalDateTime = { LocalDateTime.now() },
     /** Set to edit this medicine instead of adding a new one. */
     private val editing: MedicineWithSchedule? = null,
+    /** The user's meal times (Settings), used to suggest dose times when adding. */
+    private val meals: com.pillbox.domain.MealTimes? = null,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(
         if (editing?.schedule != null) {
             val form = AddMedicineForm.fromExisting(editing.medicine, editing.schedule)
             AddMedUiState(form = form, editingName = editing.medicine.name, original = form)
-        } else AddMedUiState(),
+        } else AddMedUiState(form = AddMedicineForm(meals = meals)),
     )
     val state: StateFlow<AddMedUiState> = _state.asStateFlow()
 
@@ -127,6 +129,6 @@ class AddMedicineViewModel(
     /** "Add another medicine" after a success. */
     fun startOver() {
         duplicateAccepted = false
-        _state.value = AddMedUiState(savedAny = _state.value.savedAny)
+        _state.value = AddMedUiState(form = AddMedicineForm(meals = meals), savedAny = _state.value.savedAny)
     }
 }

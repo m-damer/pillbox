@@ -25,3 +25,8 @@ fun firstDayOfWeek(): DayOfWeek {
     val locale = LocalConfiguration.current.locales[0]
     return settings.firstDay(WeekFields.of(locale).firstDayOfWeek)
 }
+
+/** The latest reminder settings for code outside Compose (notifications). The app keeps it up to date. */
+object ReminderState {
+    @Volatile var current: com.pillbox.domain.ReminderSettings = com.pillbox.domain.ReminderSettings()
+}

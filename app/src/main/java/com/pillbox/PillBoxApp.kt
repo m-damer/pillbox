@@ -4,9 +4,11 @@ import android.app.Application
 import com.pillbox.data.DisplaySettingsStore
 import com.pillbox.data.PillBoxDatabase
 import com.pillbox.data.PillBoxRepository
+import com.pillbox.data.ReminderSettingsStore
 import com.pillbox.data.RefillSettingsStore
 import com.pillbox.reminder.Reminders
 import com.pillbox.ui.DisplayState
+import com.pillbox.ui.ReminderState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -19,6 +21,7 @@ class PillBoxApp : Application() {
     val repository: PillBoxRepository by lazy { PillBoxRepository(PillBoxDatabase.create(this)) }
     val refillSettings: RefillSettingsStore by lazy { RefillSettingsStore(this) }
     val displaySettings: DisplaySettingsStore by lazy { DisplaySettingsStore(this) }
+    val reminderSettings: ReminderSettingsStore by lazy { ReminderSettingsStore(this) }
     val reminders: Reminders by lazy { Reminders(this, repository, refillSettings) }
 
     override fun onCreate() {
@@ -26,6 +29,11 @@ class PillBoxApp : Application() {
         // A small read, done once before any screen exists, so the first frame already has the right language and digits.
         DisplayState.current = runBlocking { displaySettings.flow.first() }
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch { displaySettings.flow.collect { DisplayState.current = it } }
+        ReminderState.current = runBlocking { reminderSettings.flow.first() }
         reminders.createChannels()
+        // A new tone or vibration choice needs its own channel; everything else is read from ReminderState when it rings.
+        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+            reminderSettings.flow.collect { ReminderState.current = it; reminders.createChannels() }
+        }
     }
 }

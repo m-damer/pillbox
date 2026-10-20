@@ -32,9 +32,13 @@ import com.pillbox.reminder.ReminderPermissions
 import com.pillbox.reminder.Reminders
 import com.pillbox.ui.people.PeopleBar
 import com.pillbox.ui.AppLocale
+import com.pillbox.ui.ReminderState
 import com.pillbox.ui.settings.AccessibilityScreen
 import com.pillbox.ui.settings.LanguageScreen
+import com.pillbox.ui.settings.MealTimesScreen
+import com.pillbox.ui.settings.QuietHoursScreen
 import com.pillbox.ui.settings.SettingsScreen
+import com.pillbox.ui.settings.SoundScreen
 import com.pillbox.ui.settings.SettingsTarget
 import com.pillbox.ui.settings.SettingsViewModel
 import com.pillbox.ui.settings.ThemeScreen
@@ -167,12 +171,19 @@ class MainActivity : PillBoxActivity() {
                         })
                     }
                 } else if (settingsScreen != 0) {
-                    val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo) } })
+                    val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
                     val close = { settingsScreen = if (settingsScreen == 3) 1 else 0 }
+                    val savedToast = {
+                        settingsToastTitle = context.getString(R.string.toast_setting_saved_title)
+                        settingsToastBody = context.getString(R.string.toast_setting_saved_body)
+                    }
                     Box(Modifier.fillMaxSize().statusBarsPadding()) {
                         when (settingsScreen) {
                             1 -> AccessibilityScreen(vm, onBack = close, onOpenTheme = { settingsScreen = 3 })
                             3 -> ThemeScreen(vm, onBack = close)
+                            4 -> SoundScreen(vm, onBack = close)
+                            5 -> QuietHoursScreen(vm, onBack = close, onSaved = { savedToast(); settingsScreen = 0 })
+                            6 -> MealTimesScreen(vm, onBack = close, onSaved = { savedToast(); settingsScreen = 0 })
                             else -> LanguageScreen(
                                 vm, activeLanguage = AppLocale.active(context), onBack = close,
                                 onSave = { choice ->
@@ -211,7 +222,7 @@ class MainActivity : PillBoxActivity() {
                 } else if (adding) {
                     val vm: AddMedicineViewModel = viewModel(
                         key = "add-$addSession",
-                        factory = viewModelFactory { initializer { AddMedicineViewModel(repo, meName, onChanged = { reminders.rearm() }) } },
+                        factory = viewModelFactory { initializer { AddMedicineViewModel(repo, meName, onChanged = { reminders.rearm() }, meals = ReminderState.current.meals) } },
                     )
                     AddMedicineScreen(vm, onClose = {
                         adding = false
@@ -294,13 +305,16 @@ class MainActivity : PillBoxActivity() {
                                     )
                                 }
                                 Tab.SETTINGS -> {
-                                    val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo) } })
+                                    val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
                                     SettingsScreen(
                                         vm,
                                         onOpen = { target ->
                                             when (target) {
                                                 SettingsTarget.REFILL -> { refillSession++; showRefill = true }
-                                                SettingsTarget.ACCESSIBILITY -> settingsScreen = 1
+                                                SettingsTarget.SOUND -> settingsScreen = 4
+                                SettingsTarget.QUIET -> settingsScreen = 5
+                                SettingsTarget.MEALS -> settingsScreen = 6
+                                SettingsTarget.ACCESSIBILITY -> settingsScreen = 1
                                                 SettingsTarget.LANGUAGE -> settingsScreen = 2
                                                 SettingsTarget.PEOPLE -> tab = Tab.PEOPLE
                                             }

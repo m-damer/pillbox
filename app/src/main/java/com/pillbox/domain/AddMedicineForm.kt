@@ -23,7 +23,7 @@ data class AddMedicineForm(
     val dose: Double = 1.0,
     val boxCount: Int? = 30,
     val freq: FreqChoice = FreqChoice.TWICE,
-    val firstDose: LocalTime = LocalTime.of(8, 0),
+    val firstDose: LocalTime = DEFAULT_FIRST_DOSE,
     /** Set when the user changed one of the automatic dose times. Cleared when frequency or first dose changes. */
     val customTimes: List<LocalTime>? = null,
     val hours: Int = 8,
@@ -44,6 +44,8 @@ data class AddMedicineForm(
     /** Edit mode: the stock the medicine had when the form was opened. Null when adding. */
     val originalStock: Double? = null,
     val originalPackSize: Int? = null,
+    /** The user's meal times from Settings. When set, once, twice and 3 times a day start at suggested times for the food rule. */
+    val meals: MealTimes? = null,
 ) {
     val isEdit get() = originalStock != null
 
@@ -61,12 +63,22 @@ data class AddMedicineForm(
 
     // ---- derived ----
     /** Dose times for once, twice and 3 times a day. Empty for the other choices. */
-    fun times(): List<LocalTime> = customTimes ?: when (freq) {
+    fun times(): List<LocalTime> = customTimes ?: mealTimes() ?: when (freq) {
         FreqChoice.ONCE -> listOf(firstDose)
         FreqChoice.TWICE -> listOf(firstDose, firstDose.plusHours(12))
         FreqChoice.THREE -> listOf(firstDose, firstDose.plusHours(8), firstDose.plusHours(16))
         else -> emptyList()
     }
+
+    /** Meal-based times, only while the first dose is still the usual 8:00 AM (the user has not picked their own) and when adding. */
+    private fun mealTimes(): List<LocalTime>? {
+        if (meals == null || isEdit || firstDose != DEFAULT_FIRST_DOSE) return null
+        val perDay = when (freq) { FreqChoice.ONCE -> 1; FreqChoice.TWICE -> 2; FreqChoice.THREE -> 3; else -> return null }
+        return meals.suggest(withFood, perDay)
+    }
+
+    /** The first dose time to show: the first suggested time when meal times apply, otherwise [firstDose]. */
+    fun firstTime(): LocalTime = times().firstOrNull() ?: firstDose
 
     fun hasDays() = freq != FreqChoice.AS_NEEDED
 
@@ -139,6 +151,8 @@ data class AddMedicineForm(
     fun isDirty() = name.isNotBlank() || strength.isNotBlank()
 
     companion object {
+        val DEFAULT_FIRST_DOSE: LocalTime = LocalTime.of(8, 0)
+
         /** Fills the form from a saved medicine, for Edit medicine. */
         fun fromExisting(m: Medicine, s: Schedule): AddMedicineForm {
             val parts = m.strength?.trim()?.split(" ", limit = 2)
