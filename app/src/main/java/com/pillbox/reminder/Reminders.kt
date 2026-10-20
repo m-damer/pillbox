@@ -191,7 +191,7 @@ class Reminders(private val context: Context, private val repo: PillBoxRepositor
         val nm = notificationManager()
         if (!nm.areNotificationsEnabled()) return
         val title = context.getString(R.string.notif_title, context.getString(blockNameRes(blockOf(at.toLocalTime()))))
-        val text = rows.joinToString(" · ") { r -> r.medicine.name + (r.medicine.strength?.let { " $it" } ?: "") }
+        val text = rows.joinToString(" · ") { r -> r.medicine.name + (com.pillbox.ui.localizedStrength(r.medicine.strength, context.resources)?.let { " $it" } ?: "") }
         val builder = NotificationCompat.Builder(context, CHANNEL_DOSES)
             .setSmallIcon(R.drawable.ic_stat_pill)
             .setContentTitle(title)
