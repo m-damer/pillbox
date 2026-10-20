@@ -93,8 +93,14 @@ object BackupCodec {
 /** When the last backup was made and how it went, for the Backup screen and the Settings row. */
 enum class BackupProblem { NO_SPACE, FOLDER_UNAVAILABLE, OTHER }
 
+/** How often the automatic backup runs. */
+enum class BackupFrequency(val days: Long) { DAILY(1), WEEKLY(7) }
+
 data class BackupSettings(
     val autoFolder: Boolean = false,
+    val frequency: BackupFrequency = BackupFrequency.WEEKLY,
+    /** Tell the person with a notification when an automatic backup finishes or fails. */
+    val notify: Boolean = true,
     val folderUri: String? = null,
     val folderLabel: String? = null,
     val lastSuccessAt: LocalDateTime? = null,

@@ -89,6 +89,10 @@ class BackupViewModel(
         manager.setAuto(on)
     }
 
+    fun setFrequency(f: com.pillbox.domain.BackupFrequency) = viewModelScope.launch { manager.setFrequency(f) }
+
+    fun setNotify(on: Boolean) = viewModelScope.launch { manager.setNotify(on) }
+
     fun share() = viewModelScope.launch {
         busy.value = true
         try {

@@ -740,7 +740,7 @@
     <string name="bk_last">آخر نسخة: %1$s</string>
     <string name="bk_never">لا توجد نسخة بعد</string>
     <string name="bk_where_folder">مجلد على هذا الهاتف</string>
-    <string name="bk_sec_auto">نسخ احتياطي أسبوعي تلقائي</string>
+    <string name="bk_sec_auto">نسخ احتياطي تلقائي</string>
     <string name="bk_folder">مجلد على هذا الهاتف</string>
     <string name="bk_folder_none">لم يُختر بعد</string>
     <string name="bk_folder_root">أعلى مستوى في التخزين</string>
@@ -757,7 +757,7 @@
     <string name="bk_delete">حذف كل بياناتي</string>
     <string name="bk_saved_title">تم حفظ النسخة</string>
     <string name="bk_folder_set_title">تم تحديد مجلد النسخ</string>
-    <string name="bk_folder_set_body">تُحفظ النسخ الأسبوعية في %1$s.</string>
+    <string name="bk_folder_set_body">تُحفظ النسخ في %1$s.</string>
     <string name="bk_share_failed_title">تعذّر إنشاء الملف</string>
     <string name="bk_share_failed_body">حاول مجدداً بعد قليل. أدويتك آمنة.</string>
     <string name="bk_failed_title">لم يكتمل النسخ الاحتياطي</string>
@@ -820,4 +820,13 @@
     <string name="da_done_body">التطبيق فارغ. يمكنك البدء من جديد أو استعادة نسخة احتياطية.</string>
     <string name="da_start">ابدأ من جديد</string>
     <string name="settings_backup">النسخ الاحتياطي والتصدير</string>
+    <string name="bk_how_often">كم مرة</string>
+    <string name="bk_daily">يومياً</string>
+    <string name="bk_weekly">أسبوعياً</string>
+    <string name="bk_notify">أخبرني عند انتهائه</string>
+    <string name="bk_notify_sub">يخبرك إشعار إن تم حفظ النسخة أو لم تكتمل.</string>
+    <string name="bk_notif_saved">%1$s في %2$s</string>
+    <string name="bk_notif_folder">لا تستطيع علبة الدواء الوصول إلى مجلد النسخ. افتح التطبيق واختر مجلداً من جديد.</string>
+    <string name="channel_backup_ok">تم حفظ النسخة</string>
+    <string name="channel_backup_failed">مشاكل النسخ الاحتياطي</string>
 </resources>

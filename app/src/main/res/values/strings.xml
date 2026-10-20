@@ -694,7 +694,7 @@
     <string name="bk_last">Last backup: %1$s</string>
     <string name="bk_never">No backup yet</string>
     <string name="bk_where_folder">Folder on this phone</string>
-    <string name="bk_sec_auto">Automatic weekly backup</string>
+    <string name="bk_sec_auto">Automatic backup</string>
     <string name="bk_folder">Folder on this phone</string>
     <string name="bk_folder_none">Not chosen yet</string>
     <string name="bk_folder_root">Top level of the storage</string>
@@ -711,7 +711,7 @@
     <string name="bk_delete">Delete all my data</string>
     <string name="bk_saved_title">Backup saved</string>
     <string name="bk_folder_set_title">Backup folder set</string>
-    <string name="bk_folder_set_body">Weekly backups go to %1$s.</string>
+    <string name="bk_folder_set_body">Backups go to %1$s.</string>
     <string name="bk_share_failed_title">Could not make the file</string>
     <string name="bk_share_failed_body">Try again in a moment. Your medicines are safe.</string>
     <string name="bk_failed_title">Backup did not finish</string>
@@ -765,4 +765,13 @@
     <string name="da_done_body">The app is empty. You can start again or restore a backup.</string>
     <string name="da_start">Start again</string>
     <string name="settings_backup">Backup and export</string>
+    <string name="bk_how_often">How often</string>
+    <string name="bk_daily">Daily</string>
+    <string name="bk_weekly">Weekly</string>
+    <string name="bk_notify">Tell me when it finishes</string>
+    <string name="bk_notify_sub">A notification says if the backup was saved or did not finish.</string>
+    <string name="bk_notif_saved">%1$s in %2$s</string>
+    <string name="bk_notif_folder">Pill Box cannot reach the backup folder. Open the app and choose a folder again.</string>
+    <string name="channel_backup_ok">Backup saved</string>
+    <string name="channel_backup_failed">Backup problems</string>
 </resources>

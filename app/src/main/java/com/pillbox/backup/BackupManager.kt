@@ -33,7 +33,7 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
     private suspend fun json(now: LocalDateTime) = BackupCodec.encode(repo.exportBackup(), now)
 
     /** Saves a backup into the chosen folder and records how it went. */
-    suspend fun backupNow(now: LocalDateTime = LocalDateTime.now()): Outcome = withContext(Dispatchers.IO) {
+    suspend fun backupNow(now: LocalDateTime = LocalDateTime.now(), automatic: Boolean = false): Outcome = withContext(Dispatchers.IO) {
         val s = settings.current()
         val outcome = try {
             val tree = Uri.parse(s.folderUri ?: return@withContext fail(now, BackupProblem.FOLDER_UNAVAILABLE))
@@ -51,6 +51,7 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
             is Outcome.Saved -> settings.update { it.copy(lastSuccessAt = now, lastProblem = null, lastProblemAt = null) }
             is Outcome.Failed -> settings.update { it.copy(lastProblem = outcome.problem, lastProblemAt = now) }
         }
+        if (automatic && s.notify) notify(outcome, s.folderLabel)
         outcome
     }
 
@@ -103,17 +104,57 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
         runCatching { resolver.takePersistableUriPermission(tree, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION) }
         val path = BackupFolders.path(DocumentsContract.getTreeDocumentId(tree))
         settings.update { it.copy(autoFolder = true, folderUri = tree.toString(), folderLabel = path, lastProblem = null, lastProblemAt = null) }
-        scheduleWeekly()
+        schedule(replace = true)
     }
 
     suspend fun setAuto(on: Boolean) {
         settings.update { it.copy(autoFolder = on) }
-        if (on) scheduleWeekly() else cancelWeekly()
+        if (on) schedule() else cancelWeekly()
     }
 
-    fun scheduleWeekly() {
-        val request = PeriodicWorkRequestBuilder<BackupWorker>(7, TimeUnit.DAYS).setConstraints(Constraints.NONE).build()
-        WorkManager.getInstance(context).enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request)
+    /** Starts the repeating job (daily or weekly). [replace] restarts it, for when the choice changed; otherwise a running job is left alone. */
+    suspend fun schedule(replace: Boolean = false) {
+        val days = settings.current().frequency.days
+        val request = PeriodicWorkRequestBuilder<BackupWorker>(days, TimeUnit.DAYS).setConstraints(Constraints.NONE).build()
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(WORK_NAME, if (replace) ExistingPeriodicWorkPolicy.UPDATE else ExistingPeriodicWorkPolicy.KEEP, request)
+    }
+
+    suspend fun setFrequency(f: com.pillbox.domain.BackupFrequency) {
+        settings.update { it.copy(frequency = f) }
+        if (settings.current().autoFolder) schedule(replace = true)
+    }
+
+    suspend fun setNotify(on: Boolean) { settings.update { it.copy(notify = on) } }
+
+    /** One quiet notification after an automatic backup: saved, or did not finish. Not sent when notifications are off. */
+    private fun notify(outcome: Outcome, folderLabel: String?) {
+        val nm = androidx.core.app.NotificationManagerCompat.from(context)
+        if (!nm.areNotificationsEnabled()) return
+        val failed = outcome is Outcome.Failed
+        val channel = if (failed) CHANNEL_FAILED else CHANNEL_OK
+        val system = context.getSystemService(android.app.NotificationManager::class.java)
+        system.createNotificationChannel(android.app.NotificationChannel(CHANNEL_OK, context.getString(com.pillbox.R.string.channel_backup_ok), android.app.NotificationManager.IMPORTANCE_LOW))
+        system.createNotificationChannel(android.app.NotificationChannel(CHANNEL_FAILED, context.getString(com.pillbox.R.string.channel_backup_failed), android.app.NotificationManager.IMPORTANCE_DEFAULT))
+        val title = context.getString(if (failed) com.pillbox.R.string.bk_failed_title else com.pillbox.R.string.bk_saved_title)
+        val text = when (outcome) {
+            is Outcome.Saved -> context.getString(com.pillbox.R.string.bk_notif_saved, outcome.fileName, folderLabel?.ifEmpty { null } ?: context.getString(com.pillbox.R.string.bk_folder_root))
+            is Outcome.Failed -> context.getString(when (outcome.problem) {
+                BackupProblem.NO_SPACE -> com.pillbox.R.string.bk_failed_space
+                BackupProblem.FOLDER_UNAVAILABLE -> com.pillbox.R.string.bk_notif_folder
+                BackupProblem.OTHER -> com.pillbox.R.string.bk_failed_other
+            })
+        }
+        val open = android.app.PendingIntent.getActivity(
+            context, NOTIFICATION_ID, android.content.Intent(context, com.pillbox.MainActivity::class.java).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE,
+        )
+        val n = androidx.core.app.NotificationCompat.Builder(context, channel)
+            .setSmallIcon(com.pillbox.R.drawable.ic_stat_pill).setContentTitle(title).setContentText(text)
+            .setStyle(androidx.core.app.NotificationCompat.BigTextStyle().bigText(text))
+            .setContentIntent(open).setAutoCancel(true)
+            .setCategory(androidx.core.app.NotificationCompat.CATEGORY_STATUS)
+            .build()
+        runCatching { nm.notify(NOTIFICATION_ID, n) }
     }
 
     fun cancelWeekly() { WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME) }
@@ -170,7 +211,10 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
 
     companion object {
         const val WORK_NAME = "weekly-backup"
-        const val KEEP = 4
+        const val KEEP = 7
+        const val CHANNEL_OK = "backup_ok"
+        const val CHANNEL_FAILED = "backup_failed"
+        const val NOTIFICATION_ID = 700_000_001
         const val MAX_BYTES = 64 * 1024 * 1024
     }
 }

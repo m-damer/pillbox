@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pillbox.R
+import com.pillbox.domain.BackupFrequency
 import com.pillbox.domain.BackupProblem
 import com.pillbox.domain.BackupSettings
 import com.pillbox.domain.BackupSummary
@@ -60,6 +61,7 @@ import com.pillbox.ui.components.LinkButton
 import com.pillbox.ui.components.MessageDialog
 import com.pillbox.ui.components.OutlineButton
 import com.pillbox.ui.components.PrimaryButton
+import com.pillbox.ui.components.Segmented
 import com.pillbox.ui.components.SwitchRow
 import com.pillbox.ui.components.ToastHost
 import com.pillbox.ui.components.showToast
@@ -123,7 +125,7 @@ fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onReport: () -> Unit, 
     } else {
         BackupContent(
             settings, fmt, LocalDate.now(), host, onBack,
-            onToggleAuto = vm::setAuto, onSaveNow = vm::saveNow, onReport = onReport, onShare = vm::share, onRestore = onRestore, onDelete = { confirmDelete = true },
+            onToggleAuto = vm::setAuto, onFrequency = vm::setFrequency, onNotify = vm::setNotify, onSaveNow = vm::saveNow, onReport = onReport, onShare = vm::share, onRestore = onRestore, onDelete = { confirmDelete = true },
             busy = state.busy,
         )
     }
@@ -149,7 +151,7 @@ internal fun whenText(at: LocalDateTime, today: LocalDate, fmt: Formatter): Stri
 fun BackupContent(
     s: BackupSettings, fmt: Formatter, today: LocalDate, host: SnackbarHostState, onBack: () -> Unit,
     onToggleAuto: (Boolean) -> Unit, onSaveNow: () -> Unit, onReport: () -> Unit, onShare: () -> Unit, onRestore: () -> Unit, onDelete: () -> Unit,
-    busy: Boolean = false,
+    busy: Boolean = false, onFrequency: (BackupFrequency) -> Unit = {}, onNotify: (Boolean) -> Unit = {},
 ) {
     val c = PillBox.colors
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -181,6 +183,16 @@ fun BackupContent(
                             else -> s.folderLabel?.ifEmpty { null } ?: stringResource(R.string.bk_folder_root)
                         }
                         SwitchRow(stringResource(R.string.bk_folder), s.autoFolder && s.hasFolder, onToggleAuto, subtitle = folder)
+                        RowDivider()
+                        Column(Modifier.fillMaxWidth().padding(horizontal = Space.S16, vertical = Space.S12), verticalArrangement = Arrangement.spacedBy(Space.S8)) {
+                            Text(stringResource(R.string.bk_how_often), style = MaterialTheme.typography.labelLarge, color = c.text)
+                            Segmented(
+                                listOf(stringResource(R.string.bk_daily), stringResource(R.string.bk_weekly)),
+                                BackupFrequency.entries.indexOf(s.frequency), { onFrequency(BackupFrequency.entries[it]) }, stackWhenLarge = true,
+                            )
+                        }
+                        RowDivider()
+                        SwitchRow(stringResource(R.string.bk_notify), s.notify, onNotify, subtitle = stringResource(R.string.bk_notify_sub))
                     }
                 }
                 Row(

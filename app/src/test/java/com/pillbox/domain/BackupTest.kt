@@ -92,3 +92,12 @@ class BackupFoldersTest {
     @Test fun aCardFolderKeepsItsName() = assertEquals("Backups", BackupFolders.path("1234-5678:Backups"))
     @Test fun anIdWithoutAColonHasNoPath() = assertEquals("", BackupFolders.path("weird"))
 }
+
+class BackupFrequencyTest {
+    @Test fun dailyIsOneDayAndWeeklyIsSeven() { assertEquals(1L, BackupFrequency.DAILY.days); assertEquals(7L, BackupFrequency.WEEKLY.days) }
+    @Test fun aNewSetupIsWeeklyAndTellsThePerson() {
+        val s = BackupSettings()
+        assertEquals(BackupFrequency.WEEKLY, s.frequency)
+        assertTrue(s.notify)
+    }
+}
