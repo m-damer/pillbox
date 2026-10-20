@@ -605,4 +605,54 @@
     <string name="theme_dark">داكن</string>
     <string name="toast_setting_saved_title">تم حفظ الإعداد</string>
     <string name="toast_setting_saved_body">يُطبَّق من الآن.</string>
+    <!-- Settings (M8b) -->
+    <string name="settings_sound">الصوت والتكرار</string>
+    <string name="settings_quiet">ساعات الهدوء</string>
+    <string name="settings_meals">أوقات الوجبات</string>
+    <string name="settings_off">متوقف</string>
+    <string name="settings_quiet_range">من %1$s إلى %2$s</string>
+    <plurals name="meals_count">
+        <item quantity="zero">%1$s وجبة</item><item quantity="one">وجبة واحدة</item><item quantity="two">وجبتان</item>
+        <item quantity="few">%1$s وجبات</item><item quantity="many">%1$s وجبة</item><item quantity="other">%1$s وجبة</item>
+    </plurals>
+    <string name="tone_gentle_bell">جرس هادئ</string>
+    <string name="tone_morning_chime">رنين الصباح</string>
+    <string name="tone_loud_alarm">منبه عالٍ</string>
+    <string name="sound_title">الصوت والتكرار</string>
+    <string name="sound_tone">نغمة التنبيه</string>
+    <string name="sound_vibration">الاهتزاز</string>
+    <string name="sound_unanswered">إذا لم أرد</string>
+    <string name="sound_repeat_every">ذكّرني مرة أخرى كل</string>
+    <string name="min_short">%1$s د</string>
+    <string name="sound_test">تشغيل صوت تجريبي</string>
+    <string name="sound_volume_note">يتبع الصوت أزرار مستوى الصوت في هاتفك.</string>
+    <string name="acc_keep">استمر في التنبيه حتى أرد</string>
+    <string name="acc_keep_sub">يتكرر كل %1$s</string>
+    <string name="acc_keep_off_sub">يرن مرة واحدة</string>
+    <string name="quiet_title">ساعات الهدوء</string>
+    <string name="quiet_use">استخدام ساعات الهدوء</string>
+    <string name="quiet_use_sub">صوت أخفض في الليل</string>
+    <string name="quiet_from">من</string>
+    <string name="quiet_until">إلى</string>
+    <string name="quiet_bar_a11y">هدوء من %1$s إلى %2$s</string>
+    <string name="quiet_dose_rings">تنبيهات الأدوية تبقى تعمل</string>
+    <string name="quiet_dose_rings_sub">لا تُكتم الجرعات أبداً</string>
+    <string name="quiet_mute_refill">كتم تنبيهات التجديد</string>
+    <string name="quiet_mute_refill_sub">خلال ساعات الهدوء فقط</string>
+    <string name="quiet_note">آمن افتراضياً: تنبيه الجرعة يرن دائماً، حتى في الليل.</string>
+    <string name="quiet_note_silent">ستكون تنبيهات الجرعات صامتة خلال ساعات الهدوء. وتبقى ظاهرة على الشاشة.</string>
+    <string name="meals_title">أوقات الوجبات</string>
+    <string name="meals_sub">تُستخدم لتنبيهات ما قبل الوجبة ومعها وبعدها</string>
+    <string name="meals_note">تبدأ إضافة الدواء بأوقات الجرعات عند هذه الوجبات. بعد الوجبة يعني بعدها بـ ٣٠ دقيقة، وقبلها بـ ٣٠ دقيقة.</string>
+    <string name="meal_breakfast">الفطور</string>
+    <string name="meal_lunch">الغداء</string>
+    <string name="meal_dinner">العشاء</string>
+    <string name="meal_bedtime">وقت النوم</string>
+    <string name="meal_breakfast_sub">أدوية الصباح</string>
+    <string name="meal_lunch_sub">أدوية بعد الظهر</string>
+    <string name="meal_dinner_sub">أدوية المساء</string>
+    <string name="meal_bedtime_sub">أدوية الليل</string>
+    <string name="meal_time_a11y">%1$s، %2$s. تغيير الوقت.</string>
+    <string name="channel_doses_quiet">تنبيهات الأدوية (ساعات الهدوء)</string>
+    <string name="channel_doses_quiet_desc">تنبيهات صامتة تُستخدم في ساعات الهدوء عندما تختار ألا ترن.</string>
 </resources>

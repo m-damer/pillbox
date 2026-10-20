@@ -34,7 +34,7 @@ import org.robolectric.annotation.GraphicsMode
 class SettingsScreenshotTest {
     @get:Rule val compose = createComposeRule()
 
-    private val state = SettingsUiState(loaded = true, refillDays = 5, people = 2)
+    private val state = SettingsUiState(loaded = true, refillDays = 5, people = 2, reminder = com.pillbox.domain.ReminderSettings(quiet = com.pillbox.domain.QuietHours(enabled = true)))
 
     @Test fun home_en() = shoot("home_en", "en") { SettingsContent(state, fmt(false), {}) }
     @Test fun home_en_dark_2x() = shoot("home_en_dark_2x", "en", ThemeMode.Dark, 2f) { SettingsContent(state, fmt(false), {}) }
@@ -51,6 +51,21 @@ class SettingsScreenshotTest {
     @Test fun language_en() = shoot("language_en", "en") { language("en") }
     @Test fun language_en_dark_2x() = shoot("language_en_dark_2x", "en", ThemeMode.Dark, 2f) { language("en") }
     @Config(qualifiers = "+ar-ldrtl") @Test fun language_ar() = shoot("language_ar", "ar") { language("ar") }
+
+    private val rem = com.pillbox.domain.ReminderSettings(quiet = com.pillbox.domain.QuietHours(enabled = true))
+
+    @Test fun sound_en() = shoot("sound_en", "en") { SoundContent(rem, fmt(false), {}, {}, {}, {}, {}) }
+    @Test fun sound_en_dark_2x() = shoot("sound_en_dark_2x", "en", ThemeMode.Dark, 2f) { SoundContent(rem, fmt(false), {}, {}, {}, {}, {}) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun sound_ar() = shoot("sound_ar", "ar") { SoundContent(rem, fmt(true), {}, {}, {}, {}, {}) }
+
+    @Test fun quiet_en() = shoot("quiet_en", "en") { QuietHoursContent(rem.quiet, fmt(false), {}, {}, {}, {}, {}, {}, {}) }
+    @Test fun quiet_en_dark_2x() = shoot("quiet_en_dark_2x", "en", ThemeMode.Dark, 2f) { QuietHoursContent(rem.quiet, fmt(false), {}, {}, {}, {}, {}, {}, {}) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun quiet_ar() = shoot("quiet_ar", "ar") { QuietHoursContent(rem.quiet, fmt(true), {}, {}, {}, {}, {}, {}, {}) }
+    @Test fun quiet_off_en() = shoot("quiet_off_en", "en") { QuietHoursContent(com.pillbox.domain.QuietHours(), fmt(false), {}, {}, {}, {}, {}, {}, {}) }
+
+    @Test fun meals_en() = shoot("meals_en", "en") { MealTimesContent(com.pillbox.domain.MealTimes(), fmt(false), {}, { _, _ -> }, {}) }
+    @Test fun meals_en_dark_2x() = shoot("meals_en_dark_2x", "en", ThemeMode.Dark, 2f) { MealTimesContent(com.pillbox.domain.MealTimes(), fmt(false), {}, { _, _ -> }, {}) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun meals_ar() = shoot("meals_ar", "ar") { MealTimesContent(com.pillbox.domain.MealTimes(), fmt(true), {}, { _, _ -> }, {}) }
 
     @Composable
     private fun language(code: String) = LanguageContent(code, code == "ar", TimeFormat.PHONE, DayOfWeek.SUNDAY, {}, {}, {}, {}, {}, {})

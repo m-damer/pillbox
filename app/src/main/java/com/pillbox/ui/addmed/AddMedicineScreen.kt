@@ -209,7 +209,7 @@ fun AddMedicineContent(
     }
 
     timeTarget?.let { target ->
-        val initial = if (target < 0) form.firstDose else form.times().getOrElse(target) { form.firstDose }
+        val initial = if (target < 0) form.firstTime() else form.times().getOrElse(target) { form.firstDose }
         PBTimePickerDialog(initial, fmt.is24Hour, onDismiss = { timeTarget = null }) { picked ->
             edit { f -> if (target < 0) f.withFirstDose(picked) else f.withDoseTime(target, picked) }
             timeTarget = null
@@ -354,7 +354,7 @@ private fun Step2(
         FreqChoice.ONCE, FreqChoice.TWICE, FreqChoice.THREE -> {
             val label = stringResource(if (form.freq == FreqChoice.ONCE) R.string.one_dose else R.string.first_dose)
             FieldLabel(label)
-            TimeCard(label, fmt.time(form.firstDose)) { openTimePicker(-1) }
+            TimeCard(label, fmt.time(form.firstTime())) { openTimePicker(-1) }
             if (form.freq == FreqChoice.ONCE) {
                 HelperText(stringResource(R.string.once_hint))
             } else {

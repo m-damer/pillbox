@@ -122,36 +122,45 @@ fun PBChip(label: String, selected: Boolean, onClick: () -> Unit, modifier: Modi
     }
 }
 
-/** Two to four options in one track, the selected one raised. */
+/**
+ * Two to four options in one track, the selected one raised. With [stackWhenLarge], big text puts the options under each
+ * other so a word never breaks in the middle.
+ */
 @Composable
-fun Segmented(options: List<String>, selectedIndex: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
+fun Segmented(options: List<String>, selectedIndex: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier, stackWhenLarge: Boolean = false) {
     val colors = PillBox.colors
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(colors.night, Dimens.ButtonShape)
-            .padding(Space.S4)
-            .selectableGroup(),
-        horizontalArrangement = Arrangement.spacedBy(Space.S4),
-    ) {
-        options.forEachIndexed { i, label ->
-            val selected = i == selectedIndex
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .heightIn(min = Dimens.TouchTargetMin)
-                    .background(if (selected) colors.card else Color.Transparent, Dimens.ButtonShape)
-                    .selectable(selected = selected, role = Role.RadioButton, onClick = { onSelect(i) })
-                    .padding(horizontal = Space.S8, vertical = Space.S8),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = if (selected) colors.primary else colors.nightText,
-                    textAlign = TextAlign.Center,
-                )
-            }
+    val stacked = stackWhenLarge && androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f
+    @Composable
+    fun Option(i: Int, label: String, m: Modifier) {
+        val selected = i == selectedIndex
+        Box(
+            modifier = m
+                .heightIn(min = Dimens.TouchTargetMin)
+                .background(if (selected) colors.card else Color.Transparent, Dimens.ButtonShape)
+                .selectable(selected = selected, role = Role.RadioButton, onClick = { onSelect(i) })
+                .padding(horizontal = Space.S8, vertical = Space.S8),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                label,
+                style = MaterialTheme.typography.labelMedium,
+                color = if (selected) colors.primary else colors.nightText,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+    val track = modifier
+        .fillMaxWidth()
+        .background(colors.night, if (stacked) MaterialTheme.shapes.large else Dimens.ButtonShape)
+        .padding(Space.S4)
+        .selectableGroup()
+    if (stacked) {
+        Column(track, verticalArrangement = Arrangement.spacedBy(Space.S4)) {
+            options.forEachIndexed { i, label -> Option(i, label, Modifier.fillMaxWidth()) }
+        }
+    } else {
+        Row(track, horizontalArrangement = Arrangement.spacedBy(Space.S4)) {
+            options.forEachIndexed { i, label -> Option(i, label, Modifier.weight(1f)) }
         }
     }
 }
