@@ -1,5 +1,8 @@
 package com.pillbox.ui.settings
 
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.runtime.CompositionLocalProvider
 import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -191,10 +194,11 @@ fun HighContrastPreviewContent(fmt: Formatter, on: Boolean, onBack: () -> Unit, 
             Text(stringResource(R.string.hc_preview_sub), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, modifier = Modifier.padding(horizontal = Space.S8, vertical = Space.S6))
             // A real Today with example doses, drawn with the high contrast colors. It is a picture: nothing in it reacts.
             Box(Modifier.fillMaxWidth().heightIn(max = Dimens.PreviewMaxHeight).clip(MaterialTheme.shapes.large).border(Dimens.ChipBorder, c.border, MaterialTheme.shapes.large)) {
+                // The picture always shows Today at normal size, so it matches the design whatever the text size is.
                 PillBoxTheme(mode = ThemeMode.Light, highContrast = true) {
-                    Box(Modifier.fillMaxWidth().heightIn(max = Dimens.PreviewMaxHeight).background(MaterialTheme.colorScheme.background).clearAndSetSemantics { }) {
+                    CompositionLocalProvider(LocalDensity provides Density(LocalDensity.current.density, 1f)) { Box(Modifier.fillMaxWidth().heightIn(max = Dimens.PreviewMaxHeight).background(MaterialTheme.colorScheme.background).clearAndSetSemantics { }) {
                         TodayContent(sampleToday(), fmt, onSelectDate = {}, onBackToToday = {}, onTake = {}, onSkip = {}, onAddMedicine = {})
-                    }
+                    } }
                 }
                 Box(Modifier.matchParentSize().pointerInput(Unit) { awaitEachGesture { awaitFirstDown().consume() } })
             }
