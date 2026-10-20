@@ -128,7 +128,7 @@ class BackupViewModel(
         try {
             when (val a = manager.driveClient.authorize()) {
                 is DriveClient.Auth.Ready -> finishConnect(a.email)
-                is DriveClient.Auth.NeedsConsent -> _events.trySend(BackupEvent.Consent(a.sender))
+                is DriveClient.Auth.NeedsConsent -> _events.trySend(BackupEvent.Consent(a.intentSender))
                 is DriveClient.Auth.Failed -> _events.trySend(BackupEvent.DriveFailed(a.problem))
             }
         } finally { busy.value = false }
@@ -179,7 +179,7 @@ class BackupViewModel(
         _restore.value = RestoreState.Checking
         when (val a = manager.driveClient.authorize()) {
             is DriveClient.Auth.Ready -> restoreFromDriveWith(a.token)
-            is DriveClient.Auth.NeedsConsent -> _events.trySend(BackupEvent.Consent(a.sender))
+            is DriveClient.Auth.NeedsConsent -> _events.trySend(BackupEvent.Consent(a.intentSender))
             is DriveClient.Auth.Failed -> _restore.value = if (a.problem == DriveProblem.NO_INTERNET) RestoreState.DriveOffline else RestoreState.Failed
         }
     }
