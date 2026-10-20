@@ -24,6 +24,7 @@ class PillBoxApp : Application() {
     val refillSettings: RefillSettingsStore by lazy { RefillSettingsStore(this) }
     val displaySettings: DisplaySettingsStore by lazy { DisplaySettingsStore(this) }
     val reminderSettings: ReminderSettingsStore by lazy { ReminderSettingsStore(this) }
+    val widgetSettings: com.pillbox.data.WidgetSettingsStore by lazy { com.pillbox.data.WidgetSettingsStore(this) }
     val backups: BackupManager by lazy { BackupManager(this, repository, BackupSettingsStore(this)) }
     val reminders: Reminders by lazy { Reminders(this, repository, refillSettings) }
 

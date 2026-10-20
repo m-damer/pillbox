@@ -932,4 +932,45 @@
     <string name="cr_body">هل تريد إرسال تقرير إلى المطوّر ليصلح المشكلة؟ التطبيق يعمل بدون إنترنت، فيفتح تطبيق البريد والتقرير جاهز. اضغط إرسال هناك. يحتوي التقرير نص الخطأ وإصدار التطبيق وطراز الهاتف فقط، وليس أدويتك أبداً.</string>
     <string name="cr_open_mail">افتح تطبيق البريد</string>
     <string name="cr_skip">لا ترسل</string>
+    <!-- M11 Widget -->
+    <string name="w_description">تعرض جرعتك التالية وتتيح لك تسجيلها كمأخوذة.</string>
+    <string name="w_title">الجرعة التالية</string>
+    <string name="w_late_title">جرعة متأخرة</string>
+    <string name="w_in">بعد %1$s</string>
+    <string name="w_now">الآن</string>
+    <string name="w_late_by">متأخرة %1$s</string>
+    <string name="w_min">%1$s د</string>
+    <string name="w_h">%1$s س</string>
+    <string name="w_h_min">%1$s س %2$s د</string>
+    <string name="w_take_all">أخذتها كلها</string>
+    <string name="w_taken">تم تسجيلها كمأخوذة</string>
+    <string name="w_done">انتهت جرعات اليوم</string>
+    <string name="w_none">لا جرعات اليوم</string>
+    <string name="w_next_tomorrow">التالية: غداً، %1$s</string>
+    <string name="w_next_at">التالية: %1$s</string>
+    <string name="w_error">تعذّر تحميل علبة الدواء. المس للفتح.</string>
+    <string name="w_next_a11y">الجرعة التالية الساعة %1$s</string>
+    <plurals name="w_more">
+        <item quantity="zero">+%1$s أخرى</item><item quantity="one">+١ أخرى</item><item quantity="two">+٢ أخريان</item>
+        <item quantity="few">+%1$s أخرى</item><item quantity="many">+%1$s أخرى</item><item quantity="other">+%1$s أخرى</item>
+    </plurals>
+    <plurals name="w_n_medicines">
+        <item quantity="zero">%1$s دواء</item><item quantity="one">دواء واحد</item><item quantity="two">دواءان</item>
+        <item quantity="few">%1$s أدوية</item><item quantity="many">%1$s دواءً</item><item quantity="other">%1$s دواء</item>
+    </plurals>
+    <string name="w_cfg_title">إعدادات الأداة</string>
+    <string name="w_cfg_sub">اختر ما تعرضه الأداة</string>
+    <string name="w_cfg_size">الحجم</string>
+    <string name="w_small">صغير</string>
+    <string name="w_medium">متوسط</string>
+    <string name="w_large">كبير</string>
+    <string name="w_cfg_person">الشخص</string>
+    <string name="w_cfg_names">إظهار أسماء الأدوية</string>
+    <string name="w_cfg_names_sub">أوقف لعرض الوقت فقط</string>
+    <string name="w_cfg_take">زر أخذتها كلها</string>
+    <string name="w_cfg_take_sub">يسجل الجرعات القادمة كمأخوذة</string>
+    <string name="w_cfg_note">الأخذ من الأداة يعرض تأكيداً قصيراً ويمكن التراجع عنه من شاشة اليوم.</string>
+    <string name="w_cfg_save">حفظ</string>
+    <string name="w_saved_title">تم تحديث الأداة</string>
+    <string name="w_saved_body">تظهر التغييرات على شاشتك الرئيسية.</string>
 </resources>

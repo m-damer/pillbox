@@ -877,4 +877,39 @@
     <string name="cr_body">Do you want to send a report to the developer so he can fix it? Pill Box has no internet, so your email app opens with the report ready. Press Send there. The report has only the error text, app version and phone model, never your medicines.</string>
     <string name="cr_open_mail">Open email app</string>
     <string name="cr_skip">Do not send</string>
+    <!-- M11 Widget -->
+    <string name="w_description">Shows your next dose and lets you mark it as taken.</string>
+    <string name="w_title">Next dose</string>
+    <string name="w_late_title">Late dose</string>
+    <string name="w_in">in %1$s</string>
+    <string name="w_now">Now</string>
+    <string name="w_late_by">%1$s late</string>
+    <string name="w_min">%1$s min</string>
+    <string name="w_h">%1$s h</string>
+    <string name="w_h_min">%1$s h %2$s min</string>
+    <string name="w_take_all">Take all</string>
+    <string name="w_taken">Marked as taken</string>
+    <string name="w_done">All done for today</string>
+    <string name="w_none">No doses today</string>
+    <string name="w_next_tomorrow">Next: tomorrow, %1$s</string>
+    <string name="w_next_at">Next: %1$s</string>
+    <string name="w_error">Pill Box could not load. Tap to open.</string>
+    <string name="w_next_a11y">Next dose at %1$s</string>
+    <plurals name="w_more"><item quantity="one">+%1$s more</item><item quantity="other">+%1$s more</item></plurals>
+    <plurals name="w_n_medicines"><item quantity="one">%1$s medicine</item><item quantity="other">%1$s medicines</item></plurals>
+    <string name="w_cfg_title">Widget settings</string>
+    <string name="w_cfg_sub">Choose what the widget shows</string>
+    <string name="w_cfg_size">Size</string>
+    <string name="w_small">Small</string>
+    <string name="w_medium">Medium</string>
+    <string name="w_large">Large</string>
+    <string name="w_cfg_person">Person</string>
+    <string name="w_cfg_names">Show medicine names</string>
+    <string name="w_cfg_names_sub">Turn off to show only the time</string>
+    <string name="w_cfg_take">Take all button</string>
+    <string name="w_cfg_take_sub">Marks the next doses as taken</string>
+    <string name="w_cfg_note">Taking from the widget shows a short confirmation and can be undone from Today.</string>
+    <string name="w_cfg_save">Save</string>
+    <string name="w_saved_title">Widget updated</string>
+    <string name="w_saved_body">The changes show on your home screen.</string>
 </resources>

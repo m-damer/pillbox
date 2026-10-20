@@ -112,6 +112,8 @@ class Reminders(
         val next = ReminderPlanner.nextDue(items(), now)
         if (next == null) cancel(Kind.DUE, null) else schedule(Kind.DUE, next, next, 0)
         rearmRefill(now)
+        // The home screen widget shows the next dose, so it is redrawn whenever the plan changes.
+        com.pillbox.widget.PillBoxWidget.refresh(context)
     }
 
     // ---------------------------------------------------------------- refill alerts

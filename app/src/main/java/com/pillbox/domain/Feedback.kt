@@ -2,7 +2,7 @@ package com.pillbox.domain
 
 /** Where feedback, ratings and crash reports are addressed. One place, so it is easy to change. */
 object Contact {
-    const val DEVELOPER_EMAIL = "CHANGE_ME@example.com"
+    const val DEVELOPER_EMAIL = "damermahmoud@gmail.com"
     /** Link to the app in the store, added to "Share the app" once the app is published. Empty until then. */
     const val STORE_URL = ""
 }
