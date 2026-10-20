@@ -22,10 +22,10 @@ data class HistoryUiState(
     val history: History? = null,
 )
 
-/** The History screen: the last 30 days of the "Me" profile. */
+/** The History screen: the last 30 days of the person on screen. */
 @OptIn(ExperimentalCoroutinesApi::class)
 class HistoryViewModel(repo: PillBoxRepository, meName: String) : ViewModel() {
-    val state: StateFlow<HistoryUiState> = flow { emit(repo.ensureMe(meName)) }
+    val state: StateFlow<HistoryUiState> = flow { emit(repo.activePerson(meName)) }
         .flatMapLatest { me ->
             val now = LocalDateTime.now()
             val start = now.toLocalDate().minusDays((HistoryBuilder.DEFAULT_DAYS - 1).toLong())

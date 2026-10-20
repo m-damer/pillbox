@@ -72,7 +72,10 @@ class Reminders(
     // ---------------------------------------------------------------- data
 
     private suspend fun items(): List<Triple<Medicine, Schedule, List<Pause>>> =
-        repo.allActiveWithSchedules().mapNotNull { m -> m.schedule?.let { Triple(m.medicine, it, m.pauses) } }
+        repo.allActiveRinging().mapNotNull { m -> m.schedule?.let { Triple(m.medicine, it, m.pauses) } }
+
+    /** Names of the people other than me, for "For Mom" on the reminder screen. */
+    suspend fun owners(): Map<Long, String> = repo.otherPeopleNames()
 
     /** Doses waiting at [at], from the database right now. */
     suspend fun pendingRows(at: LocalDateTime): List<DoseRow> {
@@ -271,11 +274,16 @@ class Reminders(
     }
 
     @SuppressLint("MissingPermission")
-    private fun show(rows: List<DoseRow>, at: LocalDateTime) {
+    private suspend fun show(rows: List<DoseRow>, at: LocalDateTime) {
+        val owners = repo.otherPeopleNames()
         val nm = notificationManager()
         if (!nm.areNotificationsEnabled()) return
         val title = context.getString(R.string.notif_title, context.getString(blockNameRes(blockOf(at.toLocalTime()))))
-        val text = rows.joinToString(" · ") { r -> r.medicine.name + (com.pillbox.ui.localizedStrength(r.medicine.strength, context.resources)?.let { " $it" } ?: "") }
+        // A dose for someone I care for says whose it is, so the wrong person never gets it.
+        val text = rows.joinToString(" · ") { r ->
+            val line = r.medicine.name + (com.pillbox.ui.localizedStrength(r.medicine.strength, context.resources)?.let { " $it" } ?: "")
+            owners[r.medicine.personId]?.let { context.getString(R.string.notif_dose_for, it, line) } ?: line
+        }
         val builder = NotificationCompat.Builder(context, CHANNEL_DOSES)
             .setSmallIcon(R.drawable.ic_stat_pill)
             .setContentTitle(title)

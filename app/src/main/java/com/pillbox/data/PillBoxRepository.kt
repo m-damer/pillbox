@@ -12,6 +12,12 @@ import com.pillbox.domain.ScheduleEngine
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
@@ -32,11 +38,55 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
 
     suspend fun myPersonId(): Long? = db.persons().me()?.id
 
-    suspend fun addPerson(person: Person): Long = db.persons().insert(Mappers.toEntity(person.copy(id = 0)))
+    /** Whose medicines the Today, Medicines, History and Report screens show. Null (or a removed person) means "me". */
+    private val activeId = MutableStateFlow<Long?>(null)
+    val activePersonId: StateFlow<Long?> = activeId
+
+    fun selectPerson(id: Long?) { activeId.value = id }
+
+    /** The person on screen now, and again whenever they are edited or the selection changes. */
+    fun observeActivePerson(meName: String): Flow<Person> = flow {
+        ensureMe(meName)
+        emitAll(
+            combine(observePeople(), activeId) { people, id -> people.firstOrNull { it.id == id } ?: people.first { it.isMe } }.distinctUntilChanged(),
+        )
+    }
+
+    /** One-shot version of [observeActivePerson], for saving a new medicine for whoever is on screen. */
+    suspend fun activePerson(meName: String): Person {
+        val me = ensureMe(meName)
+        val id = activeId.value ?: return me
+        return db.persons().get(id)?.let(Mappers::toDomain) ?: me
+    }
+
+    /** Names of the people other than me, by id, for labeling reminders. Empty when I am the only person. */
+    suspend fun otherPeopleNames(): Map<Long, String> = observePeople().first().filter { !it.isMe }.associate { it.id to it.name }
+
+    suspend fun getPerson(id: Long): Person? = db.persons().get(id)?.let(Mappers::toDomain)
+
+    suspend fun addPerson(person: Person): Long = db.withTransaction {
+        val next = (db.persons().observeAll().first().maxOfOrNull { it.sortOrder } ?: 0) + 1
+        db.persons().insert(Mappers.toEntity(person.copy(id = 0, sortOrder = next)))
+    }
+
+    /** Doses of the people whose reminders are off must not ring, so alarms use this list instead of every medicine. */
+    suspend fun allActiveRinging(): List<MedicineWithSchedule> {
+        val silent = db.persons().silentIds().toSet()
+        return allActiveWithSchedules().filter { it.medicine.personId !in silent }
+    }
+
+    /** Turns reminders for every person but me on or off at once. */
+    suspend fun setRingForOthers(ring: Boolean) {
+        observePeople().first().filter { !it.isMe && it.ring != ring }.forEach { updatePerson(it.copy(ring = ring)) }
+    }
     suspend fun updatePerson(person: Person) = db.persons().update(Mappers.toEntity(person))
 
     /** Removing a person removes their medicines, schedules and history (cascade). The UI must warn first. */
-    suspend fun removePerson(person: Person) { if (!person.isMe) db.persons().delete(Mappers.toEntity(person)) }
+    suspend fun removePerson(person: Person) {
+        if (person.isMe) return
+        db.persons().delete(Mappers.toEntity(person))
+        if (activeId.value == person.id) activeId.value = null
+    }
 
     // ---- medicines ----
     suspend fun addMedicine(medicine: Medicine, schedule: Schedule): Long = db.withTransaction {

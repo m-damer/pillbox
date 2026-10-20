@@ -62,7 +62,23 @@ data class Schedule(
 
 enum class MedicineStatus { ACTIVE, STOPPED, FINISHED }
 
-data class Person(val id: Long = 0, val name: String, val isMe: Boolean = false, val sortOrder: Int = 0)
+/** Who a person is to the user, for the "Who is this?" chips. ME is the owner of the phone. */
+enum class Relation { ME, PARENT, CHILD, PARTNER, OTHER }
+
+/**
+ * [colorIndex] picks an avatar color (see PeopleRules.COLORS). [ring] is whether this person's doses ring on this phone.
+ * [birthYear] is optional and only the owner's is used (shown on the doctor report next to the name).
+ */
+data class Person(
+    val id: Long = 0,
+    val name: String,
+    val isMe: Boolean = false,
+    val sortOrder: Int = 0,
+    val relation: Relation = if (isMe) Relation.ME else Relation.OTHER,
+    val colorIndex: Int = 0,
+    val ring: Boolean = true,
+    val birthYear: Int? = null,
+)
 
 /** [packSize] is tablets (or doses) per box, used by Add stock. Frequency details live in [Schedule]. */
 data class Medicine(

@@ -77,6 +77,7 @@ fun MedicinesScreen(
     onToastShown: () -> Unit,
     modifier: Modifier = Modifier,
     onRefillAlert: () -> Unit = {},
+    people: com.pillbox.ui.people.PeopleBar? = null,
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
@@ -88,7 +89,7 @@ fun MedicinesScreen(
         }
     }
     Box(modifier.fillMaxSize()) {
-        MedicinesContent(state, fmt, showFinished, onShowFinished, onOpen, onAddMedicine, onRefillAlert = onRefillAlert)
+        MedicinesContent(state, fmt, showFinished, onShowFinished, onOpen, onAddMedicine, onRefillAlert = onRefillAlert, people = people)
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
 }
@@ -103,18 +104,22 @@ fun MedicinesContent(
     onAddMedicine: () -> Unit,
     modifier: Modifier = Modifier,
     onRefillAlert: () -> Unit = {},
+    people: com.pillbox.ui.people.PeopleBar? = null,
 ) {
     val c = PillBox.colors
     Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        Column(Modifier.padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) {
-            Text(
-                stringResource(R.string.medicines_title), style = MaterialTheme.typography.titleLarge, color = c.text,
-                modifier = Modifier.semantics { heading() },
-            )
-            Text(
-                if (state.pausedCount > 0) stringResource(R.string.meds_sub_paused, fmt.number(state.active.size - state.pausedCount), fmt.number(state.pausedCount))
-                else stringResource(R.string.meds_sub, fmt.number(state.active.size)),
-                style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+        Row(Modifier.fillMaxWidth().padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12), horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.medicines_title), style = MaterialTheme.typography.titleLarge, color = c.text,
+                    modifier = Modifier.semantics { heading() },
+                )
+                Text(
+                    if (state.pausedCount > 0) stringResource(R.string.meds_sub_paused, fmt.number(state.active.size - state.pausedCount), fmt.number(state.pausedCount))
+                    else stringResource(R.string.meds_sub, fmt.number(state.active.size)),
+                    style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+            }
+            com.pillbox.ui.people.PeopleBarSwitcher(people)
         }
         Segmented(
             options = listOf(stringResource(R.string.tab_active), stringResource(R.string.tab_finished)),

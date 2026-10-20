@@ -46,6 +46,8 @@ fun ReminderScreen(
     onSkipAll: () -> Unit,
     onSnooze: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Names of the people other than me, by person id; a dose of theirs shows "For Mom" above the medicine. */
+    owners: Map<Long, String> = emptyMap(),
 ) {
     val c = PillBox.colors
     val block = stringResource(Reminders.blockNameRes(blockOf(at.toLocalTime())))
@@ -72,6 +74,7 @@ fun ReminderScreen(
                 Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S12),
                 verticalArrangement = Arrangement.spacedBy(Space.S8),
             ) {
+                owners[med.personId]?.let { Text(stringResource(R.string.reminder_for, it), style = MaterialTheme.typography.labelLarge, color = c.accent) }
                 Text(med.name + (com.pillbox.ui.strengthLabel(med.strength)?.let { " $it" } ?: ""), style = MaterialTheme.typography.titleMedium, color = c.text)
                 Text(line, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
