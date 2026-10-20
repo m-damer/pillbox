@@ -71,7 +71,7 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
             resolver.query(
                 DocumentsContract.buildChildDocumentsUriUsingTree(tree, treeId),
                 arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_DISPLAY_NAME), null, null, null,
-            )?.use { c -> buildList { while (c.moveToNext()) add(c.getString(0) to c.getString(1)) } } ?: throw FolderGone()
+            )?.use { c -> buildList<Pair<String, String>> { while (c.moveToNext()) add(c.getString(0) to c.getString(1)) } } ?: throw FolderGone()
         } catch (e: IllegalArgumentException) {
             throw FolderGone()
         }
