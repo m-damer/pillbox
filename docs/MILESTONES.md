@@ -7,10 +7,10 @@
 - [x] M3 Today screen (Take, Skip with reason, Undo, past and future days, empty and paused states)
 - [x] M4 Reminders: exact alarms, channels, notification with 3 actions, full-screen reminder, permissions screens, re-arm on boot/update/time change (quiet hours move to M8 Settings)
 - [x] M5 Medicine detail, edit, pause/resume, stop/restart, stock and refill alerts (refill alert settings and daily notification: M5f)
-- [ ] M6 History and doctor report PDF
-- [ ] M7 People
-- [ ] M8 Settings: language, dark, 24-hour, accessibility (large text, high contrast, simple mode), meal times, late-dose setting
-- [ ] M9 Backup and restore (weekly to folder, optional Google Drive, restore checks, delete all)
-- [ ] M10 Feedback, rating, crash-report prompt (email intents), privacy policy, about
+- [x] M6 History and doctor report PDF
+- [x] M7 People
+- [x] M8 Settings: language, dark, 24-hour, accessibility (large text, high contrast, simple mode), meal times, late-dose setting
+- [x] M9 Backup and restore (weekly to folder, optional Google Drive, restore checks, delete all)
+- [x] M10 Feedback, rating, crash-report prompt (email intents), privacy policy, about
 - [ ] M11 Widget
 - [ ] M12 Large-text and TalkBack polish; test on real phones

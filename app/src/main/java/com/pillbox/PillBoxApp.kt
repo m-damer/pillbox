@@ -29,6 +29,7 @@ class PillBoxApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        CrashReporter.install(this)
         // A small read, done once before any screen exists, so the first frame already has the right language and digits.
         DisplayState.current = runBlocking { displaySettings.flow.first() }
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch { displaySettings.flow.collect { DisplayState.current = it } }

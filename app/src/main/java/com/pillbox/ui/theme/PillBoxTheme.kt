@@ -25,7 +25,7 @@ data class PillBoxColors(
     val primary: Color, val onPrimary: Color, val accent: Color, val primaryContainer: Color,
     val divider: Color, val border: Color, val placeholder: Color,
     val success: Color, val successContainer: Color,
-    val warning: Color, val warningContainer: Color,
+    val warning: Color, val warningContainer: Color, val star: Color,
     val danger: Color, val dangerContainer: Color,
     val morning: Color, val morningText: Color, val noon: Color, val noonText: Color,
     val evening: Color, val eveningText: Color, val night: Color, val nightText: Color,
@@ -50,6 +50,7 @@ val LightColors = PillBoxColors(
     successContainer = c(0xFFE3F4E8),
     warning = c(0xFF6B4200),
     warningContainer = c(0xFFFFF1D6),
+    star = c(0xFFB86E00),
     danger = c(0xFFB42318),
     dangerContainer = c(0xFFFFE4E0),
     morning = c(0xFFE3F4E8),
@@ -79,6 +80,7 @@ val DarkColors = PillBoxColors(
     successContainer = c(0xFF17382A),
     warning = c(0xFFFFD28A),
     warningContainer = c(0xFF3D2D0A),
+    star = c(0xFFFFC53D),
     danger = c(0xFFFF8A7A),
     dangerContainer = c(0xFF4A1F1B),
     morning = c(0xFF17382A),
@@ -108,6 +110,7 @@ val HighContrastColors = PillBoxColors(
     successContainer = c(0xFFE3F4E8),
     warning = c(0xFF6B4200),
     warningContainer = c(0xFFFFF1D6),
+    star = c(0xFF6B4200),
     danger = c(0xFFB42318),
     dangerContainer = c(0xFFFFE4E0),
     morning = c(0xFFFFFFFF),
@@ -180,6 +183,8 @@ object Dimens {
     val SwitchWidth = 52.dp; val SwitchHeight = 32.dp
     val ButtonShape = RoundedCornerShape(percent = 50)
     val LogoSize = 128.dp
+    val LogoSmall = 72.dp
+    val StarSize = 40.dp
     val StepperButton = 56.dp
     val ChipBorder = 2.dp
 }
