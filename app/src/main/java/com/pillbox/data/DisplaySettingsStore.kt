@@ -27,6 +27,9 @@ class DisplaySettingsStore(private val context: Context) {
     private val theme = stringPreferencesKey("theme")
     private val textSize = stringPreferencesKey("text_size")
     private val highContrast = booleanPreferencesKey("high_contrast")
+    private val simpleMode = booleanPreferencesKey("simple_mode")
+    private val simpleOnlyTabs = booleanPreferencesKey("simple_only_tabs")
+    private val simpleLargeText = booleanPreferencesKey("simple_large_text")
 
     val flow: Flow<DisplaySettings> = context.displayStore.data.map(::read)
 
@@ -44,6 +47,9 @@ class DisplaySettingsStore(private val context: Context) {
         theme = enumOr(p[theme], ThemeChoice.SYSTEM),
         textSize = enumOr(p[textSize], TextSize.STANDARD),
         highContrast = p[highContrast] ?: false,
+        simpleMode = p[simpleMode] ?: false,
+        simpleOnlyTabs = p[simpleOnlyTabs] ?: true,
+        simpleLargeText = p[simpleLargeText] ?: true,
     )
 
     private fun write(p: androidx.datastore.preferences.core.MutablePreferences, s: DisplaySettings) {
@@ -54,6 +60,9 @@ class DisplaySettingsStore(private val context: Context) {
         p[theme] = s.theme.name
         p[textSize] = s.textSize.name
         p[highContrast] = s.highContrast
+        p[simpleMode] = s.simpleMode
+        p[simpleOnlyTabs] = s.simpleOnlyTabs
+        p[simpleLargeText] = s.simpleLargeText
     }
 
     private inline fun <reified E : Enum<E>> enumOr(name: String?, default: E): E =

@@ -647,4 +647,43 @@
     <string name="late_threshold_caption">A dose counts as late after</string>
     <string name="late_threshold_hour">1 hour</string>
     <string name="late_setting_note">Medicines that need a set gap, such as every 8 hours, always ask you first.</string>
+    <!-- M8c -->
+    <string name="tts_time_to_take">Time to take %1$s.</string>
+    <string name="test_notif_title">Test reminder</string>
+    <string name="test_notif_text">If you can see and hear this, your dose reminders will work.</string>
+    <string name="test_tts_name">your medicine</string>
+    <string name="settings_sec_help">Help</string>
+    <string name="settings_ring">Reminders not ringing?</string>
+    <plurals name="settings_ring_fix"><item quantity="one">%1$s to fix</item><item quantity="other">%1$s to fix</item></plurals>
+    <string name="settings_ring_ok">All good</string>
+    <string name="ring_title">Reminders not ringing?</string>
+    <plurals name="ring_banner_fix"><item quantity="one">%1$s thing to fix so no dose is missed.</item><item quantity="other">%1$s things to fix so no dose is missed.</item></plurals>
+    <string name="ring_banner_ok">Everything is set. Reminders should ring on time.</string>
+    <string name="ring_notif">Notifications</string>
+    <string name="ring_notif_sub">Needed to show reminders</string>
+    <string name="ring_exact">Exact alarms</string>
+    <string name="ring_exact_sub">Rings at the right minute</string>
+    <string name="ring_battery">Battery saver</string>
+    <string name="ring_battery_sub">Phone may stop the app at night</string>
+    <string name="ring_dnd">Do Not Disturb</string>
+    <string name="ring_dnd_sub">Let dose reminders through</string>
+    <string name="ring_fix">Fix</string>
+    <string name="ring_fix_desc">Fix %1$s</string>
+    <string name="ring_test">Send a test reminder</string>
+    <string name="ring_done">Done</string>
+    <string name="acc_simple">Simple mode</string>
+    <string name="acc_simple_sub">Fewer places to go, bigger text</string>
+    <string name="acc_read">Read reminders aloud</string>
+    <string name="acc_read_sub">Says the medicine name when it rings</string>
+    <string name="acc_simple_row_sub">Big buttons, fewer choices</string>
+    <string name="acc_hc_preview">High contrast preview</string>
+    <string name="acc_hc_preview_sub">See how Today looks</string>
+    <string name="simple_title">Simple mode</string>
+    <string name="simple_tabs">Show only Today and Settings</string>
+    <string name="simple_large">Extra large text</string>
+    <string name="simple_hc_sub">Black text on white, thick borders</string>
+    <string name="simple_note">You can turn Simple mode off any time here.</string>
+    <string name="hc_preview_title">High contrast preview</string>
+    <string name="hc_preview_sub">This is how Today looks with high contrast.</string>
+    <string name="hc_preview_use">Use high contrast</string>
 </resources>

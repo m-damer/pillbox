@@ -102,7 +102,7 @@ internal fun Note(text: String) {
 
 /** Text size, high contrast and the way to the dark theme choice. Every change applies at once and shows a toast. */
 @Composable
-fun AccessibilityScreen(vm: SettingsViewModel, onBack: () -> Unit, onOpenTheme: () -> Unit) {
+fun AccessibilityScreen(vm: SettingsViewModel, onBack: () -> Unit, onOpenTheme: () -> Unit, onOpenSimple: () -> Unit = {}, onOpenPreview: () -> Unit = {}) {
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     val savedTitle = stringResource(R.string.toast_setting_saved_title)
@@ -115,6 +115,8 @@ fun AccessibilityScreen(vm: SettingsViewModel, onBack: () -> Unit, onOpenTheme: 
             state.display, onBack, onOpenTheme,
             onTextSize = { vm.setTextSize(it); changes++ }, onHighContrast = { vm.setHighContrast(it); changes++ },
             reminder = state.reminder, onKeepRinging = { vm.setKeepRinging(it); changes++ },
+            onSimple = { vm.setSimple(it); changes++ }, onReadAloud = { vm.setReadAloud(it); changes++ },
+            onOpenSimple = onOpenSimple, onOpenPreview = onOpenPreview,
         )
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
@@ -129,6 +131,10 @@ fun AccessibilityContent(
     onHighContrast: (Boolean) -> Unit,
     reminder: com.pillbox.domain.ReminderSettings = com.pillbox.domain.ReminderSettings(),
     onKeepRinging: (Boolean) -> Unit = {},
+    onSimple: (Boolean) -> Unit = {},
+    onReadAloud: (Boolean) -> Unit = {},
+    onOpenSimple: () -> Unit = {},
+    onOpenPreview: () -> Unit = {},
 ) {
     val c = PillBox.colors
     val fmt = com.pillbox.ui.rememberFormatter()
@@ -153,8 +159,8 @@ fun AccessibilityContent(
             }
             Card {
                 SwitchRow(stringResource(R.string.acc_high_contrast), display.highContrast, onHighContrast, subtitle = stringResource(R.string.acc_high_contrast_sub))
-            }
-            Card {
+                SwitchRow(stringResource(R.string.acc_simple), display.simpleMode, onSimple, subtitle = stringResource(R.string.acc_simple_sub))
+                SwitchRow(stringResource(R.string.acc_read), reminder.readAloud, onReadAloud, subtitle = stringResource(R.string.acc_read_sub))
                 SwitchRow(
                     stringResource(R.string.acc_keep), reminder.keepRinging, onKeepRinging,
                     subtitle = if (reminder.keepRinging) stringResource(R.string.acc_keep_sub, androidx.compose.ui.res.pluralStringResource(R.plurals.n_minutes, reminder.repeatMinutes, fmt.number(reminder.repeatMinutes)))
@@ -162,6 +168,8 @@ fun AccessibilityContent(
                 )
             }
             Card {
+                NavRow(stringResource(R.string.acc_simple), stringResource(R.string.acc_simple_row_sub), null, onOpenSimple)
+                NavRow(stringResource(R.string.acc_hc_preview), stringResource(R.string.acc_hc_preview_sub), null, onOpenPreview)
                 val value = stringResource(themeName(display.theme))
                 val desc = stringResource(R.string.settings_row_a11y, stringResource(R.string.acc_dark), value)
                 Row(
@@ -182,6 +190,28 @@ fun AccessibilityContent(
             }
             Box(Modifier.size(96.dp))
         }
+    }
+}
+
+/** A row that opens another screen: title, a line under it, an optional value and the arrow. */
+@Composable
+internal fun NavRow(title: String, subtitle: String, value: String?, onClick: () -> Unit) {
+    val c = PillBox.colors
+    val desc = if (value != null) stringResource(R.string.settings_row_a11y, title, value) else "$title. $subtitle"
+    Row(
+        Modifier
+            .fillMaxWidth().heightIn(min = Dimens.SettingsRowMinHeight)
+            .clickable(role = Role.Button, onClick = onClick)
+            .semantics(mergeDescendants = true) { contentDescription = desc }
+            .padding(horizontal = Space.S16, vertical = Space.S8),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.labelLarge, color = c.text)
+            Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+        }
+        if (value != null) Text(value, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.textMuted)
     }
 }
 

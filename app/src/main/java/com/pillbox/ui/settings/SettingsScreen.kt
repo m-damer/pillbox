@@ -54,24 +54,24 @@ import com.pillbox.ui.theme.Space
 import com.pillbox.ui.theme.illustration
 
 /** Where a Settings row leads. */
-enum class SettingsTarget { SOUND, REFILL, QUIET, MEALS, LATE, ACCESSIBILITY, LANGUAGE, PEOPLE }
+enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, LANGUAGE, PEOPLE }
 
 @Composable
-fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier) {
+fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0) {
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     LaunchedEffect(toast) {
         if (toast != null) { snackbar.showToast(toast.title, toast.body); onToastShown() }
     }
     Box(modifier.fillMaxSize()) {
-        SettingsContent(state, rememberFormatter(), onOpen)
+        SettingsContent(state, rememberFormatter(), onOpen, ringingIssues)
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
 }
 
 /** The Settings home without a ViewModel, so screenshots can draw it. Only the rows that lead somewhere are shown. */
 @Composable
-fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTarget) -> Unit) {
+fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTarget) -> Unit, ringingIssues: Int = 0) {
     val c = PillBox.colors
     val tints = PillBox.illustration.avatars
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -80,6 +80,16 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
             Section(stringResource(R.string.settings_sec_reminders))
             Group {
                 SettingsRow(stringResource(R.string.settings_sound), stringResource(toneName(state.reminder.tone)), tints[0], { RowGlyph("♪", large = true) }, { onOpen(SettingsTarget.SOUND) })
+                Divider()
+                SettingsRow(
+                    stringResource(R.string.settings_late),
+                    stringResource(when (state.reminder.late) {
+                        com.pillbox.domain.LateSetting.ASK -> R.string.late_value_ask
+                        com.pillbox.domain.LateSetting.MOVE_NEXT -> R.string.late_value_move
+                        com.pillbox.domain.LateSetting.KEEP -> R.string.late_value_keep
+                    }),
+                    tints[5], { RowIcon(Icons.Filled.Refresh) }, { onOpen(SettingsTarget.LATE) },
+                )
                 Divider()
                 SettingsRow(
                     stringResource(R.string.settings_refill),
@@ -98,21 +108,11 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                     stringResource(R.string.settings_meals), pluralStringResource(R.plurals.meals_count, 4, fmt.number(4)),
                     tints[3], { RowGlyph("◔", large = true) }, { onOpen(SettingsTarget.MEALS) },
                 )
-                Divider()
-                SettingsRow(
-                    stringResource(R.string.settings_late),
-                    stringResource(when (state.reminder.late) {
-                        com.pillbox.domain.LateSetting.ASK -> R.string.late_value_ask
-                        com.pillbox.domain.LateSetting.MOVE_NEXT -> R.string.late_value_move
-                        com.pillbox.domain.LateSetting.KEEP -> R.string.late_value_keep
-                    }),
-                    tints[5], { RowIcon(Icons.Filled.Refresh) }, { onOpen(SettingsTarget.LATE) },
-                )
             }
             Section(stringResource(R.string.settings_sec_display))
             Group {
                 SettingsRow(
-                    stringResource(R.string.settings_accessibility), textSizeName(state.display.textSize),
+                    stringResource(R.string.settings_accessibility), textSizeName(state.display.effectiveTextSize),
                     tints[0], { RowGlyph("Aa") }, { onOpen(SettingsTarget.ACCESSIBILITY) },
                 )
                 Divider()
@@ -126,6 +126,14 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                 SettingsRow(
                     stringResource(R.string.settings_people), pluralStringResource(R.plurals.people_count, state.people, fmt.number(state.people)),
                     tints[4], { RowIcon(Icons.Filled.Person) }, { onOpen(SettingsTarget.PEOPLE) },
+                )
+            }
+            Section(stringResource(R.string.settings_sec_help))
+            Group {
+                SettingsRow(
+                    stringResource(R.string.settings_ring),
+                    if (ringingIssues > 0) pluralStringResource(R.plurals.settings_ring_fix, ringingIssues, fmt.number(ringingIssues)) else stringResource(R.string.settings_ring_ok),
+                    tints[2], { RowIcon(Icons.Filled.Notifications) }, { onOpen(SettingsTarget.RINGING) },
                 )
             }
             Spacer(Modifier.size(Space.S20))

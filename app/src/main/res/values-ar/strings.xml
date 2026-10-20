@@ -687,4 +687,49 @@
     <string name="late_threshold_caption">تُعدّ الجرعة متأخرة بعد</string>
     <string name="late_threshold_hour">ساعة</string>
     <string name="late_setting_note">الأدوية التي تحتاج فاصلاً ثابتاً، مثل كل 8 ساعات، تسألك دائماً أولاً.</string>
+    <!-- M8c -->
+    <string name="tts_time_to_take">حان وقت أخذ %1$s.</string>
+    <string name="test_notif_title">تنبيه تجريبي</string>
+    <string name="test_notif_text">إذا رأيت هذا وسمعته، فتنبيهات جرعاتك ستعمل.</string>
+    <string name="test_tts_name">دواءك</string>
+    <string name="settings_sec_help">مساعدة</string>
+    <string name="settings_ring">التنبيهات لا ترنّ؟</string>
+    <plurals name="settings_ring_fix">
+        <item quantity="zero">%1$s للإصلاح</item><item quantity="one">%1$s للإصلاح</item><item quantity="two">%1$s للإصلاح</item>
+        <item quantity="few">%1$s للإصلاح</item><item quantity="many">%1$s للإصلاح</item><item quantity="other">%1$s للإصلاح</item>
+    </plurals>
+    <string name="settings_ring_ok">كل شيء سليم</string>
+    <string name="ring_title">التنبيهات لا ترنّ؟</string>
+    <plurals name="ring_banner_fix">
+        <item quantity="zero">%1$s أشياء للإصلاح حتى لا تفوتك جرعة.</item><item quantity="one">شيء واحد للإصلاح حتى لا تفوتك جرعة.</item><item quantity="two">شيئان للإصلاح حتى لا تفوتك جرعة.</item>
+        <item quantity="few">%1$s أشياء للإصلاح حتى لا تفوتك جرعة.</item><item quantity="many">%1$s شيئاً للإصلاح حتى لا تفوتك جرعة.</item><item quantity="other">%1$s شيء للإصلاح حتى لا تفوتك جرعة.</item>
+    </plurals>
+    <string name="ring_banner_ok">كل شيء جاهز. يجب أن ترنّ التنبيهات في وقتها.</string>
+    <string name="ring_notif">الإشعارات</string>
+    <string name="ring_notif_sub">مطلوبة لإظهار التنبيهات</string>
+    <string name="ring_exact">المنبّهات الدقيقة</string>
+    <string name="ring_exact_sub">يرنّ في الدقيقة المحددة</string>
+    <string name="ring_battery">توفير البطارية</string>
+    <string name="ring_battery_sub">قد يوقف الهاتف التطبيق ليلاً</string>
+    <string name="ring_dnd">عدم الإزعاج</string>
+    <string name="ring_dnd_sub">اسمح بمرور تنبيهات الجرعات</string>
+    <string name="ring_fix">إصلاح</string>
+    <string name="ring_fix_desc">إصلاح %1$s</string>
+    <string name="ring_test">إرسال تنبيه تجريبي</string>
+    <string name="ring_done">تم</string>
+    <string name="acc_simple">الوضع البسيط</string>
+    <string name="acc_simple_sub">أماكن أقل وخط أكبر</string>
+    <string name="acc_read">قراءة التنبيهات بصوت عالٍ</string>
+    <string name="acc_read_sub">ينطق اسم الدواء عند رنين التنبيه</string>
+    <string name="acc_simple_row_sub">أزرار كبيرة وخيارات أقل</string>
+    <string name="acc_hc_preview">معاينة التباين العالي</string>
+    <string name="acc_hc_preview_sub">شاهد شكل شاشة اليوم</string>
+    <string name="simple_title">الوضع البسيط</string>
+    <string name="simple_tabs">إظهار «اليوم» و«الإعدادات» فقط</string>
+    <string name="simple_large">خط كبير جداً</string>
+    <string name="simple_hc_sub">نص أسود على أبيض وحدود سميكة</string>
+    <string name="simple_note">يمكنك إيقاف الوضع البسيط في أي وقت من هنا.</string>
+    <string name="hc_preview_title">معاينة التباين العالي</string>
+    <string name="hc_preview_sub">هكذا تبدو شاشة اليوم بتباين عالٍ.</string>
+    <string name="hc_preview_use">استخدام التباين العالي</string>
 </resources>

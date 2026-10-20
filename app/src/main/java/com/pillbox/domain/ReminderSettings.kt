@@ -80,6 +80,8 @@ data class ReminderSettings(
     val repeatMinutes: Int = 5,
     /** Keep ringing (repeat) until the user answers. Off: ring once. */
     val keepRinging: Boolean = true,
+    /** Say the medicine names out loud when a reminder rings. */
+    val readAloud: Boolean = false,
     val quiet: QuietHours = QuietHours(),
     val meals: MealTimes = MealTimes(),
     /** What to do with the next doses when one is taken late (fixed-time medicines; fixed-gap ones always ask). */

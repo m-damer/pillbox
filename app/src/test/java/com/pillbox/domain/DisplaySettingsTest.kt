@@ -42,4 +42,17 @@ class DisplaySettingsTest {
     @Test fun unknownPhoneLanguagesShowEnglish() {
         assertEquals("ar", DisplaySettings.supported("ar")); assertEquals("en", DisplaySettings.supported("fr")); assertEquals("en", DisplaySettings.supported(null))
     }
+
+    @Test fun simpleModeUsesTheLargestTextUnlessTurnedOff() {
+        val simple = none.copy(simpleMode = true)
+        assertEquals(TextSize.LARGEST, simple.effectiveTextSize)
+        assertEquals(TextSize.STANDARD, simple.copy(simpleLargeText = false).effectiveTextSize)
+        assertEquals(TextSize.STANDARD, none.effectiveTextSize)
+    }
+
+    @Test fun simpleModeHidesTabsOnlyWhenAsked() {
+        assertEquals(true, none.copy(simpleMode = true).onlyTodayAndSettings)
+        assertEquals(false, none.copy(simpleMode = true, simpleOnlyTabs = false).onlyTodayAndSettings)
+        assertEquals(false, none.onlyTodayAndSettings)
+    }
 }
