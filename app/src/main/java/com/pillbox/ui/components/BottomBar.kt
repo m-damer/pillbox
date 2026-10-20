@@ -45,7 +45,7 @@ enum class Tab { TODAY, MEDS, PEOPLE, SETTINGS }
 
 /** Today, Meds, [+], People, Settings. Labels wrap to two lines at large text instead of clipping. */
 @Composable
-fun PillBoxBottomBar(selected: Tab, onSelect: (Tab) -> Unit, onAdd: () -> Unit, modifier: Modifier = Modifier) {
+fun PillBoxBottomBar(selected: Tab, onSelect: (Tab) -> Unit, onAdd: () -> Unit, modifier: Modifier = Modifier, onlyTodayAndSettings: Boolean = false) {
     val c = PillBox.colors
     Box(modifier.fillMaxWidth()) {
         Row(
@@ -59,9 +59,9 @@ fun PillBoxBottomBar(selected: Tab, onSelect: (Tab) -> Unit, onAdd: () -> Unit, 
             verticalAlignment = Alignment.CenterVertically,
         ) {
             NavItem(Tab.TODAY, Icons.Filled.DateRange, R.string.nav_today, selected, onSelect, Modifier.weight(1f))
-            NavItem(Tab.MEDS, Icons.Filled.List, R.string.nav_meds, selected, onSelect, Modifier.weight(1f))
+            if (!onlyTodayAndSettings) NavItem(Tab.MEDS, Icons.Filled.List, R.string.nav_meds, selected, onSelect, Modifier.weight(1f))
             Box(Modifier.weight(0.9f))
-            NavItem(Tab.PEOPLE, Icons.Filled.Person, R.string.nav_people, selected, onSelect, Modifier.weight(1f))
+            if (!onlyTodayAndSettings) NavItem(Tab.PEOPLE, Icons.Filled.Person, R.string.nav_people, selected, onSelect, Modifier.weight(1f))
             NavItem(Tab.SETTINGS, Icons.Filled.Settings, R.string.nav_settings, selected, onSelect, Modifier.weight(1f))
         }
         val add = stringResource(R.string.add_medicine)

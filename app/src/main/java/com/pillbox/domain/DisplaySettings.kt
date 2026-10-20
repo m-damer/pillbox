@@ -24,7 +24,17 @@ data class DisplaySettings(
     val theme: ThemeChoice = ThemeChoice.SYSTEM,
     val textSize: TextSize = TextSize.STANDARD,
     val highContrast: Boolean = false,
+    /** Simple mode: fewer places to go and bigger text. [simpleOnlyTabs] and [simpleLargeText] are its two parts. */
+    val simpleMode: Boolean = false,
+    val simpleOnlyTabs: Boolean = true,
+    val simpleLargeText: Boolean = true,
 ) {
+    /** Text size in use: Simple mode with extra large text overrides the chosen size. */
+    val effectiveTextSize: TextSize get() = if (simpleMode && simpleLargeText) TextSize.LARGEST else textSize
+
+    /** True when the bottom bar shows only Today and Settings. */
+    val onlyTodayAndSettings: Boolean get() = simpleMode && simpleOnlyTabs
+
     fun useArabicDigits(activeLanguage: String): Boolean = arabicDigits ?: (activeLanguage == "ar")
 
     fun is24Hour(phoneIs24: Boolean): Boolean = when (timeFormat) {
@@ -36,7 +46,7 @@ data class DisplaySettings(
     fun firstDay(languageDefault: DayOfWeek): DayOfWeek = firstDay ?: languageDefault
 
     /** The font scale to use: the phone's scale times the app's own, never above [MAX_FONT_SCALE]. */
-    fun fontScale(systemScale: Float): Float = maxOf(systemScale, minOf(systemScale * textSize.scale, MAX_FONT_SCALE))
+    fun fontScale(systemScale: Float): Float = maxOf(systemScale, minOf(systemScale * effectiveTextSize.scale, MAX_FONT_SCALE))
 
     companion object {
         const val MAX_FONT_SCALE = 2f

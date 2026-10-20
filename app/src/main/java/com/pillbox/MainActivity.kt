@@ -36,7 +36,11 @@ import com.pillbox.ui.ReminderState
 import com.pillbox.ui.settings.AccessibilityScreen
 import com.pillbox.ui.settings.LanguageScreen
 import com.pillbox.ui.settings.LateSettingScreen
+import com.pillbox.ui.settings.HighContrastPreviewScreen
 import com.pillbox.ui.settings.MealTimesScreen
+import com.pillbox.ui.settings.NotRingingContent
+import com.pillbox.ui.settings.RingFix
+import com.pillbox.ui.settings.SimpleModeScreen
 import com.pillbox.ui.settings.QuietHoursScreen
 import com.pillbox.ui.settings.SettingsScreen
 import com.pillbox.ui.settings.SoundScreen
@@ -133,6 +137,9 @@ class MainActivity : PillBoxActivity() {
                         detailId = wanted; openMedicine.value = null
                     }
                 }
+                LaunchedEffect(display.onlyTodayAndSettings) {
+                    if (display.onlyTodayAndSettings && (tab == Tab.MEDS || tab == Tab.PEOPLE)) tab = Tab.TODAY
+                }
                 var permissions by remember { mutableStateOf(ReminderPermissions.state(context)) }
 
                 // Coming back from system settings: re-check permissions and arm the next reminder again.
@@ -173,14 +180,35 @@ class MainActivity : PillBoxActivity() {
                     }
                 } else if (settingsScreen != 0) {
                     val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
-                    val close = { settingsScreen = if (settingsScreen == 3) 1 else 0 }
+                    val close = { settingsScreen = if (settingsScreen == 3 || settingsScreen == 9 || settingsScreen == 10) 1 else 0 }
                     val savedToast = {
                         settingsToastTitle = context.getString(R.string.toast_setting_saved_title)
                         settingsToastBody = context.getString(R.string.toast_setting_saved_body)
                     }
                     Box(Modifier.fillMaxSize().statusBarsPadding()) {
                         when (settingsScreen) {
-                            1 -> AccessibilityScreen(vm, onBack = close, onOpenTheme = { settingsScreen = 3 })
+                            1 -> AccessibilityScreen(vm, onBack = close, onOpenTheme = { settingsScreen = 3 }, onOpenSimple = { settingsScreen = 9 }, onOpenPreview = { settingsScreen = 10 })
+                            9 -> SimpleModeScreen(vm, onBack = close)
+                            10 -> HighContrastPreviewScreen(vm, onBack = close)
+                            8 -> {
+                                var ringing by remember { mutableStateOf(ReminderPermissions.state(context)) }
+                                LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+                                    ringing = ReminderPermissions.state(context); permissions = ringing
+                                }
+                                fun open(intent: android.content.Intent) { runCatching { context.startActivity(intent) } }
+                                NotRingingContent(
+                                    ringing, onBack = close,
+                                    onFix = { fix ->
+                                        when (fix) {
+                                            RingFix.NOTIFICATIONS -> open(ReminderPermissions.notificationSettings(context))
+                                            RingFix.EXACT -> open(ReminderPermissions.exactAlarmSettings(context))
+                                            RingFix.BATTERY -> open(ReminderPermissions.batterySettings())
+                                            RingFix.DND -> open(ReminderPermissions.doNotDisturbSettings(context))
+                                        }
+                                    },
+                                    onTest = { if (ringing.notifications) reminders.sendTest() else open(ReminderPermissions.notificationSettings(context)) },
+                                )
+                            }
                             3 -> ThemeScreen(vm, onBack = close)
                             4 -> SoundScreen(vm, onBack = close)
                             5 -> QuietHoursScreen(vm, onBack = close, onSaved = { savedToast(); settingsScreen = 0 })
@@ -317,6 +345,7 @@ class MainActivity : PillBoxActivity() {
                                 SettingsTarget.QUIET -> settingsScreen = 5
                                 SettingsTarget.MEALS -> settingsScreen = 6
                                 SettingsTarget.LATE -> settingsScreen = 7
+                                SettingsTarget.RINGING -> settingsScreen = 8
                                 SettingsTarget.ACCESSIBILITY -> settingsScreen = 1
                                                 SettingsTarget.LANGUAGE -> settingsScreen = 2
                                                 SettingsTarget.PEOPLE -> tab = Tab.PEOPLE
@@ -324,11 +353,12 @@ class MainActivity : PillBoxActivity() {
                                         },
                                         toast = settingsToastTitle?.let { ListToast(it, settingsToastBody) },
                                         onToastShown = { settingsToastTitle = null; settingsToastBody = null },
+                                        ringingIssues = permissions.issues,
                                     )
                                 }
                             }
                         }
-                        PillBoxBottomBar(tab, onSelect = { tab = it }, onAdd = { adding = true })
+                        PillBoxBottomBar(tab, onSelect = { tab = it }, onAdd = { adding = true }, onlyTodayAndSettings = display.onlyTodayAndSettings)
                     }
                 }
             }

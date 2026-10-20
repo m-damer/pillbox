@@ -330,6 +330,32 @@ class Reminders(
         // The notification above is the fallback when the full-screen screen is not allowed (Android 14+ may need approval).
         builder.setFullScreenIntent(activityPending(ReminderActivity::class.java, at, 22), true)
         runCatching { nm.notify(notificationId(at), builder.build()) }
+        val settings = ReminderState.current
+        if (settings.readAloud && !settings.quiet.silencesDoseAt(LocalDateTime.now().toLocalTime())) {
+            ReminderSpeaker.speak(context, context.getString(R.string.tts_time_to_take, rows.joinToString(", ") { it.medicine.name }))
+        }
+    }
+
+    /** "Send a test reminder": a notification on the same channel as a real one, so the user hears what a dose sounds like. */
+    @SuppressLint("MissingPermission")
+    fun sendTest() {
+        val nm = notificationManager()
+        if (!nm.areNotificationsEnabled()) return
+        val title = context.getString(R.string.test_notif_title)
+        val text = context.getString(R.string.test_notif_text)
+        val n = NotificationCompat.Builder(context, channelFor(LocalDateTime.now().toLocalTime()))
+            .setSmallIcon(R.drawable.ic_stat_pill)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setAutoCancel(true)
+            .build()
+        runCatching { nm.notify(TEST_ID, n) }
+        val s = ReminderState.current
+        if (s.readAloud && !s.quiet.silencesDoseAt(LocalDateTime.now().toLocalTime())) ReminderSpeaker.speak(context, context.getString(R.string.tts_time_to_take, context.getString(R.string.test_tts_name)))
     }
 
     /** The channel a dose reminder uses now: silent during quiet hours only when the user turned "Medicine reminders still ring" off. */
@@ -350,6 +376,7 @@ class Reminders(
             com.pillbox.domain.Tone.LOUD_ALARM -> R.raw.tone_loud_alarm
         }
         const val CHANNEL_REFILLS = "refills"
+        private const val TEST_ID = 999_999_999
         const val EXTRA_AT = "at"
         const val EXTRA_COUNT = "count"
         const val ACTION_TAKE_ALL = "com.pillbox.action.TAKE_ALL"

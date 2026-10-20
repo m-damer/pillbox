@@ -49,6 +49,10 @@ class SettingsViewModel(
     fun setHighContrast(on: Boolean) = change { it.copy(highContrast = on) }
     fun setTheme(theme: ThemeChoice) = change { it.copy(theme = theme) }
 
+    fun setSimple(on: Boolean) = change { it.copy(simpleMode = on) }
+    fun setSimpleTabs(on: Boolean) = change { it.copy(simpleOnlyTabs = on) }
+    fun setSimpleLarge(on: Boolean) = change { it.copy(simpleLargeText = on) }
+    fun setReadAloud(on: Boolean) = remind({ it.copy(readAloud = on) })
     fun setTone(tone: Tone) = remind({ it.copy(tone = tone) })
     fun setVibration(on: Boolean) = remind({ it.copy(vibration = on) })
     fun setRepeat(minutes: Int) = remind({ it.copy(repeatMinutes = minutes) })

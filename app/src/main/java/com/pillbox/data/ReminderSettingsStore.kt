@@ -27,6 +27,7 @@ class ReminderSettingsStore(private val context: Context) {
     private val vibration = booleanPreferencesKey("vibration")
     private val repeat = intPreferencesKey("repeat_minutes")
     private val keepRinging = booleanPreferencesKey("keep_ringing")
+    private val readAloud = booleanPreferencesKey("read_aloud")
     private val quietOn = booleanPreferencesKey("quiet_on")
     private val quietFrom = intPreferencesKey("quiet_from")
     private val quietUntil = intPreferencesKey("quiet_until")
@@ -55,6 +56,7 @@ class ReminderSettingsStore(private val context: Context) {
             vibration = p[vibration] ?: d.vibration,
             repeatMinutes = (p[repeat] ?: d.repeatMinutes).takeIf { it in ReminderSettings.REPEAT_CHOICES } ?: d.repeatMinutes,
             keepRinging = p[keepRinging] ?: d.keepRinging,
+            readAloud = p[readAloud] ?: d.readAloud,
             quiet = QuietHours(
                 enabled = p[quietOn] ?: d.quiet.enabled,
                 from = p[quietFrom]?.let(::time) ?: d.quiet.from,
@@ -73,6 +75,7 @@ class ReminderSettingsStore(private val context: Context) {
         p[vibration] = s.vibration
         p[repeat] = s.repeatMinutes
         p[keepRinging] = s.keepRinging
+        p[readAloud] = s.readAloud
         p[quietOn] = s.quiet.enabled
         p[quietFrom] = minute(s.quiet.from)
         p[quietUntil] = minute(s.quiet.until)
