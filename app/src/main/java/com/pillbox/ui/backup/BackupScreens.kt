@@ -1,5 +1,6 @@
 package com.pillbox.ui.backup
 
+import com.pillbox.ui.components.stringResourceIso
 import android.content.ClipData
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -179,7 +180,7 @@ internal fun whenText(at: LocalDateTime, today: LocalDate, fmt: Formatter): Stri
         today.minusDays(1) -> stringResource(R.string.bk_yesterday)
         else -> shortDate(at.toLocalDate(), fmt)
     }
-    return stringResource(R.string.bk_when, day, fmt.time(at.toLocalTime()))
+    return stringResourceIso(R.string.bk_when, day, fmt.time(at.toLocalTime()))
 }
 
 @Composable
@@ -202,7 +203,7 @@ fun BackupContent(
                         Column(Modifier.weight(1f)) {
                             val at = s.lastSuccessAt
                             if (at != null) {
-                                Text(stringResource(R.string.bk_last, whenText(at, today, fmt)), style = MaterialTheme.typography.labelLarge, color = c.text)
+                                Text(stringResourceIso(R.string.bk_last, whenText(at, today, fmt)), style = MaterialTheme.typography.labelLarge, color = c.text)
                                 val where = when { s.lastToFolder && s.lastToDrive -> R.string.bk_where_both; s.lastToDrive -> R.string.bk_where_drive; else -> R.string.bk_where_folder }
                                 Text(stringResource(where), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
                             } else {
@@ -230,7 +231,7 @@ fun BackupContent(
                         RowDivider()
                         SwitchRow(
                             stringResource(R.string.dr_row), s.driveOn, onDrive,
-                            subtitle = when { !s.driveOn -> stringResource(R.string.dr_row_off); s.driveEmail != null -> stringResource(R.string.dr_row_on, s.driveEmail); else -> stringResource(R.string.dr_row_on_noemail) },
+                            subtitle = when { !s.driveOn -> stringResource(R.string.dr_row_off); s.driveEmail != null -> stringResourceIso(R.string.dr_row_on, s.driveEmail); else -> stringResource(R.string.dr_row_on_noemail) },
                         )
                         RowDivider()
                         SwitchRow(stringResource(R.string.bk_notify), s.notify, onNotify, subtitle = stringResource(R.string.bk_notify_sub))
@@ -369,7 +370,7 @@ fun DriveConnectDialog(onChoose: () -> Unit, onNotNow: () -> Unit) {
 fun FolderUnavailableDialog(label: String?, onChoose: () -> Unit, onLater: () -> Unit) {
     MessageDialog(
         DialogKind.Warning, stringResource(R.string.bk_unavail_title),
-        stringResource(R.string.bk_unavail_body, label?.ifEmpty { null } ?: stringResource(R.string.bk_folder_root)), onLater,
+        stringResourceIso(R.string.bk_unavail_body, label?.ifEmpty { null } ?: stringResource(R.string.bk_folder_root)), onLater,
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
             PrimaryButton(stringResource(R.string.bk_choose_folder), onChoose)
@@ -497,7 +498,7 @@ fun RestoreConfirmContent(s: RestoreState.Confirm, fmt: Formatter, today: LocalD
                     Tile(c.successContainer) { Icon(Icons.Filled.Check, contentDescription = null, tint = c.success) }
                     Column(Modifier.weight(1f)) {
                         if (s.fileName.isNotEmpty()) Text(s.fileName, style = MaterialTheme.typography.labelLarge, color = c.text)
-                        s.savedAt?.let { Text(stringResource(R.string.rs_saved, whenText(it, today, fmt)), style = MaterialTheme.typography.bodyMedium, color = c.textMuted) }
+                        s.savedAt?.let { Text(stringResourceIso(R.string.rs_saved, whenText(it, today, fmt)), style = MaterialTheme.typography.bodyMedium, color = c.textMuted) }
                     }
                 }
                 RowDivider()

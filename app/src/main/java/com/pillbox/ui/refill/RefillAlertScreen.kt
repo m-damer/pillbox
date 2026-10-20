@@ -1,5 +1,6 @@
 package com.pillbox.ui.refill
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -121,7 +122,7 @@ fun RefillAlertContent(
                 ) {
                     Text(stringResource(R.string.refill_time_label), style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
                     val timeText = fmt.time(s.time)
-                    val desc = stringResource(R.string.refill_time_a11y, timeText)
+                    val desc = stringResourceIso(R.string.refill_time_a11y, timeText)
                     Box(
                         Modifier
                             .heightIn(min = Dimens.TouchTargetMin)
@@ -171,12 +172,12 @@ fun RefillAlertContent(
                     Column(Modifier.weight(1f)) {
                         val res = androidx.compose.ui.platform.LocalContext.current.resources
                         val amount = fmt.amount(p.stock) + " " + res.getQuantityString(unitPlural(p.unit), quantityFor(p.stock))
-                        Text(stringResource(R.string.refill_preview_title, p.name, amount), style = MaterialTheme.typography.labelLarge, color = c.text)
+                        Text(stringResourceIso(R.string.refill_preview_title, p.name, amount), style = MaterialTheme.typography.labelLarge, color = c.text)
                         val daysText = pluralStringResource(R.plurals.n_days, s.daysBefore, fmt.number(s.daysBefore))
                         val dateText = date?.let { shortDate(it, fmt) } ?: ""
                         Text(
-                            if (date == java.time.LocalDate.now()) stringResource(R.string.refill_preview_today, daysText, dateText)
-                            else stringResource(R.string.refill_preview_later, daysText, dateText),
+                            if (date == java.time.LocalDate.now()) stringResourceIso(R.string.refill_preview_today, daysText, dateText)
+                            else stringResourceIso(R.string.refill_preview_later, daysText, dateText),
                             style = MaterialTheme.typography.bodyMedium, color = c.textMuted,
                         )
                     }
@@ -207,12 +208,12 @@ private fun DaysCard(days: Int, fmt: Formatter, onDays: (Int) -> Unit) {
         verticalArrangement = Arrangement.spacedBy(Space.S12),
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12)) {
-            StepCircle("−", stringResource(R.string.stepper_decrease, caption), days > RefillSettings.MIN_DAYS, filled = false) { onDays(days - 1) }
+            StepCircle("−", stringResourceIso(R.string.stepper_decrease, caption), days > RefillSettings.MIN_DAYS, filled = false) { onDays(days - 1) }
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(fmt.number(days), style = MaterialTheme.typography.displaySmall, color = c.text, textAlign = TextAlign.Center)
                 Text(caption, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.Center)
             }
-            StepCircle("+", stringResource(R.string.stepper_increase, caption), days < RefillSettings.MAX_DAYS, filled = true) { onDays(days + 1) }
+            StepCircle("+", stringResourceIso(R.string.stepper_increase, caption), days < RefillSettings.MAX_DAYS, filled = true) { onDays(days + 1) }
         }
         ChipGroup {
             RefillSettings.PRESETS.forEach { n ->

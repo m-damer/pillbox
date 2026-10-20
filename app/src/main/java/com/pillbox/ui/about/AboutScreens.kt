@@ -1,5 +1,6 @@
 package com.pillbox.ui.about
 
+import com.pillbox.ui.components.stringResourceIso
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -155,7 +156,7 @@ fun AboutContent(version: String, host: SnackbarHostState, onBack: () -> Unit, o
                         Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = null, modifier = Modifier.fillMaxSize())
                     }
                     Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleMedium, color = c.text, modifier = Modifier.padding(top = Space.S8))
-                    Text(stringResource(R.string.ab_version, version), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+                    Text(stringResourceIso(R.string.ab_version, version), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
                 }
                 Row(
                     Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.large).padding(Space.S16),
@@ -289,7 +290,7 @@ fun FeedbackScreen(onBack: () -> Unit, onOpened: () -> Unit) {
     var includeInfo by rememberSaveable { mutableStateOf(true) }
     var check by rememberSaveable { mutableStateOf(EmailCheck.OK) }
     val noMailTitle = stringResource(R.string.fb_no_mail_title)
-    val noMailBody = stringResource(R.string.fb_no_mail_body, Contact.DEVELOPER_EMAIL)
+    val noMailBody = stringResourceIso(R.string.fb_no_mail_body, Contact.DEVELOPER_EMAIL)
     Box(Modifier.fillMaxSize()) {
         FeedbackContent(
             kind, { kind = it }, message, { message = it }, email, { email = it; check = EmailCheck.OK }, phone, { phone = it },
@@ -375,7 +376,7 @@ fun RateScreen(onBack: () -> Unit, onOpened: () -> Unit, onWriteFeedback: () -> 
     val scope = rememberCoroutineScope()
     var stars by rememberSaveable { mutableIntStateOf(0) }
     val noMailTitle = stringResource(R.string.fb_no_mail_title)
-    val noMailBody = stringResource(R.string.fb_no_mail_body, Contact.DEVELOPER_EMAIL)
+    val noMailBody = stringResourceIso(R.string.fb_no_mail_body, Contact.DEVELOPER_EMAIL)
     val shareText = stringResource(R.string.rt_share_text)
     val shareChooser = stringResource(R.string.rt_share)
     Box(Modifier.fillMaxSize()) {
@@ -406,7 +407,7 @@ fun RateContent(stars: Int, onStars: (Int) -> Unit, onBack: () -> Unit, onWriteF
             Text(stringResource(R.string.rt_body), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.S8))
             Row(Modifier.padding(top = Space.S16).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(Space.S4)) {
                 for (i in 1..5) {
-                    val label = stringResource(R.string.rt_star_a11y, i, stringResource(starLabels[i - 1]))
+                    val label = stringResourceIso(R.string.rt_star_a11y, i, stringResource(starLabels[i - 1]))
                     Box(
                         Modifier.size(Dimens.TouchTargetMin + Space.S4).selectable(selected = stars == i, role = Role.RadioButton, onClick = { onStars(i) }).semantics { contentDescription = label },
                         contentAlignment = Alignment.Center,

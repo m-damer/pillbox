@@ -1,5 +1,6 @@
 package com.pillbox.ui.medicines
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -140,12 +141,12 @@ fun AddStockSheet(
 
             Row(Modifier.fillMaxWidth().heightIn(min = Dimens.StepperButton), verticalAlignment = Alignment.CenterVertically) {
                 Text(boxesLabel, style = MaterialTheme.typography.bodyLarge, color = c.text, modifier = Modifier.weight(1f))
-                RoundStepButton("−", stringResource(R.string.stepper_decrease, boxesLabel), boxes > 1) { boxes = (boxes - 1).coerceAtLeast(1) }
+                RoundStepButton("−", stringResourceIso(R.string.stepper_decrease, boxesLabel), boxes > 1) { boxes = (boxes - 1).coerceAtLeast(1) }
                 Text(
                     fmt.number(boxes), style = MaterialTheme.typography.headlineSmall, color = c.text, textAlign = TextAlign.Center,
                     modifier = Modifier.widthIn(min = 56.dp).padding(horizontal = Space.S8),
                 )
-                RoundStepButton("+", stringResource(R.string.stepper_increase, boxesLabel), boxes < 99) { boxes = (boxes + 1).coerceAtMost(99) }
+                RoundStepButton("+", stringResourceIso(R.string.stepper_increase, boxesLabel), boxes < 99) { boxes = (boxes + 1).coerceAtMost(99) }
             }
             HorizontalDivider(color = c.divider)
             Row(Modifier.fillMaxWidth().heightIn(min = Dimens.StepperButton), verticalAlignment = Alignment.CenterVertically) {
@@ -170,7 +171,7 @@ fun AddStockSheet(
                     )
                 }
             }
-            if (showError && perBox == null) ErrorText(stringResource(R.string.stock_per_error, unitWord))
+            if (showError && perBox == null) ErrorText(stringResourceIso(R.string.stock_per_error, unitWord))
             Text(
                 summary, style = MaterialTheme.typography.bodyMedium, color = c.accent,
                 modifier = Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S16),

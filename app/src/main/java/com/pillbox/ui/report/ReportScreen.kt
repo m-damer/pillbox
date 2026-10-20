@@ -1,5 +1,6 @@
 package com.pillbox.ui.report
 
+import com.pillbox.ui.components.stringResourceIso
 import android.content.ClipData
 import android.content.Intent
 import androidx.activity.compose.BackHandler
@@ -133,7 +134,7 @@ fun ReportContent(
             }
             Column(Modifier.weight(1f).padding(vertical = Space.S8)) {
                 Text(stringResource(R.string.report_screen_title), style = MaterialTheme.typography.titleLarge, color = c.text, modifier = Modifier.semantics { heading() })
-                if (state.patient.isNotEmpty()) Text(stringResource(R.string.report_for, state.patient), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+                if (state.patient.isNotEmpty()) Text(stringResourceIso(R.string.report_for, state.patient), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
             }
         }
         Column(
@@ -247,7 +248,7 @@ private fun ReportPreview(pages: List<android.graphics.Bitmap>, onBack: () -> Un
         val fmt = rememberFormatter()
         LazyColumn(Modifier.weight(1f), contentPadding = androidx.compose.foundation.layout.PaddingValues(Dimens.ScreenPaddingH), verticalArrangement = Arrangement.spacedBy(Dimens.CardGap)) {
             itemsIndexed(pages) { i, bmp ->
-                val label = stringResource(R.string.report_preview_page, fmt.number(i + 1), fmt.number(pages.size))
+                val label = stringResourceIso(R.string.report_preview_page, fmt.number(i + 1), fmt.number(pages.size))
                 Image(
                     bitmap = bmp.asImageBitmap(), contentDescription = label, contentScale = ContentScale.FillWidth,
                     modifier = Modifier.fillMaxWidth().border(1.dp, c.border),

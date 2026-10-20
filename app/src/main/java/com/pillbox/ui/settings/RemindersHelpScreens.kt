@@ -1,5 +1,6 @@
 package com.pillbox.ui.settings
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -122,7 +123,7 @@ private fun RingRow(title: Int, sub: Int, ok: Boolean, onFix: () -> Unit) {
                 Text(stringResource(R.string.perm_allowed), style = MaterialTheme.typography.labelLarge, color = c.success)
             }
         } else {
-            RowButton(stringResource(R.string.ring_fix), stringResource(R.string.ring_fix_desc, stringResource(title)), filled = true, onClick = onFix)
+            RowButton(stringResource(R.string.ring_fix), stringResourceIso(R.string.ring_fix_desc, stringResource(title)), filled = true, onClick = onFix)
         }
     }
 }
@@ -189,9 +190,9 @@ fun HighContrastPreviewContent(fmt: Formatter, on: Boolean, onBack: () -> Unit, 
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH), verticalArrangement = Arrangement.spacedBy(Dimens.CardGap)) {
             Text(stringResource(R.string.hc_preview_sub), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, modifier = Modifier.padding(horizontal = Space.S8, vertical = Space.S6))
             // A real Today with example doses, drawn with the high contrast colors. It is a picture: nothing in it reacts.
-            Box(Modifier.fillMaxWidth().heightIn(max = 460.dp).clip(MaterialTheme.shapes.large).border(Dimens.ChipBorder, c.border, MaterialTheme.shapes.large)) {
+            Box(Modifier.fillMaxWidth().heightIn(max = Dimens.PreviewMaxHeight).clip(MaterialTheme.shapes.large).border(Dimens.ChipBorder, c.border, MaterialTheme.shapes.large)) {
                 PillBoxTheme(mode = ThemeMode.Light, highContrast = true) {
-                    Box(Modifier.fillMaxWidth().heightIn(max = 460.dp).background(MaterialTheme.colorScheme.background).clearAndSetSemantics { }) {
+                    Box(Modifier.fillMaxWidth().heightIn(max = Dimens.PreviewMaxHeight).background(MaterialTheme.colorScheme.background).clearAndSetSemantics { }) {
                         TodayContent(sampleToday(), fmt, onSelectDate = {}, onBackToToday = {}, onTake = {}, onSkip = {}, onAddMedicine = {})
                     }
                 }

@@ -1,5 +1,6 @@
 package com.pillbox.ui.medicines
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -147,7 +148,7 @@ fun MedicineDetailScreen(
     }
 
     if (state.showStop) {
-        MessageDialog(DialogKind.Danger, stringResource(R.string.stop_title, m.name), stringResource(R.string.stop_body), onDismiss = { vm.showStop(false) }) {
+        MessageDialog(DialogKind.Danger, stringResourceIso(R.string.stop_title, m.name), stringResource(R.string.stop_body), onDismiss = { vm.showStop(false) }) {
             DangerButton(stringResource(R.string.stop_confirm), {
                 vm.stop { name ->
                     onDone(ListToast(res.getString(R.string.toast_stopped_title, name), res.getString(R.string.toast_stopped_body)), true)
@@ -170,13 +171,13 @@ fun MedicineDetailScreen(
         )
     }
     if (state.showDelete) {
-        MessageDialog(DialogKind.Danger, stringResource(R.string.delete_title, m.name), stringResource(R.string.delete_body), onDismiss = { vm.showDelete(false) }) {
-            DangerButton(stringResource(R.string.delete_confirm, m.name), {
+        MessageDialog(DialogKind.Danger, stringResourceIso(R.string.delete_title, m.name), stringResource(R.string.delete_body), onDismiss = { vm.showDelete(false) }) {
+            DangerButton(stringResourceIso(R.string.delete_confirm, m.name), {
                 vm.delete { name ->
                     onDone(ListToast(res.getString(R.string.toast_deleted_title, name), res.getString(R.string.toast_deleted_body)), !active)
                 }
             })
-            OutlineButton(stringResource(R.string.delete_keep, m.name), { vm.showDelete(false) })
+            OutlineButton(stringResourceIso(R.string.delete_keep, m.name), { vm.showDelete(false) })
         }
     }
     if (state.showStock) {
@@ -314,7 +315,7 @@ private fun PausedBanner(pause: Pause, fmt: Formatter) {
     val c = PillBox.colors
     val until = pause.until
     val title = if (until == null) stringResource(R.string.paused_until_resume)
-    else stringResource(R.string.paused_until, shortDate(until.toLocalDate(), fmt))
+    else stringResourceIso(R.string.paused_until, shortDate(until.toLocalDate(), fmt))
     val body = stringResource(R.string.paused_banner_body)
     Row(
         Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(horizontal = Space.S16, vertical = Space.S12)
@@ -354,7 +355,7 @@ private fun StatTiles(item: MedicineWithSchedule, daysLeft: Int?, level: StockLe
         { mod ->
             Tile(
                 mod,
-                big = if (perDay != null) stringResource(R.string.tile_per_day, fmt.amount(Math.round(perDay * 10) / 10.0)) else "—",
+                big = if (perDay != null) stringResourceIso(R.string.tile_per_day, fmt.amount(Math.round(perDay * 10) / 10.0)) else "—",
                 small = if (perDay != null) stringResource(R.string.tile_use) else stringResource(R.string.tile_as_needed), bg = c.card, ink = c.text, wide = big,
             )
         },
@@ -534,16 +535,16 @@ private fun WeekCard(week: WeekSummary?, fmt: Formatter, onSeeHistory: () -> Uni
                 week.days.forEach { d ->
                     val say = shortDate(d.date, fmt)
                     val desc = when (d.mark) {
-                        DayMark.ALL_TAKEN -> stringResource(R.string.week_day_taken, say)
-                        DayMark.MISSED -> stringResource(R.string.week_day_missed, say)
-                        DayMark.PENDING -> stringResource(R.string.week_day_pending, say)
-                        DayMark.NONE -> stringResource(R.string.week_day_none, say)
+                        DayMark.ALL_TAKEN -> stringResourceIso(R.string.week_day_taken, say)
+                        DayMark.MISSED -> stringResourceIso(R.string.week_day_missed, say)
+                        DayMark.PENDING -> stringResourceIso(R.string.week_day_pending, say)
+                        DayMark.NONE -> stringResourceIso(R.string.week_day_none, say)
                     }
                     DayCircle(d.mark, desc)
                 }
             }
             val text = if (week.counted == 0) stringResource(R.string.week_none) else buildString {
-                append(stringResource(R.string.week_taken, fmt.number(week.taken), fmt.number(week.counted)))
+                append(stringResourceIso(R.string.week_taken, fmt.number(week.taken), fmt.number(week.counted)))
                 if (week.missedDays.isNotEmpty()) {
                     val n = week.missedDays.size
                     val dayName = week.missedDays.first().dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
@@ -631,7 +632,7 @@ private fun FinishedDetail(
                 HorizontalDivider(color = c.divider)
                 FactRow(
                     stringResource(R.string.fin_taken),
-                    if (state.courseTotal > 0) stringResource(R.string.fin_taken_value, fmt.number(state.courseTaken), fmt.number(state.courseTotal))
+                    if (state.courseTotal > 0) stringResourceIso(R.string.fin_taken_value, fmt.number(state.courseTaken), fmt.number(state.courseTotal))
                     else pluralStringResource(R.plurals.n_doses, state.courseTaken, fmt.number(state.courseTaken)),
                 )
             }

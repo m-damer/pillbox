@@ -12,5 +12,5 @@
 - [x] M8 Settings: language, dark, 24-hour, accessibility (large text, high contrast, simple mode), meal times, late-dose setting
 - [x] M9 Backup and restore (weekly to folder, optional Google Drive, restore checks, delete all)
 - [x] M10 Feedback, rating, crash-report prompt (email intents), privacy policy, about
-- [ ] M11 Widget
+- [x] M11 Widget
 - [ ] M12 Large-text and TalkBack polish; test on real phones

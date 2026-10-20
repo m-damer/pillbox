@@ -1,5 +1,6 @@
 package com.pillbox.reminder
 
+import com.pillbox.ui.components.getStringIso
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.NotificationChannel
@@ -157,12 +158,12 @@ class Reminders(
         val text: String
         val big: String
         if (a.out) {
-            title = context.getString(R.string.refill_notif_out_title, name)
+            title = context.getStringIso(R.string.refill_notif_out_title, name)
             text = context.getString(R.string.refill_notif_out_text)
             big = text
         } else {
             val amount = fmt.amount(m.stock) + " " + res.getQuantityString(com.pillbox.ui.unitPlural(m.unit), com.pillbox.ui.quantityFor(m.stock))
-            title = context.getString(R.string.refill_notif_title, name)
+            title = context.getStringIso(R.string.refill_notif_title, name)
             text = context.getString(R.string.refill_notif_left, amount)
             val days = a.daysLeft ?: 0
             val about = res.getQuantityString(R.plurals.n_days, days, fmt.number(days))
@@ -312,7 +313,7 @@ class Reminders(
         // A dose for someone I care for says whose it is, so the wrong person never gets it.
         val text = rows.joinToString(" · ") { r ->
             val line = r.medicine.name + (com.pillbox.ui.localizedStrength(r.medicine.strength, context.resources)?.let { " $it" } ?: "")
-            owners[r.medicine.personId]?.let { context.getString(R.string.notif_dose_for, it, line) } ?: line
+            owners[r.medicine.personId]?.let { context.getStringIso(R.string.notif_dose_for, it, line) } ?: line
         }
         val builder = NotificationCompat.Builder(context, channelFor(LocalDateTime.now().toLocalTime()))
             .setSmallIcon(R.drawable.ic_stat_pill)
@@ -334,7 +335,7 @@ class Reminders(
         runCatching { nm.notify(notificationId(at), builder.build()) }
         val settings = ReminderState.current
         if (settings.readAloud && !settings.quiet.silencesDoseAt(LocalDateTime.now().toLocalTime())) {
-            ReminderSpeaker.speak(context, context.getString(R.string.tts_time_to_take, rows.joinToString(", ") { it.medicine.name }))
+            ReminderSpeaker.speak(context, context.getString(R.string.tts_time_to_take, rows.joinToString(", ") { com.pillbox.ui.components.isolate(it.medicine.name) }))
         }
     }
 

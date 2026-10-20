@@ -1,5 +1,6 @@
 package com.pillbox.ui.people
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -164,15 +165,15 @@ fun PersonEditContent(
             }
             PrimaryButton(saveText, onSave, enabled = state.canSave)
             if (state.mode == PersonMode.EDIT) {
-                DangerOutlineButton(stringResource(R.string.person_remove, name), onAskRemove)
+                DangerOutlineButton(stringResourceIso(R.string.person_remove, name), onAskRemove)
             }
         }
     }
 
     if (state.showRemove) {
-        MessageDialog(DialogKind.Danger, stringResource(R.string.person_remove_title, name), stringResource(R.string.person_remove_body), onKeep) {
-            DangerButton(stringResource(R.string.person_remove, name), onRemove)
-            LinkButton(stringResource(R.string.person_keep, name), onKeep)
+        MessageDialog(DialogKind.Danger, stringResourceIso(R.string.person_remove_title, name), stringResource(R.string.person_remove_body), onKeep) {
+            DangerButton(stringResourceIso(R.string.person_remove, name), onRemove)
+            LinkButton(stringResourceIso(R.string.person_keep, name), onKeep)
         }
     }
 }

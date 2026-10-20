@@ -1,5 +1,6 @@
 package com.pillbox.ui.components
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -200,7 +201,7 @@ fun Stepper(
 ) {
     val colors = PillBox.colors
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12)) {
-        RoundStepButton("−", stringResource(R.string.stepper_decrease, label), minusEnabled, onMinus)
+        RoundStepButton("−", stringResourceIso(R.string.stepper_decrease, label), minusEnabled, onMinus)
         Row(
             modifier = Modifier
                 .weight(1f)
@@ -227,7 +228,7 @@ fun Stepper(
             Spacer(Modifier.width(Space.S8))
             Text(unit, style = MaterialTheme.typography.bodyMedium, color = colors.textMuted, modifier = Modifier.weight(1f, fill = false))
         }
-        RoundStepButton("+", stringResource(R.string.stepper_increase, label), plusEnabled, onPlus)
+        RoundStepButton("+", stringResourceIso(R.string.stepper_increase, label), plusEnabled, onPlus)
     }
 }
 

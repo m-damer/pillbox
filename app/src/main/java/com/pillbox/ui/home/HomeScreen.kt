@@ -1,5 +1,6 @@
 package com.pillbox.ui.home
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -79,7 +80,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 )
             }
             Text(
-                text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
+                text = stringResourceIso(R.string.app_version, BuildConfig.VERSION_NAME),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
