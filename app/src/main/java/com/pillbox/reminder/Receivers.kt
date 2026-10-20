@@ -32,6 +32,7 @@ class DoseAlarmReceiver : BroadcastReceiver() {
                 "com.pillbox.action.DOSE_DUE" -> if (at != null) reminders.onDue(at) else reminders.rearm()
                 "com.pillbox.action.DOSE_NAG" -> if (at != null) reminders.onRepeat(at, intent.getIntExtra(Reminders.EXTRA_COUNT, 1))
                 "com.pillbox.action.DOSE_SNOOZE" -> if (at != null) reminders.onSnoozeEnded(at)
+                "com.pillbox.action.REFILL_DUE" -> reminders.onRefillDue()
             }
         }
     }
@@ -41,6 +42,11 @@ class DoseAlarmReceiver : BroadcastReceiver() {
 class ReminderActionReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val reminders = context.reminders()
+        // "Tomorrow" on a refill alert: it only goes away; the daily alarm brings it back tomorrow.
+        if (intent.action == Reminders.ACTION_REFILL_TOMORROW) {
+            reminders.dismissRefill(intent.getLongExtra(Reminders.EXTRA_MEDICINE_ID, -1L))
+            return
+        }
         val at = intent.at() ?: return
         async {
             when (intent.action) {

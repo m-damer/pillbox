@@ -525,7 +525,7 @@ private fun InfoCard(text: String, icon: androidx.compose.ui.graphics.vector.Ima
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PBTimePickerDialog(initial: LocalTime, is24: Boolean, onDismiss: () -> Unit, onConfirm: (LocalTime) -> Unit) {
+internal fun PBTimePickerDialog(initial: LocalTime, is24: Boolean, onDismiss: () -> Unit, onConfirm: (LocalTime) -> Unit) {
     val colors = PillBox.colors
     val st = rememberTimePickerState(initial.hour, initial.minute, is24)
     AlertDialog(

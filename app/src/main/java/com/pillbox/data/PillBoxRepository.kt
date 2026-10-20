@@ -30,6 +30,8 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
         me.copy(id = db.persons().insert(Mappers.toEntity(me)))
     }
 
+    suspend fun myPersonId(): Long? = db.persons().me()?.id
+
     suspend fun addPerson(person: Person): Long = db.persons().insert(Mappers.toEntity(person.copy(id = 0)))
     suspend fun updatePerson(person: Person) = db.persons().update(Mappers.toEntity(person))
 

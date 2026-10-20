@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.pillbox.data.MedicineWithSchedule
 import com.pillbox.data.PillBoxRepository
 import com.pillbox.domain.Pause
+import com.pillbox.domain.RefillSettings
 import com.pillbox.domain.StockInfo
 import com.pillbox.domain.StockMath
 import java.time.LocalDate
@@ -14,7 +15,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -24,12 +27,18 @@ data class MedicinesUiState(
     val loaded: Boolean = false,
     val active: List<MedRow> = emptyList(),
     val pausedCount: Int = 0,
+    /** Days before running out that Refill alerts start, for the note at the bottom. */
+    val remindDays: Int = RefillSettings.DEFAULT_DAYS,
     val finished: List<MedicineWithSchedule> = emptyList(),
 )
 
 /** The Medicines tab: active medicines with their stock, and the Finished tab. */
 @OptIn(ExperimentalCoroutinesApi::class)
-class MedicinesViewModel(private val repo: PillBoxRepository, meName: String) : ViewModel() {
+class MedicinesViewModel(
+    private val repo: PillBoxRepository,
+    meName: String,
+    remindDays: Flow<Int> = flowOf(RefillSettings.DEFAULT_DAYS),
+) : ViewModel() {
 
     init {
         // Courses whose last day has passed move to Finished.
@@ -39,14 +48,15 @@ class MedicinesViewModel(private val repo: PillBoxRepository, meName: String) : 
     val state: StateFlow<MedicinesUiState> =
         flow { emit(repo.ensureMe(meName)) }
             .flatMapLatest { me ->
-                combine(repo.observeMedicines(me.id), repo.observeFinished(me.id)) { active, finished ->
+                combine(repo.observeMedicines(me.id), repo.observeFinished(me.id), remindDays) { active, finished, remind ->
                     val today = LocalDate.now()
                     val now = LocalDateTime.now()
-                    val rows = active.map { MedRow(it, StockMath.info(it.medicine, it.schedule, today), Pause.activeAt(it.pauses, now)) }
+                    val rows = active.map { MedRow(it, StockMath.info(it.medicine, it.schedule, today, remind), Pause.activeAt(it.pauses, now)) }
                     MedicinesUiState(
                         loaded = true,
                         active = rows,
                         pausedCount = rows.count { it.pause != null },
+                        remindDays = remind,
                         finished = finished,
                     )
                 }

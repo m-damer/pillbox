@@ -26,6 +26,7 @@ Scope checked: all 112 offline screens (English and Arabic), their links, visibl
 **Rules for the developer:**
 
 - Late dose: fixed-gap medicines (every N hours) always ask; others follow the Late setting.
+- Refill alert (M5f): one alert a day at the chosen time (default 9:00 AM, 5 days before) for each active, unpaused medicine that is low or out, one low-importance notification each, with "I bought it" (opens the medicine to Add stock) and "Tomorrow" (dismisses; the daily alert returns). The refill alarm is inexact on purpose. The "Include the people I care for" switch is stored now and applies once People exists (M7). Settings live in DataStore.
 - Pause: no reminders, no refill alerts, "days left" frozen, history keeps a Paused mark; resumes 9:00 AM on the end date.
 - Hours schedule: first dose, then every N hours, wrapping past midnight, all 24 hours.
 - Minimum gap: As needed and hours-based medicines store a minimum gap; an early Take shows the warning sheet and the user may still confirm.

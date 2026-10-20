@@ -76,6 +76,7 @@ fun MedicinesScreen(
     toast: ListToast?,
     onToastShown: () -> Unit,
     modifier: Modifier = Modifier,
+    onRefillAlert: () -> Unit = {},
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
@@ -87,7 +88,7 @@ fun MedicinesScreen(
         }
     }
     Box(modifier.fillMaxSize()) {
-        MedicinesContent(state, fmt, showFinished, onShowFinished, onOpen, onAddMedicine)
+        MedicinesContent(state, fmt, showFinished, onShowFinished, onOpen, onAddMedicine, onRefillAlert = onRefillAlert)
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
 }
@@ -101,6 +102,7 @@ fun MedicinesContent(
     onOpen: (Long) -> Unit,
     onAddMedicine: () -> Unit,
     modifier: Modifier = Modifier,
+    onRefillAlert: () -> Unit = {},
 ) {
     val c = PillBox.colors
     Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -133,8 +135,9 @@ fun MedicinesContent(
                 item { AddMedicineButton(onAddMedicine) }
                 item {
                     InfoNote(
-                        pluralStringResource(R.plurals.meds_remind_note, com.pillbox.domain.StockMath.DEFAULT_REMIND_DAYS, fmt.number(com.pillbox.domain.StockMath.DEFAULT_REMIND_DAYS)),
+                        pluralStringResource(R.plurals.meds_remind_note, state.remindDays, fmt.number(state.remindDays)),
                         Icons.Filled.Notifications,
+                        onClick = onRefillAlert,
                     )
                 }
             } else {
@@ -314,14 +317,21 @@ private fun AddMedicineButton(onClick: () -> Unit) {
 }
 
 @Composable
-internal fun InfoNote(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Filled.Info) {
+internal fun InfoNote(
+    text: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Filled.Info,
+    /** When set, the whole note is a button (the refill note opens the Refill alert screen). */
+    onClick: (() -> Unit)? = null,
+) {
     val c = PillBox.colors
+    val tap = if (onClick != null) Modifier.clickable(onClickLabel = stringResource(R.string.refill_change_a11y), role = Role.Button, onClick = onClick) else Modifier
     Row(
-        Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S16),
+        Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).then(tap).padding(Space.S16),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Space.S12),
     ) {
         Icon(icon, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
         Text(text, style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
+        if (onClick != null) Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
     }
 }

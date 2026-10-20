@@ -52,10 +52,11 @@ class MedicineDetailViewModel(
     private val id: Long,
     /** Called after anything that changes reminders, so the next alarm is armed again. */
     private val onChanged: suspend () -> Unit,
+    remindDays: kotlinx.coroutines.flow.Flow<Int> = kotlinx.coroutines.flow.flowOf(com.pillbox.domain.RefillSettings.DEFAULT_DAYS),
 ) : ViewModel() {
     private val dialogs = MutableStateFlow(Dialogs())
 
-    val state: StateFlow<DetailUiState> = repo.observeMedicine(id).flatMapLatest { item ->
+    val state: StateFlow<DetailUiState> = combine(repo.observeMedicine(id), remindDays) { i, r -> i to r }.flatMapLatest { (item, remind) ->
         val today = LocalDate.now()
         val active = item?.medicine?.status == MedicineStatus.ACTIVE
         val from: LocalDateTime
@@ -69,7 +70,7 @@ class MedicineDetailViewModel(
         combine(repo.observeDoseEventsFor(id, from, to), dialogs) { events, d ->
             if (item == null) return@combine DetailUiState(loaded = true)
             val schedule = item.schedule
-            val info = StockMath.info(item.medicine, schedule, today)
+            val info = StockMath.info(item.medicine, schedule, today, remind)
             if (active) {
                 DetailUiState(
                     true, item, info, WeekSummary.build(schedule, item.pauses, events, today),

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,9 +43,16 @@ import com.pillbox.ui.medicines.MedicinesViewModel
 import com.pillbox.ui.theme.PillBoxTheme
 import com.pillbox.ui.today.TodayScreen
 import com.pillbox.ui.today.TodayViewModel
+import com.pillbox.ui.refill.RefillAlertScreen
+import com.pillbox.ui.refill.RefillAlertViewModel
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    /** A medicine to open, asked for by a refill notification. Taken once the screen shows it. */
+    private val openMedicine = mutableStateOf<Long?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -53,6 +61,8 @@ class MainActivity : ComponentActivity() {
         val reminders = app.reminders
         val meName = getString(R.string.person_me)
         stopRepeatIfOpenedFromNotification()
+        readOpenMedicine()
+        val remindDays = app.refillSettings.flow.map { it.daysBefore }.distinctUntilChanged()
         setContent {
             PillBoxTheme {
                 val context = LocalContext.current
@@ -74,6 +84,16 @@ class MainActivity : ComponentActivity() {
                 var detailToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
                 var detailToastBody by rememberSaveable { mutableStateOf<String?>(null) }
                 var tab by rememberSaveable { mutableStateOf(Tab.TODAY) }
+                var showRefill by rememberSaveable { mutableStateOf(false) }
+                var refillSession by rememberSaveable { mutableIntStateOf(0) }
+                // A refill notification asked for a medicine.
+                val wanted = openMedicine.value
+                LaunchedEffect(wanted) {
+                    if (wanted != null) {
+                        showRefill = false; adding = false; editItem = null
+                        detailId = wanted; openMedicine.value = null
+                    }
+                }
                 var permissions by remember { mutableStateOf(ReminderPermissions.state(context)) }
 
                 // Coming back from system settings: re-check permissions and arm the next reminder again.
@@ -85,7 +105,13 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                if (showPermissions) {
+                if (showRefill) {
+                    val vm: RefillAlertViewModel = viewModel(
+                        key = "refill-$refillSession",
+                        factory = viewModelFactory { initializer { RefillAlertViewModel(repo, app.refillSettings, onChanged = { reminders.rearmRefill() }) } },
+                    )
+                    Box(Modifier.fillMaxSize().statusBarsPadding()) { RefillAlertScreen(vm, onClose = { showRefill = false; refillSession++ }) }
+                } else if (showPermissions) {
                     PermissionsRoute(onDone = { showPermissions = false; permissions = ReminderPermissions.state(context) })
                 } else if (adding) {
                     val vm: AddMedicineViewModel = viewModel(
@@ -120,7 +146,7 @@ class MainActivity : ComponentActivity() {
                     val id = detailId!!
                     val vm: MedicineDetailViewModel = viewModel(
                         key = "detail-$id",
-                        factory = viewModelFactory { initializer { MedicineDetailViewModel(repo, id, onChanged = { reminders.rearm() }) } },
+                        factory = viewModelFactory { initializer { MedicineDetailViewModel(repo, id, onChanged = { reminders.rearm() }, remindDays = remindDays) } },
                     )
                     Box(Modifier.fillMaxSize().statusBarsPadding()) {
                         MedicineDetailScreen(
@@ -141,7 +167,7 @@ class MainActivity : ComponentActivity() {
                         Box(Modifier.weight(1f).statusBarsPadding()) {
                             when (tab) {
                                 Tab.TODAY -> {
-                                    val vm: TodayViewModel = viewModel(factory = viewModelFactory { initializer { TodayViewModel(repo, meName, onChanged = { reminders.rearm() }) } })
+                                    val vm: TodayViewModel = viewModel(factory = viewModelFactory { initializer { TodayViewModel(repo, meName, onChanged = { reminders.rearm() }, remindDays = remindDays) } })
                                     TodayScreen(
                                         vm, onAddMedicine = { adding = true },
                                         remindersOff = !permissions.remindersWork, onFixReminders = { showPermissions = true },
@@ -149,10 +175,11 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 Tab.MEDS -> {
-                                    val vm: MedicinesViewModel = viewModel(factory = viewModelFactory { initializer { MedicinesViewModel(repo, meName) } })
+                                    val vm: MedicinesViewModel = viewModel(factory = viewModelFactory { initializer { MedicinesViewModel(repo, meName, remindDays) } })
                                     MedicinesScreen(
                                         vm, showFinished = showFinishedTab, onShowFinished = { showFinishedTab = it },
                                         onOpen = { detailId = it }, onAddMedicine = { adding = true },
+                                        onRefillAlert = { refillSession++; showRefill = true },
                                         toast = listToastTitle?.let { ListToast(it, listToastBody) },
                                         onToastShown = { listToastTitle = null; listToastBody = null },
                                     )
@@ -172,6 +199,13 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         stopRepeatIfOpenedFromNotification()
+        readOpenMedicine()
+    }
+
+    private fun readOpenMedicine() {
+        val id = intent?.getLongExtra(Reminders.EXTRA_OPEN_MEDICINE, -1L) ?: -1L
+        if (id > 0) openMedicine.value = id
+        intent?.removeExtra(Reminders.EXTRA_OPEN_MEDICINE)
     }
 
     /** "Open" on a reminder means the user has seen it, so the 5-minute repeat stops. */
