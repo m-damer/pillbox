@@ -62,7 +62,7 @@
     <string name="doses_auto">Your doses (automatic)</string>
     <string name="once_hint">Once a day, every day at this time. Tap to change it.</string>
     <string name="twice_hint">Every 12 hours. Tap a dose to change its time.</string>
-    <string name="three_hint">About every 6 hours while you are awake. Tap a dose to change its time.</string>
+    <string name="three_hint">Every 8 hours, around the clock. Tap a dose to change its time.</string>
     <string name="hours_label">Every how many hours?</string>
     <string name="hours_hint">Choose from 1 to 24 hours.</string>
     <string name="hours_summary">Starts at your first dose (%1$s), then every %2$s, day and night: %3$s a day.</string>

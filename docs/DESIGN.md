@@ -267,3 +267,5 @@ Every success, warning and error message now has a designed screen in English an
 **Not drawn (same rules apply):** dark, 24-hour and high-contrast variants (same layouts), lock-screen notifications (drawn by Android), toast-only screens (base screen plus a toast).
 
 **Message screens:** each success, warning and error screen carries a "From: …" label naming the screen and action that triggers it.
+
+- **3 times a day (changed by Mahmoud):** doses are every 8 hours around the clock (first dose, +8 h, +16 h). The canvas hint said "About every 6 hours while you are awake"; the app now says "Every 8 hours, around the clock". Existing medicines keep their saved times until the first dose is changed in Edit.

@@ -17,7 +17,7 @@ class AddMedicineFormTest {
     @Test fun autoTimes() {
         assertEquals(listOf(t(8)), base.withFreq(FreqChoice.ONCE).times())
         assertEquals(listOf(t(8), t(20)), base.withFreq(FreqChoice.TWICE).times())
-        assertEquals(listOf(t(8), t(14), t(20)), base.withFreq(FreqChoice.THREE).times())
+        assertEquals(listOf(t(8), t(16), t(0)), base.withFreq(FreqChoice.THREE).times())
     }
 
     @Test fun timesWrapPastMidnight() {
@@ -26,11 +26,16 @@ class AddMedicineFormTest {
         assertEquals(listOf(t(2), t(14)), (f.schedule(today).frequency as Frequency.FixedTimes).times)
     }
 
+    @Test fun threeTimesADayIsEvery8Hours() {
+        val f = base.withFreq(FreqChoice.THREE).withFirstDose(t(13, 10))
+        assertEquals(listOf(t(13, 10), t(21, 10), t(5, 10)), f.times())
+    }
+
     @Test fun editingOneDoseKeepsTheOthers() {
         val f = base.withFreq(FreqChoice.THREE).withDoseTime(1, t(13, 30))
-        assertEquals(listOf(t(8), t(13, 30), t(20)), f.times())
+        assertEquals(listOf(t(8), t(13, 30), t(0)), f.times())
         // changing the first dose rebuilds all times
-        assertEquals(listOf(t(9), t(15), t(21)), f.withFirstDose(t(9)).times())
+        assertEquals(listOf(t(9), t(17), t(1)), f.withFirstDose(t(9)).times())
     }
 
     @Test fun everyDayOngoing() {

@@ -141,8 +141,8 @@ class ScheduleEngineTest {
     }
 
     @Test fun startDayBeginsAtTheFirstDose() {
-        // 3 times a day, first dose 21:47: 21:47, 03:47, 09:47. The start day only has 21:47.
-        val s = Schedule(sat, null, Frequency.FixedTimes(listOf(t(21, 47), t(3, 47), t(9, 47))), startTime = t(21, 47))
+        // 3 times a day, first dose 21:47: 21:47, 05:47, 13:47. The start day only has 21:47.
+        val s = Schedule(sat, null, Frequency.FixedTimes(listOf(t(21, 47), t(5, 47), t(13, 47))), startTime = t(21, 47))
         assertEquals(listOf(sat.atTime(21, 47)), ScheduleEngine.plannedDoses(s, sat))
         assertEquals(3, ScheduleEngine.plannedDoses(s, sat.plusDays(1)).size)
         assertEquals(sat.atTime(21, 47), ScheduleEngine.nextDose(s, emptyList(), sat.atTime(0, 0)))
