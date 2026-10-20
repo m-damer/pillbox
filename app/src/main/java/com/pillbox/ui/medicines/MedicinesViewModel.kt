@@ -14,7 +14,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -46,9 +48,9 @@ class MedicinesViewModel(
     }
 
     val state: StateFlow<MedicinesUiState> =
-        flow { emit(repo.ensureMe(meName)) }
-            .flatMapLatest { me ->
-                combine(repo.observeMedicines(me.id), repo.observeFinished(me.id), remindDays) { active, finished, remind ->
+        repo.observeActivePerson(meName).map { it.id }.distinctUntilChanged()
+            .flatMapLatest { personId ->
+                combine(repo.observeMedicines(personId), repo.observeFinished(personId), remindDays) { active, finished, remind ->
                     val today = LocalDate.now()
                     val now = LocalDateTime.now()
                     val rows = active.map { MedRow(it, StockMath.info(it.medicine, it.schedule, today, remind), Pause.activeAt(it.pauses, now)) }

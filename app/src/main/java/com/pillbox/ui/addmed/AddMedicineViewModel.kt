@@ -67,7 +67,7 @@ class AddMedicineViewModel(
             1 -> {
                 if (s.form.step1Errors().isNotEmpty()) { _state.update { it.copy(showErrors = true) }; return }
                 viewModelScope.launch {
-                    val me = repo.ensureMe(meName)
+                    val me = repo.activePerson(meName)
                     val renamed = editing == null || !editing.medicine.name.equals(s.form.name.trim(), ignoreCase = true)
                     if (renamed && !duplicateAccepted && repo.isDuplicateName(me.id, s.form.name)) {
                         _state.update { it.copy(dialog = AddMedDialog.Duplicate(s.form.name.trim())) }
@@ -99,7 +99,7 @@ class AddMedicineViewModel(
                     _state.update { it.copy(saving = false, saved = true) }
                     return@launch
                 }
-                val me = repo.ensureMe(meName)
+                val me = repo.activePerson(meName)
                 repo.addMedicine(s.form.medicine(me.id), schedule)
                 runCatching { onChanged() } // arm the next reminder; a failure here must not undo the save
                 val first = ScheduleEngine.nextDose(schedule, emptyList(), at)

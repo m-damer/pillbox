@@ -9,6 +9,7 @@ import com.pillbox.domain.Medicine
 import com.pillbox.domain.MedicineStatus
 import com.pillbox.domain.Pause
 import com.pillbox.domain.Person
+import com.pillbox.domain.Relation
 import com.pillbox.domain.Schedule
 import com.pillbox.domain.WithFood
 import java.time.DayOfWeek
@@ -28,8 +29,10 @@ object Mappers {
     private fun time(minutes: Int) = LocalTime.of(minutes / 60, minutes % 60)
 
     // ---- person ----
-    fun toEntity(p: Person) = PersonEntity(p.id, p.name, p.isMe, p.sortOrder)
-    fun toDomain(e: PersonEntity) = Person(e.id, e.name, e.isMe, e.sortOrder)
+    fun toEntity(p: Person) = PersonEntity(p.id, p.name, p.isMe, p.sortOrder, p.relation.name, p.colorIndex, p.ring, p.birthYear)
+    fun toDomain(e: PersonEntity) = Person(
+        e.id, e.name, e.isMe, e.sortOrder, runCatching { Relation.valueOf(e.relation) }.getOrDefault(Relation.OTHER), e.colorIndex, e.ring, e.birthYear,
+    )
 
     // ---- medicine ----
     fun toEntity(m: Medicine) = MedicineEntity(m.id, m.personId, m.name, m.strength, m.unit.name, m.doseAmount, m.stock, m.packSize, m.status.name, m.endedOn?.toEpochDay())

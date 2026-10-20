@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,6 +33,13 @@ import com.pillbox.reminder.PermissionsRoute
 import com.pillbox.reminder.ReminderPermissions
 import com.pillbox.reminder.Reminders
 import com.pillbox.ui.PlaceholderScreen
+import com.pillbox.ui.people.PeopleBar
+import com.pillbox.ui.people.PeopleScreen
+import com.pillbox.ui.people.PeopleViewModel
+import com.pillbox.ui.people.PersonEditScreen
+import com.pillbox.ui.people.PersonEditViewModel
+import com.pillbox.ui.people.PersonMode
+import com.pillbox.ui.people.PersonResult
 import com.pillbox.ui.addmed.AddMedicineScreen
 import com.pillbox.ui.addmed.AddMedicineViewModel
 import com.pillbox.ui.components.PillBoxBottomBar
@@ -93,6 +101,15 @@ class MainActivity : ComponentActivity() {
                 var showHistory by rememberSaveable { mutableStateOf(false) }
                 var showReport by rememberSaveable { mutableStateOf(false) }
                 var refillSession by rememberSaveable { mutableIntStateOf(0) }
+                // People: which person screen is open (0 none, 1 add, 2 edit, 3 my profile) and a toast for the People tab.
+                var personMode by rememberSaveable { mutableIntStateOf(0) }
+                var personId by rememberSaveable { mutableStateOf(0L) }
+                var personSession by rememberSaveable { mutableIntStateOf(0) }
+                var peopleToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
+                var peopleToastBody by rememberSaveable { mutableStateOf<String?>(null) }
+                val peopleList by repo.observePeople().collectAsStateWithLifecycle(emptyList())
+                val activePersonId by repo.activePersonId.collectAsStateWithLifecycle()
+                val peopleBar = PeopleBar(peopleList, activePersonId, onSelect = { repo.selectPerson(it) })
                 // A refill notification asked for a medicine.
                 val wanted = openMedicine.value
                 LaunchedEffect(wanted) {
@@ -112,7 +129,34 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                if (showReport) {
+                if (personMode != 0) {
+                    val mode = when (personMode) { 1 -> PersonMode.ADD; 2 -> PersonMode.EDIT; else -> PersonMode.PROFILE }
+                    val vm: PersonEditViewModel = viewModel(
+                        key = "person-$personSession",
+                        factory = viewModelFactory { initializer { PersonEditViewModel(repo, meName, mode, personId, onChanged = { reminders.rearm() }) } },
+                    )
+                    Box(Modifier.fillMaxSize().statusBarsPadding().imePadding()) {
+                        PersonEditScreen(vm, onClose = { result ->
+                            when (result) {
+                                is PersonResult.Added -> {
+                                    peopleToastTitle = context.getString(R.string.toast_person_added_title, result.name)
+                                    peopleToastBody = context.getString(R.string.toast_person_added_body)
+                                }
+                                is PersonResult.Removed -> {
+                                    peopleToastTitle = context.getString(R.string.toast_person_removed_title, result.name)
+                                    peopleToastBody = context.getString(R.string.toast_person_removed_body)
+                                }
+                                PersonResult.Saved -> {
+                                    peopleToastTitle = context.getString(R.string.toast_person_saved_title)
+                                    peopleToastBody = context.getString(R.string.toast_person_saved_body)
+                                }
+                                null -> {}
+                            }
+                            personMode = 0
+                            tab = Tab.PEOPLE
+                        })
+                    }
+                } else if (showReport) {
                     val vm: ReportViewModel = viewModel(factory = viewModelFactory { initializer { ReportViewModel(applicationContext, repo, meName) } })
                     // Registered first, so the preview inside ReportScreen can take Back before this does.
                     BackHandler { showReport = false }
@@ -191,7 +235,7 @@ class MainActivity : ComponentActivity() {
                                     TodayScreen(
                                         vm, onAddMedicine = { adding = true },
                                         remindersOff = !permissions.remindersWork, onFixReminders = { showPermissions = true },
-                                        onGoToMeds = { tab = Tab.MEDS },
+                                        onGoToMeds = { tab = Tab.MEDS }, people = peopleBar,
                                     )
                                 }
                                 Tab.MEDS -> {
@@ -199,12 +243,24 @@ class MainActivity : ComponentActivity() {
                                     MedicinesScreen(
                                         vm, showFinished = showFinishedTab, onShowFinished = { showFinishedTab = it },
                                         onOpen = { detailId = it }, onAddMedicine = { adding = true },
-                                        onRefillAlert = { refillSession++; showRefill = true },
+                                        onRefillAlert = { refillSession++; showRefill = true }, people = peopleBar,
                                         toast = listToastTitle?.let { ListToast(it, listToastBody) },
                                         onToastShown = { listToastTitle = null; listToastBody = null },
                                     )
                                 }
-                                Tab.PEOPLE -> PlaceholderScreen(stringResource(R.string.nav_people))
+                                Tab.PEOPLE -> {
+                                    val vm: PeopleViewModel = viewModel(factory = viewModelFactory { initializer { PeopleViewModel(repo, meName, onChanged = { reminders.rearm() }) } })
+                                    PeopleScreen(
+                                        vm, onOpenPerson = { tab = Tab.TODAY },
+                                        onEditPerson = { id ->
+                                            val isMe = peopleList.firstOrNull { it.id == id }?.isMe == true
+                                            personId = id; personMode = if (isMe) 3 else 2; personSession++
+                                        },
+                                        onAddPerson = { personId = 0L; personMode = 1; personSession++ },
+                                        toast = peopleToastTitle?.let { ListToast(it, peopleToastBody) },
+                                        onToastShown = { peopleToastTitle = null; peopleToastBody = null },
+                                    )
+                                }
                                 Tab.SETTINGS -> PlaceholderScreen(stringResource(R.string.nav_settings))
                             }
                         }

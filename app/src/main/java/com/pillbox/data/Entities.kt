@@ -1,5 +1,6 @@
 package com.pillbox.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -18,6 +19,10 @@ data class PersonEntity(
     val name: String,
     val isMe: Boolean = false,
     val sortOrder: Int = 0,
+    @ColumnInfo(defaultValue = "OTHER") val relation: String = "OTHER",
+    @ColumnInfo(defaultValue = "0") val colorIndex: Int = 0,
+    @ColumnInfo(defaultValue = "1") val ring: Boolean = true,
+    val birthYear: Int? = null,
 )
 
 @Entity(

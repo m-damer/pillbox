@@ -16,6 +16,7 @@ interface PersonDao {
     @Query("SELECT * FROM person ORDER BY sortOrder, id") fun observeAll(): Flow<List<PersonEntity>>
     @Query("SELECT * FROM person WHERE id = :id") suspend fun get(id: Long): PersonEntity?
     @Query("SELECT * FROM person WHERE isMe = 1 LIMIT 1") suspend fun me(): PersonEntity?
+    @Query("SELECT id FROM person WHERE ring = 0") suspend fun silentIds(): List<Long>
 }
 
 @Dao

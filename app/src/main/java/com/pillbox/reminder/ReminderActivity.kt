@@ -38,8 +38,10 @@ private fun ReminderRoute(reminders: Reminders, at: LocalDateTime, onFinish: () 
     val scope = rememberCoroutineScope()
     val fmt = rememberFormatter()
     var rows by remember { mutableStateOf<List<DoseRow>?>(null) }
+    var owners by remember { mutableStateOf<Map<Long, String>>(emptyMap()) }
 
     suspend fun reload() {
+        owners = reminders.owners()
         val pending = reminders.pendingRows(at)
         if (pending.isEmpty()) { reminders.dismiss(at); onFinish() } else rows = pending
     }
@@ -53,5 +55,6 @@ private fun ReminderRoute(reminders: Reminders, at: LocalDateTime, onFinish: () 
         onTakeAll = { scope.launch { reminders.take(current); reload() } },
         onSkipAll = { scope.launch { reminders.skip(current); reload() } },
         onSnooze = { scope.launch { reminders.snooze(at); onFinish() } },
+        owners = owners,
     )
 }

@@ -16,6 +16,8 @@ data class Illustration(
     val stockLow: Color,
     /** Day bar gradient from midnight to midnight: position (0..1) to color. */
     val dayBar: List<Pair<Float, Color>>,
+    /** Avatar backgrounds the user can pick for a person (PeopleRules.COLORS of them). */
+    val avatars: List<Color>,
     val legendNight: Color, val legendSunrise: Color, val legendDay: Color, val legendSunset: Color,
 )
 
@@ -32,11 +34,13 @@ private fun bar(night: Color, dusk: Color) = listOf(
 private val LightIllustration = Illustration(
     tablet = Color(0xFF2F6FED), capsule = Color(0xFFE4572E), paused = Color(0xFF8A90A8), stockLow = Color(0xFFD98200),
     dayBar = bar(Color(0xFF26304D), Color(0xFF3B4A7A)),
+    avatars = listOf(0xFFDDE1F5, 0xFFE3F4E8, 0xFFFFE4E0, 0xFFFFF1D6, 0xFFF0E8FF, 0xFFDDF0FF).map { Color(it) },
     legendNight = Color(0xFF26304D), legendSunrise = Sunrise, legendDay = DaySky, legendSunset = SunsetPurple,
 )
 
 private val DarkIllustration = LightIllustration.copy(
     paused = Color(0xFFAEB5D3),
+    avatars = listOf(0xFF2B3158, 0xFF1F3B2C, 0xFF4A2A2A, 0xFF4A3E22, 0xFF3A2E5A, 0xFF1F3A4F).map { Color(it) },
     dayBar = bar(Color(0xFFC5CCEE), Color(0xFFB8C2F0)),
     legendNight = Color(0xFFC5CCEE),
 )

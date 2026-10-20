@@ -244,7 +244,7 @@ fun AddMedicineContent(
 // ---------------------------------------------------------------- step 1
 
 @Composable
-private fun fieldColors() = OutlinedTextFieldDefaults.colors(
+internal fun fieldColors() = OutlinedTextFieldDefaults.colors(
     focusedTextColor = PillBox.colors.text, unfocusedTextColor = PillBox.colors.text, errorTextColor = PillBox.colors.text,
     focusedContainerColor = PillBox.colors.card, unfocusedContainerColor = PillBox.colors.card, errorContainerColor = PillBox.colors.card,
     focusedBorderColor = PillBox.colors.primary, unfocusedBorderColor = PillBox.colors.border, errorBorderColor = PillBox.colors.danger,

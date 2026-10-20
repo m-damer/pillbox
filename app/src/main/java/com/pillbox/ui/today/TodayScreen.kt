@@ -101,6 +101,7 @@ import kotlinx.coroutines.launch
 fun TodayScreen(
     vm: TodayViewModel, onAddMedicine: () -> Unit, modifier: Modifier = Modifier,
     remindersOff: Boolean = false, onFixReminders: () -> Unit = {}, onGoToMeds: () -> Unit = {},
+    people: com.pillbox.ui.people.PeopleBar? = null,
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
@@ -124,7 +125,7 @@ fun TodayScreen(
             state = state, fmt = fmt, onSelectDate = vm::selectDate, onBackToToday = vm::backToToday,
             onTake = vm::take, onSkip = vm::skip, onAddMedicine = onAddMedicine,
             remindersOff = remindersOff, onFixReminders = onFixReminders,
-            onResumeAll = vm::resumeAll, onGoToMeds = onGoToMeds,
+            onResumeAll = vm::resumeAll, onGoToMeds = onGoToMeds, people = people,
         )
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) { data ->
             val c = PillBox.colors
@@ -168,15 +169,22 @@ fun TodayContent(
     onFixReminders: () -> Unit = {},
     onResumeAll: () -> Unit = {},
     onGoToMeds: () -> Unit = {},
+    people: com.pillbox.ui.people.PeopleBar? = null,
 ) {
     val today = state.now.toLocalDate()
     val model = state.model
     if (state.loaded && state.allPaused != null) {
-        AllPausedToday(today, state.allPaused, fmt, onResumeAll, onGoToMeds, modifier)
+        Column(modifier.fillMaxSize()) {
+            PeopleRow(people)
+            AllPausedToday(today, state.allPaused, fmt, onResumeAll, onGoToMeds, Modifier.weight(1f))
+        }
         return
     }
     if (state.loaded && !state.hasMedicines) {
-        EmptyToday(today, onAddMedicine, modifier)
+        Column(modifier.fillMaxSize()) {
+            PeopleRow(people)
+            EmptyToday(today, onAddMedicine, Modifier.weight(1f))
+        }
         return
     }
     Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -187,7 +195,13 @@ fun TodayContent(
         ),
         verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
     ) {
-        item { Header(state.selectedDate, today, model, fmt) }
+        item {
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top) {
+                Box(Modifier.weight(1f)) { Header(state.selectedDate, today, model, fmt) }
+                com.pillbox.ui.people.PeopleBarSwitcher(people)
+            }
+        }
+        if (people?.active?.isMe == false) item { com.pillbox.ui.people.ViewingBanner(people) }
         if (remindersOff) item { RemindersOffBanner(onFixReminders) }
         item { WeekStrip(state.selectedDate, today, fmt, onSelectDate) }
         if (state.selectedDate != today) item { BackToToday(onBackToToday) }
@@ -238,6 +252,16 @@ private fun LowStockStrip(item: LowStock, onClick: () -> Unit) {
 }
 
 // ---------------------------------------------------------------- header, week, timeline
+
+/** Switcher and "you are viewing" note for the screens that replace the whole list (nothing planned, all paused). */
+@Composable
+private fun PeopleRow(people: com.pillbox.ui.people.PeopleBar?) {
+    if (people == null || people.people.size < 2) return
+    Column(Modifier.fillMaxWidth().padding(start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Dimens.ScreenPaddingTop), verticalArrangement = Arrangement.spacedBy(Space.S8)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { com.pillbox.ui.people.PeopleBarSwitcher(people) }
+        com.pillbox.ui.people.ViewingBanner(people)
+    }
+}
 
 @Composable
 private fun Header(selected: LocalDate, today: LocalDate, model: TodayModel?, fmt: Formatter) {

@@ -29,7 +29,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -94,11 +96,11 @@ class TodayViewModel(
 
     private val tick = flow { while (true) { emit(LocalDateTime.now()); delay(30_000) } }
 
-    private val data = flow { emit(repo.ensureMe(meName)) }.flatMapLatest { me ->
+    private val data = repo.observeActivePerson(meName).map { it.id }.distinctUntilChanged().flatMapLatest { personId ->
         selected.flatMapLatest { day ->
             combine(
-                repo.observeMedicines(me.id),
-                repo.observeDoseEvents(me.id, day.atStartOfDay(), day.plusDays(1).atStartOfDay()),
+                repo.observeMedicines(personId),
+                repo.observeDoseEvents(personId, day.atStartOfDay(), day.plusDays(1).atStartOfDay()),
                 remindDays,
             ) { medicines, events, remind -> Triple(medicines, events, remind) }
         }
