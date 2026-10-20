@@ -15,5 +15,5 @@
 - [x] M11 Widget
 - [x] M12 Large-text and TalkBack polish (static pass; real-phone test pending)
 - [x] M13 Review plan after every add, as-needed log and limit, Welcome, Settings clean-up (Dark theme in Display, Report in Settings, People row removed)
-- [ ] M14 Today timeline callouts and group icons, Settings row style, full-height screenshots, issues from the phone test
+- [x] M14 Today timeline callouts and group icons, Settings row style, As needed card on Today, as-needed doses in History and report, full-height screenshots (phone-test issues still to come)
 - [ ] M15 Release: signed build, Google sign-in publishing
