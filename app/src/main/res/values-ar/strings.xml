@@ -409,4 +409,32 @@
     <string name="refill_notif_out_text">اشترِ المزيد في أقرب وقت.</string>
     <string name="refill_notif_bought">اشتريته</string>
     <string name="refill_notif_tomorrow">ذكّرني غداً</string>
+    <!-- M6a: السجل -->
+    <string name="history_title">السجل</string>
+    <string name="history_link">عرض السجل ‹</string>
+    <string name="history_sub">%1$s · %2$s</string>
+    <string name="history_percent">%1$s٪</string>
+    <string name="history_percent_title">في الوقت المحدد</string>
+    <string name="history_sub_none">آخر ٣٠ يوماً · لا جرعات فائتة</string>
+    <plurals name="history_sub_missed">
+        <item quantity="zero">آخر ٣٠ يوماً · %1$s جرعة فائتة</item><item quantity="one">آخر ٣٠ يوماً · جرعة واحدة فائتة</item><item quantity="two">آخر ٣٠ يوماً · جرعتان فائتتان</item>
+        <item quantity="few">آخر ٣٠ يوماً · %1$s جرعات فائتة</item><item quantity="many">آخر ٣٠ يوماً · %1$s جرعة فائتة</item><item quantity="other">آخر ٣٠ يوماً · %1$s جرعة فائتة</item>
+    </plurals>
+    <string name="history_legend_all">تم أخذها كلها</string>
+    <string name="history_legend_some">بعضها فائت</string>
+    <string name="history_legend_missed">يوم فائت</string>
+    <string name="history_legend_paused">موقوف</string>
+    <string name="history_day_all_missed">%1$s: كل الجرعات فائتة</string>
+    <string name="history_day_paused">%1$s: موقوف مؤقتاً</string>
+    <string name="history_day_future">%1$s: لم يحن بعد</string>
+    <string name="history_attention">تحتاج انتباهك</string>
+    <string name="history_when">%1$s، %2$s</string>
+    <string name="history_skipped">تم تخطي %1$s</string>
+    <string name="history_not_taken">لم يُؤخذ %1$s</string>
+    <string name="history_late_by">أُخذ %1$s متأخراً %2$s</string>
+    <string name="history_badge_missed">فائتة</string>
+    <string name="history_badge_late">متأخرة</string>
+    <string name="history_empty_title">لا يوجد سجل بعد</string>
+    <string name="history_empty_body">بعد يومك الأول، تظهر الجرعات المأخوذة والفائتة هنا كتقويم ونسبة مئوية لآخر ٣٠ يوماً.</string>
+    <string name="history_go_today">الذهاب إلى اليوم</string>
 </resources>

@@ -3,6 +3,7 @@ package com.pillbox
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,8 @@ import com.pillbox.ui.medicines.MedicinesViewModel
 import com.pillbox.ui.theme.PillBoxTheme
 import com.pillbox.ui.today.TodayScreen
 import com.pillbox.ui.today.TodayViewModel
+import com.pillbox.ui.history.HistoryScreen
+import com.pillbox.ui.history.HistoryViewModel
 import com.pillbox.ui.refill.RefillAlertScreen
 import com.pillbox.ui.refill.RefillAlertViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -85,12 +88,13 @@ class MainActivity : ComponentActivity() {
                 var detailToastBody by rememberSaveable { mutableStateOf<String?>(null) }
                 var tab by rememberSaveable { mutableStateOf(Tab.TODAY) }
                 var showRefill by rememberSaveable { mutableStateOf(false) }
+                var showHistory by rememberSaveable { mutableStateOf(false) }
                 var refillSession by rememberSaveable { mutableIntStateOf(0) }
                 // A refill notification asked for a medicine.
                 val wanted = openMedicine.value
                 LaunchedEffect(wanted) {
                     if (wanted != null) {
-                        showRefill = false; adding = false; editItem = null
+                        showRefill = false; showHistory = false; adding = false; editItem = null
                         detailId = wanted; openMedicine.value = null
                     }
                 }
@@ -105,7 +109,13 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                if (showRefill) {
+                if (showHistory) {
+                    val vm: HistoryViewModel = viewModel(factory = viewModelFactory { initializer { HistoryViewModel(repo, meName) } })
+                    Box(Modifier.fillMaxSize().statusBarsPadding()) {
+                        HistoryScreen(vm, onBack = { showHistory = false }, onGoToToday = { showHistory = false; detailId = null; tab = Tab.TODAY })
+                    }
+                    BackHandler { showHistory = false }
+                } else if (showRefill) {
                     val vm: RefillAlertViewModel = viewModel(
                         key = "refill-$refillSession",
                         factory = viewModelFactory { initializer { RefillAlertViewModel(repo, app.refillSettings, onChanged = { reminders.rearmRefill() }) } },
@@ -152,6 +162,7 @@ class MainActivity : ComponentActivity() {
                         MedicineDetailScreen(
                             vm, onBack = { detailId = null },
                             onEdit = { vm.state.value.item?.let { editItem = it; editSession++ } },
+                            onSeeHistory = { showHistory = true },
                             toast = detailToastTitle?.let { ListToast(it, detailToastBody) },
                             onToastShown = { detailToastTitle = null; detailToastBody = null },
                             onDone = { toast, finishedTab ->

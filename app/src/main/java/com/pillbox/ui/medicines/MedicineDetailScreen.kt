@@ -96,6 +96,7 @@ fun MedicineDetailScreen(
     /** Stop or Restart finished: go back to the list and show this toast there. */
     onDone: (ListToast, finishedTab: Boolean) -> Unit,
     onEdit: () -> Unit = {},
+    onSeeHistory: () -> Unit = {},
     /** A toast to show when this screen appears (after Edit medicine saved). */
     toast: ListToast? = null,
     onToastShown: () -> Unit = {},
@@ -135,6 +136,7 @@ fun MedicineDetailScreen(
             },
             onDelete = { vm.showDelete(true) },
             onEdit = onEdit,
+            onSeeHistory = onSeeHistory,
             onRestart = {
                 vm.restart { name ->
                     onDone(ListToast(res.getString(R.string.toast_restarted_title, name), res.getString(R.string.toast_restarted_body)), false)
@@ -204,11 +206,12 @@ fun MedicineDetailContent(
     onDelete: () -> Unit = {},
     onEdit: () -> Unit = {},
     onRestart: () -> Unit = {},
+    onSeeHistory: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val item = state.item ?: return
     Box(modifier) {
-        if (item.medicine.status == MedicineStatus.ACTIVE) ActiveDetail(state, item, fmt, onBack, onAddStock, onStop, onPause, onResume, onDelete, onEdit)
+        if (item.medicine.status == MedicineStatus.ACTIVE) ActiveDetail(state, item, fmt, onBack, onAddStock, onStop, onPause, onResume, onDelete, onEdit, onSeeHistory)
         else FinishedDetail(state, item, fmt, onBack, onRestart, onDelete)
     }
 }
@@ -256,6 +259,7 @@ private fun ActiveDetail(
     onResume: () -> Unit,
     onDelete: () -> Unit,
     onEdit: () -> Unit,
+    onSeeHistory: () -> Unit,
 ) {
     val c = PillBox.colors
     val m = item.medicine
@@ -284,7 +288,7 @@ private fun ActiveDetail(
             // Paused: the cards stay readable but fade, so it is clear nothing will ring.
             Column(Modifier.alpha(if (paused != null) 0.6f else 1f), verticalArrangement = Arrangement.spacedBy(Dimens.CardGap)) {
                 if (schedule != null) ScheduleCard(item, fmt)
-                WeekCard(state.week, fmt)
+                WeekCard(state.week, fmt, onSeeHistory)
             }
         }
         Column(Modifier.padding(Dimens.ScreenPaddingH), verticalArrangement = Arrangement.spacedBy(Space.S10)) {
@@ -512,13 +516,19 @@ private fun DayLegend() {
 }
 
 @Composable
-private fun WeekCard(week: WeekSummary?, fmt: Formatter) {
+private fun WeekCard(week: WeekSummary?, fmt: Formatter, onSeeHistory: () -> Unit) {
     val c = PillBox.colors
     Column(
         Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S16),
         verticalArrangement = Arrangement.spacedBy(Space.S10),
     ) {
-        Text(stringResource(R.string.week_title), style = MaterialTheme.typography.labelMedium, color = c.accent, modifier = Modifier.semantics { heading() })
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.week_title), style = MaterialTheme.typography.labelMedium, color = c.accent, modifier = Modifier.semantics { heading() })
+            Text(stringResource(R.string.dot_sep), style = MaterialTheme.typography.labelMedium, color = c.textMuted)
+            Box(Modifier.heightIn(min = Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onSeeHistory), contentAlignment = Alignment.CenterStart) {
+                Text(stringResource(R.string.history_link), style = MaterialTheme.typography.labelMedium, color = c.accent)
+            }
+        }
         if (week != null) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 week.days.forEach { d ->
