@@ -119,6 +119,9 @@ class MainActivity : PillBoxActivity() {
                 // A new Add medicine flow every time, so an old "was added" prompt never comes back.
                 var addSession by rememberSaveable { mutableIntStateOf(0) }
                 var showPermissions by rememberSaveable { mutableStateOf(false) }
+                // First launch: language and text size, shown once.
+                var welcomeDone by rememberSaveable { mutableStateOf(prefs.getBoolean("welcome_done", false)) }
+                var welcomeLegal by rememberSaveable { mutableIntStateOf(0) }
                 // Medicines tab: which medicine is open, which list tab, and a toast to show after Stop or Restart.
                 var detailId by rememberSaveable { mutableStateOf<Long?>(null) }
                 // As-needed log: which medicine, whether to log a dose on opening, and a counter so each opening starts fresh.
@@ -185,7 +188,30 @@ class MainActivity : PillBoxActivity() {
                     }
                 }
 
-                if (personMode != 0) {
+                if (!welcomeDone) {
+                    val wvm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
+                    val back = { welcomeLegal = 0 }
+                    Box(Modifier.fillMaxSize().statusBarsPadding()) {
+                        when (welcomeLegal) {
+                            16 -> { BackHandler(onBack = back); TermsContent(onBack = back, onDone = back) }
+                            15 -> { BackHandler(onBack = back); PrivacyPolicyContent(onBack = back, onDelete = {}, onClose = back, showDelete = false) }
+                            else -> com.pillbox.ui.welcome.WelcomeContent(
+                                language = AppLocale.active(context), textSize = display.textSize,
+                                onLanguage = { code ->
+                                    if (code != AppLocale.active(context)) {
+                                        wvm.saveLanguage(com.pillbox.ui.settings.LanguageChoice(code, code == "ar", display.timeFormat, java.time.temporal.WeekFields.of(java.util.Locale.forLanguageTag(code)).firstDayOfWeek)) {
+                                            AppLocale.set(context, code)
+                                            if (android.os.Build.VERSION.SDK_INT < 33 && AppLocale.active(context) != code) this@MainActivity.recreate()
+                                        }
+                                    }
+                                },
+                                onTextSize = wvm::setTextSize,
+                                onTerms = { welcomeLegal = 16 }, onPrivacy = { welcomeLegal = 15 },
+                                onContinue = { prefs.edit().putBoolean("welcome_done", true).apply(); welcomeDone = true },
+                            )
+                        }
+                    }
+                } else if (personMode != 0) {
                     val mode = when (personMode) { 1 -> PersonMode.ADD; 2 -> PersonMode.EDIT; else -> PersonMode.PROFILE }
                     val vm: PersonEditViewModel = viewModel(
                         key = "person-$personSession",

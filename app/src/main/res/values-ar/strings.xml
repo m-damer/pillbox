@@ -1012,4 +1012,10 @@
     <string name="prn_undo_last">تراجع عن آخر جرعة</string>
     <string name="prn_card_title">المأخوذ اليوم</string>
     <string name="prn_card_sub">اضغط لرؤية جرعات اليوم</string>
+
+    <!-- M13: welcome -->
+    <string name="wl_title">مرحباً</string>
+    <string name="wl_sub">لا تفوّت جرعة أبداً. دعنا نضبطه على طريقتك.</string>
+    <string name="wl_agree">بالمتابعة فإنك توافق على:</string>
+    <string name="wl_continue">متابعة</string>
 </resources>

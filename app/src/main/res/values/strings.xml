@@ -951,4 +951,10 @@
     <string name="prn_undo_last">Undo last dose</string>
     <string name="prn_card_title">Taken today</string>
     <string name="prn_card_sub">Tap to see today\'s doses</string>
+
+    <!-- M13: welcome -->
+    <string name="wl_title">Welcome</string>
+    <string name="wl_sub">Never miss a dose. Let us set it up your way.</string>
+    <string name="wl_agree">By continuing you agree to:</string>
+    <string name="wl_continue">Continue</string>
 </resources>

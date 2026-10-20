@@ -241,7 +241,7 @@ private fun LegalPage(title: String, updated: String, blocks: List<Block>, onBac
 }
 
 @Composable
-fun PrivacyPolicyContent(onBack: () -> Unit, onDelete: () -> Unit, onClose: () -> Unit) {
+fun PrivacyPolicyContent(onBack: () -> Unit, onDelete: () -> Unit, onClose: () -> Unit, showDelete: Boolean = true) {
     val c = PillBox.colors
     val blocks = listOf(
         Block(Icons.Filled.Lock, R.string.pp_1_title, R.string.pp_1_body, { c.primaryContainer }, { c.accent }),
@@ -250,7 +250,7 @@ fun PrivacyPolicyContent(onBack: () -> Unit, onDelete: () -> Unit, onClose: () -
         Block(Icons.Filled.Check, R.string.pp_4_title, R.string.pp_4_body, { c.successContainer }, { c.success }),
     )
     LegalPage(stringResource(R.string.pp_title), stringResource(R.string.legal_updated), blocks, onBack) {
-        Card { AboutRow(stringResource(R.string.bk_delete), Icons.Filled.Delete, onDelete, danger = true) }
+        if (showDelete) Card { AboutRow(stringResource(R.string.bk_delete), Icons.Filled.Delete, onDelete, danger = true) }
         OutlineButton(stringResource(R.string.pp_close), onClose)
     }
 }
