@@ -35,7 +35,11 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.outlined.Star
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
+import androidx.compose.ui.graphics.vector.path
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -92,6 +96,17 @@ import com.pillbox.ui.theme.PillBox
 import com.pillbox.ui.theme.Space
 
 // ---------------------------------------------------------------- helpers
+
+/** A star drawn as an outline. An empty star must differ from a filled one by shape, not only by color. */
+private val StarOutline: ImageVector by lazy {
+    ImageVector.Builder("StarOutline", 24.dp, 24.dp, 24f, 24f).apply {
+        path(fill = null, stroke = SolidColor(Color.Black), strokeLineWidth = 1.8f, strokeLineCap = StrokeCap.Round, strokeLineJoin = StrokeJoin.Round) {
+            moveTo(12f, 17.27f); lineTo(18.18f, 21f); lineToRelative(-1.64f, -7.03f); lineTo(22f, 9.24f)
+            lineToRelative(-7.19f, -0.61f); lineTo(12f, 2f); lineTo(9.19f, 8.63f); lineTo(2f, 9.24f)
+            lineToRelative(5.46f, 4.73f); lineTo(5.82f, 21f); close()
+        }
+    }.build()
+}
 
 /** Opens the person's email app with the message ready. Returns false when there is no email app. Pill Box never sends anything itself. */
 fun openEmail(context: Context, mail: Mail): Boolean {
@@ -156,7 +171,7 @@ fun AboutContent(version: String, host: SnackbarHostState, onBack: () -> Unit, o
                     Divider()
                     AboutRow(stringResource(R.string.ab_feedback), Icons.Filled.Email, onFeedback)
                     Divider()
-                    AboutRow(stringResource(R.string.ab_rate), Icons.Outlined.Star, onRate)
+                    AboutRow(stringResource(R.string.ab_rate), StarOutline, onRate)
                 }
                 Text(
                     stringResource(R.string.ab_disclaimer), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.Center,
@@ -396,7 +411,7 @@ fun RateContent(stars: Int, onStars: (Int) -> Unit, onBack: () -> Unit, onWriteF
                         Modifier.size(Dimens.TouchTargetMin + Space.S4).selectable(selected = stars == i, role = Role.RadioButton, onClick = { onStars(i) }).semantics { contentDescription = label },
                         contentAlignment = Alignment.Center,
                     ) {
-                        Icon(if (i <= stars) Icons.Filled.Star else Icons.Outlined.Star, contentDescription = null, tint = if (i <= stars) c.star else c.textMuted, modifier = Modifier.size(Dimens.StarSize))
+                        Icon(if (i <= stars) Icons.Filled.Star else StarOutline, contentDescription = null, tint = if (i <= stars) c.star else c.textMuted, modifier = Modifier.size(Dimens.StarSize))
                     }
                 }
             }

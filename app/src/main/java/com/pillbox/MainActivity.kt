@@ -254,7 +254,7 @@ class MainActivity : PillBoxActivity() {
                                             app.backups,
                                             onDataChanged = { reminders.rearm() },
                                             resetOtherSettings = {
-                                                app.reminderSettings.update { ReminderSettings() }; app.refillSettings.save(RefillSettings())
+                                                app.reminderSettings.update { ReminderSettings() }; app.refillSettings.save(RefillSettings()); app.widgetSettings.clear(); com.pillbox.widget.PillBoxWidget.refresh(applicationContext)
                                                 androidx.core.app.NotificationManagerCompat.from(applicationContext).cancelAll()
                                             },
                                         )
