@@ -1,6 +1,7 @@
 package com.pillbox.data
 
 import androidx.room.withTransaction
+import com.pillbox.domain.BackupData
 import com.pillbox.domain.DoseEvent
 import com.pillbox.domain.DoseStatus
 import com.pillbox.domain.LateRules
@@ -26,6 +27,35 @@ data class MedicineWithSchedule(val medicine: Medicine, val schedule: Schedule?,
 
 /** The only class the UI and the alarm code talk to. Domain objects in, domain objects out. */
 class PillBoxRepository(private val db: PillBoxDatabase) {
+
+    // ---- backup, restore, delete all ----
+
+    /** Everything in the database, as backup rows. */
+    suspend fun exportBackup(): BackupData = db.withTransaction {
+        val b = db.backup()
+        BackupMapper.toData(BackupMapper.Entities(b.persons(), b.medicines(), b.schedules(), b.pauses(), b.doseEvents()))
+    }
+
+    /** Replaces everything with the backup, all or nothing. Rows are checked and converted first, so a bad file changes nothing. */
+    suspend fun restoreBackup(data: BackupData) {
+        val e = BackupMapper.toEntities(data)
+        db.withTransaction {
+            val b = db.backup()
+            clearAll(b)
+            b.insertPersons(e.persons); b.insertMedicines(e.medicines); b.insertSchedules(e.schedules)
+            b.insertPauses(e.pauses); b.insertDoseEvents(e.doseEvents)
+        }
+        activeId.value = null
+    }
+
+    suspend fun deleteEverything() {
+        db.withTransaction { clearAll(db.backup()) }
+        activeId.value = null
+    }
+
+    private suspend fun clearAll(b: BackupDao) {
+        b.clearDoseEvents(); b.clearPauses(); b.clearSchedules(); b.clearMedicines(); b.clearPersons()
+    }
 
     // ---- people ----
     fun observePeople(): Flow<List<Person>> = db.persons().observeAll().map { l -> l.map(Mappers::toDomain) }

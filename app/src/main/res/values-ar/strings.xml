@@ -732,4 +732,92 @@
     <string name="hc_preview_title">معاينة التباين العالي</string>
     <string name="hc_preview_sub">هكذا تبدو شاشة اليوم بتباين عالٍ.</string>
     <string name="hc_preview_use">استخدام التباين العالي</string>
+
+    <!-- M9a: Backup and export, Restore, Delete all my data -->
+    <string name="bk_title">النسخ الاحتياطي والتصدير</string>
+    <string name="bk_when">%1$s، %2$s</string>
+    <string name="bk_yesterday">أمس</string>
+    <string name="bk_last">آخر نسخة: %1$s</string>
+    <string name="bk_never">لا توجد نسخة بعد</string>
+    <string name="bk_where_folder">مجلد على هذا الهاتف</string>
+    <string name="bk_sec_auto">نسخ احتياطي أسبوعي تلقائي</string>
+    <string name="bk_folder">مجلد على هذا الهاتف</string>
+    <string name="bk_folder_none">لم يُختر بعد</string>
+    <string name="bk_folder_root">أعلى مستوى في التخزين</string>
+    <string name="bk_warn_phone_only">نسخة محفوظة على هذا الهاتف فقط تضيع إذا ضاع الهاتف. شارك نسخة لتبقى بأمان.</string>
+    <string name="bk_save_now">احفظ نسخة احتياطية الآن</string>
+    <string name="bk_sec_more">المزيد</string>
+    <string name="bk_report">مشاركة تقرير لطبيبي</string>
+    <string name="bk_report_sub">ملف PDF لآخر ٣٠ يوماً</string>
+    <string name="bk_share">مشاركة ملف النسخة</string>
+    <string name="bk_share_sub">أرسله إلى هاتف جديد أو بريدك</string>
+    <string name="bk_share_chooser">مشاركة ملف النسخة</string>
+    <string name="bk_restore">استعادة من نسخة احتياطية</string>
+    <string name="bk_restore_sub">من ملف</string>
+    <string name="bk_delete">حذف كل بياناتي</string>
+    <string name="bk_saved_title">تم حفظ النسخة</string>
+    <string name="bk_folder_set_title">تم تحديد مجلد النسخ</string>
+    <string name="bk_folder_set_body">تُحفظ النسخ الأسبوعية في %1$s.</string>
+    <string name="bk_share_failed_title">تعذّر إنشاء الملف</string>
+    <string name="bk_share_failed_body">حاول مجدداً بعد قليل. أدويتك آمنة.</string>
+    <string name="bk_failed_title">لم يكتمل النسخ الاحتياطي</string>
+    <string name="bk_failed_space">لا توجد مساحة كافية على هذا الهاتف. أدويتك ما زالت آمنة.</string>
+    <string name="bk_failed_other">حدث خطأ ما. أدويتك ما زالت آمنة.</string>
+    <string name="bk_failed_hint_space">أفرغ بعض المساحة على هاتفك ثم حاول مجدداً.</string>
+    <string name="bk_failed_hint_other">حاول مجدداً بعد قليل.</string>
+    <string name="bk_last_ok">آخر نسخة ناجحة</string>
+    <string name="bk_not_saved">لم تُحفظ بعد</string>
+    <string name="bk_failed_tag">فشلت</string>
+    <string name="bk_try_again">حاول مجدداً</string>
+    <string name="bk_later">لاحقاً</string>
+    <string name="bk_unavail_title">مجلد النسخ غير متاح</string>
+    <string name="bk_unavail_body">لا تستطيع علبة الدواء الوصول إلى %1$s. ربما نُقل المجلد أو حُذف. اختر مجلداً من جديد.</string>
+    <string name="bk_choose_folder">اختيار مجلد</string>
+    <string name="bk_cancel">إلغاء</string>
+    <string name="rs_title">استعادة من نسخة احتياطية</string>
+    <string name="rs_choose_title">اختر ملف نسختك الاحتياطية</string>
+    <string name="rs_choose_body">اختر نسخة علبة الدواء من هاتفك أو بريدك أو تخزينك السحابي. ينتهي اسمها بـ ‎.pillbox</string>
+    <string name="rs_warn_replace">الاستعادة تستبدل كل ما هو على هذا الهاتف الآن.</string>
+    <string name="rs_choose_btn">اختيار ملف النسخة</string>
+    <string name="rs_saved">حُفظت %1$s</string>
+    <string name="rs_people">الأشخاص</string>
+    <string name="rs_meds">الأدوية</string>
+    <string name="rs_doses">سجل الجرعات</string>
+    <string name="rs_warn_confirm">كل ما هو على هذا الهاتف الآن سيُستبدل بهذه النسخة.</string>
+    <string name="rs_do">استعادة هذه النسخة</string>
+    <string name="rs_another">اختيار ملف آخر</string>
+    <string name="rs_done_title">تمت الاستعادة</string>
+    <plurals name="rs_n_people">
+        <item quantity="zero">%1$s شخص</item><item quantity="one">شخص واحد</item><item quantity="two">شخصين</item>
+        <item quantity="few">%1$s أشخاص</item><item quantity="many">%1$s شخصاً</item><item quantity="other">%1$s شخص</item>
+    </plurals>
+    <plurals name="rs_n_meds">
+        <item quantity="zero">%1$s دواء</item><item quantity="one">دواء واحد</item><item quantity="two">دواءين</item>
+        <item quantity="few">%1$s أدوية</item><item quantity="many">%1$s دواءً</item><item quantity="other">%1$s دواء</item>
+    </plurals>
+    <plurals name="rs_n_doses">
+        <item quantity="zero">%1$s سجل جرعة</item><item quantity="one">سجل جرعة واحد</item><item quantity="two">سجلَّي جرعة</item>
+        <item quantity="few">%1$s سجلات جرعة</item><item quantity="many">%1$s سجل جرعة</item><item quantity="other">%1$s سجل جرعة</item>
+    </plurals>
+    <string name="rs_done_body">تمت استعادة بيانات %1$s و%2$s و%3$s.</string>
+    <string name="rs_remind_note">على هاتف جديد، اسمح بالتذكيرات مجدداً لتصلك في وقتها.</string>
+    <string name="rs_set_up">إعداد التذكيرات</string>
+    <string name="rs_go_today">الذهاب إلى اليوم</string>
+    <string name="rs_err_title">لا يمكن استخدام هذا الملف</string>
+    <string name="rs_err_body">ليس نسخة احتياطية من علبة الدواء، أو أنه تالف.</string>
+    <string name="rs_err_safe">لم تتغير أدويتك على هذا الهاتف.</string>
+    <string name="rs_failed_title">تعذّرت الاستعادة</string>
+    <string name="rs_failed_body">حدث خطأ ولم يتغير أي شيء. حاول مجدداً.</string>
+    <string name="rs_newer_title">هذه النسخة من إصدار أحدث</string>
+    <string name="rs_newer_body">حدّث علبة الدواء من Google Play ثم حاول مجدداً. لم يتغير أي شيء.</string>
+    <string name="rs_ok">حسناً</string>
+    <string name="da_title">حذف كل بياناتي؟</string>
+    <string name="da_body">ستُمحى كل الأشخاص والأدوية والسجل والإعدادات من هذا الهاتف. النسخ التي حفظتها في مكان آخر لا تُحذف.</string>
+    <string name="da_check">أفهم أنه لا يمكن التراجع</string>
+    <string name="da_do">حذف كل شيء</string>
+    <string name="da_keep">إبقاء بياناتي</string>
+    <string name="da_done_title">تم حذف كل شيء</string>
+    <string name="da_done_body">التطبيق فارغ. يمكنك البدء من جديد أو استعادة نسخة احتياطية.</string>
+    <string name="da_start">ابدأ من جديد</string>
+    <string name="settings_backup">النسخ الاحتياطي والتصدير</string>
 </resources>

@@ -81,3 +81,25 @@ interface DoseEventDao {
     @Query("SELECT * FROM dose_event WHERE medicineId = :medicineId ORDER BY COALESCE(takenAt, plannedAt) DESC LIMIT :limit")
     suspend fun latest(medicineId: Long, limit: Int): List<DoseEventEntity>
 }
+
+/** Whole-table reads and writes for backup, restore and "Delete all my data". */
+@Dao
+interface BackupDao {
+    @Query("SELECT * FROM person ORDER BY id") suspend fun persons(): List<PersonEntity>
+    @Query("SELECT * FROM medicine ORDER BY id") suspend fun medicines(): List<MedicineEntity>
+    @Query("SELECT * FROM schedule ORDER BY id") suspend fun schedules(): List<ScheduleEntity>
+    @Query("SELECT * FROM pause ORDER BY id") suspend fun pauses(): List<PauseEntity>
+    @Query("SELECT * FROM dose_event ORDER BY id") suspend fun doseEvents(): List<DoseEventEntity>
+
+    @Insert suspend fun insertPersons(rows: List<PersonEntity>)
+    @Insert suspend fun insertMedicines(rows: List<MedicineEntity>)
+    @Insert suspend fun insertSchedules(rows: List<ScheduleEntity>)
+    @Insert suspend fun insertPauses(rows: List<PauseEntity>)
+    @Insert suspend fun insertDoseEvents(rows: List<DoseEventEntity>)
+
+    @Query("DELETE FROM dose_event") suspend fun clearDoseEvents()
+    @Query("DELETE FROM pause") suspend fun clearPauses()
+    @Query("DELETE FROM schedule") suspend fun clearSchedules()
+    @Query("DELETE FROM medicine") suspend fun clearMedicines()
+    @Query("DELETE FROM person") suspend fun clearPersons()
+}

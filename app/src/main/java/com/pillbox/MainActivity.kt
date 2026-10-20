@@ -28,7 +28,14 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.pillbox.data.Mappers
 import com.pillbox.reminder.PermissionsRoute
+import com.pillbox.domain.BackupSettings
+import com.pillbox.domain.RefillSettings
+import com.pillbox.domain.ReminderSettings
 import com.pillbox.reminder.ReminderPermissions
+import com.pillbox.ui.backup.BackupScreen
+import com.pillbox.ui.backup.BackupViewModel
+import com.pillbox.ui.backup.DeleteDoneContent
+import com.pillbox.ui.backup.RestoreScreen
 import com.pillbox.reminder.Reminders
 import com.pillbox.ui.people.PeopleBar
 import com.pillbox.ui.AppLocale
@@ -92,6 +99,7 @@ class MainActivity : PillBoxActivity() {
         val remindDays = app.refillSettings.flow.map { it.daysBefore }.distinctUntilChanged()
         setContent {
             val display by app.displaySettings.flow.collectAsStateWithLifecycle(DisplayState.current)
+            val backup by app.backups.settings.flow.collectAsStateWithLifecycle(BackupSettings())
             PillBoxAppTheme(display) {
                 val context = LocalContext.current
                 val scope = rememberCoroutineScope()
@@ -180,7 +188,8 @@ class MainActivity : PillBoxActivity() {
                     }
                 } else if (settingsScreen != 0) {
                     val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
-                    val close = { settingsScreen = if (settingsScreen == 3 || settingsScreen == 9 || settingsScreen == 10) 1 else 0 }
+                    val close = { settingsScreen = when (settingsScreen) { 3, 9, 10 -> 1; 12 -> 11; else -> 0 } }
+                    BackHandler { close() }
                     val savedToast = {
                         settingsToastTitle = context.getString(R.string.toast_setting_saved_title)
                         settingsToastBody = context.getString(R.string.toast_setting_saved_body)
@@ -208,6 +217,36 @@ class MainActivity : PillBoxActivity() {
                                     },
                                     onTest = { if (ringing.notifications) reminders.sendTest() else open(ReminderPermissions.notificationSettings(context)) },
                                 )
+                            }
+                            11, 12, 13 -> {
+                                val backupVm: BackupViewModel = viewModel(factory = viewModelFactory {
+                                    initializer {
+                                        BackupViewModel(
+                                            app.backups,
+                                            onDataChanged = { reminders.rearm() },
+                                            resetOtherSettings = {
+                                                app.reminderSettings.update { ReminderSettings() }; app.refillSettings.save(RefillSettings())
+                                                androidx.core.app.NotificationManagerCompat.from(applicationContext).cancelAll()
+                                            },
+                                        )
+                                    }
+                                })
+                                when (settingsScreen) {
+                                    11 -> BackupScreen(
+                                        backupVm, onBack = close, onReport = { showReport = true },
+                                        onRestore = { backupVm.startRestore(); settingsScreen = 12 },
+                                        onDeleted = { settingsScreen = 13 },
+                                    )
+                                    12 -> RestoreScreen(
+                                        backupVm, onBack = close,
+                                        onSetUpReminders = { settingsScreen = 0; tab = Tab.TODAY; showPermissions = true },
+                                        onGoToToday = { settingsScreen = 0; tab = Tab.TODAY; detailId = null },
+                                    )
+                                    else -> DeleteDoneContent(
+                                        onStartAgain = { settingsScreen = 0; tab = Tab.TODAY; detailId = null },
+                                        onRestore = { backupVm.startRestore(); settingsScreen = 12 },
+                                    )
+                                }
                             }
                             3 -> ThemeScreen(vm, onBack = close)
                             4 -> SoundScreen(vm, onBack = close)
@@ -346,6 +385,7 @@ class MainActivity : PillBoxActivity() {
                                 SettingsTarget.MEALS -> settingsScreen = 6
                                 SettingsTarget.LATE -> settingsScreen = 7
                                 SettingsTarget.RINGING -> settingsScreen = 8
+                                SettingsTarget.BACKUP -> settingsScreen = 11
                                 SettingsTarget.ACCESSIBILITY -> settingsScreen = 1
                                                 SettingsTarget.LANGUAGE -> settingsScreen = 2
                                                 SettingsTarget.PEOPLE -> tab = Tab.PEOPLE
@@ -354,6 +394,7 @@ class MainActivity : PillBoxActivity() {
                                         toast = settingsToastTitle?.let { ListToast(it, settingsToastBody) },
                                         onToastShown = { settingsToastTitle = null; settingsToastBody = null },
                                         ringingIssues = permissions.issues,
+                                        backup = backup,
                                     )
                                 }
                             }

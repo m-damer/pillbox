@@ -22,6 +22,7 @@ abstract class PillBoxDatabase : RoomDatabase() {
     abstract fun schedules(): ScheduleDao
     abstract fun pauses(): PauseDao
     abstract fun doseEvents(): DoseEventDao
+    abstract fun backup(): BackupDao
 
     companion object {
         const val FILE_NAME = "pillbox.db"
