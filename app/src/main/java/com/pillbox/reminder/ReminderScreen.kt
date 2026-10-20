@@ -72,7 +72,7 @@ fun ReminderScreen(
                 Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S12),
                 verticalArrangement = Arrangement.spacedBy(Space.S8),
             ) {
-                Text(med.name + (med.strength?.let { " $it" } ?: ""), style = MaterialTheme.typography.titleMedium, color = c.text)
+                Text(med.name + (com.pillbox.ui.strengthLabel(med.strength)?.let { " $it" } ?: ""), style = MaterialTheme.typography.titleMedium, color = c.text)
                 Text(line, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
                     RowButton(stringResource(R.string.take), stringResource(R.string.take_med, med.name), filled = true) { onTake(row) }

@@ -132,7 +132,7 @@ fun AddStockSheet(
                         modifier = Modifier.semantics { heading() },
                     )
                     Text(
-                        listOfNotNull(medicine.name, medicine.strength).joinToString(" "),
+                        listOfNotNull(medicine.name, com.pillbox.ui.strengthLabel(medicine.strength)).joinToString(" "),
                         style = MaterialTheme.typography.bodyMedium, color = c.textMuted,
                     )
                 }

@@ -557,12 +557,12 @@ internal fun RowButton(label: String, description: String, filled: Boolean, onCl
     Box(
         Modifier
             .heightIn(min = Dimens.TouchTargetMin)
-            .widthIn(min = 72.dp)
+            .widthIn(min = 64.dp)
             .background(if (filled) c.primary else Color.Transparent, Dimens.ButtonShape)
             .border(Dimens.ChipBorder, if (filled) c.primary else c.border, Dimens.ButtonShape)
             .clickable(role = Role.Button, onClick = onClick)
             .semantics { contentDescription = description }
-            .padding(horizontal = Space.S16, vertical = Space.S8),
+            .padding(horizontal = Space.S12, vertical = Space.S8),
         contentAlignment = Alignment.Center,
     ) { Text(label, style = MaterialTheme.typography.labelLarge, color = if (filled) c.onPrimary else c.text, maxLines = 1) }
 }

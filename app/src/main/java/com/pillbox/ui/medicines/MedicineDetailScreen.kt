@@ -46,6 +46,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -273,7 +274,7 @@ private fun ActiveDetail(
                 Column(Modifier.weight(1f)) {
                     Text(m.name, style = MaterialTheme.typography.titleLarge, color = c.text)
                     Text(
-                        listOfNotNull(m.strength, doseText(m, fmt), lengthText(schedule, fmt)).joinToString(sep),
+                        listOfNotNull(com.pillbox.ui.strengthLabel(m.strength), doseText(m, fmt), lengthText(schedule, fmt)).joinToString(sep),
                         style = MaterialTheme.typography.bodyMedium, color = c.textMuted,
                     )
                 }
@@ -330,39 +331,71 @@ private fun StatTiles(item: MedicineWithSchedule, daysLeft: Int?, level: StockLe
     val m = item.medicine
     val perDay = item.schedule?.let { com.pillbox.domain.StockMath.averageDosesPerDay(it) }
     val lowTint = level != StockLevel.ENOUGH
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
-        Tile(
-            Modifier.weight(1f),
-            big = if (daysLeft != null) fmt.number(daysLeft) else "—",
-            small = if (daysLeft != null) pluralStringResource(R.plurals.tile_days_left, daysLeft.coerceAtLeast(0)) else stringResource(R.string.stock_enough),
-            bg = if (lowTint) c.warningContainer else c.card, ink = if (lowTint) c.warning else c.text,
-        )
-        Tile(
-            Modifier.weight(1f), big = fmt.amount(m.stock),
-            small = pluralStringResource(com.pillbox.ui.unitPlural(m.unit), com.pillbox.ui.quantityFor(m.stock)), bg = c.card, ink = c.text,
-        )
-        Tile(
-            Modifier.weight(1f),
-            big = if (perDay != null) stringResource(R.string.tile_per_day, fmt.amount(Math.round(perDay * 10) / 10.0)) else "—",
-            small = if (perDay != null) stringResource(R.string.tile_use) else stringResource(R.string.tile_as_needed), bg = c.card, ink = c.text,
-        )
+    val big = LocalDensity.current.fontScale > 1.15f
+    val tiles = listOf<@Composable (Modifier) -> Unit>(
+        { mod ->
+            Tile(
+                mod,
+                big = if (daysLeft != null) fmt.number(daysLeft) else "—",
+                small = if (daysLeft != null) pluralStringResource(R.plurals.tile_days_left, daysLeft.coerceAtLeast(0)) else stringResource(R.string.stock_enough),
+                bg = if (lowTint) c.warningContainer else c.card, ink = if (lowTint) c.warning else c.text, wide = big,
+            )
+        },
+        { mod ->
+            Tile(
+                mod, big = fmt.amount(m.stock),
+                small = pluralStringResource(com.pillbox.ui.unitPlural(m.unit), com.pillbox.ui.quantityFor(m.stock)), bg = c.card, ink = c.text, wide = big,
+            )
+        },
+        { mod ->
+            Tile(
+                mod,
+                big = if (perDay != null) stringResource(R.string.tile_per_day, fmt.amount(Math.round(perDay * 10) / 10.0)) else "—",
+                small = if (perDay != null) stringResource(R.string.tile_use) else stringResource(R.string.tile_as_needed), bg = c.card, ink = c.text, wide = big,
+            )
+        },
+    )
+    // At large text sizes the three tiles stack, each as one wide row, so numbers never break.
+    if (big) {
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Space.S8)) { tiles.forEach { it(Modifier.fillMaxWidth()) } }
+    } else {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8)) { tiles.forEach { it(Modifier.weight(1f)) } }
     }
 }
 
 @Composable
-private fun Tile(modifier: Modifier, big: String, small: String, bg: androidx.compose.ui.graphics.Color, ink: androidx.compose.ui.graphics.Color) {
+private fun Tile(
+    modifier: Modifier, big: String, small: String, bg: androidx.compose.ui.graphics.Color, ink: androidx.compose.ui.graphics.Color,
+    wide: Boolean = false,
+) {
     val c = PillBox.colors
-    Column(
-        modifier
-            .heightIn(min = 88.dp)
-            .background(bg, MaterialTheme.shapes.large)
-            .padding(Space.S10)
-            .semantics(mergeDescendants = true) { contentDescription = "$big $small" },
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(big, style = MaterialTheme.typography.headlineSmall, color = ink, textAlign = TextAlign.Center)
-        Text(small, style = MaterialTheme.typography.bodySmall, color = if (bg == c.card) c.textMuted else ink, textAlign = TextAlign.Center)
+    val smallColor = if (bg == c.card) c.textMuted else ink
+    if (wide) {
+        Row(
+            modifier
+                .heightIn(min = 64.dp)
+                .background(bg, MaterialTheme.shapes.large)
+                .padding(horizontal = Space.S16, vertical = Space.S10)
+                .semantics(mergeDescendants = true) { contentDescription = "$big $small" },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Space.S12),
+        ) {
+            Text(big, style = MaterialTheme.typography.headlineSmall, color = ink)
+            Text(small, style = MaterialTheme.typography.bodyMedium, color = smallColor, modifier = Modifier.weight(1f))
+        }
+    } else {
+        Column(
+            modifier
+                .heightIn(min = 88.dp)
+                .background(bg, MaterialTheme.shapes.large)
+                .padding(Space.S10)
+                .semantics(mergeDescendants = true) { contentDescription = "$big $small" },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(big, style = MaterialTheme.typography.headlineSmall, color = ink, textAlign = TextAlign.Center)
+            Text(small, style = MaterialTheme.typography.bodySmall, color = smallColor, textAlign = TextAlign.Center)
+        }
     }
 }
 
@@ -405,7 +438,9 @@ private fun DayBar(times: List<LocalTime>, fmt: Formatter) {
     val white = c.card
     fun frac(t: LocalTime) = (t.hour * 60 + t.minute) / 1440f
     fun at(f: Float) = if (rtl) 1f - f else f
-    val label = times.size <= 4
+    // At large text sizes the labels above the bar would overlap, so the times go in a list below it.
+    val big = LocalDensity.current.fontScale > 1.15f
+    val label = times.size <= 4 && !big
     val stops = ill.dayBar.map { (p, color) -> at(p) to color }.sortedBy { it.first }.toTypedArray()
     Column(Modifier.fillMaxWidth().clearAndSetSemantics { }) {
         BoxWithConstraints(Modifier.fillMaxWidth().height(if (label) 66.dp else 36.dp)) {
@@ -441,7 +476,15 @@ private fun DayBar(times: List<LocalTime>, fmt: Formatter) {
             }
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            listOf(0, 6, 12, 18, 24).forEach { h -> Text(fmt.hour(h), style = MaterialTheme.typography.labelSmall, color = c.textMuted) }
+            (if (big) listOf(0, 12, 24) else listOf(0, 6, 12, 18, 24)).forEach { h ->
+                Text(fmt.hour(h), style = MaterialTheme.typography.labelSmall, color = c.textMuted)
+            }
+        }
+        if (big) {
+            Text(
+                times.joinToString(", ") { fmt.time(it) }, style = MaterialTheme.typography.labelLarge, color = ink,
+                modifier = Modifier.padding(top = Space.S8),
+            )
         }
     }
 }
@@ -544,7 +587,7 @@ private fun FinishedDetail(
     val c = PillBox.colors
     val m = item.medicine
     val course = m.status == MedicineStatus.FINISHED
-    val title = listOfNotNull(m.name, m.strength).joinToString(" ")
+    val title = listOfNotNull(m.name, com.pillbox.ui.strengthLabel(m.strength)).joinToString(" ")
     val ended = m.endedOn
     Column(Modifier.fillMaxSize()) {
         TopBar(stringResource(R.string.back), onBack)

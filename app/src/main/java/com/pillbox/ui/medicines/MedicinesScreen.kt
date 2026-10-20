@@ -155,7 +155,7 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
     val schedule = row.item.schedule
     val info = row.info
     val sep = stringResource(R.string.dot_sep)
-    val sub = listOfNotNull(m.strength, lengthText(schedule, fmt)).joinToString(sep)
+    val sub = listOfNotNull(com.pillbox.ui.strengthLabel(m.strength), lengthText(schedule, fmt)).joinToString(sep)
     val label = levelLabel(info.level)
     val color = levelColor(info.level)
     val barColor = if (info.level == StockLevel.BUY_SOON) PillBox.illustration.stockLow else color
@@ -205,7 +205,7 @@ private fun PausedCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
     val c = PillBox.colors
     val m = row.item.medicine
     val sep = stringResource(R.string.dot_sep)
-    val sub = listOfNotNull(m.strength, lengthText(row.item.schedule, fmt)).joinToString(sep)
+    val sub = listOfNotNull(com.pillbox.ui.strengthLabel(m.strength), lengthText(row.item.schedule, fmt)).joinToString(sep)
     val until = row.pause?.until
     val status = if (until == null) stringResource(R.string.paused_until_resume)
     else stringResource(R.string.paused_until, shortDate(until.toLocalDate(), fmt))
@@ -256,7 +256,7 @@ private fun FinishedCard(item: MedicineWithSchedule, fmt: Formatter, onClick: ()
     val c = PillBox.colors
     val m = item.medicine
     val sep = stringResource(R.string.dot_sep)
-    val title = listOfNotNull(m.name, m.strength).joinToString(" ")
+    val title = listOfNotNull(m.name, com.pillbox.ui.strengthLabel(m.strength)).joinToString(" ")
     val ended = m.endedOn
     val course = m.status == MedicineStatus.FINISHED
     val sub = buildList {
