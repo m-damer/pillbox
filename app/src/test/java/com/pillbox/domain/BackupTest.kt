@@ -101,3 +101,38 @@ class BackupFrequencyTest {
         assertTrue(s.notify)
     }
 }
+
+class DriveApiTest {
+    @Test fun uploadBodyHasTheNameThePrivateFolderAndTheFile() {
+        val body = DriveApi.multipartBody("pillbox-2026-10-17.pillbox", "{\"a\":1}", "B")
+        assertTrue(body.startsWith("--B\r\n"))
+        assertTrue(body.contains("\"parents\":[\"appDataFolder\"]"))
+        assertTrue(body.contains("\"name\":\"pillbox-2026-10-17.pillbox\""))
+        assertTrue(body.contains("\r\n\r\n{\"a\":1}\r\n--B--"))
+    }
+
+    @Test fun backupsComeNewestFirstAndOtherFilesAreIgnored() {
+        val json = """{"files":[
+            {"id":"1","name":"pillbox-2026-10-10.pillbox","createdTime":"2026-10-10T09:41:00.000Z"},
+            {"id":"2","name":"pillbox-2026-10-17.pillbox","createdTime":"2026-10-17T09:41:00.000Z"},
+            {"id":"3","name":"notes.txt","createdTime":"2026-10-18T09:41:00.000Z"},
+            {"name":"pillbox-x.pillbox"}]}"""
+        assertEquals(listOf("2", "1"), DriveApi.parseFiles(json).map { it.id })
+    }
+
+    @Test fun anAnswerThatIsNotJsonGivesNoFiles() {
+        assertEquals(emptyList<DriveFile>(), DriveApi.parseFiles("<html>"))
+        assertEquals(emptyList<DriveFile>(), DriveApi.parseFiles("{}"))
+    }
+
+    @Test fun onlyTheOldestAreRemoved() {
+        val files = (1..9).map { DriveFile("$it", "pillbox-$it.pillbox", "") }
+        assertEquals(listOf("8", "9"), DriveApi.toRemove(files, 7).map { it.id })
+    }
+
+    @Test fun problemsAreToldInPlainTerms() {
+        assertEquals(DriveProblem.NO_INTERNET, DriveApi.problemFor(null, offline = true))
+        assertEquals(DriveProblem.SIGN_IN, DriveApi.problemFor(401, false))
+        assertEquals(DriveProblem.OTHER, DriveApi.problemFor(500, false))
+    }
+}

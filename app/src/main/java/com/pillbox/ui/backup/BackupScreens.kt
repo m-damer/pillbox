@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Warning
@@ -54,6 +55,7 @@ import com.pillbox.domain.BackupFrequency
 import com.pillbox.domain.BackupProblem
 import com.pillbox.domain.BackupSettings
 import com.pillbox.domain.BackupSummary
+import com.pillbox.domain.DriveProblem
 import com.pillbox.ui.Formatter
 import com.pillbox.ui.components.DangerButton
 import com.pillbox.ui.components.DialogKind
@@ -88,7 +90,11 @@ fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onReport: () -> Unit, 
     var unavailable by remember { mutableStateOf(false) }
     var confirmDelete by rememberSaveable { mutableStateOf(false) }
     var failureHidden by rememberSaveable { mutableStateOf(false) }
+    var askDrive by rememberSaveable { mutableStateOf(false) }
+    var stopDrive by rememberSaveable { mutableStateOf(false) }
+    var driveProblem by rememberSaveable { mutableStateOf<DriveProblem?>(null) }
     val pickFolder = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri -> if (uri != null) vm.folderPicked(uri) }
+    val consent = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { r -> vm.consentResult(r.data) }
 
     val savedTitle = stringResource(R.string.bk_saved_title)
     val folderTitle = stringResource(R.string.bk_folder_set_title)
@@ -97,6 +103,8 @@ fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onReport: () -> Unit, 
     val shareFailedTitle = stringResource(R.string.bk_share_failed_title)
     val shareFailedBody = stringResource(R.string.bk_share_failed_body)
     val shareChooser = stringResource(R.string.bk_share_chooser)
+    val driveTitle = stringResource(R.string.dr_connected_title)
+    val driveBody = stringResource(R.string.dr_connected_body)
 
     LaunchedEffect(Unit) {
         vm.events.collect { e ->
@@ -115,6 +123,9 @@ fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onReport: () -> Unit, 
                 }
                 BackupEvent.ShareFailed -> host.showToast(shareFailedTitle, shareFailedBody)
                 BackupEvent.NeedFolder -> pickFolder.launch(null)
+                BackupEvent.DriveConnected -> { failureHidden = false; host.showToast(driveTitle, driveBody) }
+                is BackupEvent.DriveFailed -> { failureHidden = false; driveProblem = e.problem }
+                is BackupEvent.Consent -> consent.launch(androidx.activity.result.IntentSenderRequest.Builder(e.sender).build())
             }
         }
     }
@@ -125,12 +136,36 @@ fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onReport: () -> Unit, 
     } else {
         BackupContent(
             settings, fmt, LocalDate.now(), host, onBack,
+            onDrive = { on -> if (on) askDrive = true else stopDrive = true },
             onToggleAuto = vm::setAuto, onFrequency = vm::setFrequency, onNotify = vm::setNotify, onSaveNow = vm::saveNow, onReport = onReport, onShare = vm::share, onRestore = onRestore, onDelete = { confirmDelete = true },
             busy = state.busy,
         )
     }
     if (unavailable) {
         FolderUnavailableDialog(settings.folderLabel, onChoose = { unavailable = false; pickFolder.launch(null) }, onLater = { unavailable = false })
+    }
+    if (askDrive) {
+        DriveConnectDialog(onChoose = { askDrive = false; vm.connectDrive() }, onNotNow = { askDrive = false })
+    }
+    if (stopDrive) {
+        MessageDialog(DialogKind.Warning, stringResource(R.string.dr_disconnect_title), stringResource(R.string.dr_disconnect_body), onDismiss = { stopDrive = false }, icon = Icons.Filled.Info) {
+            Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
+                PrimaryButton(stringResource(R.string.dr_keep), { stopDrive = false })
+                OutlineButton(stringResource(R.string.dr_disconnect), { stopDrive = false; vm.disconnectDrive() })
+            }
+        }
+    }
+    driveProblem?.let { p ->
+        MessageDialog(
+            DialogKind.Danger, stringResource(R.string.dr_failed_title),
+            stringResource(when (p) { DriveProblem.NO_INTERNET -> R.string.dr_failed_net; DriveProblem.SIGN_IN -> R.string.dr_failed_signin; else -> R.string.dr_failed_other }),
+            onDismiss = { driveProblem = null }, icon = Icons.Filled.Warning,
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
+                PrimaryButton(stringResource(R.string.bk_try_again), { driveProblem = null; vm.saveNow() })
+                OutlineButton(stringResource(R.string.rs_ok), { driveProblem = null })
+            }
+        }
     }
     if (confirmDelete) {
         DeleteAllDialog(onKeep = { confirmDelete = false }, onDelete = { confirmDelete = false; vm.deleteAll(onDeleted) })
@@ -151,7 +186,7 @@ internal fun whenText(at: LocalDateTime, today: LocalDate, fmt: Formatter): Stri
 fun BackupContent(
     s: BackupSettings, fmt: Formatter, today: LocalDate, host: SnackbarHostState, onBack: () -> Unit,
     onToggleAuto: (Boolean) -> Unit, onSaveNow: () -> Unit, onReport: () -> Unit, onShare: () -> Unit, onRestore: () -> Unit, onDelete: () -> Unit,
-    busy: Boolean = false, onFrequency: (BackupFrequency) -> Unit = {}, onNotify: (Boolean) -> Unit = {},
+    busy: Boolean = false, onFrequency: (BackupFrequency) -> Unit = {}, onNotify: (Boolean) -> Unit = {}, onDrive: (Boolean) -> Unit = {},
 ) {
     val c = PillBox.colors
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -168,7 +203,8 @@ fun BackupContent(
                             val at = s.lastSuccessAt
                             if (at != null) {
                                 Text(stringResource(R.string.bk_last, whenText(at, today, fmt)), style = MaterialTheme.typography.labelLarge, color = c.text)
-                                Text(stringResource(R.string.bk_where_folder), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+                                val where = when { s.lastToFolder && s.lastToDrive -> R.string.bk_where_both; s.lastToDrive -> R.string.bk_where_drive; else -> R.string.bk_where_folder }
+                                Text(stringResource(where), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
                             } else {
                                 Text(stringResource(R.string.bk_never), style = MaterialTheme.typography.labelLarge, color = c.text)
                             }
@@ -192,15 +228,30 @@ fun BackupContent(
                             )
                         }
                         RowDivider()
+                        SwitchRow(
+                            stringResource(R.string.dr_row), s.driveOn, onDrive,
+                            subtitle = when { !s.driveOn -> stringResource(R.string.dr_row_off); s.driveEmail != null -> stringResource(R.string.dr_row_on, s.driveEmail); else -> stringResource(R.string.dr_row_on_noemail) },
+                        )
+                        RowDivider()
                         SwitchRow(stringResource(R.string.bk_notify), s.notify, onNotify, subtitle = stringResource(R.string.bk_notify_sub))
                     }
                 }
-                Row(
-                    Modifier.fillMaxWidth().background(c.warningContainer, MaterialTheme.shapes.large).padding(Space.S16),
-                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
-                ) {
-                    Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(28.dp))
-                    Text(stringResource(R.string.bk_warn_phone_only), style = MaterialTheme.typography.bodyMedium, color = c.warning, modifier = Modifier.weight(1f))
+                if (s.driveOn) {
+                    Row(
+                        Modifier.fillMaxWidth().background(c.successContainer, MaterialTheme.shapes.large).padding(Space.S16),
+                        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
+                    ) {
+                        Icon(Icons.Filled.Lock, contentDescription = null, tint = c.success, modifier = Modifier.size(28.dp))
+                        Text(stringResource(R.string.dr_private), style = MaterialTheme.typography.bodyMedium, color = c.success, modifier = Modifier.weight(1f))
+                    }
+                } else {
+                    Row(
+                        Modifier.fillMaxWidth().background(c.warningContainer, MaterialTheme.shapes.large).padding(Space.S16),
+                        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
+                    ) {
+                        Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(28.dp))
+                        Text(stringResource(R.string.bk_warn_phone_only), style = MaterialTheme.typography.bodyMedium, color = c.warning, modifier = Modifier.weight(1f))
+                    }
                 }
                 PrimaryButton(stringResource(R.string.bk_save_now), onSaveNow, enabled = !busy)
                 Column {
@@ -305,6 +356,16 @@ private fun dayOnly(at: LocalDateTime, today: LocalDate, fmt: Formatter): String
 }
 
 @Composable
+fun DriveConnectDialog(onChoose: () -> Unit, onNotNow: () -> Unit) {
+    MessageDialog(DialogKind.Success, stringResource(R.string.dr_connect_title), stringResource(R.string.dr_connect_body), onDismiss = onNotNow, icon = Icons.Filled.Lock) {
+        Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
+            PrimaryButton(stringResource(R.string.dr_choose_account), onChoose)
+            OutlineButton(stringResource(R.string.dr_not_now), onNotNow)
+        }
+    }
+}
+
+@Composable
 fun FolderUnavailableDialog(label: String?, onChoose: () -> Unit, onLater: () -> Unit) {
     MessageDialog(
         DialogKind.Warning, stringResource(R.string.bk_unavail_title),
@@ -372,14 +433,20 @@ fun RestoreScreen(vm: BackupViewModel, onBack: () -> Unit, onSetUpReminders: () 
     val fmt = rememberFormatter()
     val pick = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if (uri != null) vm.filePicked(uri) }
     val choose = { pick.launch(arrayOf("*/*")) }
+    val consent = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { r -> vm.consentResult(r.data) }
+    LaunchedEffect(Unit) {
+        vm.events.collect { e -> if (e is BackupEvent.Consent) consent.launch(androidx.activity.result.IntentSenderRequest.Builder(e.sender).build()) }
+    }
     when (val s = state) {
-        RestoreState.Intro, RestoreState.Checking, RestoreState.Restoring -> RestoreIntroContent(onBack, choose, busy = s != RestoreState.Intro)
+        RestoreState.Intro, RestoreState.Checking, RestoreState.Restoring -> RestoreIntroContent(onBack, choose, busy = s != RestoreState.Intro, onDrive = vm::startDriveRestore)
         is RestoreState.Confirm -> RestoreConfirmContent(s, fmt, LocalDate.now(), onBack, onRestore = vm::restoreNow, onAnother = choose)
         is RestoreState.Done -> RestoreDoneContent(s.summary, fmt, onSetUpReminders, onGoToToday)
         RestoreState.Invalid -> RestoreErrorContent(onBack, onAnother = choose, body = R.string.rs_err_body, safe = R.string.rs_err_safe, title = R.string.rs_err_title)
         RestoreState.Failed -> RestoreErrorContent(onBack, onAnother = choose, body = R.string.rs_failed_body, safe = R.string.rs_err_safe, title = R.string.rs_failed_title)
+        RestoreState.DriveEmpty -> RestoreErrorContent(onBack, onAnother = choose, body = R.string.rs_drive_empty_body, safe = R.string.rs_err_safe, title = R.string.rs_drive_empty_title)
+        RestoreState.DriveOffline -> RestoreErrorContent(onBack, onAnother = choose, body = R.string.rs_drive_offline_body, safe = R.string.rs_err_safe, title = R.string.rs_drive_offline_title)
         RestoreState.Newer -> {
-            RestoreIntroContent(onBack, choose, busy = false)
+            RestoreIntroContent(onBack, choose, busy = false, onDrive = vm::startDriveRestore)
             MessageDialog(DialogKind.Warning, stringResource(R.string.rs_newer_title), stringResource(R.string.rs_newer_body), onDismiss = vm::startRestore, icon = Icons.Filled.Info) {
                 Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
                     PrimaryButton(stringResource(R.string.rs_ok), vm::startRestore)
@@ -391,7 +458,7 @@ fun RestoreScreen(vm: BackupViewModel, onBack: () -> Unit, onSetUpReminders: () 
 }
 
 @Composable
-fun RestoreIntroContent(onBack: () -> Unit, onChoose: () -> Unit, busy: Boolean = false) {
+fun RestoreIntroContent(onBack: () -> Unit, onChoose: () -> Unit, busy: Boolean = false, onDrive: (() -> Unit)? = null) {
     val c = PillBox.colors
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         SubHeader(stringResource(R.string.rs_title), onBack)
@@ -413,6 +480,7 @@ fun RestoreIntroContent(onBack: () -> Unit, onChoose: () -> Unit, busy: Boolean 
         }
         Column(Modifier.padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12), verticalArrangement = Arrangement.spacedBy(Space.S4)) {
             PrimaryButton(stringResource(R.string.rs_choose_btn), onChoose, enabled = !busy)
+            if (onDrive != null) if (!busy) OutlineButton(stringResource(R.string.rs_from_drive), onDrive)
             LinkButton(stringResource(R.string.bk_cancel), onBack)
         }
     }

@@ -106,7 +106,18 @@ data class BackupSettings(
     val lastSuccessAt: LocalDateTime? = null,
     val lastProblem: BackupProblem? = null,
     val lastProblemAt: LocalDateTime? = null,
+    /** Google Drive copy (optional). Needs internet when the backup runs. */
+    val driveOn: Boolean = false,
+    val driveEmail: String? = null,
+    val driveProblem: DriveProblem? = null,
+    val driveProblemAt: LocalDateTime? = null,
+    /** Where the last successful backup went. */
+    val lastToFolder: Boolean = true,
+    val lastToDrive: Boolean = false,
 ) {
+    /** The last Google Drive try failed and nothing worked since. */
+    val driveFailing get() = driveProblem != null && driveProblemAt != null && (lastSuccessAt == null || driveProblemAt > lastSuccessAt)
+
     /** The last try failed and nothing worked since. */
     val failing get() = lastProblem != null && lastProblemAt != null && (lastSuccessAt == null || lastProblemAt > lastSuccessAt)
     val hasFolder get() = folderUri != null

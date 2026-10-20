@@ -1,14 +1,19 @@
 package com.pillbox.ui.backup
 
+import android.content.Intent
+import android.content.IntentSender
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.backup.BackupManager
+import com.pillbox.backup.DriveClient
 import com.pillbox.domain.BackupData
+import com.pillbox.domain.BackupFrequency
 import com.pillbox.domain.BackupProblem
 import com.pillbox.domain.BackupResult
 import com.pillbox.domain.BackupSettings
 import com.pillbox.domain.BackupSummary
+import com.pillbox.domain.DriveProblem
 import java.time.LocalDateTime
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,19 +22,24 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class BackupUiState(val settings: BackupSettings = BackupSettings(), val busy: Boolean = false)
 
-/** One-time things the Backup screen reacts to: a toast, a dialog, the Share sheet or the folder picker. */
+/** Why Google asks the person for a screen: to connect the account, or to read a backup from Drive. */
+enum class ConsentFor { CONNECT, RESTORE }
+
+/** One-time things the Backup screen reacts to: a toast, a dialog, the Share sheet, the folder picker or Google's sign-in screen. */
 sealed interface BackupEvent {
     data class Saved(val fileName: String) : BackupEvent
     data class FolderSet(val label: String?) : BackupEvent
     data class Failed(val problem: BackupProblem) : BackupEvent
+    data class DriveFailed(val problem: DriveProblem) : BackupEvent
+    data object DriveConnected : BackupEvent
     data class ShareFile(val uri: Uri, val name: String) : BackupEvent
     data object ShareFailed : BackupEvent
     data object NeedFolder : BackupEvent
+    data class Consent(val sender: IntentSender) : BackupEvent
 }
 
 sealed interface RestoreState {
@@ -42,6 +52,8 @@ sealed interface RestoreState {
     data object Invalid : RestoreState
     data object Newer : RestoreState
     data object Failed : RestoreState
+    data object DriveEmpty : RestoreState
+    data object DriveOffline : RestoreState
 }
 
 class BackupViewModel(
@@ -61,26 +73,30 @@ class BackupViewModel(
     private val _restore = MutableStateFlow<RestoreState>(RestoreState.Intro)
     val restore: StateFlow<RestoreState> = _restore
 
-    private fun emitResult(o: BackupManager.Outcome) {
-        _events.trySend(when (o) { is BackupManager.Outcome.Saved -> BackupEvent.Saved(o.fileName); is BackupManager.Outcome.Failed -> BackupEvent.Failed(o.problem) })
+    private var consentFor = ConsentFor.CONNECT
+
+    private fun emit(run: BackupManager.Run) {
+        if (run.saved) _events.trySend(BackupEvent.Saved(run.fileName))
+        if (run.folderTried && run.folder != null) _events.trySend(BackupEvent.Failed(run.folder))
+        if (run.driveTried && run.drive != null) _events.trySend(BackupEvent.DriveFailed(run.drive))
     }
 
     fun saveNow() = viewModelScope.launch {
-        if (!manager.settings.current().hasFolder) { _events.trySend(BackupEvent.NeedFolder); return@launch }
+        val s = manager.settings.current()
+        if (!s.hasFolder && !s.driveOn) { _events.trySend(BackupEvent.NeedFolder); return@launch }
         busy.value = true
-        try { emitResult(manager.backupNow()) } finally { busy.value = false }
+        try { emit(manager.backupNow()) } finally { busy.value = false }
     }
 
-    /** The person picked a folder: remember it, start the weekly job, and save the first backup there. */
+    /** The person picked a folder: remember it, start the repeating job, and save the first backup there. */
     fun folderPicked(tree: Uri) = viewModelScope.launch {
         busy.value = true
         try {
             manager.setFolder(tree)
-            val label = manager.settings.current().folderLabel
-            when (val o = manager.backupNow()) {
-                is BackupManager.Outcome.Saved -> _events.trySend(BackupEvent.FolderSet(label))
-                is BackupManager.Outcome.Failed -> _events.trySend(BackupEvent.Failed(o.problem))
-            }
+            val run = manager.backupNow()
+            if (run.toFolder) _events.trySend(BackupEvent.FolderSet(manager.settings.current().folderLabel))
+            else if (run.folder != null) _events.trySend(BackupEvent.Failed(run.folder))
+            if (run.driveTried && run.drive != null) _events.trySend(BackupEvent.DriveFailed(run.drive))
         } finally { busy.value = false }
     }
 
@@ -89,7 +105,7 @@ class BackupViewModel(
         manager.setAuto(on)
     }
 
-    fun setFrequency(f: com.pillbox.domain.BackupFrequency) = viewModelScope.launch { manager.setFrequency(f) }
+    fun setFrequency(f: BackupFrequency) = viewModelScope.launch { manager.setFrequency(f) }
 
     fun setNotify(on: Boolean) = viewModelScope.launch { manager.setNotify(on) }
 
@@ -100,6 +116,46 @@ class BackupViewModel(
             _events.trySend(BackupEvent.ShareFile(uri, file.name))
         } catch (e: Exception) {
             _events.trySend(BackupEvent.ShareFailed)
+        } finally { busy.value = false }
+    }
+
+    // ---- Google Drive ----
+
+    /** "Choose Google account": Google's own screen picks the account and asks once. */
+    fun connectDrive() = viewModelScope.launch {
+        consentFor = ConsentFor.CONNECT
+        busy.value = true
+        try {
+            when (val a = manager.driveClient.authorize()) {
+                is DriveClient.Auth.Ready -> finishConnect(a.email)
+                is DriveClient.Auth.NeedsConsent -> _events.trySend(BackupEvent.Consent(a.sender))
+                is DriveClient.Auth.Failed -> _events.trySend(BackupEvent.DriveFailed(a.problem))
+            }
+        } finally { busy.value = false }
+    }
+
+    fun disconnectDrive() = viewModelScope.launch { manager.disconnectDrive() }
+
+    /** The sign-in screen closed. */
+    fun consentResult(data: Intent?) = viewModelScope.launch {
+        when (val a = manager.driveClient.fromIntent(data)) {
+            is DriveClient.Auth.Ready -> if (consentFor == ConsentFor.CONNECT) finishConnect(a.email) else restoreFromDriveWith(a.token)
+            is DriveClient.Auth.NeedsConsent -> if (consentFor == ConsentFor.RESTORE) _restore.value = RestoreState.Failed
+            is DriveClient.Auth.Failed ->
+                if (consentFor == ConsentFor.RESTORE) _restore.value = if (a.problem == DriveProblem.NO_INTERNET) RestoreState.DriveOffline else RestoreState.Intro
+                // Closing the screen without choosing is not an error.
+                else if (a.problem != DriveProblem.SIGN_IN) _events.trySend(BackupEvent.DriveFailed(a.problem))
+        }
+    }
+
+    private suspend fun finishConnect(email: String?) {
+        manager.connectDrive(email)
+        _events.trySend(BackupEvent.DriveConnected)
+        // Start with a copy right away, so Drive is not empty until the next scheduled backup.
+        busy.value = true
+        try {
+            val run = manager.backupNow()
+            if (run.driveTried && run.drive != null) _events.trySend(BackupEvent.DriveFailed(run.drive))
         } finally { busy.value = false }
     }
 
@@ -114,6 +170,30 @@ class BackupViewModel(
             is BackupResult.Ok -> RestoreState.Confirm(name, r.savedAt, r.data.summary, r.data)
             is BackupResult.Newer -> RestoreState.Newer
             BackupResult.Invalid -> RestoreState.Invalid
+        }
+    }
+
+    /** "From Google Drive": the newest backup there. */
+    fun startDriveRestore() = viewModelScope.launch {
+        consentFor = ConsentFor.RESTORE
+        _restore.value = RestoreState.Checking
+        when (val a = manager.driveClient.authorize()) {
+            is DriveClient.Auth.Ready -> restoreFromDriveWith(a.token)
+            is DriveClient.Auth.NeedsConsent -> _events.trySend(BackupEvent.Consent(a.sender))
+            is DriveClient.Auth.Failed -> _restore.value = if (a.problem == DriveProblem.NO_INTERNET) RestoreState.DriveOffline else RestoreState.Failed
+        }
+    }
+
+    private suspend fun restoreFromDriveWith(token: String) {
+        _restore.value = RestoreState.Checking
+        _restore.value = when (val r = manager.readFromDrive(token)) {
+            BackupManager.DriveRead.Empty -> RestoreState.DriveEmpty
+            is BackupManager.DriveRead.Problem -> if (r.problem == DriveProblem.NO_INTERNET) RestoreState.DriveOffline else RestoreState.Failed
+            is BackupManager.DriveRead.Found -> when (val x = r.result) {
+                is BackupResult.Ok -> RestoreState.Confirm(r.name, x.savedAt, x.data.summary, x.data)
+                is BackupResult.Newer -> RestoreState.Newer
+                BackupResult.Invalid -> RestoreState.Invalid
+            }
         }
     }
 
