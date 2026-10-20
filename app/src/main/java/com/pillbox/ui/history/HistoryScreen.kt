@@ -1,5 +1,6 @@
 package com.pillbox.ui.history
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -80,7 +81,7 @@ fun HistoryContent(
                 Text(stringResource(R.string.history_title), style = MaterialTheme.typography.titleLarge, color = c.text, modifier = Modifier.semantics { heading() })
                 if (!empty && state.loaded) {
                     val month = state.today.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault())
-                    Text(stringResource(R.string.history_sub, state.personName, month), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+                    Text(stringResourceIso(R.string.history_sub, state.personName, month), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
                 }
             }
         }
@@ -118,7 +119,7 @@ fun HistoryContent(
 @Composable
 private fun PercentCard(percent: Int, missed: Int, fmt: Formatter) {
     val c = PillBox.colors
-    val pct = stringResource(R.string.history_percent, fmt.number(percent))
+    val pct = stringResourceIso(R.string.history_percent, fmt.number(percent))
     val sub = if (missed == 0) stringResource(R.string.history_sub_none) else pluralStringResource(R.plurals.history_sub_missed, missed, fmt.number(missed))
     Row(
         Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S16),
@@ -177,13 +178,13 @@ private fun DayCell(day: HistoryDay, fmt: Formatter) {
     val date = day.date ?: run { Box(Modifier.size(36.dp)); return }
     val say = shortDate(date, fmt)
     val desc = when (day.mark) {
-        HistoryMark.ALL_TAKEN -> stringResource(R.string.week_day_taken, say)
-        HistoryMark.SOME_MISSED -> stringResource(R.string.week_day_missed, say)
-        HistoryMark.MISSED_DAY -> stringResource(R.string.history_day_all_missed, say)
-        HistoryMark.PAUSED -> stringResource(R.string.history_day_paused, say)
-        HistoryMark.PENDING -> stringResource(R.string.week_day_pending, say)
-        HistoryMark.NONE -> stringResource(R.string.week_day_none, say)
-        HistoryMark.FUTURE -> stringResource(R.string.history_day_future, say)
+        HistoryMark.ALL_TAKEN -> stringResourceIso(R.string.week_day_taken, say)
+        HistoryMark.SOME_MISSED -> stringResourceIso(R.string.week_day_missed, say)
+        HistoryMark.MISSED_DAY -> stringResourceIso(R.string.history_day_all_missed, say)
+        HistoryMark.PAUSED -> stringResourceIso(R.string.history_day_paused, say)
+        HistoryMark.PENDING -> stringResourceIso(R.string.week_day_pending, say)
+        HistoryMark.NONE -> stringResourceIso(R.string.week_day_none, say)
+        HistoryMark.FUTURE -> stringResourceIso(R.string.history_day_future, say)
     }
     Box(Modifier.semantics { contentDescription = desc }, contentAlignment = Alignment.Center) { MarkCircle(day.mark, 36.dp) }
 }
@@ -216,11 +217,11 @@ private fun MarkCircle(mark: HistoryMark, size: androidx.compose.ui.unit.Dp) {
 @Composable
 private fun AttentionRow(r: DoseRecord, fmt: Formatter) {
     val c = PillBox.colors
-    val whenText = stringResource(R.string.history_when, shortDate(r.planned.toLocalDate(), fmt), fmt.time(r.planned.toLocalTime()))
+    val whenText = stringResourceIso(R.string.history_when, shortDate(r.planned.toLocalDate(), fmt), fmt.time(r.planned.toLocalTime()))
     val name = r.medicine.name
     val what = when (r.outcome) {
-        DoseOutcome.SKIPPED -> stringResource(R.string.history_skipped, name)
-        DoseOutcome.MISSED -> stringResource(R.string.history_not_taken, name)
+        DoseOutcome.SKIPPED -> stringResourceIso(R.string.history_skipped, name)
+        DoseOutcome.MISSED -> stringResourceIso(R.string.history_not_taken, name)
         DoseOutcome.LATE -> stringResource(
             R.string.history_late_by, name,
             if (r.lateMinutes >= 60) pluralStringResource(R.plurals.n_hours, r.lateMinutes / 60, fmt.number(r.lateMinutes / 60))

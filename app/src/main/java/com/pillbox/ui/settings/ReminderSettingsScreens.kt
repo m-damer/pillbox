@@ -1,5 +1,6 @@
 package com.pillbox.ui.settings
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -120,7 +121,7 @@ fun SoundContent(
                 Text(stringResource(R.string.sound_repeat_every), style = MaterialTheme.typography.labelLarge, color = c.text)
                 val choices = ReminderSettings.REPEAT_CHOICES
                 Segmented(
-                    choices.map { stringResource(R.string.min_short, fmt.number(it)) },
+                    choices.map { stringResourceIso(R.string.min_short, fmt.number(it)) },
                     choices.indexOf(s.repeatMinutes).coerceAtLeast(0), { onRepeat(choices[it]) }, stackWhenLarge = true,
                 )
             }
@@ -221,7 +222,7 @@ private fun TimeChoice(label: String, time: String, modifier: Modifier, onClick:
 @Composable
 private fun DayBar(q: QuietHours, fmt: Formatter) {
     val c = PillBox.colors
-    val desc = stringResource(R.string.quiet_bar_a11y, fmt.time(q.from), fmt.time(q.until))
+    val desc = stringResourceIso(R.string.quiet_bar_a11y, fmt.time(q.from), fmt.time(q.until))
     Column(Modifier.semantics(mergeDescendants = true) { contentDescription = desc }, verticalArrangement = Arrangement.spacedBy(Space.S6)) {
         Canvas(Modifier.fillMaxWidth().height(20.dp)) {
             val day = 24 * 60f
@@ -283,7 +284,7 @@ fun MealTimesContent(meals: MealTimes, fmt: Formatter, onBack: () -> Unit, onCha
                 rows.forEachIndexed { i, (meal, nameRes, subRes) ->
                     val name = stringResource(nameRes)
                     val time = fmt.time(meals[meal])
-                    val desc = stringResource(R.string.meal_time_a11y, name, time)
+                    val desc = stringResourceIso(R.string.meal_time_a11y, name, time)
                     Row(
                         Modifier
                             .fillMaxWidth().heightIn(min = Dimens.SettingsRowMinHeight)
@@ -382,7 +383,7 @@ fun LateSettingContent(
             Card {
                 Box(Modifier.padding(Space.S8)) {
                     Segmented(
-                        thresholds.map { if (it.minutes < 60) stringResource(R.string.min_short, fmt.number(it.minutes)) else stringResource(R.string.late_threshold_hour) },
+                        thresholds.map { if (it.minutes < 60) stringResourceIso(R.string.min_short, fmt.number(it.minutes)) else stringResource(R.string.late_threshold_hour) },
                         thresholds.indexOf(threshold), { onThreshold(thresholds[it]) }, stackWhenLarge = true,
                     )
                 }

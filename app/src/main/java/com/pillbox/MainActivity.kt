@@ -1,5 +1,6 @@
 package com.pillbox
 
+import com.pillbox.ui.components.getStringIso
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
@@ -190,11 +191,11 @@ class MainActivity : PillBoxActivity() {
                         PersonEditScreen(vm, onClose = { result ->
                             when (result) {
                                 is PersonResult.Added -> {
-                                    peopleToastTitle = context.getString(R.string.toast_person_added_title, result.name)
+                                    peopleToastTitle = context.getStringIso(R.string.toast_person_added_title, result.name)
                                     peopleToastBody = context.getString(R.string.toast_person_added_body)
                                 }
                                 is PersonResult.Removed -> {
-                                    peopleToastTitle = context.getString(R.string.toast_person_removed_title, result.name)
+                                    peopleToastTitle = context.getStringIso(R.string.toast_person_removed_title, result.name)
                                     peopleToastBody = context.getString(R.string.toast_person_removed_body)
                                 }
                                 PersonResult.Saved -> {
@@ -342,7 +343,7 @@ class MainActivity : PillBoxActivity() {
                     AddMedicineScreen(vm, onClose = {
                         if (vm.state.value.saved) {
                             detailToastTitle = context.getString(R.string.toast_edit_title)
-                            detailToastBody = context.getString(R.string.toast_edit_body, item.medicine.name)
+                            detailToastBody = context.getStringIso(R.string.toast_edit_body, item.medicine.name)
                         }
                         editItem = null
                     })

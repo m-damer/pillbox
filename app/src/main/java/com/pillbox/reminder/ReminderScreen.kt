@@ -1,5 +1,6 @@
 package com.pillbox.reminder
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -63,7 +64,7 @@ fun ReminderScreen(
     ) {
         Text(fmt.time(at.toLocalTime()), style = MaterialTheme.typography.displayMedium, color = c.text)
         Text(
-            stringResource(R.string.notif_title, block),
+            stringResourceIso(R.string.notif_title, block),
             style = MaterialTheme.typography.titleLarge, color = c.text, modifier = Modifier.semantics { heading() },
         )
         rows.forEach { row ->
@@ -74,12 +75,12 @@ fun ReminderScreen(
                 Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S12),
                 verticalArrangement = Arrangement.spacedBy(Space.S8),
             ) {
-                owners[med.personId]?.let { Text(stringResource(R.string.reminder_for, it), style = MaterialTheme.typography.labelLarge, color = c.accent) }
+                owners[med.personId]?.let { Text(stringResourceIso(R.string.reminder_for, it), style = MaterialTheme.typography.labelLarge, color = c.accent) }
                 Text(med.name + (com.pillbox.ui.strengthLabel(med.strength)?.let { " $it" } ?: ""), style = MaterialTheme.typography.titleMedium, color = c.text)
                 Text(line, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
-                    RowButton(stringResource(R.string.take), stringResource(R.string.take_med, med.name), filled = true) { onTake(row) }
-                    RowButton(stringResource(R.string.skip), stringResource(R.string.skip_med, med.name), filled = false) { onSkip(row) }
+                    RowButton(stringResource(R.string.take), stringResourceIso(R.string.take_med, med.name), filled = true) { onTake(row) }
+                    RowButton(stringResource(R.string.skip), stringResourceIso(R.string.skip_med, med.name), filled = false) { onSkip(row) }
                 }
             }
         }

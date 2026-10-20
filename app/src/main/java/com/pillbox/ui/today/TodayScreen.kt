@@ -1,5 +1,6 @@
 package com.pillbox.ui.today
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -141,10 +142,10 @@ fun TodayScreen(
 @Composable
 private fun toastMessage(kind: ToastKind): String = when (kind) {
     is ToastKind.Taken ->
-        if (kind.names.size == 1) stringResource(R.string.toast_taken, kind.names[0])
+        if (kind.names.size == 1) stringResourceIso(R.string.toast_taken, kind.names[0])
         else pluralStringResource(R.plurals.toast_taken_n, kind.names.size, kind.names.size)
     is ToastKind.Skipped ->
-        if (kind.names.size == 1) stringResource(R.string.toast_skipped, kind.names[0])
+        if (kind.names.size == 1) stringResourceIso(R.string.toast_skipped, kind.names[0])
         else pluralStringResource(R.plurals.toast_skipped_n, kind.names.size, kind.names.size)
     is ToastKind.StockUpdated -> {
         val (title, body) = stockToastText(LocalContext.current.resources, rememberFormatter(), kind.unit, kind.result)
@@ -233,7 +234,7 @@ private fun LowStockStrip(item: LowStock, onClick: () -> Unit) {
         pluralStringResource(R.plurals.stock_days_left, item.daysLeft.coerceAtLeast(0), rememberFormatter().number(item.daysLeft))
     else stringResource(R.string.stock_out)
     val label = stringResource(if (item.level == StockLevel.OUT) R.string.out_update else R.string.stock_buy_soon)
-    val text = stringResource(R.string.low_stock_strip, item.name, what)
+    val text = stringResourceIso(R.string.low_stock_strip, item.name, what)
     Row(
         Modifier
             .fillMaxWidth()
@@ -274,8 +275,8 @@ private fun Header(selected: LocalDate, today: LocalDate, model: TodayModel?, fm
     val date = fmt.digits(shortDate(selected))
     val sub = when {
         model == null -> date
-        selected > today -> stringResource(R.string.sub_planned, date, pluralStringResource(R.plurals.n_doses, model.total, fmt.number(model.total)))
-        else -> stringResource(R.string.sub_taken, date, fmt.number(model.taken), fmt.number(model.total))
+        selected > today -> stringResourceIso(R.string.sub_planned, date, pluralStringResource(R.plurals.n_doses, model.total, fmt.number(model.total)))
+        else -> stringResourceIso(R.string.sub_taken, date, fmt.number(model.taken), fmt.number(model.total))
     }
     Column(Modifier.fillMaxWidth().padding(top = Space.S4)) {
         Text(title, style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.semantics { heading() })
@@ -413,8 +414,8 @@ private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) 
     val suffix = when (group.state) {
         GroupState.NEXT -> " · " + stringResource(R.string.group_next)
         GroupState.LATE ->
-            " · " + if (group.minutesLate >= 60) stringResource(R.string.late_h, fmt.number(group.minutesLate / 60))
-            else stringResource(R.string.late_min, fmt.number(group.minutesLate))
+            " · " + if (group.minutesLate >= 60) stringResourceIso(R.string.late_h, fmt.number(group.minutesLate / 60))
+            else stringResourceIso(R.string.late_min, fmt.number(group.minutesLate))
         else -> ""
     }
     Column(
@@ -438,7 +439,7 @@ private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) 
                 horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top,
             ) {
                 Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(20.dp))
-                Text(stringResource(R.string.late_banner, timeText), style = MaterialTheme.typography.labelMedium, color = c.warning)
+                Text(stringResourceIso(R.string.late_banner, timeText), style = MaterialTheme.typography.labelMedium, color = c.warning)
             }
         }
         group.rows.forEach { row -> DoseRowItem(row, group, fmt, fg, onTake, onSkip) }
@@ -519,7 +520,7 @@ private fun DoseRowItem(
 
     val plannedText = fmt.time(row.planned.toLocalTime())
     val statusText = when (status) {
-        RowStatus.TAKEN -> stringResource(R.string.said_taken_at, fmt.time(row.event?.taken?.toLocalTime() ?: row.planned.toLocalTime()))
+        RowStatus.TAKEN -> stringResourceIso(R.string.said_taken_at, fmt.time(row.event?.taken?.toLocalTime() ?: row.planned.toLocalTime()))
         RowStatus.SKIPPED -> stringResource(R.string.skipped)
         RowStatus.PENDING -> if (row.missed) stringResource(R.string.missed) else stringResource(R.string.said_not_taken)
     }
@@ -554,8 +555,8 @@ private fun DoseRowItem(
                 Text(stringResource(R.string.missed), style = MaterialTheme.typography.labelLarge, color = c.warning)
             }
             actionable -> Row(horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
-                RowButton(stringResource(R.string.take), stringResource(R.string.take_med, med.name), filled = true) { onTake(listOf(row)) }
-                RowButton(stringResource(R.string.skip), stringResource(R.string.skip_med, med.name), filled = false) { onSkip(listOf(row)) }
+                RowButton(stringResource(R.string.take), stringResourceIso(R.string.take_med, med.name), filled = true) { onTake(listOf(row)) }
+                RowButton(stringResource(R.string.skip), stringResourceIso(R.string.skip_med, med.name), filled = false) { onSkip(listOf(row)) }
             }
         }
     }

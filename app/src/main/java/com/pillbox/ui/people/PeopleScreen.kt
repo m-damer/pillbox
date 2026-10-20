@@ -1,5 +1,6 @@
 package com.pillbox.ui.people
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -122,7 +123,7 @@ fun PeopleContent(
                 item {
                     Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large)) {
                         SwitchRow(
-                            stringResource(R.string.people_ring_all, joinNames(others.map { it.label })), state.ringOthers, onRingOthers,
+                            stringResourceIso(R.string.people_ring_all, joinNames(others.map { it.label })), state.ringOthers, onRingOthers,
                             subtitle = stringResource(R.string.people_ring_sub),
                         )
                     }
@@ -146,10 +147,10 @@ private fun PersonCard(row: PersonRow, chip: PersonChip, active: Boolean, fmt: F
         d.missed > 0 -> pluralStringResource(R.plurals.people_missed_at, d.missed, fmt.number(d.missed), d.firstMissed?.let { fmt.time(it.toLocalTime()) } ?: "") to c.danger
         d.total == 0 -> stringResource(R.string.people_no_doses) to c.textMuted
         d.taken == d.total -> stringResource(R.string.people_all_taken) to c.success
-        else -> stringResource(R.string.people_taken, fmt.number(d.taken), fmt.number(d.total)) to c.textMuted
+        else -> stringResourceIso(R.string.people_taken, fmt.number(d.taken), fmt.number(d.total)) to c.textMuted
     }
-    val open = stringResource(R.string.people_open_a11y, chip.label, status)
-    val editDesc = stringResource(R.string.people_edit_a11y, chip.label)
+    val open = stringResourceIso(R.string.people_open_a11y, chip.label, status)
+    val editDesc = stringResourceIso(R.string.people_edit_a11y, chip.label)
     Row(
         Modifier
             .fillMaxWidth()

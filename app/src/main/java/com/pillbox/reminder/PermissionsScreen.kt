@@ -1,5 +1,6 @@
 package com.pillbox.reminder
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
@@ -101,7 +102,7 @@ private fun PermRow(icon: ImageVector, bg: Color, fg: Color, title: Int, sub: In
                 Text(stringResource(R.string.perm_allowed), style = MaterialTheme.typography.labelLarge, color = c.success)
             }
         } else {
-            RowButton(stringResource(R.string.perm_allow), stringResource(R.string.perm_allow_desc, stringResource(title)), filled = true, onClick = onAllow)
+            RowButton(stringResource(R.string.perm_allow), stringResourceIso(R.string.perm_allow_desc, stringResource(title)), filled = true, onClick = onAllow)
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.pillbox.ui.medicines
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -115,8 +116,8 @@ fun MedicinesContent(
                     modifier = Modifier.semantics { heading() },
                 )
                 Text(
-                    if (state.pausedCount > 0) stringResource(R.string.meds_sub_paused, fmt.number(state.active.size - state.pausedCount), fmt.number(state.pausedCount))
-                    else stringResource(R.string.meds_sub, fmt.number(state.active.size)),
+                    if (state.pausedCount > 0) stringResourceIso(R.string.meds_sub_paused, fmt.number(state.active.size - state.pausedCount), fmt.number(state.pausedCount))
+                    else stringResourceIso(R.string.meds_sub, fmt.number(state.active.size)),
                     style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
             }
             com.pillbox.ui.people.PeopleBarSwitcher(people)
@@ -170,11 +171,11 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
     val end = schedule?.end
     val left = when {
         info.level == StockLevel.OUT -> label
-        end != null -> stringResource(R.string.stock_left, fmt.amount(m.stock)) + sep + label
+        end != null -> stringResourceIso(R.string.stock_left, fmt.amount(m.stock)) + sep + label
         info.daysLeft != null -> pluralStringResource(R.plurals.stock_days_left, info.daysLeft.coerceAtLeast(0), fmt.number(info.daysLeft)) + sep + label
         else -> label
     }
-    val right = if (end != null && info.level != StockLevel.OUT) stringResource(R.string.ends_on, shortDate(end, fmt)) else stockAmountText(m, fmt)
+    val right = if (end != null && info.level != StockLevel.OUT) stringResourceIso(R.string.ends_on, shortDate(end, fmt)) else stockAmountText(m, fmt)
     val fraction = com.pillbox.domain.StockMath.barFraction(m)
     val sentence = listOf(m.name, sub, left, right).joinToString(", ")
 
@@ -216,7 +217,7 @@ private fun PausedCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
     val sub = listOfNotNull(com.pillbox.ui.strengthLabel(m.strength), lengthText(row.item.schedule, fmt)).joinToString(sep)
     val until = row.pause?.until
     val status = if (until == null) stringResource(R.string.paused_until_resume)
-    else stringResource(R.string.paused_until, shortDate(until.toLocalDate(), fmt))
+    else stringResourceIso(R.string.paused_until, shortDate(until.toLocalDate(), fmt))
     val tap = stringResource(R.string.paused_tap)
     val tag = stringResource(R.string.tag_paused)
     val dash = c.placeholder

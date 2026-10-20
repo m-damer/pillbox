@@ -1,5 +1,6 @@
 package com.pillbox.ui.addmed
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -7,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -121,9 +123,9 @@ fun AddMedicineScreen(vm: AddMedicineViewModel, onClose: () -> Unit, modifier: M
 
     when (val d = state.dialog) {
         is AddMedDialog.Duplicate -> MessageDialog(
-            DialogKind.Warning, stringResource(R.string.dup_title, d.name), stringResource(R.string.dup_body), vm::dismissDialog,
+            DialogKind.Warning, stringResourceIso(R.string.dup_title, d.name), stringResource(R.string.dup_body), vm::dismissDialog,
         ) {
-            PrimaryButton(stringResource(R.string.dup_open, d.name), { vm.dismissDialog(); onClose() })
+            PrimaryButton(stringResourceIso(R.string.dup_open, d.name), { vm.dismissDialog(); onClose() })
             OutlineButton(stringResource(R.string.dup_add_anyway), vm::addAnyway)
             LinkButton(stringResource(R.string.cancel), vm::dismissDialog)
         }
@@ -145,11 +147,11 @@ fun AddMedicineScreen(vm: AddMedicineViewModel, onClose: () -> Unit, modifier: M
             val body = when {
                 d.asNeeded -> stringResource(R.string.added_body_prn)
                 first == null -> stringResource(R.string.added_body_none)
-                first.toLocalDate() == today -> stringResource(R.string.added_body_today, fmt.time(first.toLocalTime()))
-                first.toLocalDate() == today.plusDays(1) -> stringResource(R.string.added_body_tomorrow, fmt.time(first.toLocalTime()))
-                else -> stringResource(R.string.added_body_date, fmt.digits(shortDate(first.toLocalDate())), fmt.time(first.toLocalTime()))
+                first.toLocalDate() == today -> stringResourceIso(R.string.added_body_today, fmt.time(first.toLocalTime()))
+                first.toLocalDate() == today.plusDays(1) -> stringResourceIso(R.string.added_body_tomorrow, fmt.time(first.toLocalTime()))
+                else -> stringResourceIso(R.string.added_body_date, fmt.digits(shortDate(first.toLocalDate())), fmt.time(first.toLocalTime()))
             }
-            MessageDialog(DialogKind.Success, stringResource(R.string.added_title, d.name), body, onDismiss = {}) {
+            MessageDialog(DialogKind.Success, stringResourceIso(R.string.added_title, d.name), body, onDismiss = {}) {
                 PrimaryButton(stringResource(R.string.go_today), onClose)
                 OutlineButton(stringResource(R.string.add_another), vm::startOver)
             }
@@ -184,8 +186,8 @@ fun AddMedicineContent(
         Column(Modifier.padding(start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Dimens.ScreenPaddingTop)) {
             StepHeader(
                 title = stringResource(if (state.isEdit) R.string.edit_title else R.string.add_medicine),
-                subtitle = if (state.isEdit) stringResource(R.string.edit_med_step, state.editingName.orEmpty(), fmt.number(state.step))
-                else stringResource(R.string.add_med_step, fmt.number(state.step), stringResource(subtitles[state.step - 1])),
+                subtitle = if (state.isEdit) stringResourceIso(R.string.edit_med_step, state.editingName.orEmpty(), fmt.number(state.step))
+                else stringResourceIso(R.string.add_med_step, fmt.number(state.step), stringResource(subtitles[state.step - 1])),
                 step = state.step, steps = 3, backLabel = stringResource(R.string.back), onBack = onBack,
             )
         }
@@ -588,7 +590,7 @@ private fun Step3(
                     ErrorText(stringResource(R.string.days_none))
                 } else if (form.weekdays.isNotEmpty()) {
                     val names = week.filter { it in form.weekdays }.map { it.getDisplayName(TextStyle.FULL, locale()) }
-                    HelperText(stringResource(R.string.days_picked, fmt.list(names, stringResource(R.string.list_sep), stringResource(R.string.list_and))))
+                    HelperText(stringResourceIso(R.string.days_picked, fmt.list(names, stringResource(R.string.list_sep), stringResource(R.string.list_and))))
                 }
             }
             DaysChoice.EVERY_N -> {
@@ -602,7 +604,7 @@ private fun Step3(
                 )
                 val s = form.startDate(today)
                 val dates = (0..2).map { shortDate(s.plusDays((it * form.everyN).toLong())) }
-                HelperText(stringResource(R.string.repeat_hint, fmt.digits(dates.joinToString(", "))))
+                HelperText(stringResourceIso(R.string.repeat_hint, fmt.digits(dates.joinToString(", "))))
             }
             DaysChoice.EVERY_DAY -> Unit
         }
@@ -712,19 +714,19 @@ private fun summaryText(form: AddMedicineForm, fmt: Formatter): String {
     }
     val length = when (form.length) {
         LengthChoice.ONGOING -> stringResource(R.string.sum_ongoing)
-        LengthChoice.SEVEN -> stringResource(R.string.sum_for, pluralStringResource(R.plurals.n_days, 7, fmt.number(7)))
-        LengthChoice.OTHER -> stringResource(R.string.sum_for, pluralStringResource(R.plurals.n_days, form.lengthDays, fmt.number(form.lengthDays)))
+        LengthChoice.SEVEN -> stringResourceIso(R.string.sum_for, pluralStringResource(R.plurals.n_days, 7, fmt.number(7)))
+        LengthChoice.OTHER -> stringResourceIso(R.string.sum_for, pluralStringResource(R.plurals.n_days, form.lengthDays, fmt.number(form.lengthDays)))
     }
-    if (!form.hasDays()) return stringResource(R.string.sum_short, freq, length)
+    if (!form.hasDays()) return stringResourceIso(R.string.sum_short, freq, length)
     val days = when (form.days) {
         DaysChoice.EVERY_DAY -> stringResource(R.string.sum_every_day)
         DaysChoice.SPECIFIC -> {
             val first = com.pillbox.ui.firstDayOfWeek()
             val names = (0..6).map { first.plus(it.toLong()) }.filter { it in form.weekdays }.map { it.getDisplayName(TextStyle.SHORT, locale()) }
             if (names.isEmpty()) stringResource(R.string.sum_specific_none)
-            else stringResource(R.string.sum_on, fmt.list(names, stringResource(R.string.list_sep), stringResource(R.string.list_and)))
+            else stringResourceIso(R.string.sum_on, fmt.list(names, stringResource(R.string.list_sep), stringResource(R.string.list_and)))
         }
-        DaysChoice.EVERY_N -> stringResource(R.string.sum_every_n, pluralStringResource(R.plurals.n_days, form.everyN, fmt.number(form.everyN)))
+        DaysChoice.EVERY_N -> stringResourceIso(R.string.sum_every_n, pluralStringResource(R.plurals.n_days, form.everyN, fmt.number(form.everyN)))
     }
-    return stringResource(R.string.sum_full, freq, days, length)
+    return stringResourceIso(R.string.sum_full, freq, days, length)
 }

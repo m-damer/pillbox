@@ -187,6 +187,7 @@ object Dimens {
     val StarSize = 40.dp
     val StepperButton = 56.dp
     val ChipBorder = 2.dp
+    val PreviewMaxHeight = 460.dp
 }
 
 /** The "space" scale in pillbox-tokens.json. */

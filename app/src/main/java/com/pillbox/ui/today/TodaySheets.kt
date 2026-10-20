@@ -1,5 +1,6 @@
 package com.pillbox.ui.today
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -93,7 +94,7 @@ internal fun SheetTitle(title: String, subtitle: String? = null) {
 private fun SkipSheet(sheet: TodaySheet.Skip, vm: TodayViewModel) {
     val c = PillBox.colors
     var reason by remember { mutableStateOf<SkipReason?>(null) }
-    val title = if (sheet.rows.size == 1) stringResource(R.string.skip_title, sheet.rows[0].medicine.name) else stringResource(R.string.skip_title_many)
+    val title = if (sheet.rows.size == 1) stringResourceIso(R.string.skip_title, sheet.rows[0].medicine.name) else stringResource(R.string.skip_title_many)
     SheetTitle(title, stringResource(R.string.skip_sub))
     val options = listOf(
         SkipReason.NOT_FEELING_WELL to R.string.reason_not_well, SkipReason.SIDE_EFFECTS to R.string.reason_side_effects,
@@ -150,9 +151,9 @@ private fun TooSoonSheet(sheet: TodaySheet.TooSoon, vm: TodayViewModel, fmt: For
 private fun gapText(minutes: Int, fmt: Formatter): String {
     val m = minutes.coerceAtLeast(0)
     return when {
-        m < 60 -> stringResource(R.string.min_short, fmt.number(m))
-        m % 60 == 0 -> stringResource(R.string.gap_h, fmt.number(m / 60))
-        else -> stringResource(R.string.gap_h_m, fmt.number(m / 60), fmt.number(m % 60))
+        m < 60 -> stringResourceIso(R.string.min_short, fmt.number(m))
+        m % 60 == 0 -> stringResourceIso(R.string.gap_h, fmt.number(m / 60))
+        else -> stringResourceIso(R.string.gap_h_m, fmt.number(m / 60), fmt.number(m % 60))
     }
 }
 
@@ -164,7 +165,7 @@ internal fun LateSheet(sheet: TodaySheet.Late, fmt: Formatter, onConfirm: (LateC
     val late = gapText(sheet.minutesLate, fmt)
     SheetTitle(
         stringResource(if (sheet.askRows.size == 1) R.string.late_title_one else R.string.late_title_many, late),
-        stringResource(R.string.late_sub, fmt.time(sheet.duePlanned.toLocalTime()), fmt.time(sheet.takenAt.toLocalTime()), sheet.askRows.joinToString(", ") { it.medicine.name }),
+        stringResourceIso(R.string.late_sub, fmt.time(sheet.duePlanned.toLocalTime()), fmt.time(sheet.takenAt.toLocalTime()), sheet.askRows.joinToString(", ") { it.medicine.name }),
     )
     val moveText = when {
         sheet.gapHours != null && sheet.moveTimes.size >= 2 -> stringResource(
@@ -175,10 +176,10 @@ internal fun LateSheet(sheet: TodaySheet.Late, fmt: Formatter, onConfirm: (LateC
             R.string.late_move_gap_one, pluralStringResource(R.plurals.n_hours, sheet.gapHours, fmt.number(sheet.gapHours)), fmt.time(sheet.moveTimes[0].toLocalTime()),
         )
         sheet.moveTimes.isEmpty() -> stringResource(R.string.late_move_none)
-        else -> stringResource(R.string.late_move_fixed, gapText(sheet.delayMinutes, fmt), fmt.time(sheet.moveTimes[0].toLocalTime()))
+        else -> stringResourceIso(R.string.late_move_fixed, gapText(sheet.delayMinutes, fmt), fmt.time(sheet.moveTimes[0].toLocalTime()))
     }
     val keepText = if (sheet.gapHours != null && sheet.keepNext != null && sheet.keepGapMinutes != null) {
-        stringResource(R.string.late_keep_gap, fmt.time(sheet.keepNext.toLocalTime()), gapText(sheet.keepGapMinutes, fmt))
+        stringResourceIso(R.string.late_keep_gap, fmt.time(sheet.keepNext.toLocalTime()), gapText(sheet.keepGapMinutes, fmt))
     } else stringResource(R.string.late_keep_fixed)
     Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(Space.S12)) {
         LateOption(stringResource(R.string.late_move), moveText, choice == LateChoice.MOVE) { choice = LateChoice.MOVE }
@@ -238,7 +239,7 @@ private fun LateOption(title: String, body: String, selected: Boolean, onClick: 
 @Composable
 private fun OutOfStockSheet(sheet: TodaySheet.OutOfStock, vm: TodayViewModel, fmt: Formatter) {
     val unit = pluralStringResource(unitPlural(sheet.medicine.unit), quantityFor(2.0))
-    SheetTitle(stringResource(R.string.out_title, unit), stringResource(R.string.out_body, sheet.medicine.name))
+    SheetTitle(stringResourceIso(R.string.out_title, unit), stringResourceIso(R.string.out_body, sheet.medicine.name))
     PrimaryButton(stringResource(R.string.take_anyway), vm::takeWithoutStock)
     OutlineButton(stringResource(R.string.out_update), vm::updateStock)
     LinkButton(stringResource(R.string.cancel), vm::dismissSheet)

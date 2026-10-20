@@ -31,11 +31,23 @@ android {
             keyAlias = "androiddebugkey"
             keyPassword = "android"
         }
+        // Release key: never in the repository. Set these four environment variables (or Gradle properties) on the
+        // machine that builds the release; without them the release build is simply left unsigned.
+        val releaseFile = (System.getenv("PILLBOX_KEYSTORE") ?: findProperty("pillbox.keystore") as String?)
+        if (releaseFile != null) {
+            create("release") {
+                storeFile = file(releaseFile)
+                storePassword = System.getenv("PILLBOX_STORE_PASSWORD") ?: findProperty("pillbox.storePassword") as String?
+                keyAlias = System.getenv("PILLBOX_KEY_ALIAS") ?: findProperty("pillbox.keyAlias") as String?
+                keyPassword = System.getenv("PILLBOX_KEY_PASSWORD") ?: findProperty("pillbox.keyPassword") as String?
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfigs.findByName("release")?.let { signingConfig = it }
         }
     }
 

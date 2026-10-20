@@ -1,5 +1,6 @@
 package com.pillbox.ui.settings
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -103,7 +104,7 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                 val q = state.reminder.quiet
                 SettingsRow(
                     stringResource(R.string.settings_quiet),
-                    if (q.enabled) stringResource(R.string.settings_quiet_range, fmt.time(q.from), fmt.time(q.until)) else stringResource(R.string.settings_off),
+                    if (q.enabled) stringResourceIso(R.string.settings_quiet_range, fmt.time(q.from), fmt.time(q.until)) else stringResource(R.string.settings_off),
                     tints[2], { RowGlyph("☾", large = true) }, { onOpen(SettingsTarget.QUIET) },
                 )
                 Divider()
@@ -146,7 +147,7 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                 Divider()
                 SettingsRow(
                     stringResource(R.string.settings_privacy),
-                    stringResource(R.string.ab_version, fmt.digits(com.pillbox.ui.about.appVersion(androidx.compose.ui.platform.LocalContext.current))),
+                    stringResourceIso(R.string.ab_version, fmt.digits(com.pillbox.ui.about.appVersion(androidx.compose.ui.platform.LocalContext.current))),
                     tints[1], { RowIcon(Icons.Filled.Lock) }, { onOpen(SettingsTarget.PRIVACY) },
                 )
             }
@@ -212,7 +213,7 @@ internal fun RowGlyph(text: String, large: Boolean = false) = Text(text, style =
 @Composable
 private fun SettingsRow(title: String, value: String, tint: Color, icon: @Composable () -> Unit, onClick: () -> Unit) {
     val c = PillBox.colors
-    val desc = stringResource(R.string.settings_row_a11y, title, value)
+    val desc = stringResourceIso(R.string.settings_row_a11y, title, value)
     // At big text, or with a long value, the value goes under the title, so no word is squeezed into a few letters per line.
     val big = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f || value.length > 14 || title.length > 14
     Row(

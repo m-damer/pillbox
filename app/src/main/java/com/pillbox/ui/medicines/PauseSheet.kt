@@ -1,5 +1,6 @@
 package com.pillbox.ui.medicines
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,7 +59,7 @@ fun PauseSheet(
         PauseChoice.OTHER -> other
         PauseChoice.UNTIL_RESUME -> null
     }
-    val note = if (days != null) stringResource(R.string.pause_restart_on, shortDate(today.plusDays(days.toLong()), fmt))
+    val note = if (days != null) stringResourceIso(R.string.pause_restart_on, shortDate(today.plusDays(days.toLong()), fmt))
     else stringResource(R.string.pause_stays_off)
     val daysLabel = stringResource(R.string.pause_days_label)
 
@@ -72,7 +73,7 @@ fun PauseSheet(
             verticalArrangement = Arrangement.spacedBy(Space.S12),
         ) {
             Text(
-                stringResource(R.string.pause_title, medicineName), style = MaterialTheme.typography.titleMedium, color = c.text,
+                stringResourceIso(R.string.pause_title, medicineName), style = MaterialTheme.typography.titleMedium, color = c.text,
                 modifier = Modifier.semantics { heading() },
             )
             Text(stringResource(R.string.pause_sub), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)

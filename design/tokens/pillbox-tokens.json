@@ -164,7 +164,8 @@
     "iconSmall": 18,
     "logo": 128,
     "logoSmall": 72,
-    "starSize": 40
+    "starSize": 40,
+    "previewMaxHeight": 460
   },
   "rules": {
     "contrastMin": "4.5:1 for text",

@@ -1,5 +1,6 @@
 package com.pillbox.ui.settings
 
+import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -163,7 +164,7 @@ fun AccessibilityContent(
                 SwitchRow(stringResource(R.string.acc_read), reminder.readAloud, onReadAloud, subtitle = stringResource(R.string.acc_read_sub))
                 SwitchRow(
                     stringResource(R.string.acc_keep), reminder.keepRinging, onKeepRinging,
-                    subtitle = if (reminder.keepRinging) stringResource(R.string.acc_keep_sub, androidx.compose.ui.res.pluralStringResource(R.plurals.n_minutes, reminder.repeatMinutes, fmt.number(reminder.repeatMinutes)))
+                    subtitle = if (reminder.keepRinging) stringResourceIso(R.string.acc_keep_sub, androidx.compose.ui.res.pluralStringResource(R.plurals.n_minutes, reminder.repeatMinutes, fmt.number(reminder.repeatMinutes)))
                     else stringResource(R.string.acc_keep_off_sub),
                 )
             }
@@ -171,7 +172,7 @@ fun AccessibilityContent(
                 NavRow(stringResource(R.string.acc_simple), stringResource(R.string.acc_simple_row_sub), null, onOpenSimple)
                 NavRow(stringResource(R.string.acc_hc_preview), stringResource(R.string.acc_hc_preview_sub), null, onOpenPreview)
                 val value = stringResource(themeName(display.theme))
-                val desc = stringResource(R.string.settings_row_a11y, stringResource(R.string.acc_dark), value)
+                val desc = stringResourceIso(R.string.settings_row_a11y, stringResource(R.string.acc_dark), value)
                 Row(
                     Modifier
                         .fillMaxWidth().heightIn(min = Dimens.SettingsRowMinHeight)
@@ -197,7 +198,7 @@ fun AccessibilityContent(
 @Composable
 internal fun NavRow(title: String, subtitle: String, value: String?, onClick: () -> Unit) {
     val c = PillBox.colors
-    val desc = if (value != null) stringResource(R.string.settings_row_a11y, title, value) else "$title. $subtitle"
+    val desc = if (value != null) stringResourceIso(R.string.settings_row_a11y, title, value) else "$title. $subtitle"
     Row(
         Modifier
             .fillMaxWidth().heightIn(min = Dimens.SettingsRowMinHeight)
