@@ -54,7 +54,7 @@ class Formatter(val arabicDigits: Boolean, val is24Hour: Boolean, private val am
     fun hour(h: Int): String {
         val hh = h % 24
         val text = if (is24Hour) digits(hh.toString().padStart(2, '0') + ":00")
-        else digits((if (hh % 12 == 0) 12 else hh % 12).toString()) + " " + (if (hh < 12) am else pm)
+        else digits((if (hh % 12 == 0) 12 else hh % 12).toString()) + "\u00A0" + (if (hh < 12) am else pm)
         return if (rtl) "⁧$text⁩" else "⁦$text⁩"
     }
 
@@ -65,7 +65,7 @@ class Formatter(val arabicDigits: Boolean, val is24Hour: Boolean, private val am
             digits("${t.hour.toString().padStart(2, '0')}:$minute")
         } else {
             val h = if (t.hour % 12 == 0) 12 else t.hour % 12
-            digits("$h:$minute") + " " + (if (t.hour < 12) am else pm)
+            digits("$h:$minute") + "\u00A0" + (if (t.hour < 12) am else pm)
         }
         // Isolate so the AM/PM mark stays next to its time inside any surrounding sentence.
         return if (rtl) "⁧$text⁩" else "⁦$text⁩"

@@ -178,7 +178,7 @@ private fun SettingsRow(title: String, value: String, tint: Color, icon: @Compos
     val c = PillBox.colors
     val desc = stringResource(R.string.settings_row_a11y, title, value)
     // At big text, or with a long value, the value goes under the title, so no word is squeezed into a few letters per line.
-    val big = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f || value.length > 14
+    val big = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f || value.length > 14 || title.length > 14
     Row(
         Modifier
             .fillMaxWidth()

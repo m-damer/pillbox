@@ -623,7 +623,7 @@
     <string name="sound_vibration">الاهتزاز</string>
     <string name="sound_unanswered">إذا لم أرد</string>
     <string name="sound_repeat_every">ذكّرني مرة أخرى كل</string>
-    <string name="min_short">%1$s د</string>
+    <string name="min_short">%1$s د</string>
     <string name="sound_test">تشغيل صوت تجريبي</string>
     <string name="sound_volume_note">يتبع الصوت أزرار مستوى الصوت في هاتفك.</string>
     <string name="acc_keep">استمر في التنبيه حتى أرد</string>
@@ -670,8 +670,8 @@
     <string name="late_always">افعل هذا دائماً. لا تسأل مرة أخرى.</string>
     <string name="late_choose">اختر واحداً للمتابعة</string>
     <string name="late_continue">متابعة</string>
-    <string name="gap_h_m">%1$s س %2$s د</string>
-    <string name="gap_h">%1$s س</string>
+    <string name="gap_h_m">%1$s س %2$s د</string>
+    <string name="gap_h">%1$s س</string>
     <string name="settings_late">عند تأخري عن جرعة</string>
     <string name="late_value_ask">اسألني</string>
     <string name="late_value_move">تأخير</string>
