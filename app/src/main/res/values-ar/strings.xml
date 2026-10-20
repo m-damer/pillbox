@@ -991,4 +991,25 @@
     <string name="plan_start">ابدأ تذكيراتي</string>
     <string name="plan_new">جديد</string>
     <string name="plan_change_time_a11y">%1$s، %2$s. اضغط لتغيير الوقت.</string>
+
+    <!-- M13: as-needed log -->
+    <string name="prn_title">%1$s (عند الحاجة)</string>
+    <string name="prn_each_time">%1$s في كل مرة</string>
+    <string name="prn_taken_today">المأخوذ اليوم</string>
+    <string name="prn_x_of_y">%1$s من %2$s</string>
+    <string name="prn_count_a11y">المأخوذ اليوم: %1$s من %2$s مسموحة.</string>
+    <string name="prn_count_a11y_nomax">المأخوذ اليوم: %1$s.</string>
+    <string name="prn_next_allowed">الجرعة التالية مسموحة من %1$s (بعد %2$s من الأخيرة).</string>
+    <string name="prn_limit_body">وصلت إلى الحد الأقصى لليوم (%1$s). الجرعة التالية مسموحة %2$s. أخذ المزيد قد يكون خطيراً. إذا استمر الألم فاتصل بطبيبك أو الصيدلاني.</string>
+    <string name="prn_tomorrow">غداً</string>
+    <string name="prn_tomorrow_at">غداً عند %1$s</string>
+    <string name="prn_today">اليوم</string>
+    <string name="prn_taken">مأخوذة</string>
+    <string name="prn_taken_early">مأخوذة مبكراً</string>
+    <string name="prn_logged">تم تسجيل الجرعة</string>
+    <string name="prn_take_now">خذها الآن</string>
+    <string name="prn_ok_wait">حسناً، سأنتظر</string>
+    <string name="prn_undo_last">تراجع عن آخر جرعة</string>
+    <string name="prn_card_title">المأخوذ اليوم</string>
+    <string name="prn_card_sub">اضغط لرؤية جرعات اليوم</string>
 </resources>

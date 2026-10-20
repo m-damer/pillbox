@@ -267,6 +267,9 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
     suspend fun takenTimesSince(medicineId: Long, since: LocalDateTime): List<LocalDateTime> =
         db.doseEvents().takenSince(medicineId, Mappers.dt(since)).map(Mappers::dt)
 
+    suspend fun takenEventsSince(medicineId: Long, since: LocalDateTime): List<DoseEvent> =
+        db.doseEvents().takenEventsSince(medicineId, Mappers.dt(since)).map(Mappers::toDomain)
+
     /** Marks a dose taken and takes it out of stock in one transaction. */
     suspend fun takeDose(medicine: Medicine, event: DoseEvent): Long = db.withTransaction {
         val id = db.doseEvents().insert(Mappers.toEntity(event.copy(id = 0, medicineId = medicine.id, status = DoseStatus.TAKEN)))

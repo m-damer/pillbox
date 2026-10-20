@@ -930,4 +930,25 @@
     <string name="plan_start">Start my reminders</string>
     <string name="plan_new">New</string>
     <string name="plan_change_time_a11y">%1$s, %2$s. Tap to change the time.</string>
+
+    <!-- M13: as-needed log -->
+    <string name="prn_title">%1$s (as needed)</string>
+    <string name="prn_each_time">%1$s each time</string>
+    <string name="prn_taken_today">Taken today</string>
+    <string name="prn_x_of_y">%1$s of %2$s</string>
+    <string name="prn_count_a11y">Taken today: %1$s of %2$s allowed.</string>
+    <string name="prn_count_a11y_nomax">Taken today: %1$s.</string>
+    <string name="prn_next_allowed">Next dose is allowed from %1$s (%2$s after the last one).</string>
+    <string name="prn_limit_body">You reached the most for today (%1$s). Next dose is allowed %2$s. Taking more can be dangerous. If you still have pain, call your doctor or pharmacist.</string>
+    <string name="prn_tomorrow">tomorrow</string>
+    <string name="prn_tomorrow_at">tomorrow at %1$s</string>
+    <string name="prn_today">Today</string>
+    <string name="prn_taken">Taken</string>
+    <string name="prn_taken_early">Taken early</string>
+    <string name="prn_logged">Dose logged</string>
+    <string name="prn_take_now">Take now</string>
+    <string name="prn_ok_wait">OK, I will wait</string>
+    <string name="prn_undo_last">Undo last dose</string>
+    <string name="prn_card_title">Taken today</string>
+    <string name="prn_card_sub">Tap to see today\'s doses</string>
 </resources>

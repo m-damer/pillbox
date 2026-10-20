@@ -121,6 +121,10 @@ class MainActivity : PillBoxActivity() {
                 var showPermissions by rememberSaveable { mutableStateOf(false) }
                 // Medicines tab: which medicine is open, which list tab, and a toast to show after Stop or Restart.
                 var detailId by rememberSaveable { mutableStateOf<Long?>(null) }
+                // As-needed log: which medicine, whether to log a dose on opening, and a counter so each opening starts fresh.
+                var prnId by rememberSaveable { mutableStateOf<Long?>(null) }
+                var prnAuto by rememberSaveable { mutableStateOf(false) }
+                var prnSession by rememberSaveable { mutableIntStateOf(0) }
                 var showFinishedTab by rememberSaveable { mutableStateOf(false) }
                 var listToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
                 var listToastBody by rememberSaveable { mutableStateOf<String?>(null) }
@@ -347,6 +351,13 @@ class MainActivity : PillBoxActivity() {
                         }
                         editItem = null
                     })
+                } else if (prnId != null) {
+                    val pid = prnId!!
+                    val vm: com.pillbox.ui.prn.PrnViewModel = viewModel(
+                        key = "prn-$pid-$prnSession",
+                        factory = viewModelFactory { initializer { com.pillbox.ui.prn.PrnViewModel(repo, pid, prnAuto, onChanged = { reminders.rearm() }) } },
+                    )
+                    Box(Modifier.fillMaxSize().statusBarsPadding()) { com.pillbox.ui.prn.PrnScreen(vm, onBack = { prnId = null }) }
                 } else if (detailId != null) {
                     val id = detailId!!
                     val vm: MedicineDetailViewModel = viewModel(
@@ -358,6 +369,8 @@ class MainActivity : PillBoxActivity() {
                             vm, onBack = { detailId = null },
                             onEdit = { vm.state.value.item?.let { editItem = it; editSession++ } },
                             onSeeHistory = { showHistory = true },
+                            onTakeNow = { prnAuto = true; prnId = detailId; prnSession++ },
+                            onOpenLog = { prnAuto = false; prnId = detailId; prnSession++ },
                             toast = detailToastTitle?.let { ListToast(it, detailToastBody) },
                             onToastShown = { detailToastTitle = null; detailToastBody = null },
                             onDone = { toast, finishedTab ->
