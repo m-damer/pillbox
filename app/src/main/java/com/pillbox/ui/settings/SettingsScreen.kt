@@ -225,8 +225,8 @@ internal fun RowGlyph(text: String, large: Boolean = false) = Text(text, style =
 private fun SettingsRow(title: String, value: String, tint: Color, icon: @Composable () -> Unit, onClick: () -> Unit) {
     val c = PillBox.colors
     val desc = stringResourceIso(R.string.settings_row_a11y, title, value)
-    // At big text, or with a long value, the value goes under the title, so no word is squeezed into a few letters per line.
-    val big = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f || value.length > 14 || title.length > 14
+    // At big text, or when title and value together are long, the value goes under the title, so no word is squeezed into a few letters per line.
+    val big = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f || title.length + value.length > 30
     Row(
         Modifier
             .fillMaxWidth()
