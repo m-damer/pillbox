@@ -13,6 +13,7 @@ import com.pillbox.domain.BackupCodec
 import com.pillbox.domain.BackupFolders
 import com.pillbox.domain.BackupProblem
 import com.pillbox.domain.BackupResult
+import com.pillbox.domain.DriveProblem
 import java.io.File
 import java.io.IOException
 import java.time.LocalDateTime
@@ -23,41 +24,102 @@ import kotlinx.coroutines.withContext
 /** Makes, shares and reads backup files. Everything stays on the phone unless the person shares the file. */
 class BackupManager(private val context: Context, private val repo: PillBoxRepository, val settings: BackupSettingsStore) {
 
-    sealed interface Outcome {
-        data class Saved(val fileName: String) : Outcome
-        data class Failed(val problem: BackupProblem) : Outcome
+    /** How one backup run went: what was tried, and what went wrong where. A target that was not tried has no problem. */
+    data class Run(
+        val fileName: String,
+        val folderTried: Boolean, val folder: BackupProblem?,
+        val driveTried: Boolean, val drive: DriveProblem?,
+    ) {
+        val toFolder get() = folderTried && folder == null
+        val toDrive get() = driveTried && drive == null
+        val saved get() = toFolder || toDrive
+        val nothingToDo get() = !folderTried && !driveTried
     }
 
     private val resolver get() = context.contentResolver
+    val driveClient by lazy { DriveClient(context) }
 
     private suspend fun json(now: LocalDateTime) = BackupCodec.encode(repo.exportBackup(), now)
 
-    /** Saves a backup into the chosen folder and records how it went. */
-    suspend fun backupNow(now: LocalDateTime = LocalDateTime.now(), automatic: Boolean = false): Outcome = withContext(Dispatchers.IO) {
+    /** Saves a backup into the chosen folder and to Google Drive (each only if set up), and records how it went. */
+    suspend fun backupNow(now: LocalDateTime = LocalDateTime.now(), automatic: Boolean = false, attempt: Int = 0): Run = withContext(Dispatchers.IO) {
         val s = settings.current()
-        val outcome = try {
-            val tree = Uri.parse(s.folderUri ?: return@withContext fail(now, BackupProblem.FOLDER_UNAVAILABLE))
-            Outcome.Saved(writeTo(tree, json(now), now))
-        } catch (e: FolderGone) {
-            Outcome.Failed(BackupProblem.FOLDER_UNAVAILABLE)
-        } catch (e: IOException) {
-            Outcome.Failed(if (isNoSpace(e)) BackupProblem.NO_SPACE else BackupProblem.OTHER)
-        } catch (e: SecurityException) {
-            Outcome.Failed(BackupProblem.FOLDER_UNAVAILABLE)
-        } catch (e: Exception) {
-            Outcome.Failed(BackupProblem.OTHER)
+        val name = BackupCodec.fileName(now.toLocalDate())
+        val folderTried = s.hasFolder && (!automatic || s.autoFolder)
+        val driveTried = s.driveOn
+        if (!folderTried && !driveTried) return@withContext Run(name, false, null, false, null)
+        val text = try { json(now) } catch (e: Exception) { null }
+        var folder: BackupProblem? = null
+        var drive: DriveProblem? = null
+        if (text == null) {
+            if (folderTried) folder = BackupProblem.OTHER
+            if (driveTried) drive = DriveProblem.OTHER
+        } else {
+            if (folderTried) folder = try {
+                writeTo(Uri.parse(s.folderUri), text, now); null
+            } catch (e: FolderGone) {
+                BackupProblem.FOLDER_UNAVAILABLE
+            } catch (e: IOException) {
+                if (isNoSpace(e)) BackupProblem.NO_SPACE else BackupProblem.OTHER
+            } catch (e: SecurityException) {
+                BackupProblem.FOLDER_UNAVAILABLE
+            } catch (e: Exception) {
+                BackupProblem.OTHER
+            }
+            if (driveTried) drive = uploadToDrive(name, text)
         }
-        when (outcome) {
-            is Outcome.Saved -> settings.update { it.copy(lastSuccessAt = now, lastProblem = null, lastProblemAt = null) }
-            is Outcome.Failed -> settings.update { it.copy(lastProblem = outcome.problem, lastProblemAt = now) }
+        val run = Run(name, folderTried, folder, driveTried, drive)
+        settings.update {
+            var n = it
+            if (run.saved) n = n.copy(lastSuccessAt = now, lastToFolder = run.toFolder, lastToDrive = run.toDrive)
+            if (folderTried) n = n.copy(lastProblem = folder, lastProblemAt = if (folder != null) now else null)
+            if (driveTried) n = n.copy(driveProblem = drive, driveProblemAt = if (drive != null) now else null)
+            n
         }
-        if (automatic && s.notify) notify(outcome, s.folderLabel)
-        outcome
+        // No internet is tried again by the worker a couple of times before the person is told.
+        if (automatic && s.notify && !(run.drive == DriveProblem.NO_INTERNET && attempt < RETRIES)) notify(run, s.folderLabel)
+        run
     }
 
-    private suspend fun fail(now: LocalDateTime, p: BackupProblem): Outcome {
-        settings.update { it.copy(lastProblem = p, lastProblemAt = now) }
-        return Outcome.Failed(p)
+    private suspend fun uploadToDrive(name: String, text: String): DriveProblem? =
+        when (val auth = driveClient.authorize()) {
+            is DriveClient.Auth.Ready -> when (val r = driveClient.upload(auth.token, name, text, KEEP)) {
+                is DriveClient.Result.Ok -> null
+                is DriveClient.Result.Problem -> r.problem
+            }
+            // Choosing an account needs a screen, which a backup running by itself does not have.
+            is DriveClient.Auth.NeedsConsent -> DriveProblem.SIGN_IN
+            is DriveClient.Auth.Failed -> auth.problem
+        }
+
+    /** Google Drive is connected: remember the account and start with a backup there. */
+    suspend fun connectDrive(email: String?) {
+        settings.update { it.copy(driveOn = true, driveEmail = email ?: it.driveEmail, driveProblem = null, driveProblemAt = null) }
+        reconcile()
+    }
+
+    suspend fun disconnectDrive() {
+        settings.update { it.copy(driveOn = false, driveEmail = null, driveProblem = null, driveProblemAt = null) }
+        reconcile()
+    }
+
+    /** The newest backup in Google Drive, read and checked, for "Restore from Google Drive". */
+    suspend fun readFromDrive(token: String): DriveRead = withContext(Dispatchers.IO) {
+        when (val r = driveClient.newest(token)) {
+            is DriveClient.Result.Problem -> DriveRead.Problem(r.problem)
+            is DriveClient.Result.Ok -> {
+                val found = r.value ?: return@withContext DriveRead.Empty
+                val result = BackupCodec.decode(found.second)
+                if (result is BackupResult.Ok && runCatching { com.pillbox.data.BackupMapper.toEntities(result.data) }.isFailure) DriveRead.Found(found.first.name, BackupResult.Invalid)
+                else DriveRead.Found(found.first.name, result)
+            }
+        }
+    }
+
+    sealed interface DriveRead {
+        data object Empty : DriveRead
+        data class Problem(val problem: DriveProblem) : DriveRead
+        data class Found(val name: String, val result: BackupResult) : DriveRead
     }
 
     private class FolderGone : Exception()
@@ -109,8 +171,13 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
 
     suspend fun setAuto(on: Boolean) {
         settings.update { it.copy(autoFolder = on) }
-        if (on) schedule() else cancelWeekly()
+        reconcile()
     }
+
+    /** The repeating job runs while either the folder or Google Drive wants automatic backups. */
+    suspend fun wantsAutomatic(): Boolean = settings.current().let { (it.autoFolder && it.hasFolder) || it.driveOn }
+
+    suspend fun reconcile(replace: Boolean = false) { if (wantsAutomatic()) schedule(replace) else cancelWeekly() }
 
     /** Starts the repeating job (daily or weekly). [replace] restarts it, for when the choice changed; otherwise a running job is left alone. */
     suspend fun schedule(replace: Boolean = false) {
@@ -121,28 +188,40 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
 
     suspend fun setFrequency(f: com.pillbox.domain.BackupFrequency) {
         settings.update { it.copy(frequency = f) }
-        if (settings.current().autoFolder) schedule(replace = true)
+        reconcile(replace = true)
     }
 
     suspend fun setNotify(on: Boolean) { settings.update { it.copy(notify = on) } }
 
     /** One quiet notification after an automatic backup: saved, or did not finish. Not sent when notifications are off. */
-    private fun notify(outcome: Outcome, folderLabel: String?) {
+    private fun notify(run: Run, folderLabel: String?) {
         val nm = androidx.core.app.NotificationManagerCompat.from(context)
         if (!nm.areNotificationsEnabled()) return
-        val failed = outcome is Outcome.Failed
+        val failed = (run.folderTried && run.folder != null) || (run.driveTried && run.drive != null)
         val channel = if (failed) CHANNEL_FAILED else CHANNEL_OK
         val system = context.getSystemService(android.app.NotificationManager::class.java)
         system.createNotificationChannel(android.app.NotificationChannel(CHANNEL_OK, context.getString(com.pillbox.R.string.channel_backup_ok), android.app.NotificationManager.IMPORTANCE_LOW))
         system.createNotificationChannel(android.app.NotificationChannel(CHANNEL_FAILED, context.getString(com.pillbox.R.string.channel_backup_failed), android.app.NotificationManager.IMPORTANCE_DEFAULT))
-        val title = context.getString(if (failed) com.pillbox.R.string.bk_failed_title else com.pillbox.R.string.bk_saved_title)
-        val text = when (outcome) {
-            is Outcome.Saved -> context.getString(com.pillbox.R.string.bk_notif_saved, outcome.fileName, folderLabel?.ifEmpty { null } ?: context.getString(com.pillbox.R.string.bk_folder_root))
-            is Outcome.Failed -> context.getString(when (outcome.problem) {
+        val place = folderLabel?.ifEmpty { null } ?: context.getString(com.pillbox.R.string.bk_folder_root)
+        val title: String
+        val text: String
+        if (!failed) {
+            title = context.getString(com.pillbox.R.string.bk_saved_title)
+            text = when {
+                run.toFolder && run.toDrive -> context.getString(com.pillbox.R.string.bk_notif_saved_both, run.fileName, place)
+                run.toDrive -> context.getString(com.pillbox.R.string.bk_notif_saved_drive, run.fileName)
+                else -> context.getString(com.pillbox.R.string.bk_notif_saved, run.fileName, place)
+            }
+        } else if (run.folderTried && run.folder != null) {
+            title = context.getString(com.pillbox.R.string.bk_failed_title)
+            text = context.getString(when (run.folder) {
                 BackupProblem.NO_SPACE -> com.pillbox.R.string.bk_failed_space
                 BackupProblem.FOLDER_UNAVAILABLE -> com.pillbox.R.string.bk_notif_folder
-                BackupProblem.OTHER -> com.pillbox.R.string.bk_failed_other
+                else -> com.pillbox.R.string.bk_failed_other
             })
+        } else {
+            title = context.getString(com.pillbox.R.string.dr_failed_title)
+            text = context.getString(driveReason(run.drive))
         }
         val open = android.app.PendingIntent.getActivity(
             context, NOTIFICATION_ID, android.content.Intent(context, com.pillbox.MainActivity::class.java).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP),
@@ -155,6 +234,12 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
             .setCategory(androidx.core.app.NotificationCompat.CATEGORY_STATUS)
             .build()
         runCatching { nm.notify(NOTIFICATION_ID, n) }
+    }
+
+    private fun driveReason(p: DriveProblem?) = when (p) {
+        DriveProblem.NO_INTERNET -> com.pillbox.R.string.dr_failed_net
+        DriveProblem.SIGN_IN -> com.pillbox.R.string.dr_failed_signin
+        else -> com.pillbox.R.string.dr_failed_other
     }
 
     fun cancelWeekly() { WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME) }
@@ -212,6 +297,7 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
     companion object {
         const val WORK_NAME = "weekly-backup"
         const val KEEP = 7
+        const val RETRIES = 2
         const val CHANNEL_OK = "backup_ok"
         const val CHANNEL_FAILED = "backup_failed"
         const val NOTIFICATION_ID = 700_000_001

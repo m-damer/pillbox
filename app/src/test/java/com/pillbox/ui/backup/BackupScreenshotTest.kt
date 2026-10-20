@@ -40,6 +40,7 @@ class BackupScreenshotTest {
 
     private val today = LocalDate.of(2026, 10, 17)
     private val folder = BackupSettings(autoFolder = true, folderUri = "content://x", folderLabel = "Documents / Pill Box", lastSuccessAt = LocalDateTime.of(2026, 10, 17, 9, 41))
+    private val drive = folder.copy(driveOn = true, driveEmail = "damer@gmail.com", lastToDrive = true)
     private val fresh = BackupSettings()
     private val failing = folder.copy(lastSuccessAt = LocalDateTime.of(2026, 10, 16, 9, 41), lastProblem = BackupProblem.NO_SPACE, lastProblemAt = LocalDateTime.of(2026, 10, 17, 9, 0))
     private val summary = BackupSummary(3, 2, 214)
@@ -52,6 +53,11 @@ class BackupScreenshotTest {
     @Test fun backup_en_dark_2x() = shoot("backup_en_dark_2x", "en", ThemeMode.Dark, 2f) { content(folder, it) }
     @Config(qualifiers = "+ar-ldrtl") @Test fun backup_ar() = shoot("backup_ar", "ar") { content(folder, it) }
     @Config(qualifiers = "+ar-ldrtl") @Test fun backup_ar_dark_2x() = shoot("backup_ar_dark_2x", "ar", ThemeMode.Dark, 2f) { content(folder, it) }
+    @Test fun backup_drive_en() = shoot("backup_drive_en", "en") { content(drive, it) }
+    @Test fun backup_drive_en_dark_2x() = shoot("backup_drive_en_dark_2x", "en", ThemeMode.Dark, 2f) { content(drive, it) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun backup_drive_ar() = shoot("backup_drive_ar", "ar") { content(drive, it) }
+    @Test fun restore_intro_drive_en() = shoot("restore_intro_drive_en", "en") { RestoreIntroContent({}, {}, onDrive = {}) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun restore_intro_drive_ar() = shoot("restore_intro_drive_ar", "ar") { RestoreIntroContent({}, {}, onDrive = {}) }
     @Test fun backup_new_en() = shoot("backup_new_en", "en") { content(fresh, it) }
 
     @Test fun failed_en() = shoot("failed_en", "en") { BackupFailedContent(failing, it, today, false, {}, {}, {}) }

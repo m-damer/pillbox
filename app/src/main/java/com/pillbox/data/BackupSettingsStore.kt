@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.pillbox.domain.BackupFrequency
 import com.pillbox.domain.BackupProblem
 import com.pillbox.domain.BackupSettings
+import com.pillbox.domain.DriveProblem
 import java.time.LocalDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -26,6 +27,12 @@ class BackupSettingsStore(private val context: Context) {
     private val success = stringPreferencesKey("last_success")
     private val problem = stringPreferencesKey("last_problem")
     private val problemAt = stringPreferencesKey("last_problem_at")
+    private val driveOn = booleanPreferencesKey("drive_on")
+    private val driveEmail = stringPreferencesKey("drive_email")
+    private val driveProblem = stringPreferencesKey("drive_problem")
+    private val driveProblemAt = stringPreferencesKey("drive_problem_at")
+    private val lastFolder = booleanPreferencesKey("last_to_folder")
+    private val lastDrive = booleanPreferencesKey("last_to_drive")
 
     val flow: Flow<BackupSettings> = context.backupPrefs.data.map(::read)
 
@@ -48,6 +55,12 @@ class BackupSettingsStore(private val context: Context) {
         lastSuccessAt = time(p[success]),
         lastProblem = p[problem]?.let { n -> BackupProblem.entries.firstOrNull { it.name == n } },
         lastProblemAt = time(p[problemAt]),
+        driveOn = p[driveOn] ?: false,
+        driveEmail = p[driveEmail],
+        driveProblem = p[driveProblem]?.let { n -> DriveProblem.entries.firstOrNull { it.name == n } },
+        driveProblemAt = time(p[driveProblemAt]),
+        lastToFolder = p[lastFolder] ?: true,
+        lastToDrive = p[lastDrive] ?: false,
     )
 
     private fun write(p: androidx.datastore.preferences.core.MutablePreferences, s: BackupSettings) {
@@ -59,5 +72,11 @@ class BackupSettingsStore(private val context: Context) {
         s.lastSuccessAt?.let { p[success] = it.toString() } ?: p.remove(success)
         s.lastProblem?.let { p[problem] = it.name } ?: p.remove(problem)
         s.lastProblemAt?.let { p[problemAt] = it.toString() } ?: p.remove(problemAt)
+        p[driveOn] = s.driveOn
+        s.driveEmail?.let { p[driveEmail] = it } ?: p.remove(driveEmail)
+        s.driveProblem?.let { p[driveProblem] = it.name } ?: p.remove(driveProblem)
+        s.driveProblemAt?.let { p[driveProblemAt] = it.toString() } ?: p.remove(driveProblemAt)
+        p[lastFolder] = s.lastToFolder
+        p[lastDrive] = s.lastToDrive
     }
 }

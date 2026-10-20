@@ -9,8 +9,10 @@ import com.pillbox.PillBoxApp
 class BackupWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         val backups = (applicationContext as PillBoxApp).backups
-        if (!backups.settings.current().autoFolder) return Result.success()
-        backups.backupNow(automatic = true)
+        if (!backups.wantsAutomatic()) return Result.success()
+        val run = backups.backupNow(automatic = true, attempt = runAttemptCount)
+        // Google Drive needs internet: wait and try again on its own, a couple of times.
+        if (run.drive == com.pillbox.domain.DriveProblem.NO_INTERNET && runAttemptCount < BackupManager.RETRIES) return Result.retry()
         return Result.success()
     }
 }

@@ -698,7 +698,7 @@
     <string name="bk_folder">Folder on this phone</string>
     <string name="bk_folder_none">Not chosen yet</string>
     <string name="bk_folder_root">Top level of the storage</string>
-    <string name="bk_warn_phone_only">A backup kept only on this phone is lost if the phone is lost. Share a copy to keep it safe.</string>
+    <string name="bk_warn_phone_only">A backup kept only on this phone is lost if the phone is lost. Turn on Google Drive or share a copy to keep it safe.</string>
     <string name="bk_save_now">Save a backup now</string>
     <string name="bk_sec_more">More</string>
     <string name="bk_report">Share report for my doctor</string>
@@ -707,7 +707,7 @@
     <string name="bk_share_sub">Send it to a new phone or your email</string>
     <string name="bk_share_chooser">Share backup file</string>
     <string name="bk_restore">Restore from backup</string>
-    <string name="bk_restore_sub">From a file</string>
+    <string name="bk_restore_sub">From a file or Google Drive</string>
     <string name="bk_delete">Delete all my data</string>
     <string name="bk_saved_title">Backup saved</string>
     <string name="bk_folder_set_title">Backup folder set</string>
@@ -774,4 +774,35 @@
     <string name="bk_notif_folder">Pill Box cannot reach the backup folder. Open the app and choose a folder again.</string>
     <string name="channel_backup_ok">Backup saved</string>
     <string name="channel_backup_failed">Backup problems</string>
+
+    <!-- M9b Google Drive -->
+    <string name="bk_where_both">Folder on this phone and Google Drive</string>
+    <string name="bk_where_drive">Google Drive</string>
+    <string name="dr_row">Google Drive</string>
+    <string name="dr_row_off">Needs internet</string>
+    <string name="dr_row_on">%1$s · needs internet</string>
+    <string name="dr_row_on_noemail">Connected · needs internet</string>
+    <string name="dr_private">Backups go to your own Google Drive. The developer cannot see them.</string>
+    <string name="dr_connect_title">Save backups to Google Drive?</string>
+    <string name="dr_connect_body">Pill Box keeps its backups in a private space in your Google Drive that only this app can open. You choose the account, and you can turn this off at any time.</string>
+    <string name="dr_choose_account">Choose Google account</string>
+    <string name="dr_not_now">Not now</string>
+    <string name="dr_connected_title">Google Drive connected</string>
+    <string name="dr_connected_body">Backups also go to your Google Drive.</string>
+    <string name="dr_disconnect_title">Stop saving to Google Drive?</string>
+    <string name="dr_disconnect_body">Backups already in your Google Drive stay there. New backups will not go there.</string>
+    <string name="dr_disconnect">Turn off</string>
+    <string name="dr_keep">Keep on</string>
+    <string name="dr_failed_title">Google Drive backup did not finish</string>
+    <string name="dr_failed_net">There is no internet connection. Pill Box will try again by itself. Your copy on this phone is safe.</string>
+    <string name="dr_failed_signin">Google needs you to sign in again. Open Backup and choose your account. Your copy on this phone is safe.</string>
+    <string name="dr_failed_other">Something went wrong with Google Drive. Your copy on this phone is safe.</string>
+    <string name="bk_notif_saved_both">%1$s in %2$s and in Google Drive</string>
+    <string name="bk_notif_saved_drive">%1$s in Google Drive</string>
+    <string name="rs_from_drive">From Google Drive</string>
+    <string name="rs_drive_sub">The newest backup in your Google Drive</string>
+    <string name="rs_drive_empty_title">No backup in Google Drive</string>
+    <string name="rs_drive_empty_body">Pill Box found no backup in this Google account.</string>
+    <string name="rs_drive_offline_title">No internet connection</string>
+    <string name="rs_drive_offline_body">Connect to the internet and try again.</string>
 </resources>

@@ -744,7 +744,7 @@
     <string name="bk_folder">مجلد على هذا الهاتف</string>
     <string name="bk_folder_none">لم يُختر بعد</string>
     <string name="bk_folder_root">أعلى مستوى في التخزين</string>
-    <string name="bk_warn_phone_only">نسخة محفوظة على هذا الهاتف فقط تضيع إذا ضاع الهاتف. شارك نسخة لتبقى بأمان.</string>
+    <string name="bk_warn_phone_only">نسخة محفوظة على هذا الهاتف فقط تضيع إذا ضاع الهاتف. فعّل Google Drive أو شارك نسخة لتبقى بأمان.</string>
     <string name="bk_save_now">احفظ نسخة احتياطية الآن</string>
     <string name="bk_sec_more">المزيد</string>
     <string name="bk_report">مشاركة تقرير لطبيبي</string>
@@ -753,7 +753,7 @@
     <string name="bk_share_sub">أرسله إلى هاتف جديد أو بريدك</string>
     <string name="bk_share_chooser">مشاركة ملف النسخة</string>
     <string name="bk_restore">استعادة من نسخة احتياطية</string>
-    <string name="bk_restore_sub">من ملف</string>
+    <string name="bk_restore_sub">من ملف أو Google Drive</string>
     <string name="bk_delete">حذف كل بياناتي</string>
     <string name="bk_saved_title">تم حفظ النسخة</string>
     <string name="bk_folder_set_title">تم تحديد مجلد النسخ</string>
@@ -829,4 +829,35 @@
     <string name="bk_notif_folder">لا تستطيع علبة الدواء الوصول إلى مجلد النسخ. افتح التطبيق واختر مجلداً من جديد.</string>
     <string name="channel_backup_ok">تم حفظ النسخة</string>
     <string name="channel_backup_failed">مشاكل النسخ الاحتياطي</string>
+
+    <!-- M9b Google Drive -->
+    <string name="bk_where_both">مجلد على هذا الهاتف وGoogle Drive</string>
+    <string name="bk_where_drive">Google Drive</string>
+    <string name="dr_row">Google Drive</string>
+    <string name="dr_row_off">يحتاج إنترنت</string>
+    <string name="dr_row_on">%1$s · يحتاج إنترنت</string>
+    <string name="dr_row_on_noemail">مرتبط · يحتاج إنترنت</string>
+    <string name="dr_private">تذهب النسخ إلى حسابك على Google Drive. لا يستطيع المطوّر رؤيتها.</string>
+    <string name="dr_connect_title">حفظ النسخ في Google Drive؟</string>
+    <string name="dr_connect_body">تحتفظ علبة الدواء بنسخها في مساحة خاصة في حسابك على Google Drive لا يفتحها غير هذا التطبيق. أنت تختار الحساب، ويمكنك إيقاف ذلك في أي وقت.</string>
+    <string name="dr_choose_account">اختيار حساب Google</string>
+    <string name="dr_not_now">ليس الآن</string>
+    <string name="dr_connected_title">تم ربط Google Drive</string>
+    <string name="dr_connected_body">تذهب النسخ أيضاً إلى حسابك على Google Drive.</string>
+    <string name="dr_disconnect_title">إيقاف الحفظ في Google Drive؟</string>
+    <string name="dr_disconnect_body">النسخ الموجودة في حسابك تبقى هناك. النسخ الجديدة لن تذهب إليه.</string>
+    <string name="dr_disconnect">إيقاف</string>
+    <string name="dr_keep">إبقاؤه</string>
+    <string name="dr_failed_title">لم تكتمل النسخة على Google Drive</string>
+    <string name="dr_failed_net">لا يوجد اتصال بالإنترنت. ستحاول علبة الدواء مجدداً تلقائياً. نسختك على هذا الهاتف سليمة.</string>
+    <string name="dr_failed_signin">تحتاج Google إلى تسجيل دخولك من جديد. افتح النسخ الاحتياطي واختر حسابك. نسختك على هذا الهاتف سليمة.</string>
+    <string name="dr_failed_other">حدث خطأ في Google Drive. نسختك على هذا الهاتف سليمة.</string>
+    <string name="bk_notif_saved_both">%1$s في %2$s وفي Google Drive</string>
+    <string name="bk_notif_saved_drive">%1$s في Google Drive</string>
+    <string name="rs_from_drive">من Google Drive</string>
+    <string name="rs_drive_sub">أحدث نسخة في حسابك على Google Drive</string>
+    <string name="rs_drive_empty_title">لا توجد نسخة في Google Drive</string>
+    <string name="rs_drive_empty_body">لم تجد علبة الدواء أي نسخة في حساب Google هذا.</string>
+    <string name="rs_drive_offline_title">لا يوجد اتصال بالإنترنت</string>
+    <string name="rs_drive_offline_body">اتصل بالإنترنت ثم حاول مجدداً.</string>
 </resources>
