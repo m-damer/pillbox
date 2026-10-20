@@ -24,7 +24,8 @@ import org.robolectric.annotation.GraphicsMode
 
 /** The PDF is made without crashing, in English and Arabic, for every period, and long lists run onto more pages. */
 @RunWith(RobolectricTestRunner::class)
-@GraphicsMode(GraphicsMode.Mode.NATIVE)
+// PdfDocument only works in the legacy graphics mode (in native mode it reports "document is closed").
+@GraphicsMode(GraphicsMode.Mode.LEGACY)
 @Config(sdk = [35])
 class ReportPdfTest {
     private val today = LocalDate.of(2026, 10, 17)
