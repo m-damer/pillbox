@@ -386,7 +386,9 @@ private fun Timeline(model: TodayModel, fmt: Formatter) {
             }
         }
         Row(Modifier.fillMaxWidth().padding(top = Space.S4), horizontalArrangement = Arrangement.SpaceBetween) {
-            listOf(0, 6, 12, 18, 24).forEach { h ->
+            // At large text five labels run into each other, so only midnight, noon and midnight stay.
+            val hours = if (LocalDensity.current.fontScale > 1.3f) listOf(0, 12, 24) else listOf(0, 6, 12, 18, 24)
+            hours.forEach { h ->
                 Text(fmt.hour(h), style = MaterialTheme.typography.labelSmall, color = c.textMuted)
             }
         }

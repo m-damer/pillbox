@@ -1,5 +1,6 @@
 package com.pillbox.ui.settings
 
+import androidx.compose.ui.platform.LocalDensity
 import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
@@ -177,7 +178,13 @@ fun QuietHoursContent(
             if (q.enabled) {
                 Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S16), verticalArrangement = Arrangement.spacedBy(Space.S12)) {
                     DayBar(q, fmt)
-                    Row(horizontalArrangement = Arrangement.spacedBy(Space.S12)) {
+                    // At large text two cards side by side are too narrow for a time, so they stack.
+                    if (LocalDensity.current.fontScale > 1.3f) {
+                        Column(verticalArrangement = Arrangement.spacedBy(Space.S12)) {
+                            TimeChoice(stringResource(R.string.quiet_from), fmt.time(q.from), Modifier.fillMaxWidth()) { picking = 1 }
+                            TimeChoice(stringResource(R.string.quiet_until), fmt.time(q.until), Modifier.fillMaxWidth()) { picking = 2 }
+                        }
+                    } else Row(horizontalArrangement = Arrangement.spacedBy(Space.S12)) {
                         TimeChoice(stringResource(R.string.quiet_from), fmt.time(q.from), Modifier.weight(1f)) { picking = 1 }
                         TimeChoice(stringResource(R.string.quiet_until), fmt.time(q.until), Modifier.weight(1f)) { picking = 2 }
                     }
@@ -241,7 +248,7 @@ private fun DayBar(q: QuietHours, fmt: Formatter) {
             }
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            listOf(0, 6, 12, 18).forEach { Text(fmt.hour(it), style = MaterialTheme.typography.labelSmall, color = c.textMuted) }
+            (if (LocalDensity.current.fontScale > 1.3f) listOf(0, 12) else listOf(0, 6, 12, 18)).forEach { Text(fmt.hour(it), style = MaterialTheme.typography.labelSmall, color = c.textMuted) }
         }
     }
 }
@@ -301,7 +308,7 @@ fun MealTimesContent(meals: MealTimes, fmt: Formatter, onBack: () -> Unit, onCha
                             Text(stringResource(subRes), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
                         }
                         Text(
-                            time, style = MaterialTheme.typography.labelLarge, color = c.text,
+                            time, style = MaterialTheme.typography.labelLarge, color = c.text, softWrap = false,
                             modifier = Modifier.background(c.primaryContainer, MaterialTheme.shapes.medium).padding(horizontal = Space.S12, vertical = Space.S8),
                         )
                     }
