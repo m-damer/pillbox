@@ -11,8 +11,8 @@ import kotlin.math.floor
 
 /**
  * The one place that turns numbers and times into text, so digits and 12/24-hour follow the settings.
- * Settings screen (M8) will feed [arabicDigits] and [is24Hour]; until then Arabic UI uses Arabic-Indic digits
- * and the time format follows the phone.
+ * The Language and numbers screen (Settings) feeds [arabicDigits] and [is24Hour];
+ * with nothing chosen, Arabic uses Arabic-Indic digits and the time format follows the phone.
  */
 class Formatter(val arabicDigits: Boolean, val is24Hour: Boolean, private val am: String, private val pm: String, private val rtl: Boolean) {
 
@@ -76,9 +76,10 @@ class Formatter(val arabicDigits: Boolean, val is24Hour: Boolean, private val am
         fun from(context: android.content.Context): Formatter {
             val locale = context.resources.configuration.locales[0]
             val res = context.resources
+            val settings = DisplayState.current
             return Formatter(
-                arabicDigits = locale.language == "ar",
-                is24Hour = DateFormat.is24HourFormat(context),
+                arabicDigits = settings.useArabicDigits(locale.language),
+                is24Hour = settings.is24Hour(DateFormat.is24HourFormat(context)),
                 am = res.getString(com.pillbox.R.string.time_am),
                 pm = res.getString(com.pillbox.R.string.time_pm),
                 rtl = android.text.TextUtils.getLayoutDirectionFromLocale(locale) == android.view.View.LAYOUT_DIRECTION_RTL,
@@ -91,8 +92,9 @@ class Formatter(val arabicDigits: Boolean, val is24Hour: Boolean, private val am
 fun rememberFormatter(): Formatter {
     val context = LocalContext.current
     val locale = LocalConfiguration.current.locales[0]
-    val arabic = locale.language == "ar"
-    val is24 = DateFormat.is24HourFormat(context)
+    val settings = LocalDisplaySettings.current
+    val arabic = settings.useArabicDigits(locale.language)
+    val is24 = settings.is24Hour(DateFormat.is24HourFormat(context))
     val res = context.resources
     return remember(arabic, is24, locale) {
         Formatter(

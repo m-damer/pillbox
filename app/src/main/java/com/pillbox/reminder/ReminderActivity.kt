@@ -1,7 +1,7 @@
 package com.pillbox.reminder
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import com.pillbox.PillBoxActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
@@ -15,20 +15,24 @@ import com.pillbox.PillBoxApp
 import com.pillbox.data.Mappers
 import com.pillbox.domain.DoseRow
 import com.pillbox.ui.rememberFormatter
-import com.pillbox.ui.theme.PillBoxTheme
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.pillbox.ui.DisplayState
+import com.pillbox.ui.theme.PillBoxAppTheme
 import java.time.LocalDateTime
 import kotlinx.coroutines.launch
 
 /** The full-screen reminder: per-medicine Take and Skip. Shown over the lock screen when Android allows it. */
-class ReminderActivity : ComponentActivity() {
+class ReminderActivity : PillBoxActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val at = intent.getStringExtra(Reminders.EXTRA_AT)?.let { runCatching { Mappers.dt(it) }.getOrNull() }
         if (at == null) { finish(); return }
-        val reminders = (application as PillBoxApp).reminders
+        val app = application as PillBoxApp
+        val reminders = app.reminders
         setContent {
-            PillBoxTheme { ReminderRoute(reminders, at, onFinish = { finish() }) }
+            val display by app.displaySettings.flow.collectAsStateWithLifecycle(DisplayState.current)
+            PillBoxAppTheme(display) { ReminderRoute(reminders, at, onFinish = { finish() }) }
         }
     }
 }

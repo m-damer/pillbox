@@ -286,7 +286,7 @@ private fun Header(selected: LocalDate, today: LocalDate, model: TodayModel?, fm
 @Composable
 private fun WeekStrip(selected: LocalDate, today: LocalDate, fmt: Formatter, onSelect: (LocalDate) -> Unit) {
     val c = PillBox.colors
-    val first = WeekFields.of(locale()).firstDayOfWeek
+    val first = com.pillbox.ui.firstDayOfWeek()
     val start = today.minusDays(((today.dayOfWeek.value - first.value + 7) % 7).toLong())
     Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(Space.S4)) {
         for (i in 0..6) {
