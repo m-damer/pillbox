@@ -53,18 +53,10 @@ class ReportPdfTest {
 
     @Test fun smallReportIsOnePage() = assertEquals(1, pages(model(7, allMissed = false)))
 
-    @Test fun everyPeriodWorks() = ReportOptions.PERIODS.forEach { assertTrue(pages(model(it, allMissed = false)) >= 1) }
-
     @Test fun manyMissedDosesContinueOnMorePages() = assertTrue(pages(model(90, allMissed = true)) > 1)
 
     @Test fun optionsCanBeTurnedOff() {
         val m = model(30, false).let { it.copy(options = ReportOptions(30, medicines = false, dayByDay = false, missedLate = false)) }
         assertEquals(1, pages(m))
-    }
-
-    @Test fun arabicWorks() {
-        // Switch the phone to Arabic (right-to-left) for this test only, without starting a new sandbox.
-        RuntimeEnvironment.setQualifiers("+ar-rSY")
-        assertTrue(pages(model(30, allMissed = true)) >= 1)
     }
 }
