@@ -164,21 +164,21 @@ internal fun LateSheet(sheet: TodaySheet.Late, fmt: Formatter, onConfirm: (LateC
     val late = gapText(sheet.minutesLate, fmt)
     SheetTitle(
         stringResource(if (sheet.askRows.size == 1) R.string.late_title_one else R.string.late_title_many, late),
-        stringResource(R.string.late_sub, fmt.time(sheet.duePlanned), fmt.time(sheet.takenAt), sheet.askRows.joinToString(", ") { it.medicine.name }),
+        stringResource(R.string.late_sub, fmt.time(sheet.duePlanned.toLocalTime()), fmt.time(sheet.takenAt.toLocalTime()), sheet.askRows.joinToString(", ") { it.medicine.name }),
     )
     val moveText = when {
         sheet.gapHours != null && sheet.moveTimes.size >= 2 -> stringResource(
             R.string.late_move_gap_two, pluralStringResource(R.plurals.n_hours, sheet.gapHours, fmt.number(sheet.gapHours)),
-            fmt.time(sheet.moveTimes[0]), fmt.time(sheet.moveTimes[1]),
+            fmt.time(sheet.moveTimes[0].toLocalTime()), fmt.time(sheet.moveTimes[1].toLocalTime()),
         )
         sheet.gapHours != null && sheet.moveTimes.size == 1 -> stringResource(
-            R.string.late_move_gap_one, pluralStringResource(R.plurals.n_hours, sheet.gapHours, fmt.number(sheet.gapHours)), fmt.time(sheet.moveTimes[0]),
+            R.string.late_move_gap_one, pluralStringResource(R.plurals.n_hours, sheet.gapHours, fmt.number(sheet.gapHours)), fmt.time(sheet.moveTimes[0].toLocalTime()),
         )
         sheet.moveTimes.isEmpty() -> stringResource(R.string.late_move_none)
-        else -> stringResource(R.string.late_move_fixed, gapText(sheet.delayMinutes, fmt), fmt.time(sheet.moveTimes[0]))
+        else -> stringResource(R.string.late_move_fixed, gapText(sheet.delayMinutes, fmt), fmt.time(sheet.moveTimes[0].toLocalTime()))
     }
     val keepText = if (sheet.gapHours != null && sheet.keepNext != null && sheet.keepGapMinutes != null) {
-        stringResource(R.string.late_keep_gap, fmt.time(sheet.keepNext), gapText(sheet.keepGapMinutes, fmt))
+        stringResource(R.string.late_keep_gap, fmt.time(sheet.keepNext.toLocalTime()), gapText(sheet.keepGapMinutes, fmt))
     } else stringResource(R.string.late_keep_fixed)
     Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(Space.S12)) {
         LateOption(stringResource(R.string.late_move), moveText, choice == LateChoice.MOVE) { choice = LateChoice.MOVE }
