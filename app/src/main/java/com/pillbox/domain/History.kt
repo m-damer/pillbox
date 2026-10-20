@@ -8,7 +8,14 @@ import kotlin.math.roundToInt
 /** What happened to one planned dose. Paused doses and doses still to come are not recorded at all. */
 enum class DoseOutcome { ON_TIME, LATE, SKIPPED, MISSED }
 
-data class DoseRecord(val medicine: Medicine, val planned: LocalDateTime, val outcome: DoseOutcome, val lateMinutes: Int = 0) {
+data class DoseRecord(
+    val medicine: Medicine,
+    val planned: LocalDateTime,
+    val outcome: DoseOutcome,
+    val lateMinutes: Int = 0,
+    /** The reason code the person gave when skipping, if any. */
+    val reason: String? = null,
+) {
     /** Skipped and missed doses both count as "Missed" in History. */
     val needsAttention get() = outcome != DoseOutcome.ON_TIME
 }
@@ -98,7 +105,7 @@ object HistoryBuilder {
                         else -> if (LateRules.isMissed(now, at, visible.getOrNull(i + 1))) DoseOutcome.MISSED else null
                     }
                     if (outcome == null) { pending = true; return@forEachIndexed }
-                    records += DoseRecord(med, at, outcome, event?.lateMinutes ?: 0)
+                    records += DoseRecord(med, at, outcome, event?.lateMinutes ?: 0, event?.skipReason)
                     counted++
                     if (outcome == DoseOutcome.ON_TIME || outcome == DoseOutcome.LATE) good++
                 }

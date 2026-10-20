@@ -61,14 +61,15 @@ class HistoryScreenshotTest {
 
     private val items = listOf(Triple(metformin, sMet, emptyList<Pause>()), Triple(amox, sAmox, emptyList<Pause>()))
     private val state = HistoryUiState(true, "Me", today, HistoryBuilder.build(items, takenEvents(), now))
+    private val stateAr = state.copy(personName = "أنا")
     private val empty = HistoryUiState(true, "Me", today, HistoryBuilder.build(emptyList(), emptyList(), now))
 
     @Test fun en() = shoot("en", "en", state)
     @Test fun en_empty() = shoot("en_empty", "en", empty)
     @Test fun en_dark_2x() = shoot("en_dark_2x", "en", state, ThemeMode.Dark, 2f)
-    @Config(qualifiers = "+ar-ldrtl") @Test fun ar() = shoot("ar", "ar", state)
+    @Config(qualifiers = "+ar-ldrtl") @Test fun ar() = shoot("ar", "ar", stateAr)
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar_empty() = shoot("ar_empty", "ar", empty)
-    @Config(qualifiers = "+ar-ldrtl") @Test fun ar_dark_2x() = shoot("ar_dark_2x", "ar", state, ThemeMode.Dark, 2f)
+    @Config(qualifiers = "+ar-ldrtl") @Test fun ar_dark_2x() = shoot("ar_dark_2x", "ar", stateAr, ThemeMode.Dark, 2f)
 
     private fun shoot(name: String, lang: String, s: HistoryUiState, mode: ThemeMode = ThemeMode.Light, fontScale: Float = 1f) {
         val ar = lang == "ar"
@@ -78,7 +79,7 @@ class HistoryScreenshotTest {
             CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale)) {
                 PillBoxTheme(mode = mode) {
                     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-                        HistoryContent(s, fmt, if (ar) DayOfWeek.SATURDAY else DayOfWeek.SUNDAY, {}, {})
+                        HistoryContent(s, fmt, if (ar) DayOfWeek.SATURDAY else DayOfWeek.SUNDAY, {}, {}, {})
                     }
                 }
             }

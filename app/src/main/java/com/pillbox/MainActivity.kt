@@ -47,6 +47,8 @@ import com.pillbox.ui.today.TodayViewModel
 import com.pillbox.ui.history.HistoryScreen
 import com.pillbox.ui.history.HistoryViewModel
 import com.pillbox.ui.refill.RefillAlertScreen
+import com.pillbox.ui.report.ReportScreen
+import com.pillbox.ui.report.ReportViewModel
 import com.pillbox.ui.refill.RefillAlertViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -89,12 +91,13 @@ class MainActivity : ComponentActivity() {
                 var tab by rememberSaveable { mutableStateOf(Tab.TODAY) }
                 var showRefill by rememberSaveable { mutableStateOf(false) }
                 var showHistory by rememberSaveable { mutableStateOf(false) }
+                var showReport by rememberSaveable { mutableStateOf(false) }
                 var refillSession by rememberSaveable { mutableIntStateOf(0) }
                 // A refill notification asked for a medicine.
                 val wanted = openMedicine.value
                 LaunchedEffect(wanted) {
                     if (wanted != null) {
-                        showRefill = false; showHistory = false; adding = false; editItem = null
+                        showRefill = false; showHistory = false; showReport = false; adding = false; editItem = null
                         detailId = wanted; openMedicine.value = null
                     }
                 }
@@ -109,10 +112,16 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                if (showHistory) {
+                if (showReport) {
+                    val vm: ReportViewModel = viewModel(factory = viewModelFactory { initializer { ReportViewModel(applicationContext, repo, meName) } })
+                    // Registered first, so the preview inside ReportScreen can take Back before this does.
+                    BackHandler { showReport = false }
+                    Box(Modifier.fillMaxSize().statusBarsPadding()) { ReportScreen(vm, onBack = { showReport = false }) }
+                } else if (showHistory) {
                     val vm: HistoryViewModel = viewModel(factory = viewModelFactory { initializer { HistoryViewModel(repo, meName) } })
                     Box(Modifier.fillMaxSize().statusBarsPadding()) {
-                        HistoryScreen(vm, onBack = { showHistory = false }, onGoToToday = { showHistory = false; detailId = null; tab = Tab.TODAY })
+                        HistoryScreen(vm, onBack = { showHistory = false }, onGoToToday = { showHistory = false; detailId = null; tab = Tab.TODAY },
+                            onShareReport = { showReport = true })
                     }
                     BackHandler { showHistory = false }
                 } else if (showRefill) {

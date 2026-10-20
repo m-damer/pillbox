@@ -18,6 +18,7 @@ import com.pillbox.domain.Frequency
 import com.pillbox.domain.Medicine
 import com.pillbox.domain.Schedule
 import com.pillbox.domain.StockLevel
+import com.pillbox.domain.WithFood
 import com.pillbox.ui.Formatter
 import com.pillbox.ui.quantityFor
 import com.pillbox.ui.theme.PillBox
@@ -89,28 +90,37 @@ fun levelColor(level: StockLevel) = when (level) {
 
 /** "Twice a day", "Every 6 hours", "Only when needed", plus the days and the food rule. */
 @Composable
-fun scheduleSummary(schedule: Schedule, fmt: Formatter): String {
-    val sep = stringResource(R.string.dot_sep)
+fun scheduleSummary(schedule: Schedule, fmt: Formatter): String =
+    scheduleSummaryText(androidx.compose.ui.platform.LocalContext.current.resources, schedule, fmt)
+
+/** Same text outside Compose, for the doctor report. */
+fun scheduleSummaryText(res: android.content.res.Resources, schedule: Schedule, fmt: Formatter): String {
+    val sep = res.getString(R.string.dot_sep)
     val parts = mutableListOf<String>()
     val days: DayPattern? = when (val f = schedule.frequency) {
         is Frequency.FixedTimes -> {
-            parts += stringResource(
+            parts += res.getString(
                 when (f.times.size) { 1 -> R.string.freq_once; 2 -> R.string.freq_twice; 3 -> R.string.freq_three; else -> R.string.freq_hours },
             )
             f.days
         }
         is Frequency.EveryNHours -> {
-            parts += stringResource(R.string.sched_every_hours, pluralStringResource(R.plurals.n_hours, f.hours, fmt.number(f.hours)))
+            parts += res.getString(R.string.sched_every_hours, res.getQuantityString(R.plurals.n_hours, f.hours, fmt.number(f.hours)))
             f.days
         }
-        is Frequency.AsNeeded -> { parts += stringResource(R.string.freq_prn); null }
+        is Frequency.AsNeeded -> { parts += res.getString(R.string.freq_prn); null }
     }
     when (days) {
         is DayPattern.DaysOfWeek -> parts += DayOfWeek.values().filter { it in days.days }
             .joinToString(", ") { it.getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
-        is DayPattern.EveryNDays -> parts += pluralStringResource(R.plurals.every_n_days, days.n, fmt.number(days.n))
+        is DayPattern.EveryNDays -> parts += res.getQuantityString(R.plurals.every_n_days, days.n, fmt.number(days.n))
         else -> Unit
     }
-    foodText(schedule.withFood)?.let { parts += it }
+    when (schedule.withFood) {
+        WithFood.ANY -> Unit
+        WithFood.BEFORE_MEAL -> parts += res.getString(R.string.food_line_before)
+        WithFood.WITH_MEAL -> parts += res.getString(R.string.food_line_with)
+        WithFood.AFTER_MEAL -> parts += res.getString(R.string.food_line_after)
+    }
     return parts.joinToString(sep)
 }

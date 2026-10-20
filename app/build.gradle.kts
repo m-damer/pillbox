@@ -51,6 +51,14 @@ android {
 
     testOptions {
         unitTests.isIncludeAndroidResources = true
+        // Full failure details in the CI log, so a failing test can be diagnosed without opening the report.
+        unitTests.all {
+            it.testLogging {
+                exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+                showCauses = true
+                showStackTraces = true
+            }
+        }
     }
 }
 
