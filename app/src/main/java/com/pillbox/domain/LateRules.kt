@@ -7,6 +7,9 @@ enum class LateSetting { ASK, MOVE_NEXT, KEEP }
 
 enum class LateThreshold(val minutes: Int) { MIN_15(15), MIN_30(30), HOUR_1(60) }
 
+/** What the user (or the setting) decided for the next doses after a late dose. */
+enum class LateChoice { MOVE, KEEP }
+
 sealed interface LateAction {
     /** Show the Taken late sheet (Move next doses / Keep my times, with Always do this). */
     data object ShowSheet : LateAction
@@ -40,6 +43,20 @@ object LateRules {
             LateSetting.ASK -> LateAction.ShowSheet
             LateSetting.MOVE_NEXT -> LateAction.MoveNextDoses
             LateSetting.KEEP -> LateAction.KeepTimes
+        }
+    }
+
+    /**
+     * What happens to the next doses for a dose taken [lateMinutes] late. Null when it was not late or nothing applies (as needed).
+     * [asked] is the answer from the Taken late sheet; without one, a fixed gap or "Ask" setting keeps the times.
+     */
+    fun effectiveChoice(frequency: Frequency, setting: LateSetting, lateMinutes: Int?, asked: LateChoice?): LateChoice? {
+        if (lateMinutes == null) return null
+        return when (lateAction(frequency, setting)) {
+            LateAction.ShowSheet -> asked ?: LateChoice.KEEP
+            LateAction.MoveNextDoses -> LateChoice.MOVE
+            LateAction.KeepTimes -> LateChoice.KEEP
+            LateAction.NotApplicable -> null
         }
     }
 
@@ -105,4 +122,50 @@ object LateRules {
         val gapEnds = lastTaken?.plusHours(hours.toLong()) ?: return TakeCheck.Allowed
         return if (now.isBefore(gapEnds)) TakeCheck.TooSoon(gapEnds) else TakeCheck.Allowed
     }
+
+    // ---------------------------------------------------------------- Move next doses
+
+    /**
+     * What "Move next doses" changes after [planned] was taken at [takenAt], as base time -> new time (null = dropped).
+     * Fixed times: the rest of that day shifts later by the delay. Every few hours: the chain restarts from the actual
+     * time, N hours apart, for the rest of the cycle and the next cycle's first dose; later doses go back to the schedule. As needed: nothing.
+     * Keys are the schedule's own times, so a dose moved twice keeps one entry.
+     */
+    fun moveEntries(schedule: Schedule, planned: LocalDateTime, takenAt: LocalDateTime): Map<LocalDateTime, LocalDateTime?> {
+        val reverse = schedule.shifts.entries.mapNotNull { (k, v) -> v?.let { it to k } }.toMap()
+        fun baseOf(t: LocalDateTime) = reverse[t] ?: t
+        return when (val f = schedule.frequency) {
+            is Frequency.FixedTimes -> {
+                val delay = Duration.between(planned, takenAt)
+                if (delay.isNegative || delay.isZero) return emptyMap()
+                ScheduleEngine.plannedDoses(schedule, planned.toLocalDate())
+                    .filter { it.isAfter(planned) }
+                    .associate { baseOf(it) to it.plus(delay) }
+            }
+            is Frequency.EveryNHours -> {
+                val base = baseOf(planned)
+                val cycleDay = if (base.toLocalTime() < f.first) base.toLocalDate().minusDays(1) else base.toLocalDate()
+                val nextFirst = cycleDay.plusDays(1).atTime(f.first)
+                // The rest of this cycle and the first dose of the next one all follow the actual time, N hours apart.
+                val remaining = ScheduleEngine.cycle(schedule, f, cycleDay).filter { it.isAfter(base) } + nextFirst
+                remaining.mapIndexed { i, b -> b to takenAt.plusHours(f.hours.toLong() * (i + 1)) }.toMap()
+            }
+            is Frequency.AsNeeded -> emptyMap()
+        }
+    }
+
+    /** Adds [new] to [old]. Entries from more than a year ago are forgotten (History that far back is not redrawn). */
+    fun mergeShifts(old: Map<LocalDateTime, LocalDateTime?>, new: Map<LocalDateTime, LocalDateTime?>, now: LocalDateTime): Map<LocalDateTime, LocalDateTime?> =
+        (old + new).filterKeys { it.toLocalDate().isAfter(now.toLocalDate().minusDays(400)) }
+
+    /** Stored as "from>to,from>" (empty after > means dropped). */
+    fun encodeShifts(shifts: Map<LocalDateTime, LocalDateTime?>): String? =
+        if (shifts.isEmpty()) null else shifts.entries.joinToString(",") { (k, v) -> "$k>${v ?: ""}" }
+
+    fun decodeShifts(text: String?): Map<LocalDateTime, LocalDateTime?> =
+        if (text.isNullOrBlank()) emptyMap()
+        else text.split(",").mapNotNull { part ->
+            val i = part.indexOf('>')
+            if (i < 0) null else runCatching { LocalDateTime.parse(part.substring(0, i)) to part.substring(i + 1).takeIf { it.isNotEmpty() }?.let(LocalDateTime::parse) }.getOrNull()
+        }.toMap()
 }

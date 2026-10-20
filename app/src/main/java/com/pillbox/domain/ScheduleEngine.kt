@@ -11,6 +11,17 @@ object ScheduleEngine {
      * As-needed medicines have no planned doses.
      */
     fun plannedDoses(schedule: Schedule, date: LocalDate): List<LocalDateTime> {
+        if (schedule.shifts.isEmpty()) return rawDoses(schedule, date)
+        // A moved dose can land on the next day, so look at the days around and keep what rings on [date].
+        return (-1L..1L).flatMap { rawDoses(schedule, date.plusDays(it)) }
+            .mapNotNull { if (it in schedule.shifts) schedule.shifts[it] else it }
+            .filter { it.toLocalDate() == date }
+            .distinct()
+            .sorted()
+    }
+
+    /** The doses the schedule itself makes on [date], before any moves. */
+    private fun rawDoses(schedule: Schedule, date: LocalDate): List<LocalDateTime> {
         val from = schedule.startTime?.let { schedule.start.atTime(it) }
         val all = when (val f = schedule.frequency) {
             is Frequency.FixedTimes ->

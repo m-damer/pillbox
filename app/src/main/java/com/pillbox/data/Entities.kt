@@ -73,6 +73,8 @@ data class ScheduleEntity(
     val withFood: String,
     /** Minute of the day of the first dose on the start date (null = whole day). */
     val startMinute: Int? = null,
+    /** Moved doses (Taken late > Move next doses), see LateRules.encodeShifts. Null = none. */
+    val shifts: String? = null,
 )
 
 @Entity(

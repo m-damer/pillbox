@@ -56,6 +56,11 @@ data class Schedule(
     val withFood: WithFood = WithFood.ANY,
     /** Time of the first dose on [start]. Doses earlier than this on the start day do not exist. Null = from the start of the day. */
     val startTime: LocalTime? = null,
+    /**
+     * Doses moved by "Move next doses" (Taken late): the planned time they would have had to the time they have now.
+     * A null value means that dose was dropped. Only a day or two of these are kept.
+     */
+    val shifts: Map<LocalDateTime, LocalDateTime?> = emptyMap(),
 ) {
     fun isActiveOn(date: LocalDate) = !date.isBefore(start) && (end == null || !date.isAfter(end))
 }

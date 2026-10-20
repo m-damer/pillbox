@@ -8,6 +8,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.pillbox.domain.LateSetting
+import com.pillbox.domain.LateThreshold
 import com.pillbox.domain.MealTimes
 import com.pillbox.domain.QuietHours
 import com.pillbox.domain.ReminderSettings
@@ -30,6 +32,8 @@ class ReminderSettingsStore(private val context: Context) {
     private val quietUntil = intPreferencesKey("quiet_until")
     private val quietDoseRings = booleanPreferencesKey("quiet_dose_rings")
     private val quietMuteRefill = booleanPreferencesKey("quiet_mute_refill")
+    private val lateSetting = stringPreferencesKey("late_setting")
+    private val lateThreshold = intPreferencesKey("late_threshold")
     private val mealKeys = MealTimes.Meal.entries.associateWith { intPreferencesKey("meal_" + it.name.lowercase()) }
 
     val flow: Flow<ReminderSettings> = context.reminderPrefs.data.map(::read)
@@ -59,6 +63,8 @@ class ReminderSettingsStore(private val context: Context) {
                 muteRefill = p[quietMuteRefill] ?: d.quiet.muteRefill,
             ),
             meals = meals,
+            late = p[lateSetting]?.let { n -> LateSetting.entries.firstOrNull { it.name == n } } ?: d.late,
+            lateThreshold = LateThreshold.entries.firstOrNull { it.minutes == p[lateThreshold] } ?: d.lateThreshold,
         )
     }
 
@@ -72,6 +78,8 @@ class ReminderSettingsStore(private val context: Context) {
         p[quietUntil] = minute(s.quiet.until)
         p[quietDoseRings] = s.quiet.doseRings
         p[quietMuteRefill] = s.quiet.muteRefill
+        p[lateSetting] = s.late.name
+        p[lateThreshold] = s.lateThreshold.minutes
         MealTimes.Meal.entries.forEach { p[mealKeys.getValue(it)] = minute(s.meals[it]) }
     }
 }

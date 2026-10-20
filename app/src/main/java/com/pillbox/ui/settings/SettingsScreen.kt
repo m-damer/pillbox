@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -53,7 +54,7 @@ import com.pillbox.ui.theme.Space
 import com.pillbox.ui.theme.illustration
 
 /** Where a Settings row leads. */
-enum class SettingsTarget { SOUND, REFILL, QUIET, MEALS, ACCESSIBILITY, LANGUAGE, PEOPLE }
+enum class SettingsTarget { SOUND, REFILL, QUIET, MEALS, LATE, ACCESSIBILITY, LANGUAGE, PEOPLE }
 
 @Composable
 fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier) {
@@ -96,6 +97,16 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                 SettingsRow(
                     stringResource(R.string.settings_meals), pluralStringResource(R.plurals.meals_count, 4, fmt.number(4)),
                     tints[3], { RowGlyph("◔", large = true) }, { onOpen(SettingsTarget.MEALS) },
+                )
+                Divider()
+                SettingsRow(
+                    stringResource(R.string.settings_late),
+                    stringResource(when (state.reminder.late) {
+                        com.pillbox.domain.LateSetting.ASK -> R.string.late_value_ask
+                        com.pillbox.domain.LateSetting.MOVE_NEXT -> R.string.late_value_move
+                        com.pillbox.domain.LateSetting.KEEP -> R.string.late_value_keep
+                    }),
+                    tints[5], { RowIcon(Icons.Filled.Refresh) }, { onOpen(SettingsTarget.LATE) },
                 )
             }
             Section(stringResource(R.string.settings_sec_display))

@@ -35,6 +35,7 @@ import com.pillbox.ui.AppLocale
 import com.pillbox.ui.ReminderState
 import com.pillbox.ui.settings.AccessibilityScreen
 import com.pillbox.ui.settings.LanguageScreen
+import com.pillbox.ui.settings.LateSettingScreen
 import com.pillbox.ui.settings.MealTimesScreen
 import com.pillbox.ui.settings.QuietHoursScreen
 import com.pillbox.ui.settings.SettingsScreen
@@ -183,6 +184,7 @@ class MainActivity : PillBoxActivity() {
                             3 -> ThemeScreen(vm, onBack = close)
                             4 -> SoundScreen(vm, onBack = close)
                             5 -> QuietHoursScreen(vm, onBack = close, onSaved = { savedToast(); settingsScreen = 0 })
+                            7 -> LateSettingScreen(vm, onBack = close, onSaved = { savedToast(); settingsScreen = 0 })
                             6 -> MealTimesScreen(vm, onBack = close, onSaved = { savedToast(); settingsScreen = 0 })
                             else -> LanguageScreen(
                                 vm, activeLanguage = AppLocale.active(context), onBack = close,
@@ -274,7 +276,7 @@ class MainActivity : PillBoxActivity() {
                         Box(Modifier.weight(1f).statusBarsPadding()) {
                             when (tab) {
                                 Tab.TODAY -> {
-                                    val vm: TodayViewModel = viewModel(factory = viewModelFactory { initializer { TodayViewModel(repo, meName, onChanged = { reminders.rearm() }, remindDays = remindDays) } })
+                                    val vm: TodayViewModel = viewModel(factory = viewModelFactory { initializer { TodayViewModel(repo, meName, onChanged = { reminders.rearm() }, remindDays = remindDays, saveLateSetting = { v -> app.reminderSettings.update { it.copy(late = v) } }) } })
                                     TodayScreen(
                                         vm, onAddMedicine = { adding = true },
                                         remindersOff = !permissions.remindersWork, onFixReminders = { showPermissions = true },
@@ -314,6 +316,7 @@ class MainActivity : PillBoxActivity() {
                                                 SettingsTarget.SOUND -> settingsScreen = 4
                                 SettingsTarget.QUIET -> settingsScreen = 5
                                 SettingsTarget.MEALS -> settingsScreen = 6
+                                SettingsTarget.LATE -> settingsScreen = 7
                                 SettingsTarget.ACCESSIBILITY -> settingsScreen = 1
                                                 SettingsTarget.LANGUAGE -> settingsScreen = 2
                                                 SettingsTarget.PEOPLE -> tab = Tab.PEOPLE

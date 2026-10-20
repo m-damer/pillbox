@@ -615,4 +615,36 @@
     <string name="meal_time_a11y">%1$s, %2$s. Change time.</string>
     <string name="channel_doses_quiet">Medicine reminders (quiet hours)</string>
     <string name="channel_doses_quiet_desc">Silent reminders used during quiet hours when you choose not to ring.</string>
+    <!-- Late dose -->
+    <string name="late_title_one">You took this %1$s late</string>
+    <string name="late_title_many">You took these %1$s late</string>
+    <string name="late_sub">Due %1$s · taken %2$s · %3$s</string>
+    <string name="late_move">Move the next doses later</string>
+    <string name="late_move_gap_one">Keep the %1$s gap: %2$s</string>
+    <string name="late_move_gap_two">Keep the %1$s gap: %2$s, then %3$s</string>
+    <string name="late_move_fixed">Shift the rest of today by %1$s: %2$s</string>
+    <string name="late_move_none">Nothing is left today. Tomorrow stays the same.</string>
+    <string name="late_keep">Keep the original times</string>
+    <string name="late_keep_gap">The next dose stays at %1$s (gap is %2$s)</string>
+    <string name="late_keep_fixed">The next doses stay as planned. This one is saved as late.</string>
+    <string name="late_always">Always do this. Don\'t ask again.</string>
+    <string name="late_choose">Choose one to continue</string>
+    <string name="late_continue">Continue</string>
+    <string name="gap_h_m">%1$s h %2$s min</string>
+    <string name="gap_h">%1$s h</string>
+    <string name="settings_late">When I take a dose late</string>
+    <string name="late_value_ask">Ask me</string>
+    <string name="late_value_move">Move</string>
+    <string name="late_value_keep">Keep</string>
+    <string name="late_setting_title">When I take a dose late</string>
+    <string name="late_ask">Ask me each time</string>
+    <string name="late_ask_sub">I choose to move the next doses or keep my times.</string>
+    <string name="late_suggested">Suggested</string>
+    <string name="late_move_next">Move next doses</string>
+    <string name="late_move_next_sub">Shift the rest of the day so doses stay evenly apart.</string>
+    <string name="late_keep_times">Keep my times</string>
+    <string name="late_keep_times_sub">Never change the schedule. Just record the late dose.</string>
+    <string name="late_threshold_caption">A dose counts as late after</string>
+    <string name="late_threshold_hour">1 hour</string>
+    <string name="late_setting_note">Medicines that need a set gap, such as every 8 hours, always ask you first.</string>
 </resources>

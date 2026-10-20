@@ -82,6 +82,9 @@ data class ReminderSettings(
     val keepRinging: Boolean = true,
     val quiet: QuietHours = QuietHours(),
     val meals: MealTimes = MealTimes(),
+    /** What to do with the next doses when one is taken late (fixed-time medicines; fixed-gap ones always ask). */
+    val late: LateSetting = LateSetting.ASK,
+    val lateThreshold: LateThreshold = LateThreshold.MIN_30,
 ) {
     /** How many repeats after the first ring. */
     val maxRepeats: Int get() = if (keepRinging) ReminderPlanner.MAX_NAGS else 0

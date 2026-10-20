@@ -3,6 +3,7 @@ package com.pillbox.data
 import androidx.room.withTransaction
 import com.pillbox.domain.DoseEvent
 import com.pillbox.domain.DoseStatus
+import com.pillbox.domain.LateRules
 import com.pillbox.domain.Medicine
 import com.pillbox.domain.MedicineStatus
 import com.pillbox.domain.Pause
@@ -241,6 +242,23 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
         val id = db.doseEvents().insert(Mappers.toEntity(event.copy(id = 0, medicineId = medicine.id, status = DoseStatus.TAKEN)))
         db.medicines().get(medicine.id)?.let { db.medicines().update(it.copy(stock = (it.stock - medicine.doseAmount).coerceAtLeast(0.0))) }
         id
+    }
+
+    /**
+     * Saves "Move next doses": [entries] are added to the medicine's moved doses. Returns the moves it had before,
+     * so Undo can put them back.
+     */
+    suspend fun moveDoses(medicineId: Long, entries: Map<LocalDateTime, LocalDateTime?>): Map<LocalDateTime, LocalDateTime?> = db.withTransaction {
+        val e = db.schedules().forMedicine(medicineId) ?: return@withTransaction emptyMap()
+        val s = Mappers.toDomain(e)
+        db.schedules().upsert(Mappers.toEntity(medicineId, s.copy(shifts = LateRules.mergeShifts(s.shifts, entries, LocalDateTime.now())), e.id))
+        s.shifts
+    }
+
+    /** Puts back the moves [moveDoses] returned. */
+    suspend fun setShifts(medicineId: Long, shifts: Map<LocalDateTime, LocalDateTime?>) = db.withTransaction {
+        val e = db.schedules().forMedicine(medicineId) ?: return@withTransaction
+        db.schedules().upsert(Mappers.toEntity(medicineId, Mappers.toDomain(e).copy(shifts = shifts), e.id))
     }
 
     /** Undo of [takeDose]: removes the event and puts back [restore] (less than a full dose if stock ran out). */

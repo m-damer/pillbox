@@ -21,6 +21,7 @@ import com.pillbox.domain.DoseEvent
 import com.pillbox.domain.DoseRow
 import com.pillbox.domain.DoseStatus
 import com.pillbox.domain.Pause
+import com.pillbox.domain.LateChoice
 import com.pillbox.domain.LateRules
 import com.pillbox.domain.Medicine
 import com.pillbox.domain.RefillAlert
@@ -261,15 +262,18 @@ class Reminders(
 
     suspend fun take(rows: List<DoseRow>) {
         val now = LocalDateTime.now()
+        val settings = ReminderState.current
+        var moved = false
         rows.forEach { r ->
-            repo.takeDose(
-                r.medicine,
-                DoseEvent(
-                    planned = r.planned, taken = now, status = DoseStatus.TAKEN,
-                    lateMinutes = LateRules.lateMinutes(r.planned, now, TodayBuilder.DEFAULT_LATE_THRESHOLD),
-                ),
-            )
+            val late = LateRules.lateMinutes(r.planned, now, settings.lateThreshold)
+            repo.takeDose(r.medicine, DoseEvent(planned = r.planned, taken = now, status = DoseStatus.TAKEN, lateMinutes = late))
+            // No sheet here (notification and full-screen reminder): "Move next doses" follows the setting, everything else keeps the times.
+            if (LateRules.effectiveChoice(r.schedule.frequency, settings.late, late, asked = null) == LateChoice.MOVE) {
+                val entries = LateRules.moveEntries(r.schedule, r.planned, now)
+                if (entries.isNotEmpty()) { repo.moveDoses(r.medicine.id, entries); moved = true }
+            }
         }
+        if (moved) rearm()
     }
 
     suspend fun skip(rows: List<DoseRow>) {

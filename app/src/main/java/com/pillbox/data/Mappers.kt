@@ -10,6 +10,7 @@ import com.pillbox.domain.MedicineStatus
 import com.pillbox.domain.Pause
 import com.pillbox.domain.Person
 import com.pillbox.domain.Relation
+import com.pillbox.domain.LateRules
 import com.pillbox.domain.Schedule
 import com.pillbox.domain.WithFood
 import java.time.DayOfWeek
@@ -46,6 +47,7 @@ object Mappers {
             kind = "", timesCsv = null, dayPattern = null, daysMask = null, everyNDays = null, anchorDate = null,
             firstMinute = null, hours = null, minGapMinutes = null, maxPerDay = null, withFood = s.withFood.name,
             startMinute = s.startTime?.let { minutes(it) },
+            shifts = LateRules.encodeShifts(s.shifts),
         )
         fun withDays(b: ScheduleEntity, d: DayPattern) = when (d) {
             DayPattern.EveryDay -> b.copy(dayPattern = "EVERY_DAY")
@@ -72,7 +74,7 @@ object Mappers {
             "AS_NEEDED" -> Frequency.AsNeeded(e.minGapMinutes ?: (6 * 60), e.maxPerDay)
             else -> error("Unknown schedule kind ${e.kind}")
         }
-        return Schedule(LocalDate.ofEpochDay(e.startDate), e.endDate?.let { LocalDate.ofEpochDay(it) }, frequency, WithFood.valueOf(e.withFood), e.startMinute?.let { time(it) })
+        return Schedule(LocalDate.ofEpochDay(e.startDate), e.endDate?.let { LocalDate.ofEpochDay(it) }, frequency, WithFood.valueOf(e.withFood), e.startMinute?.let { time(it) }, LateRules.decodeShifts(e.shifts))
     }
 
     // ---- pause ----

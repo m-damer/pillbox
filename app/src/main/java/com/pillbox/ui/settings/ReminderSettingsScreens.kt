@@ -3,7 +3,10 @@ package com.pillbox.ui.settings
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -308,5 +311,82 @@ fun MealTimesContent(meals: MealTimes, fmt: Formatter, onBack: () -> Unit, onCha
     if (picking >= 0) {
         val meal = rows[picking].first
         PBTimePickerDialog(meals[meal], fmt.is24Hour, onDismiss = { picking = -1 }) { onChange(meal, it); picking = -1 }
+    }
+}
+
+// ---------------------------------------------------------------- When I take a dose late
+
+@Composable
+fun LateSettingScreen(vm: SettingsViewModel, onBack: () -> Unit, onSaved: () -> Unit) {
+    val state by vm.state.collectAsStateWithLifecycle()
+    BackHandler(onBack = onBack)
+    if (!state.loaded) return
+    var setting by rememberSaveable { mutableStateOf(state.reminder.late) }
+    var threshold by rememberSaveable { mutableStateOf(state.reminder.lateThreshold) }
+    LateSettingContent(setting, threshold, rememberFormatter(), onBack, { setting = it }, { threshold = it }, { vm.saveLate(setting, threshold, onSaved) })
+}
+
+@Composable
+fun LateSettingContent(
+    setting: com.pillbox.domain.LateSetting,
+    threshold: com.pillbox.domain.LateThreshold,
+    fmt: Formatter,
+    onBack: () -> Unit,
+    onSetting: (com.pillbox.domain.LateSetting) -> Unit,
+    onThreshold: (com.pillbox.domain.LateThreshold) -> Unit,
+    onSave: () -> Unit,
+) {
+    val c = PillBox.colors
+    val options = listOf(
+        Triple(com.pillbox.domain.LateSetting.ASK, R.string.late_ask, R.string.late_ask_sub),
+        Triple(com.pillbox.domain.LateSetting.MOVE_NEXT, R.string.late_move_next, R.string.late_move_next_sub),
+        Triple(com.pillbox.domain.LateSetting.KEEP, R.string.late_keep_times, R.string.late_keep_times_sub),
+    )
+    val thresholds = com.pillbox.domain.LateThreshold.entries
+    Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        SubHeader(stringResource(R.string.late_setting_title), onBack)
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH)) {
+            Column(Modifier.selectableGroup().padding(top = Space.S8), verticalArrangement = Arrangement.spacedBy(Space.S12)) {
+                options.forEach { (value, title, sub) ->
+                    val on = setting == value
+                    Row(
+                        Modifier
+                            .fillMaxWidth().heightIn(min = Dimens.SettingsRowMinHeight)
+                            .background(if (on) c.primaryContainer else c.card, MaterialTheme.shapes.large)
+                            .border(if (on) Dimens.ChipBorder else 0.dp, if (on) c.primary else c.card, MaterialTheme.shapes.large)
+                            .selectable(selected = on, role = Role.RadioButton) { onSetting(value) }
+                            .padding(Space.S16),
+                        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
+                    ) {
+                        Box(
+                            Modifier.size(28.dp).background(if (on) c.primary else c.card, CircleShape)
+                                .border(Dimens.ChipBorder, if (on) c.primary else c.placeholder, CircleShape),
+                            contentAlignment = Alignment.Center,
+                        ) { if (on) androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Filled.Check, null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
+                        Column(Modifier.weight(1f)) {
+                            Text(stringResource(title), style = MaterialTheme.typography.labelLarge, color = c.text)
+                            if (value == com.pillbox.domain.LateSetting.ASK) {
+                                Text(
+                                    stringResource(R.string.late_suggested), style = MaterialTheme.typography.labelSmall, color = c.accent,
+                                    modifier = Modifier.padding(vertical = Space.S4),
+                                )
+                            }
+                            Text(stringResource(sub), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+                        }
+                    }
+                }
+            }
+            Caption(stringResource(R.string.late_threshold_caption))
+            Card {
+                Box(Modifier.padding(Space.S8)) {
+                    Segmented(
+                        thresholds.map { if (it.minutes < 60) stringResource(R.string.min_short, fmt.number(it.minutes)) else stringResource(R.string.late_threshold_hour) },
+                        thresholds.indexOf(threshold), { onThreshold(thresholds[it]) }, stackWhenLarge = true,
+                    )
+                }
+            }
+            Note(stringResource(R.string.late_setting_note))
+        }
+        Box(Modifier.padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) { PrimaryButton(stringResource(R.string.save_changes), onSave) }
     }
 }

@@ -6,6 +6,8 @@ import com.pillbox.data.DisplaySettingsStore
 import com.pillbox.data.PillBoxRepository
 import com.pillbox.data.RefillSettingsStore
 import com.pillbox.data.ReminderSettingsStore
+import com.pillbox.domain.LateSetting
+import com.pillbox.domain.LateThreshold
 import com.pillbox.domain.MealTimes
 import com.pillbox.domain.QuietHours
 import com.pillbox.domain.ReminderSettings
@@ -51,6 +53,7 @@ class SettingsViewModel(
     fun setVibration(on: Boolean) = remind({ it.copy(vibration = on) })
     fun setRepeat(minutes: Int) = remind({ it.copy(repeatMinutes = minutes) })
     fun setKeepRinging(on: Boolean) = remind({ it.copy(keepRinging = on) })
+    fun saveLate(setting: LateSetting, threshold: LateThreshold, onSaved: () -> Unit) = remind({ it.copy(late = setting, lateThreshold = threshold) }, onSaved)
     fun saveQuiet(q: QuietHours, onSaved: () -> Unit) = remind({ it.copy(quiet = q) }, onSaved)
     fun saveMeals(m: MealTimes, onSaved: () -> Unit) = remind({ it.copy(meals = m) }, onSaved)
 
