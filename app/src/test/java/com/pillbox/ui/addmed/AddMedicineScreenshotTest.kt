@@ -52,10 +52,9 @@ class AddMedicineScreenshotTest {
         com.pillbox.domain.Schedule(today.minusDays(3), today.plusDays(6), com.pillbox.domain.Frequency.FixedTimes(listOf(java.time.LocalTime.of(6, 0), java.time.LocalTime.of(14, 0), java.time.LocalTime.of(22, 0))), com.pillbox.domain.WithFood.WITH_MEAL)
     private val review = AddMedUiState(base.copy(name = "Metformin").let { it.copy(customTimes = listOf(java.time.LocalTime.of(14, 0), java.time.LocalTime.of(20, 30))) }, 4, others = listOf(amox))
 
-    private val tall = "w360dp-h844dp-xxhdpi"
-    @Config(qualifiers = tall) @Test fun en_review() = shoot("en_review", review, "en")
-    @Config(qualifiers = "$tall+ar-ldrtl") @Test fun ar_review() = shoot("ar_review", review, "ar")
-    @Config(qualifiers = tall) @Test fun en_dark_2x_review() = shoot("en_dark_2x_review", review, "en", ThemeMode.Dark, 2f)
+    @Config(qualifiers = "w360dp-h844dp-xxhdpi") @Test fun en_review() = shoot("en_review", review, "en")
+    @Config(qualifiers = "w360dp-h844dp-xxhdpi+ar-ldrtl") @Test fun ar_review() = shoot("ar_review", review, "ar")
+    @Config(qualifiers = "w360dp-h844dp-xxhdpi") @Test fun en_dark_2x_review() = shoot("en_dark_2x_review", review, "en", ThemeMode.Dark, 2f)
 
     private fun shoot(name: String, state: AddMedUiState, lang: String, mode: ThemeMode = ThemeMode.Light, fontScale: Float = 1f) {
         val ar = lang == "ar"
