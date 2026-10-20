@@ -82,13 +82,13 @@ import java.time.LocalDateTime
 // ---------------------------------------------------------------- Backup and export
 
 @Composable
-fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onReport: () -> Unit, onRestore: () -> Unit, onDeleted: () -> Unit) {
+fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onReport: () -> Unit, onRestore: () -> Unit, onDeleted: () -> Unit, openDelete: Boolean = false) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
     val context = LocalContext.current
     val host = remember { SnackbarHostState() }
     var unavailable by remember { mutableStateOf(false) }
-    var confirmDelete by rememberSaveable { mutableStateOf(false) }
+    var confirmDelete by rememberSaveable { mutableStateOf(openDelete) }
     var failureHidden by rememberSaveable { mutableStateOf(false) }
     var askDrive by rememberSaveable { mutableStateOf(false) }
     var stopDrive by rememberSaveable { mutableStateOf(false) }

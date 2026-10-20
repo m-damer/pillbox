@@ -34,6 +34,15 @@ import com.pillbox.domain.ReminderSettings
 import com.pillbox.reminder.ReminderPermissions
 import com.pillbox.ui.backup.BackupScreen
 import com.pillbox.ui.backup.BackupViewModel
+import com.pillbox.domain.FeedbackMail
+import com.pillbox.ui.about.AboutScreen
+import com.pillbox.ui.about.CrashReportDialog
+import com.pillbox.ui.about.FeedbackScreen
+import com.pillbox.ui.about.PrivacyPolicyContent
+import com.pillbox.ui.about.RateScreen
+import com.pillbox.ui.about.TermsContent
+import com.pillbox.ui.about.appInfo
+import com.pillbox.ui.about.openEmail
 import com.pillbox.ui.backup.DeleteDoneContent
 import com.pillbox.ui.backup.RestoreScreen
 import com.pillbox.reminder.Reminders
@@ -132,6 +141,18 @@ class MainActivity : PillBoxActivity() {
                 var peopleToastBody by rememberSaveable { mutableStateOf<String?>(null) }
                 // Settings: which settings screen is open (0 none, 1 accessibility, 2 language, 3 dark theme) and a toast for the Settings tab.
                 var settingsScreen by rememberSaveable { mutableIntStateOf(0) }
+                // Privacy and about: a counter that shows the "Thank you" toast after the email app was opened, and a crash report waiting from the last run.
+                var aboutThanks by rememberSaveable { mutableIntStateOf(0) }
+                var deleteFromPrivacy by rememberSaveable { mutableStateOf(false) }
+                var crashReport by remember { mutableStateOf(CrashReporter.pending(context)) }
+                crashReport?.let { report ->
+                    CrashReportDialog(
+                        onSend = {
+                            if (!openEmail(context, FeedbackMail.crash(report, appInfo(context)))) { /* no email app: keep the report for next time */ } else { CrashReporter.clear(context); crashReport = null }
+                        },
+                        onSkip = { CrashReporter.clear(context); crashReport = null },
+                    )
+                }
                 var settingsToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
                 var settingsToastBody by rememberSaveable { mutableStateOf<String?>(null) }
                 val peopleList by repo.observePeople().collectAsStateWithLifecycle(emptyList())
@@ -188,7 +209,7 @@ class MainActivity : PillBoxActivity() {
                     }
                 } else if (settingsScreen != 0) {
                     val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
-                    val close = { settingsScreen = when (settingsScreen) { 3, 9, 10 -> 1; 12 -> 11; else -> 0 } }
+                    val close = { settingsScreen = when (settingsScreen) { 3, 9, 10 -> 1; 12 -> 11; 15, 16, 17, 18 -> 14; else -> 0 } }
                     BackHandler { close() }
                     val savedToast = {
                         settingsToastTitle = context.getString(R.string.toast_setting_saved_title)
@@ -196,6 +217,14 @@ class MainActivity : PillBoxActivity() {
                     }
                     Box(Modifier.fillMaxSize().statusBarsPadding()) {
                         when (settingsScreen) {
+                            14 -> AboutScreen(
+                                aboutThanks, onBack = close,
+                                onPrivacy = { settingsScreen = 15 }, onTerms = { settingsScreen = 16 }, onFeedback = { settingsScreen = 17 }, onRate = { settingsScreen = 18 },
+                            )
+                            15 -> PrivacyPolicyContent(onBack = close, onDelete = { deleteFromPrivacy = true; settingsScreen = 11 }, onClose = close)
+                            16 -> TermsContent(onBack = close, onDone = close)
+                            17 -> FeedbackScreen(onBack = close, onOpened = { aboutThanks++; settingsScreen = 14 })
+                            18 -> RateScreen(onBack = close, onOpened = { aboutThanks++; settingsScreen = 14 }, onWriteFeedback = { settingsScreen = 17 })
                             1 -> AccessibilityScreen(vm, onBack = close, onOpenTheme = { settingsScreen = 3 }, onOpenSimple = { settingsScreen = 9 }, onOpenPreview = { settingsScreen = 10 })
                             9 -> SimpleModeScreen(vm, onBack = close)
                             10 -> HighContrastPreviewScreen(vm, onBack = close)
@@ -233,7 +262,7 @@ class MainActivity : PillBoxActivity() {
                                 })
                                 when (settingsScreen) {
                                     11 -> BackupScreen(
-                                        backupVm, onBack = close, onReport = { showReport = true },
+                                        backupVm, onBack = close, openDelete = deleteFromPrivacy.also { androidx.compose.runtime.SideEffect { deleteFromPrivacy = false } }, onReport = { showReport = true },
                                         onRestore = { backupVm.startRestore(); settingsScreen = 12 },
                                         onDeleted = { settingsScreen = 13 },
                                     )
@@ -386,6 +415,7 @@ class MainActivity : PillBoxActivity() {
                                 SettingsTarget.LATE -> settingsScreen = 7
                                 SettingsTarget.RINGING -> settingsScreen = 8
                                 SettingsTarget.BACKUP -> settingsScreen = 11
+                                SettingsTarget.PRIVACY -> settingsScreen = 14
                                 SettingsTarget.ACCESSIBILITY -> settingsScreen = 1
                                                 SettingsTarget.LANGUAGE -> settingsScreen = 2
                                                 SettingsTarget.PEOPLE -> tab = Tab.PEOPLE

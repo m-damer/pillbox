@@ -18,6 +18,7 @@
       "successContainer": "#E3F4E8",
       "warning": "#6B4200",
       "warningContainer": "#FFF1D6",
+      "star": "#B86E00",
       "danger": "#B42318",
       "dangerContainer": "#FFE4E0",
       "morning": "#E3F4E8",
@@ -47,6 +48,7 @@
       "successContainer": "#17382A",
       "warning": "#FFD28A",
       "warningContainer": "#3D2D0A",
+      "star": "#FFC53D",
       "danger": "#FF8A7A",
       "dangerContainer": "#4A1F1B",
       "morning": "#17382A",
@@ -76,6 +78,7 @@
       "successContainer": "#E3F4E8",
       "warning": "#6B4200",
       "warningContainer": "#FFF1D6",
+      "star": "#6B4200",
       "danger": "#B42318",
       "dangerContainer": "#FFE4E0",
       "morning": "#FFFFFF",
@@ -159,7 +162,9 @@
     "switchHeight": 32,
     "icon": 24,
     "iconSmall": 18,
-    "logo": 128
+    "logo": 128,
+    "logoSmall": 72,
+    "starSize": 40
   },
   "rules": {
     "contrastMin": "4.5:1 for text",

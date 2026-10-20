@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
@@ -56,7 +57,7 @@ import com.pillbox.ui.theme.Space
 import com.pillbox.ui.theme.illustration
 
 /** Where a Settings row leads. */
-enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, LANGUAGE, PEOPLE, BACKUP }
+enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, LANGUAGE, PEOPLE, BACKUP, PRIVACY }
 
 @Composable
 fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings()) {
@@ -141,6 +142,12 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                     stringResource(R.string.settings_ring),
                     if (ringingIssues > 0) pluralStringResource(R.plurals.settings_ring_fix, ringingIssues, fmt.number(ringingIssues)) else stringResource(R.string.settings_ring_ok),
                     tints[2], { RowIcon(Icons.Filled.Notifications) }, { onOpen(SettingsTarget.RINGING) },
+                )
+                Divider()
+                SettingsRow(
+                    stringResource(R.string.settings_privacy),
+                    stringResource(R.string.ab_version, fmt.digits(com.pillbox.ui.about.appVersion(androidx.compose.ui.platform.LocalContext.current))),
+                    tints[1], { RowIcon(Icons.Filled.Lock) }, { onOpen(SettingsTarget.PRIVACY) },
                 )
             }
             Spacer(Modifier.size(Space.S20))
