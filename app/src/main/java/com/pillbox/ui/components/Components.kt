@@ -256,10 +256,11 @@ fun OutlineButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifi
 }
 
 @Composable
-fun DangerButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun DangerButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     val colors = PillBox.colors
     Button(
         onClick = onClick,
+        enabled = enabled,
         shape = Dimens.ButtonShape,
         colors = ButtonDefaults.buttonColors(containerColor = colors.danger, contentColor = colors.onPrimary),
         modifier = modifier.fillMaxWidth().heightIn(min = Dimens.PrimaryButtonHeight),
@@ -295,10 +296,11 @@ fun MessageDialog(
     title: String,
     body: String,
     onDismiss: () -> Unit,
+    icon: ImageVector? = null,
     buttons: @Composable () -> Unit,
 ) {
     val colors = PillBox.colors
-    val (bg, fg, icon) = when (kind) {
+    val (bg, fg, kindIcon) = when (kind) {
         DialogKind.Success -> Triple(colors.successContainer, colors.success, Icons.Filled.Check)
         DialogKind.Warning -> Triple(colors.warningContainer, colors.warning, Icons.Filled.Warning)
         DialogKind.Danger -> Triple(colors.dangerContainer, colors.danger, Icons.Filled.Warning)
@@ -312,7 +314,7 @@ fun MessageDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(Space.S12),
         ) {
-            DialogIcon(bg, fg, icon)
+            DialogIcon(bg, fg, icon ?: kindIcon)
             Text(
                 title,
                 style = MaterialTheme.typography.titleMedium,

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pillbox.R
+import com.pillbox.domain.BackupSettings
 import com.pillbox.domain.TextSize
 import com.pillbox.ui.Formatter
 import com.pillbox.ui.components.ToastHost
@@ -54,24 +56,24 @@ import com.pillbox.ui.theme.Space
 import com.pillbox.ui.theme.illustration
 
 /** Where a Settings row leads. */
-enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, LANGUAGE, PEOPLE }
+enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, LANGUAGE, PEOPLE, BACKUP }
 
 @Composable
-fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0) {
+fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings()) {
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     LaunchedEffect(toast) {
         if (toast != null) { snackbar.showToast(toast.title, toast.body); onToastShown() }
     }
     Box(modifier.fillMaxSize()) {
-        SettingsContent(state, rememberFormatter(), onOpen, ringingIssues)
+        SettingsContent(state, rememberFormatter(), onOpen, ringingIssues, backup)
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
 }
 
 /** The Settings home without a ViewModel, so screenshots can draw it. Only the rows that lead somewhere are shown. */
 @Composable
-fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTarget) -> Unit, ringingIssues: Int = 0) {
+fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTarget) -> Unit, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings()) {
     val c = PillBox.colors
     val tints = PillBox.illustration.avatars
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -127,6 +129,11 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                     stringResource(R.string.settings_people), pluralStringResource(R.plurals.people_count, state.people, fmt.number(state.people)),
                     tints[4], { RowIcon(Icons.Filled.Person) }, { onOpen(SettingsTarget.PEOPLE) },
                 )
+                Divider()
+                SettingsRow(
+                    stringResource(R.string.settings_backup), backupValue(backup, fmt),
+                    tints[1], { RowIcon(Icons.Filled.Share) }, { onOpen(SettingsTarget.BACKUP) },
+                )
             }
             Section(stringResource(R.string.settings_sec_help))
             Group {
@@ -142,6 +149,20 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                 textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(bottom = 96.dp),
             )
         }
+    }
+}
+
+/** "Failed", "Today", "Yesterday", a date, or "No backup yet": how the last backup went, in one word. */
+@Composable
+private fun backupValue(b: BackupSettings, fmt: Formatter): String {
+    val at = b.lastSuccessAt?.toLocalDate()
+    val today = java.time.LocalDate.now()
+    return when {
+        b.failing -> stringResource(R.string.bk_failed_tag)
+        at == null -> stringResource(R.string.bk_never)
+        at == today -> stringResource(R.string.today)
+        at == today.minusDays(1) -> stringResource(R.string.bk_yesterday)
+        else -> com.pillbox.ui.shortDate(at, fmt)
     }
 }
 
