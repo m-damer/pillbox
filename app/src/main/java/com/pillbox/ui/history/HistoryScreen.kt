@@ -59,13 +59,15 @@ import java.util.Locale
 
 /** History: the 30-day percentage, a calendar of the last 30 days, and the doses that need attention. */
 @Composable
-fun HistoryScreen(vm: HistoryViewModel, onBack: () -> Unit, onGoToToday: () -> Unit) {
+fun HistoryScreen(vm: HistoryViewModel, onBack: () -> Unit, onGoToToday: () -> Unit, onShareReport: () -> Unit) {
     val state by vm.state.collectAsStateWithLifecycle()
-    HistoryContent(state, rememberFormatter(), WeekFields.of(Locale.getDefault()).firstDayOfWeek, onBack, onGoToToday)
+    HistoryContent(state, rememberFormatter(), WeekFields.of(Locale.getDefault()).firstDayOfWeek, onBack, onGoToToday, onShareReport)
 }
 
 @Composable
-fun HistoryContent(state: HistoryUiState, fmt: Formatter, firstDay: DayOfWeek, onBack: () -> Unit, onGoToToday: () -> Unit) {
+fun HistoryContent(
+    state: HistoryUiState, fmt: Formatter, firstDay: DayOfWeek, onBack: () -> Unit, onGoToToday: () -> Unit, onShareReport: () -> Unit,
+) {
     val c = PillBox.colors
     val history = state.history
     val empty = state.loaded && (history == null || history.percent == null)
@@ -105,6 +107,9 @@ fun HistoryContent(state: HistoryUiState, fmt: Formatter, firstDay: DayOfWeek, o
                     }
                 }
                 Spacer(Modifier.size(Space.S16))
+            }
+            Box(Modifier.padding(horizontal = Dimens.ScreenPaddingH, vertical = Dimens.ScreenPaddingBottom)) {
+                com.pillbox.ui.components.OutlineButton(stringResource(R.string.history_share), onShareReport)
             }
         }
     }
@@ -192,7 +197,7 @@ private fun MarkCircle(mark: HistoryMark, size: androidx.compose.ui.unit.Dp) {
         HistoryMark.ALL_TAKEN -> Box(Modifier.size(size).background(c.success, CircleShape), contentAlignment = Alignment.Center) {
             Icon(Icons.Filled.Check, null, tint = c.onPrimary, modifier = Modifier.size(icon))
         }
-        HistoryMark.SOME_MISSED -> Box(Modifier.size(size).background(c.warningContainer, CircleShape).border(2.dp, c.warning, CircleShape), contentAlignment = Alignment.Center) {
+        HistoryMark.SOME_MISSED -> Box(Modifier.size(size).background(c.warningContainer, CircleShape).border(2.dp, PillBox.illustration.stockLow, CircleShape), contentAlignment = Alignment.Center) {
             Text("!", style = if (size > 24.dp) MaterialTheme.typography.labelLarge else MaterialTheme.typography.labelSmall, color = c.warning)
         }
         HistoryMark.MISSED_DAY -> Box(Modifier.size(size).background(c.dangerContainer, CircleShape).border(2.dp, c.danger, CircleShape), contentAlignment = Alignment.Center) {

@@ -437,4 +437,63 @@
     <string name="history_empty_title">لا يوجد سجل بعد</string>
     <string name="history_empty_body">بعد يومك الأول، تظهر الجرعات المأخوذة والفائتة هنا كتقويم ونسبة مئوية لآخر ٣٠ يوماً.</string>
     <string name="history_go_today">الذهاب إلى اليوم</string>
+    <!-- M6b: تقرير الطبيب -->
+    <string name="history_share">مشاركة تقرير لطبيبي</string>
+    <string name="report_screen_title">تقرير الطبيب</string>
+    <string name="report_for">لـ %1$s</string>
+    <string name="report_period_label">الفترة</string>
+    <string name="report_include">ما يتضمنه</string>
+    <string name="report_opt_meds">الأدوية والجرعات</string>
+    <string name="report_opt_days">سجل يوماً بيوم</string>
+    <string name="report_opt_missed">الجرعات الفائتة والمتأخرة</string>
+    <string name="report_opt_missed_sub">مع السبب الذي ذكرته</string>
+    <string name="report_preview">معاينة التقرير</string>
+    <plurals name="report_preview_sub">
+        <item quantity="zero">%1$s صفحة · PDF · %2$s</item><item quantity="one">صفحة واحدة · PDF · %2$s</item><item quantity="two">صفحتان · PDF · %2$s</item>
+        <item quantity="few">%1$s صفحات · PDF · %2$s</item><item quantity="many">%1$s صفحة · PDF · %2$s</item><item quantity="other">%1$s صفحة · PDF · %2$s</item>
+    </plurals>
+    <string name="report_preview_making">جارٍ التجهيز…</string>
+    <string name="report_warning">يحتوي هذا التقرير على معلومات صحية. شاركه فقط مع من تثق بهم.</string>
+    <string name="report_share">مشاركة PDF</string>
+    <string name="report_save">حفظ على الهاتف</string>
+    <string name="report_saved_title">تم حفظ التقرير</string>
+    <string name="report_saved_body">%1$s</string>
+    <string name="report_share_chooser">مشاركة التقرير</string>
+    <string name="report_failed_title">تعذّر إنشاء التقرير</string>
+    <string name="report_failed_body">قد تكون مساحة التخزين ممتلئة. أفرغ بعض المساحة وحاول مجدداً.</string>
+    <string name="report_preview_title">معاينة التقرير</string>
+    <string name="report_preview_page">صفحة %1$s من %2$s</string>
+    <string name="report_title">تقرير الأدوية</string>
+    <string name="report_patient">المريض</string>
+    <string name="report_period">الفترة</string>
+    <string name="report_created">تاريخ الإنشاء</string>
+    <string name="report_period_value">من %1$s إلى %2$s (%3$s)</string>
+    <string name="report_stat_pct">في الوقت المحدد</string>
+    <string name="report_stat_on_time">في الوقت</string>
+    <string name="report_stat_late">أُخذت متأخراً</string>
+    <string name="report_stat_missed">فائتة أو متخطّاة</string>
+    <string name="report_medicines">الأدوية</string>
+    <string name="report_col_medicine">الدواء</string>
+    <string name="report_col_dose">الجرعة</string>
+    <string name="report_col_when">متى</string>
+    <string name="report_col_on_time">في الوقت</string>
+    <string name="report_col_late">متأخرة</string>
+    <string name="report_col_missed">فائتة</string>
+    <string name="report_day_by_day">يوماً بيوم</string>
+    <string name="report_legend_ok">كلها في الوقت</string>
+    <string name="report_legend_late">أُخذت متأخراً</string>
+    <string name="report_legend_missed">فائتة أو متخطّاة</string>
+    <string name="report_legend_paused">موقوف</string>
+    <string name="report_late_missed">الجرعات المتأخرة والفائتة</string>
+    <string name="report_col_date_time">التاريخ والوقت</string>
+    <string name="report_col_what">ما حدث</string>
+    <string name="report_col_reason">السبب</string>
+    <string name="report_what_late">أُخذت متأخرة %1$s</string>
+    <string name="report_what_skipped">تم تخطيها</string>
+    <string name="report_what_missed">لم تؤخذ</string>
+    <string name="report_no_reason">—</string>
+    <string name="report_none">لا جرعات متأخرة أو فائتة في هذه الفترة.</string>
+    <string name="report_no_doses">لا جرعات للحساب في هذه الفترة.</string>
+    <string name="report_page">صفحة %1$s</string>
+    <string name="report_footer">أُنشئ بواسطة علبة الدواء. تبقى كل البيانات على الهاتف حتى تشارك هذا الملف.</string>
 </resources>
