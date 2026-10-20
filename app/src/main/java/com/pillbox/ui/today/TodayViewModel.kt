@@ -84,6 +84,7 @@ class TodayViewModel(
     meName: String,
     /** Called after anything that changes reminders. */
     private val onChanged: suspend () -> Unit = {},
+    remindDays: kotlinx.coroutines.flow.Flow<Int> = kotlinx.coroutines.flow.flowOf(com.pillbox.domain.RefillSettings.DEFAULT_DAYS),
 ) : ViewModel() {
     private var pausedIds: List<Long> = emptyList()
     private val selected = MutableStateFlow(LocalDate.now())
@@ -98,11 +99,12 @@ class TodayViewModel(
             combine(
                 repo.observeMedicines(me.id),
                 repo.observeDoseEvents(me.id, day.atStartOfDay(), day.plusDays(1).atStartOfDay()),
-            ) { medicines, events -> medicines to events }
+                remindDays,
+            ) { medicines, events, remind -> Triple(medicines, events, remind) }
         }
     }
 
-    val state: StateFlow<TodayUiState> = combine(data, selected, tick, sheet, toast) { (medicines, events), day, now, sheet, toast ->
+    val state: StateFlow<TodayUiState> = combine(data, selected, tick, sheet, toast) { (medicines, events, remind), day, now, sheet, toast ->
         val items = medicines.mapNotNull { m -> m.schedule?.let { Triple(m.medicine, it, m.pauses) } }
         val allPaused = Pause.allPaused(medicines.map { it.pauses }, now)
         pausedIds = medicines.map { it.medicine.id }
@@ -112,7 +114,7 @@ class TodayViewModel(
             lowStock = medicines
                 .filter { Pause.activeAt(it.pauses, now) == null }
                 .mapNotNull { m ->
-                    val info = StockMath.info(m.medicine, m.schedule, now.toLocalDate())
+                    val info = StockMath.info(m.medicine, m.schedule, now.toLocalDate(), remind)
                     if (info.level == StockLevel.ENOUGH) null else LowStock(m.medicine.name, m.medicine.unit, info.daysLeft, info.level)
                 }
                 .sortedBy { if (it.level == StockLevel.OUT) -1 else it.daysLeft ?: Int.MAX_VALUE },

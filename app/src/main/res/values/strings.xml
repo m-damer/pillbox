@@ -360,4 +360,25 @@
     <string name="save_changes">Save changes</string>
     <string name="toast_edit_title">Changes saved</string>
     <string name="toast_edit_body">%1$s was updated. New times apply from today.</string>
+    <!-- M5f: Refill alert -->
+    <string name="btn_save">Save</string>
+    <string name="refill_title">Refill alert</string>
+    <string name="refill_days_caption">days before it runs out</string>
+    <string name="refill_time_label">Remind me at</string>
+    <string name="refill_time_a11y">Remind me at %1$s. Change time.</string>
+    <string name="refill_people_label">Include the people I care for</string>
+    <string name="refill_people_sub">Refill alerts for everyone on this phone</string>
+    <string name="refill_preview">Preview</string>
+    <string name="refill_preview_title">%1$s: %2$s left</string>
+    <string name="refill_preview_today">You get an alert as soon as you have %1$s left, so today, %2$s.</string>
+    <string name="refill_preview_later">You get an alert as soon as you have %1$s left, so on %2$s.</string>
+    <string name="refill_unsaved_body">Your changes to the refill alert will be lost.</string>
+    <string name="refill_change_a11y">Change refill alert</string>
+    <string name="refill_notif_title">Time to buy more %1$s</string>
+    <string name="refill_notif_left">%1$s left</string>
+    <string name="refill_notif_about">About %1$s. Runs out %2$s.</string>
+    <string name="refill_notif_out_title">%1$s has run out</string>
+    <string name="refill_notif_out_text">Buy more as soon as you can.</string>
+    <string name="refill_notif_bought">I bought it</string>
+    <string name="refill_notif_tomorrow">Tomorrow</string>
 </resources>

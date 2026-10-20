@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.androidx.datastore.preferences)
     ksp(libs.room.compiler)
     implementation(libs.kotlinx.coroutines.android)
     implementation(platform(libs.compose.bom))

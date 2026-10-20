@@ -21,10 +21,13 @@ import com.pillbox.domain.DoseStatus
 import com.pillbox.domain.Pause
 import com.pillbox.domain.LateRules
 import com.pillbox.domain.Medicine
+import com.pillbox.domain.RefillAlert
+import com.pillbox.domain.RefillPlanner
 import com.pillbox.domain.ReminderPlanner
 import com.pillbox.domain.Schedule
 import com.pillbox.domain.TodayBuilder
 import com.pillbox.ui.Block
+import com.pillbox.ui.Formatter
 import com.pillbox.ui.blockOf
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -34,13 +37,18 @@ import java.time.ZoneId
  * (Take all, Snooze, Open) plus a full-screen reminder, a repeat if nobody answers, and re-arming.
  * The pure decisions live in [ReminderPlanner]; this class only talks to Android.
  */
-class Reminders(private val context: Context, private val repo: PillBoxRepository) {
+class Reminders(
+    private val context: Context,
+    private val repo: PillBoxRepository,
+    private val refillSettings: com.pillbox.data.RefillSettingsStore,
+) {
     private val alarms = context.getSystemService(AlarmManager::class.java)
 
     private enum class Kind(val code: Int, val action: String) {
         DUE(1, "com.pillbox.action.DOSE_DUE"),
         NAG(2, "com.pillbox.action.DOSE_NAG"),
         SNOOZE(3, "com.pillbox.action.DOSE_SNOOZE"),
+        REFILL(4, "com.pillbox.action.REFILL_DUE"),
     }
 
     // ---------------------------------------------------------------- channels
@@ -78,6 +86,82 @@ class Reminders(private val context: Context, private val repo: PillBoxRepositor
     suspend fun rearm(now: LocalDateTime = LocalDateTime.now()) {
         val next = ReminderPlanner.nextDue(items(), now)
         if (next == null) cancel(Kind.DUE, null) else schedule(Kind.DUE, next, next, 0)
+        rearmRefill(now)
+    }
+
+    // ---------------------------------------------------------------- refill alerts
+
+    /** One alarm a day at the time chosen on the Refill alert screen. It does not need to be exact: a few minutes late is fine. */
+    suspend fun rearmRefill(now: LocalDateTime = LocalDateTime.now()) {
+        val at = RefillPlanner.nextFire(refillSettings.current(), now)
+        val millis = at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, pending(Kind.REFILL, null, 0))
+    }
+
+    /** The daily refill alarm fired: one quiet notification per medicine that is low or out, then arm tomorrow's. */
+    suspend fun onRefillDue() {
+        val now = LocalDateTime.now()
+        val items = repo.allActiveWithSchedules().map { Triple(it.medicine, it.schedule, it.pauses) }
+        val alerts = RefillPlanner.due(items, refillSettings.current(), now, repo.myPersonId())
+        val shown = alerts.map { notificationIdForRefill(it.medicine.id) }.toSet()
+        // A medicine that is no longer low (stock added, paused) loses its old alert.
+        items.map { notificationIdForRefill(it.first.id) }.filter { it !in shown }.forEach { notificationManager().cancel(it) }
+        alerts.forEach { showRefill(it, now.toLocalDate()) }
+        // One minute on, so an alarm that arrives a moment early does not ring twice.
+        rearmRefill(now.plusMinutes(1))
+    }
+
+    fun dismissRefill(medicineId: Long) = notificationManager().cancel(notificationIdForRefill(medicineId))
+
+    private fun notificationIdForRefill(medicineId: Long) = REFILL_ID_BASE + (medicineId % 1_000_000L).toInt()
+
+    @SuppressLint("MissingPermission")
+    private fun showRefill(a: RefillAlert, today: java.time.LocalDate) {
+        val nm = notificationManager()
+        if (!nm.areNotificationsEnabled()) return
+        val fmt = Formatter.from(context)
+        val res = context.resources
+        val m = a.medicine
+        val name = m.name + (com.pillbox.ui.localizedStrength(m.strength, res)?.let { " $it" } ?: "")
+        val id = notificationIdForRefill(m.id)
+        val title: String
+        val text: String
+        val big: String
+        if (a.out) {
+            title = context.getString(R.string.refill_notif_out_title, name)
+            text = context.getString(R.string.refill_notif_out_text)
+            big = text
+        } else {
+            val amount = fmt.amount(m.stock) + " " + res.getQuantityString(com.pillbox.ui.unitPlural(m.unit), com.pillbox.ui.quantityFor(m.stock))
+            title = context.getString(R.string.refill_notif_title, name)
+            text = context.getString(R.string.refill_notif_left, amount)
+            val days = a.daysLeft ?: 0
+            val about = res.getQuantityString(R.plurals.n_days, days, fmt.number(days))
+            big = text + "\n" + context.getString(R.string.refill_notif_about, about, a.runsOutOn?.let { com.pillbox.ui.shortDate(it, fmt) } ?: "")
+        }
+        val open = Intent(context, MainActivity::class.java)
+            .putExtra(EXTRA_OPEN_MEDICINE, m.id)
+            .setData(Uri.parse("pillbox://refill/open/${m.id}"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val openPending = PendingIntent.getActivity(context, 30, open, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val later = Intent(context, ReminderActionReceiver::class.java).setAction(ACTION_REFILL_TOMORROW)
+            .putExtra(EXTRA_MEDICINE_ID, m.id).setData(Uri.parse("pillbox://refill/tomorrow/${m.id}"))
+        val laterPending = PendingIntent.getBroadcast(context, 31, later, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val n = NotificationCompat.Builder(context, CHANNEL_REFILLS)
+            .setSmallIcon(R.drawable.ic_stat_pill)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(big))
+            .setSubText(context.getString(R.string.channel_refills))
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setAutoCancel(true)
+            .setContentIntent(openPending)
+            // "I bought it" opens the medicine so the new boxes can be added with Add stock.
+            .addAction(0, context.getString(R.string.refill_notif_bought), openPending)
+            .addAction(0, context.getString(R.string.refill_notif_tomorrow), laterPending)
+            .build()
+        runCatching { nm.notify(id, n) }
     }
 
     fun canScheduleExact(): Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarms.canScheduleExactAlarms()
@@ -219,6 +303,11 @@ class Reminders(private val context: Context, private val repo: PillBoxRepositor
         const val EXTRA_COUNT = "count"
         const val ACTION_TAKE_ALL = "com.pillbox.action.TAKE_ALL"
         const val ACTION_SNOOZE = "com.pillbox.action.SNOOZE"
+        const val ACTION_REFILL_TOMORROW = "com.pillbox.action.REFILL_TOMORROW"
+        const val EXTRA_MEDICINE_ID = "medicine_id"
+        const val EXTRA_OPEN_MEDICINE = "open_medicine"
+        /** Refill notification ids start here so they never clash with dose notification ids (minutes since 1970). */
+        private const val REFILL_ID_BASE = 1_000_000_000
 
         fun blockNameRes(b: Block) = when (b) {
             Block.MORNING -> R.string.block_morning

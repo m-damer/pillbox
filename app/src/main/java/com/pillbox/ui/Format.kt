@@ -70,6 +70,21 @@ class Formatter(val arabicDigits: Boolean, val is24Hour: Boolean, private val am
         // Isolate so the AM/PM mark stays next to its time inside any surrounding sentence.
         return if (rtl) "⁧$text⁩" else "⁦$text⁩"
     }
+
+    companion object {
+        /** The formatter for the current language and clock setting, for code outside Compose (notifications). */
+        fun from(context: android.content.Context): Formatter {
+            val locale = context.resources.configuration.locales[0]
+            val res = context.resources
+            return Formatter(
+                arabicDigits = locale.language == "ar",
+                is24Hour = DateFormat.is24HourFormat(context),
+                am = res.getString(com.pillbox.R.string.time_am),
+                pm = res.getString(com.pillbox.R.string.time_pm),
+                rtl = android.text.TextUtils.getLayoutDirectionFromLocale(locale) == android.view.View.LAYOUT_DIRECTION_RTL,
+            )
+        }
+    }
 }
 
 @Composable

@@ -388,4 +388,25 @@
     <string name="save_changes">حفظ التغييرات</string>
     <string name="toast_edit_title">تم حفظ التغييرات</string>
     <string name="toast_edit_body">تم تحديث %1$s. تُطبّق المواعيد الجديدة من اليوم.</string>
+    <!-- M5f: تنبيه إعادة الشراء -->
+    <string name="btn_save">حفظ</string>
+    <string name="refill_title">تنبيه إعادة الشراء</string>
+    <string name="refill_days_caption">أيام قبل نفاد الدواء</string>
+    <string name="refill_time_label">ذكّرني الساعة</string>
+    <string name="refill_time_a11y">ذكّرني الساعة %1$s. تغيير الوقت.</string>
+    <string name="refill_people_label">شمل من أرعاهم</string>
+    <string name="refill_people_sub">تنبيهات إعادة الشراء للجميع على هذا الهاتف</string>
+    <string name="refill_preview">معاينة</string>
+    <string name="refill_preview_title">%1$s: بقيت %2$s</string>
+    <string name="refill_preview_today">يصلك التنبيه فور بقاء %1$s، أي اليوم %2$s.</string>
+    <string name="refill_preview_later">يصلك التنبيه فور بقاء %1$s، أي يوم %2$s.</string>
+    <string name="refill_unsaved_body">ستفقد تغييراتك على تنبيه إعادة الشراء.</string>
+    <string name="refill_change_a11y">تغيير تنبيه إعادة الشراء</string>
+    <string name="refill_notif_title">حان وقت شراء %1$s</string>
+    <string name="refill_notif_left">بقيت %1$s</string>
+    <string name="refill_notif_about">نحو %1$s. ينفد %2$s.</string>
+    <string name="refill_notif_out_title">نفد %1$s</string>
+    <string name="refill_notif_out_text">اشترِ المزيد في أقرب وقت.</string>
+    <string name="refill_notif_bought">اشتريته</string>
+    <string name="refill_notif_tomorrow">ذكّرني غداً</string>
 </resources>
