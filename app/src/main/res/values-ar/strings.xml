@@ -62,7 +62,7 @@
     <string name="doses_auto">جرعاتك (تلقائي)</string>
     <string name="once_hint">مرة في اليوم، كل يوم في هذا الوقت. المس لتغييره.</string>
     <string name="twice_hint">كل 12 ساعة. المس جرعة لتغيير وقتها.</string>
-    <string name="three_hint">تقريباً كل 6 ساعات وأنت مستيقظ. المس جرعة لتغيير وقتها.</string>
+    <string name="three_hint">كل 8 ساعات على مدار اليوم. المس جرعة لتغيير وقتها.</string>
     <string name="hours_label">كل كم ساعة؟</string>
     <string name="hours_hint">اختر من 1 إلى 24 ساعة.</string>
     <string name="hours_summary">تبدأ عند جرعتك الأولى (%1$s)، ثم كل %2$s، ليلاً ونهاراً: %3$s في اليوم.</string>

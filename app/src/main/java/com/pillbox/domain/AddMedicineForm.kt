@@ -64,7 +64,7 @@ data class AddMedicineForm(
     fun times(): List<LocalTime> = customTimes ?: when (freq) {
         FreqChoice.ONCE -> listOf(firstDose)
         FreqChoice.TWICE -> listOf(firstDose, firstDose.plusHours(12))
-        FreqChoice.THREE -> listOf(firstDose, firstDose.plusHours(6), firstDose.plusHours(12))
+        FreqChoice.THREE -> listOf(firstDose, firstDose.plusHours(8), firstDose.plusHours(16))
         else -> emptyList()
     }
 
