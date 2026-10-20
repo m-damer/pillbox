@@ -180,10 +180,17 @@ class ReportPdf(context: Context, private val fmt: Formatter) {
             val strength = localizedStrength(med.strength, res)
             val dose = (if (strength != null) "$strength, " else "") + fmt.amount(med.doseAmount) + " " +
                 res.getQuantityString(unitPlural(med.unit), quantityFor(med.doseAmount))
-            listOf(med.name, dose, scheduleSummaryText(res, r.schedule, fmt), fmt.number(r.onTime), fmt.number(r.late), fmt.number(r.missed))
+            listOf(med.name, dose, whenCell(r), fmt.number(r.onTime), fmt.number(r.late), fmt.number(r.missed))
         }
         table(headers, listOf(2.6f, 2.4f, 3f, 1.2f, 1f, 1.2f), setOf(3, 4, 5), rows)
         y += 16f
+    }
+
+    /** As-needed medicines say how often they were taken, since they have no planned doses to count. */
+    private fun whenCell(r: ReportMedicine): String {
+        val base = scheduleSummaryText(res, r.schedule, fmt)
+        if (r.schedule.frequency !is com.pillbox.domain.Frequency.AsNeeded) return base
+        return res.getQuantityString(R.plurals.report_as_needed_taken, r.asNeeded, fmt.number(r.asNeeded))
     }
 
     private fun dayByDay(m: ReportModel) {

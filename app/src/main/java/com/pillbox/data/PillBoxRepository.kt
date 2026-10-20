@@ -263,6 +263,13 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
     fun observeDoseEvents(personId: Long, from: LocalDateTime, to: LocalDateTime): Flow<List<DoseEvent>> =
         db.doseEvents().observePlannedBetween(personId, Mappers.dt(from), Mappers.dt(to)).map { l -> l.map(Mappers::toDomain) }
 
+    /** Planned doses plus as-needed doses taken in the window, for History and the doctor report. */
+    fun observeHistoryEvents(personId: Long, from: LocalDateTime, to: LocalDateTime): Flow<List<DoseEvent>> =
+        kotlinx.coroutines.flow.combine(
+            observeDoseEvents(personId, from, to),
+            db.doseEvents().observeAsNeededBetween(personId, Mappers.dt(from), Mappers.dt(to)).map { l -> l.map(Mappers::toDomain) },
+        ) { planned, prn -> planned + prn }
+
     /** Taken times for the as-needed and every-few-hours rules. */
     suspend fun takenTimesSince(medicineId: Long, since: LocalDateTime): List<LocalDateTime> =
         db.doseEvents().takenSince(medicineId, Mappers.dt(since)).map(Mappers::dt)

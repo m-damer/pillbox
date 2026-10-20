@@ -65,7 +65,7 @@ class ReportViewModel(
             val patient = me.birthYear?.let { "${me.name} ($it)" } ?: me.name
             val today = LocalDateTime.now().toLocalDate()
             val from = today.minusDays((ReportOptions.PERIODS.max() - 1).toLong()).atStartOfDay()
-            val events = repo.observeDoseEvents(me.id, from, today.plusDays(1).atStartOfDay()).first()
+            val events = repo.observeHistoryEvents(me.id, from, today.plusDays(1).atStartOfDay()).first()
             val meds = repo.observeMedicines(me.id).first() + repo.observeFinished(me.id).first()
             val items = meds.mapNotNull { m -> m.schedule?.let { Triple(m.medicine, it, m.pauses) } }
             data = Data(patient, items, events)

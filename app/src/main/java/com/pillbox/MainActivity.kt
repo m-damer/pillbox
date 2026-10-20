@@ -417,6 +417,7 @@ class MainActivity : PillBoxActivity() {
                                         vm, onAddMedicine = { adding = true },
                                         remindersOff = !permissions.remindersWork, onFixReminders = { showPermissions = true },
                                         onGoToMeds = { tab = Tab.MEDS }, people = peopleBar,
+                                        onTakeAsNeeded = { prnAuto = true; prnId = it; prnSession++ },
                                     )
                                 }
                                 Tab.MEDS -> {

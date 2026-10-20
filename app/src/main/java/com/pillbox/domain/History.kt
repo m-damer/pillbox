@@ -25,11 +25,15 @@ enum class HistoryMark { ALL_TAKEN, SOME_MISSED, MISSED_DAY, PAUSED, PENDING, NO
 /** One calendar cell. [date] is null for the empty cells before the first day. */
 data class HistoryDay(val date: LocalDate?, val mark: HistoryMark)
 
+/** How many times an as-needed medicine was taken in the window. Not part of the on-time share, since nothing was planned. */
+data class AsNeededCount(val medicine: Medicine, val count: Int)
+
 data class History(
     val start: LocalDate,
     val today: LocalDate,
     val marks: Map<LocalDate, HistoryMark>,
     val records: List<DoseRecord>,
+    val asNeeded: List<AsNeededCount> = emptyList(),
 ) {
     val onTime get() = records.count { it.outcome == DoseOutcome.ON_TIME }
     val late get() = records.count { it.outcome == DoseOutcome.LATE }
@@ -68,7 +72,7 @@ object HistoryBuilder {
 
     /**
      * The last [days] days ending today. A dose counts when it was taken or skipped, or when it is missed
-     * (no answer after the next dose was due, or after the day ended). Paused doses and as-needed doses are left out.
+     * (no answer after the next dose was due, or after the day ended). Paused doses are left out. As-needed doses are counted apart in [History.asNeeded].
      */
     fun build(
         items: List<Triple<Medicine, Schedule, List<Pause>>>,
@@ -118,6 +122,9 @@ object HistoryBuilder {
                 else -> HistoryMark.SOME_MISSED
             }
         }
-        return History(start, today, marks, records)
+        val prn = events.filter { it.planned == null && it.status == DoseStatus.TAKEN && it.taken?.toLocalDate()?.let { d -> !d.isBefore(start) && !d.isAfter(today) } == true }
+            .groupingBy { it.medicineId }.eachCount()
+        val asNeeded = items.mapNotNull { (m, _, _) -> prn[m.id]?.let { AsNeededCount(m, it) } }.sortedBy { it.medicine.name.lowercase() }
+        return History(start, today, marks, records, asNeeded)
     }
 }

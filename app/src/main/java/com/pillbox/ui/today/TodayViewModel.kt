@@ -93,6 +93,9 @@ data class Undo(
 /** A medicine that is running low, for the strip at the bottom of Today. */
 data class LowStock(val name: String, val unit: DoseUnit, val daysLeft: Int?, val level: StockLevel)
 
+/** An as-needed medicine for the "As needed" card on Today. */
+data class AsNeededItem(val id: Long, val name: String, val unit: DoseUnit)
+
 data class TodayUiState(
     val loaded: Boolean = false,
     val hasMedicines: Boolean = false,
@@ -104,6 +107,7 @@ data class TodayUiState(
     /** Set when every medicine is paused: Today shows the "All medicines paused" screen. */
     val allPaused: AllPaused? = null,
     val lowStock: List<LowStock> = emptyList(),
+    val asNeeded: List<AsNeededItem> = emptyList(),
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -148,6 +152,10 @@ class TodayViewModel(
                     if (info.level == StockLevel.ENOUGH) null else LowStock(m.medicine.name, m.medicine.unit, info.daysLeft, info.level)
                 }
                 .sortedBy { if (it.level == StockLevel.OUT) -1 else it.daysLeft ?: Int.MAX_VALUE },
+            asNeeded = medicines
+                .filter { it.schedule?.frequency is Frequency.AsNeeded && Pause.activeAt(it.pauses, now) == null }
+                .map { AsNeededItem(it.medicine.id, it.medicine.name, it.medicine.unit) }
+                .sortedBy { it.name.lowercase() },
             hasMedicines = medicines.isNotEmpty(),
             model = TodayBuilder.build(items, events, day, now, ReminderState.current.lateThreshold),
             selectedDate = day, now = now, sheet = sheet, toast = toast,

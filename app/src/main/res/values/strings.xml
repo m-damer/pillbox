@@ -389,6 +389,9 @@
     <string name="history_percent_title">Taken on time</string>
     <string name="history_sub_none">Last 30 days · No missed doses</string>
     <plurals name="history_sub_missed"><item quantity="one">Last 30 days · 1 dose missed</item><item quantity="other">Last 30 days · %1$s doses missed</item></plurals>
+    <string name="history_as_needed">As needed</string>
+    <plurals name="history_as_needed_row"><item quantity="one">%1$s · taken once</item><item quantity="other">%1$s · taken %2$s times</item></plurals>
+    <plurals name="report_as_needed_taken"><item quantity="one">As needed · taken once</item><item quantity="other">As needed · taken %1$s times</item></plurals>
     <string name="history_legend_all">All taken</string>
     <string name="history_legend_some">Some missed</string>
     <string name="history_legend_missed">Missed day</string>
@@ -946,6 +949,8 @@
     <string name="prn_taken">Taken</string>
     <string name="prn_taken_early">Taken early</string>
     <string name="prn_logged">Dose logged</string>
+    <string name="today_as_needed">As needed</string>
+    <string name="prn_take_now_a11y">Take now: %1$s</string>
     <string name="prn_take_now">Take now</string>
     <string name="prn_ok_wait">OK, I will wait</string>
     <string name="prn_undo_last">Undo last dose</string>

@@ -420,6 +420,15 @@
         <item quantity="zero">آخر ٣٠ يوماً · %1$s جرعة فائتة</item><item quantity="one">آخر ٣٠ يوماً · جرعة واحدة فائتة</item><item quantity="two">آخر ٣٠ يوماً · جرعتان فائتتان</item>
         <item quantity="few">آخر ٣٠ يوماً · %1$s جرعات فائتة</item><item quantity="many">آخر ٣٠ يوماً · %1$s جرعة فائتة</item><item quantity="other">آخر ٣٠ يوماً · %1$s جرعة فائتة</item>
     </plurals>
+    <string name="history_as_needed">عند الحاجة</string>
+    <plurals name="history_as_needed_row">
+        <item quantity="zero">%1$s · لم تؤخذ</item><item quantity="one">%1$s · أُخذت مرة واحدة</item><item quantity="two">%1$s · أُخذت مرتين</item>
+        <item quantity="few">%1$s · أُخذت %2$s مرات</item><item quantity="many">%1$s · أُخذت %2$s مرة</item><item quantity="other">%1$s · أُخذت %2$s مرة</item>
+    </plurals>
+    <plurals name="report_as_needed_taken">
+        <item quantity="zero">عند الحاجة · لم تؤخذ</item><item quantity="one">عند الحاجة · أُخذت مرة واحدة</item><item quantity="two">عند الحاجة · أُخذت مرتين</item>
+        <item quantity="few">عند الحاجة · أُخذت %1$s مرات</item><item quantity="many">عند الحاجة · أُخذت %1$s مرة</item><item quantity="other">عند الحاجة · أُخذت %1$s مرة</item>
+    </plurals>
     <string name="history_legend_all">تم أخذها كلها</string>
     <string name="history_legend_some">بعضها فائت</string>
     <string name="history_legend_missed">يوم فائت</string>
@@ -1007,6 +1016,8 @@
     <string name="prn_taken">مأخوذة</string>
     <string name="prn_taken_early">مأخوذة مبكراً</string>
     <string name="prn_logged">تم تسجيل الجرعة</string>
+    <string name="today_as_needed">عند الحاجة</string>
+    <string name="prn_take_now_a11y">خذ الآن: %1$s</string>
     <string name="prn_take_now">خذها الآن</string>
     <string name="prn_ok_wait">حسناً، سأنتظر</string>
     <string name="prn_undo_last">تراجع عن آخر جرعة</string>

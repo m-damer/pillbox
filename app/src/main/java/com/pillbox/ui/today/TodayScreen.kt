@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -103,6 +104,7 @@ fun TodayScreen(
     vm: TodayViewModel, onAddMedicine: () -> Unit, modifier: Modifier = Modifier,
     remindersOff: Boolean = false, onFixReminders: () -> Unit = {}, onGoToMeds: () -> Unit = {},
     people: com.pillbox.ui.people.PeopleBar? = null,
+    onTakeAsNeeded: (Long) -> Unit = {},
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
@@ -126,7 +128,7 @@ fun TodayScreen(
             state = state, fmt = fmt, onSelectDate = vm::selectDate, onBackToToday = vm::backToToday,
             onTake = vm::take, onSkip = vm::skip, onAddMedicine = onAddMedicine,
             remindersOff = remindersOff, onFixReminders = onFixReminders,
-            onResumeAll = vm::resumeAll, onGoToMeds = onGoToMeds, people = people,
+            onResumeAll = vm::resumeAll, onGoToMeds = onGoToMeds, people = people, onTakeAsNeeded = onTakeAsNeeded,
         )
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) { data ->
             val c = PillBox.colors
@@ -171,6 +173,7 @@ fun TodayContent(
     onResumeAll: () -> Unit = {},
     onGoToMeds: () -> Unit = {},
     people: com.pillbox.ui.people.PeopleBar? = null,
+    onTakeAsNeeded: (Long) -> Unit = {},
 ) {
     val today = state.now.toLocalDate()
     val model = state.model
@@ -216,6 +219,7 @@ fun TodayContent(
             }
             if (state.selectedDate > today && model.groups.isNotEmpty()) item { InfoNote(stringResource(R.string.future_note)) }
         }
+        if (state.selectedDate == today && state.asNeeded.isNotEmpty()) item { AsNeededCard(state.asNeeded, onTakeAsNeeded) }
     }
     if (state.lowStock.isNotEmpty()) {
         Column(
@@ -223,6 +227,33 @@ fun TodayContent(
             verticalArrangement = Arrangement.spacedBy(Space.S8),
         ) { state.lowStock.take(2).forEach { LowStockStrip(it, onGoToMeds) } }
     }
+    }
+}
+
+/** "As needed": each as-needed medicine with a Take now button that opens its log. */
+@Composable
+private fun AsNeededCard(items: List<AsNeededItem>, onTake: (Long) -> Unit) {
+    val c = PillBox.colors
+    Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(vertical = Space.S4)) {
+        Text(
+            stringResource(R.string.today_as_needed).uppercase(), style = MaterialTheme.typography.labelMedium, color = c.textMuted,
+            modifier = Modifier.padding(horizontal = Space.S16, vertical = Space.S8).semantics { heading() },
+        )
+        items.forEachIndexed { i, item ->
+            if (i > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(c.divider))
+            val label = stringResource(R.string.prn_take_now)
+            val a11y = stringResourceIso(R.string.prn_take_now_a11y, item.name)
+            Row(
+                Modifier.fillMaxWidth().heightIn(min = Dimens.TouchTargetMin).padding(horizontal = Space.S16, vertical = Space.S8),
+                horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.CenterVertically,
+            ) {
+                PillIcon(item.unit, null, 26.dp)
+                Text(item.name, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
+                Box(Modifier.width(IntrinsicSize.Max).semantics { contentDescription = a11y }) {
+                    com.pillbox.ui.components.OutlineButton(label, { onTake(item.id) })
+                }
+            }
+        }
     }
 }
 

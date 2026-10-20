@@ -71,7 +71,7 @@ fun HistoryContent(
 ) {
     val c = PillBox.colors
     val history = state.history
-    val empty = state.loaded && (history == null || history.percent == null)
+    val empty = state.loaded && (history == null || (history.percent == null && history.asNeeded.isEmpty()))
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Row(Modifier.fillMaxWidth().padding(horizontal = Space.S8), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onBack), contentAlignment = Alignment.Center) {
@@ -92,7 +92,7 @@ fun HistoryContent(
                 Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH),
                 verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
             ) {
-                PercentCard(history.percent ?: 0, history.missed, fmt)
+                if (history.percent != null) PercentCard(history.percent!!, history.missed, fmt)
                 CalendarCard(history.weeks(firstDay), firstDay, fmt, history.marks.values.any { it == HistoryMark.PAUSED })
                 val attention = history.attention
                 if (attention.isNotEmpty()) {
@@ -104,6 +104,24 @@ fun HistoryContent(
                         attention.forEachIndexed { i, r ->
                             if (i > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(c.divider))
                             AttentionRow(r, fmt)
+                        }
+                    }
+                }
+                if (history.asNeeded.isNotEmpty()) {
+                    Text(
+                        stringResource(R.string.history_as_needed).uppercase(), style = MaterialTheme.typography.labelMedium, color = c.textMuted,
+                        modifier = Modifier.padding(start = Space.S8, top = Space.S4).semantics { heading() },
+                    )
+                    Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large)) {
+                        history.asNeeded.forEachIndexed { i, a ->
+                            if (i > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(c.divider))
+                            Text(
+                                com.pillbox.ui.components.isolate(a.medicine.name).let { n ->
+                                    pluralStringResource(R.plurals.history_as_needed_row, a.count, n, fmt.number(a.count))
+                                },
+                                style = MaterialTheme.typography.bodyLarge, color = c.text,
+                                modifier = Modifier.fillMaxWidth().heightIn(min = Dimens.ListRowMinHeight).padding(horizontal = Space.S16, vertical = Space.S12),
+                            )
                         }
                     }
                 }

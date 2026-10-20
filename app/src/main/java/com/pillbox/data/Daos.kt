@@ -65,6 +65,13 @@ interface DoseEventDao {
     )
     fun observePlannedBetween(personId: Long, fromAt: String, toAt: String): Flow<List<DoseEventEntity>>
 
+    /** As-needed doses (no planned time) taken in [fromAt, toAt) for one person. History and the doctor report count them. */
+    @Query(
+        "SELECT d.* FROM dose_event d JOIN medicine m ON m.id = d.medicineId " +
+            "WHERE m.personId = :personId AND d.plannedAt IS NULL AND d.status = 'TAKEN' AND d.takenAt >= :fromAt AND d.takenAt < :toAt ORDER BY d.takenAt",
+    )
+    fun observeAsNeededBetween(personId: Long, fromAt: String, toAt: String): Flow<List<DoseEventEntity>>
+
     @Query("SELECT * FROM dose_event WHERE medicineId = :medicineId AND plannedAt >= :fromAt AND plannedAt < :toAt ORDER BY plannedAt")
     suspend fun plannedBetween(medicineId: Long, fromAt: String, toAt: String): List<DoseEventEntity>
 
