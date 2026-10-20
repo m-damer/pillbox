@@ -45,7 +45,13 @@ class ReportPdfTest {
     private fun pages(m: com.pillbox.domain.ReportModel): Int {
         val context = RuntimeEnvironment.getApplication() as Context
         val out = ByteArrayOutputStream()
-        val n = ReportPdf(context, Formatter.from(context)).write(m, out)
+        val n = try {
+            ReportPdf(context, Formatter.from(context)).write(m, out)
+        } catch (e: Throwable) {
+            // Put the frames in the message so the CI summary shows where it happened.
+            val frames = generateSequence(e) { it.cause }.flatMap { c -> listOf("Caused by: $c") + c.stackTrace.filter { it.className.contains("pillbox") }.take(4).map { "Caused by: at $it" } }
+            throw AssertionError("DIAG\n" + frames.joinToString("\n"))
+        }
         assertTrue(String(out.toByteArray(), 0, 5, Charsets.ISO_8859_1).startsWith("%PDF"))
         return n
     }
