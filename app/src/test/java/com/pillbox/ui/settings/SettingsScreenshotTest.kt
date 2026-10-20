@@ -41,11 +41,11 @@ class SettingsScreenshotTest {
     @Config(qualifiers = "+ar-ldrtl") @Test fun home_ar() = shoot("home_ar", "ar") { SettingsContent(state, fmt(true), {}) }
     @Config(qualifiers = "+ar-ldrtl") @Test fun home_ar_dark_2x() = shoot("home_ar_dark_2x", "ar", ThemeMode.Dark, 2f) { SettingsContent(state, fmt(true), {}) }
 
-    @Test fun accessibility_en() = shoot("accessibility_en", "en") { AccessibilityContent(DisplaySettings(), {}, {}, {}, {}) }
+    @Test fun accessibility_en() = shoot("accessibility_en", "en") { AccessibilityContent(DisplaySettings(), {}, {}, {}) }
     @Test fun accessibility_en_dark_2x() = shoot("accessibility_en_dark_2x", "en", ThemeMode.Dark, 2f) {
-        AccessibilityContent(DisplaySettings(textSize = TextSize.LARGE, theme = ThemeChoice.DARK, highContrast = true), {}, {}, {}, {})
+        AccessibilityContent(DisplaySettings(textSize = TextSize.LARGE, theme = ThemeChoice.DARK, highContrast = true), {}, {}, {})
     }
-    @Config(qualifiers = "+ar-ldrtl") @Test fun accessibility_ar() = shoot("accessibility_ar", "ar") { AccessibilityContent(DisplaySettings(), {}, {}, {}, {}) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun accessibility_ar() = shoot("accessibility_ar", "ar") { AccessibilityContent(DisplaySettings(), {}, {}, {}) }
     @Test fun theme_en() = shoot("theme_en", "en") { ThemeContent(ThemeChoice.SYSTEM, {}, {}) }
 
     @Test fun language_en() = shoot("language_en", "en") { language("en") }

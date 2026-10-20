@@ -103,7 +103,7 @@ internal fun Note(text: String) {
 
 /** Text size, high contrast and the way to the dark theme choice. Every change applies at once and shows a toast. */
 @Composable
-fun AccessibilityScreen(vm: SettingsViewModel, onBack: () -> Unit, onOpenTheme: () -> Unit, onOpenSimple: () -> Unit = {}, onOpenPreview: () -> Unit = {}) {
+fun AccessibilityScreen(vm: SettingsViewModel, onBack: () -> Unit, onOpenSimple: () -> Unit = {}, onOpenPreview: () -> Unit = {}) {
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     val savedTitle = stringResource(R.string.toast_setting_saved_title)
@@ -113,7 +113,7 @@ fun AccessibilityScreen(vm: SettingsViewModel, onBack: () -> Unit, onOpenTheme: 
     BackHandler(onBack = onBack)
     Box(Modifier.fillMaxSize()) {
         AccessibilityContent(
-            state.display, onBack, onOpenTheme,
+            state.display, onBack,
             onTextSize = { vm.setTextSize(it); changes++ }, onHighContrast = { vm.setHighContrast(it); changes++ },
             reminder = state.reminder, onKeepRinging = { vm.setKeepRinging(it); changes++ },
             onSimple = { vm.setSimple(it); changes++ }, onReadAloud = { vm.setReadAloud(it); changes++ },
@@ -127,7 +127,6 @@ fun AccessibilityScreen(vm: SettingsViewModel, onBack: () -> Unit, onOpenTheme: 
 fun AccessibilityContent(
     display: DisplaySettings,
     onBack: () -> Unit,
-    onOpenTheme: () -> Unit,
     onTextSize: (TextSize) -> Unit,
     onHighContrast: (Boolean) -> Unit,
     reminder: com.pillbox.domain.ReminderSettings = com.pillbox.domain.ReminderSettings(),
@@ -171,23 +170,6 @@ fun AccessibilityContent(
             Card {
                 NavRow(stringResource(R.string.acc_simple), stringResource(R.string.acc_simple_row_sub), null, onOpenSimple)
                 NavRow(stringResource(R.string.acc_hc_preview), stringResource(R.string.acc_hc_preview_sub), null, onOpenPreview)
-                val value = stringResource(themeName(display.theme))
-                val desc = stringResourceIso(R.string.settings_row_a11y, stringResource(R.string.acc_dark), value)
-                Row(
-                    Modifier
-                        .fillMaxWidth().heightIn(min = Dimens.SettingsRowMinHeight)
-                        .clickable(role = Role.Button, onClick = onOpenTheme)
-                        .semantics(mergeDescendants = true) { contentDescription = desc }
-                        .padding(horizontal = Space.S16, vertical = Space.S8),
-                    verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
-                ) {
-                    Column(Modifier.weight(1f)) {
-                        Text(stringResource(R.string.acc_dark), style = MaterialTheme.typography.labelLarge, color = c.text)
-                        Text(stringResource(R.string.acc_dark_sub), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
-                    }
-                    Text(value, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.textMuted)
-                }
             }
             Box(Modifier.size(96.dp))
         }

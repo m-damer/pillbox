@@ -47,8 +47,8 @@ class HelpScreensScreenshotTest {
     @Test fun preview_en_dark_2x() = shoot("preview_en_dark_2x", "en", ThemeMode.Dark, 2f) { HighContrastPreviewContent(fmt(false), true, {}, {}) }
     @Config(qualifiers = "+ar-ldrtl") @Test fun preview_ar() = shoot("preview_ar", "ar") { HighContrastPreviewContent(fmt(true), false, {}, {}) }
 
-    @Test fun accessibility_new_en() = shoot("accessibility_new_en", "en") { AccessibilityContent(DisplaySettings(simpleMode = true), {}, {}, {}, {}) }
-    @Config(qualifiers = "+ar-ldrtl") @Test fun accessibility_new_ar_2x() = shoot("accessibility_new_ar_2x", "ar", ThemeMode.Light, 2f) { AccessibilityContent(DisplaySettings(simpleMode = true), {}, {}, {}, {}) }
+    @Test fun accessibility_new_en() = shoot("accessibility_new_en", "en") { AccessibilityContent(DisplaySettings(simpleMode = true), {}, {}, {}) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun accessibility_new_ar_2x() = shoot("accessibility_new_ar_2x", "ar", ThemeMode.Light, 2f) { AccessibilityContent(DisplaySettings(simpleMode = true), {}, {}, {}) }
 
     private fun fmt(ar: Boolean) = Formatter(arabicDigits = ar, is24Hour = false, am = if (ar) "ص" else "AM", pm = if (ar) "م" else "PM", rtl = ar)
 

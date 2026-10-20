@@ -563,7 +563,9 @@
     <string name="settings_title">الإعدادات</string>
     <string name="settings_sec_reminders">التنبيهات</string>
     <string name="settings_sec_display">العرض</string>
-    <string name="settings_sec_people">الأشخاص والبيانات</string>
+    <string name="settings_report">تقرير الطبيب</string>
+    <string name="settings_report_value">ملف PDF لآخر ٣٠ يوماً</string>
+    <string name="settings_sec_data">بياناتك</string>
     <string name="settings_refill">تنبيه التجديد</string>
     <string name="settings_accessibility">سهولة الاستخدام</string>
     <string name="settings_language">اللغة والأرقام</string>
@@ -973,4 +975,20 @@
     <string name="w_cfg_save">حفظ</string>
     <string name="w_saved_title">تم تحديث الأداة</string>
     <string name="w_saved_body">تظهر التغييرات على شاشتك الرئيسية.</string>
+
+    <!-- M13: review plan -->
+    <string name="plan_title">خطتك اليومية</string>
+    <string name="plan_sub">اضغط على الوقت لتغييره.</string>
+    <string name="plan_sub_fixed">هكذا سيرن يومك.</string>
+    <string name="plan_coming_up">القادم</string>
+    <string name="plan_last_dose">آخر جرعة %1$s</string>
+    <string name="plan_refill_by">مستمر · أعد الشراء قبل %1$s</string>
+    <string name="plan_ongoing">مستمر</string>
+    <string name="plan_as_needed">عند الحاجة</string>
+    <string name="plan_meal_timing">أوقات الوجبات</string>
+    <string name="plan_edit">تعديل</string>
+    <string name="plan_meal_edit_a11y">تعديل أوقات الوجبات</string>
+    <string name="plan_start">ابدأ تذكيراتي</string>
+    <string name="plan_new">جديد</string>
+    <string name="plan_change_time_a11y">%1$s، %2$s. اضغط لتغيير الوقت.</string>
 </resources>

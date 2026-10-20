@@ -526,7 +526,9 @@
     <string name="settings_title">Settings</string>
     <string name="settings_sec_reminders">Reminders</string>
     <string name="settings_sec_display">Display</string>
-    <string name="settings_sec_people">People and data</string>
+    <string name="settings_report">Doctor report</string>
+    <string name="settings_report_value">PDF, last 30 days</string>
+    <string name="settings_sec_data">Your data</string>
     <string name="settings_refill">Refill alert</string>
     <string name="settings_accessibility">Accessibility</string>
     <string name="settings_language">Language and numbers</string>
@@ -912,4 +914,20 @@
     <string name="w_cfg_save">Save</string>
     <string name="w_saved_title">Widget updated</string>
     <string name="w_saved_body">The changes show on your home screen.</string>
+
+    <!-- M13: review plan -->
+    <string name="plan_title">Your daily plan</string>
+    <string name="plan_sub">Tap a time to change it.</string>
+    <string name="plan_sub_fixed">This is how your day will ring.</string>
+    <string name="plan_coming_up">Coming up</string>
+    <string name="plan_last_dose">Last dose %1$s</string>
+    <string name="plan_refill_by">Ongoing · refill by %1$s</string>
+    <string name="plan_ongoing">Ongoing</string>
+    <string name="plan_as_needed">As needed</string>
+    <string name="plan_meal_timing">Meal timing</string>
+    <string name="plan_edit">Edit</string>
+    <string name="plan_meal_edit_a11y">Edit meal timing</string>
+    <string name="plan_start">Start my reminders</string>
+    <string name="plan_new">New</string>
+    <string name="plan_change_time_a11y">%1$s, %2$s. Tap to change the time.</string>
 </resources>

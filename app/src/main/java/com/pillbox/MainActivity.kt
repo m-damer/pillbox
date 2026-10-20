@@ -210,7 +210,7 @@ class MainActivity : PillBoxActivity() {
                     }
                 } else if (settingsScreen != 0) {
                     val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
-                    val close = { settingsScreen = when (settingsScreen) { 3, 9, 10 -> 1; 12 -> 11; 15, 16, 17, 18 -> 14; else -> 0 } }
+                    val close = { settingsScreen = when (settingsScreen) { 9, 10 -> 1; 12 -> 11; 15, 16, 17, 18 -> 14; else -> 0 } }
                     BackHandler { close() }
                     val savedToast = {
                         settingsToastTitle = context.getString(R.string.toast_setting_saved_title)
@@ -226,7 +226,7 @@ class MainActivity : PillBoxActivity() {
                             16 -> TermsContent(onBack = close, onDone = close)
                             17 -> FeedbackScreen(onBack = close, onOpened = { aboutThanks++; settingsScreen = 14 })
                             18 -> RateScreen(onBack = close, onOpened = { aboutThanks++; settingsScreen = 14 }, onWriteFeedback = { settingsScreen = 17 })
-                            1 -> AccessibilityScreen(vm, onBack = close, onOpenTheme = { settingsScreen = 3 }, onOpenSimple = { settingsScreen = 9 }, onOpenPreview = { settingsScreen = 10 })
+                            1 -> AccessibilityScreen(vm, onBack = close, onOpenSimple = { settingsScreen = 9 }, onOpenPreview = { settingsScreen = 10 })
                             9 -> SimpleModeScreen(vm, onBack = close)
                             10 -> HighContrastPreviewScreen(vm, onBack = close)
                             8 -> {
@@ -263,7 +263,7 @@ class MainActivity : PillBoxActivity() {
                                 })
                                 when (settingsScreen) {
                                     11 -> BackupScreen(
-                                        backupVm, onBack = close, openDelete = deleteFromPrivacy.also { androidx.compose.runtime.SideEffect { deleteFromPrivacy = false } }, onReport = { showReport = true },
+                                        backupVm, onBack = close, openDelete = deleteFromPrivacy.also { androidx.compose.runtime.SideEffect { deleteFromPrivacy = false } },
                                         onRestore = { backupVm.startRestore(); settingsScreen = 12 },
                                         onDeleted = { settingsScreen = 13 },
                                     )
@@ -323,7 +323,7 @@ class MainActivity : PillBoxActivity() {
                         key = "add-$addSession",
                         factory = viewModelFactory { initializer { AddMedicineViewModel(repo, meName, onChanged = { reminders.rearm() }, meals = ReminderState.current.meals) } },
                     )
-                    AddMedicineScreen(vm, onClose = {
+                    AddMedicineScreen(vm, onEditMeals = { settingsScreen = 6 }, onClose = {
                         adding = false
                         addSession++
                         tab = Tab.TODAY
@@ -419,7 +419,8 @@ class MainActivity : PillBoxActivity() {
                                 SettingsTarget.PRIVACY -> settingsScreen = 14
                                 SettingsTarget.ACCESSIBILITY -> settingsScreen = 1
                                                 SettingsTarget.LANGUAGE -> settingsScreen = 2
-                                                SettingsTarget.PEOPLE -> tab = Tab.PEOPLE
+                                                SettingsTarget.THEME -> settingsScreen = 3
+                                                SettingsTarget.REPORT -> showReport = true
                                             }
                                         },
                                         toast = settingsToastTitle?.let { ListToast(it, settingsToastBody) },
