@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -98,6 +99,9 @@ fun MedicineDetailScreen(
     onDone: (ListToast, finishedTab: Boolean) -> Unit,
     onEdit: () -> Unit = {},
     onSeeHistory: () -> Unit = {},
+    /** As-needed medicines: "Take now" (logs a dose) and the card that opens today's log. */
+    onTakeNow: () -> Unit = {},
+    onOpenLog: () -> Unit = {},
     /** A toast to show when this screen appears (after Edit medicine saved). */
     toast: ListToast? = null,
     onToastShown: () -> Unit = {},
@@ -138,6 +142,7 @@ fun MedicineDetailScreen(
             onDelete = { vm.showDelete(true) },
             onEdit = onEdit,
             onSeeHistory = onSeeHistory,
+            onTakeNow = onTakeNow, onOpenLog = onOpenLog,
             onRestart = {
                 vm.restart { name ->
                     onDone(ListToast(res.getString(R.string.toast_restarted_title, name), res.getString(R.string.toast_restarted_body)), false)
@@ -208,11 +213,13 @@ fun MedicineDetailContent(
     onEdit: () -> Unit = {},
     onRestart: () -> Unit = {},
     onSeeHistory: () -> Unit = {},
+    onTakeNow: () -> Unit = {},
+    onOpenLog: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val item = state.item ?: return
     Box(modifier) {
-        if (item.medicine.status == MedicineStatus.ACTIVE) ActiveDetail(state, item, fmt, onBack, onAddStock, onStop, onPause, onResume, onDelete, onEdit, onSeeHistory)
+        if (item.medicine.status == MedicineStatus.ACTIVE) ActiveDetail(state, item, fmt, onBack, onAddStock, onStop, onPause, onResume, onDelete, onEdit, onSeeHistory, onTakeNow, onOpenLog)
         else FinishedDetail(state, item, fmt, onBack, onRestart, onDelete)
     }
 }
@@ -261,6 +268,8 @@ private fun ActiveDetail(
     onDelete: () -> Unit,
     onEdit: () -> Unit,
     onSeeHistory: () -> Unit,
+    onTakeNow: () -> Unit,
+    onOpenLog: () -> Unit,
 ) {
     val c = PillBox.colors
     val m = item.medicine
@@ -288,13 +297,22 @@ private fun ActiveDetail(
             StatTiles(item, info?.daysLeft, info?.level ?: StockLevel.ENOUGH, fmt)
             // Paused: the cards stay readable but fade, so it is clear nothing will ring.
             Column(Modifier.alpha(if (paused != null) 0.6f else 1f), verticalArrangement = Arrangement.spacedBy(Dimens.CardGap)) {
-                if (schedule != null) ScheduleCard(item, fmt)
+                if (schedule?.frequency is com.pillbox.domain.Frequency.AsNeeded) {
+                    NavRowCard(stringResource(R.string.prn_card_title), stringResource(R.string.prn_card_sub), onOpenLog)
+                }
+                if (schedule != null && schedule.frequency !is com.pillbox.domain.Frequency.AsNeeded) ScheduleCard(item, fmt)
                 WeekCard(state.week, fmt, onSeeHistory)
             }
         }
         Column(Modifier.padding(Dimens.ScreenPaddingH), verticalArrangement = Arrangement.spacedBy(Space.S10)) {
             if (paused != null) {
                 PrimaryButton(stringResource(R.string.btn_resume), onResume)
+                Row(horizontalArrangement = Arrangement.spacedBy(Space.S10)) {
+                    OutlineButton(stringResource(R.string.btn_add_stock), onAddStock, Modifier.weight(1f))
+                    DangerOutlineButton(stringResource(R.string.btn_stop), onStop, Modifier.weight(1f))
+                }
+            } else if (schedule?.frequency is com.pillbox.domain.Frequency.AsNeeded) {
+                PrimaryButton(stringResource(R.string.prn_take_now), onTakeNow)
                 Row(horizontalArrangement = Arrangement.spacedBy(Space.S10)) {
                     OutlineButton(stringResource(R.string.btn_add_stock), onAddStock, Modifier.weight(1f))
                     DangerOutlineButton(stringResource(R.string.btn_stop), onStop, Modifier.weight(1f))
@@ -654,5 +672,23 @@ private fun FactRow(label: String, value: String) {
     ) {
         Text(label, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
         Text(value, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.End, modifier = Modifier.weight(1.4f))
+    }
+}
+
+/** A white card that opens another screen: title, a line under it and the arrow. */
+@Composable
+private fun NavRowCard(title: String, subtitle: String, onClick: () -> Unit) {
+    val c = PillBox.colors
+    Row(
+        Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).heightIn(min = Dimens.SettingsRowMinHeight)
+            .clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onClick).padding(horizontal = Space.S16, vertical = Space.S8)
+            .semantics(mergeDescendants = true) { },
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.labelLarge, color = c.text)
+            Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+        }
+        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.textMuted)
     }
 }

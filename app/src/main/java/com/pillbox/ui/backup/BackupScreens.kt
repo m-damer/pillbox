@@ -83,7 +83,7 @@ import java.time.LocalDateTime
 // ---------------------------------------------------------------- Backup and export
 
 @Composable
-fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onReport: () -> Unit, onRestore: () -> Unit, onDeleted: () -> Unit, openDelete: Boolean = false) {
+fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onRestore: () -> Unit, onDeleted: () -> Unit, openDelete: Boolean = false) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
     val context = LocalContext.current
@@ -138,7 +138,7 @@ fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onReport: () -> Unit, 
         BackupContent(
             settings, fmt, LocalDate.now(), host, onBack,
             onDrive = { on -> if (on) askDrive = true else stopDrive = true },
-            onToggleAuto = vm::setAuto, onFrequency = vm::setFrequency, onNotify = vm::setNotify, onSaveNow = vm::saveNow, onReport = onReport, onShare = vm::share, onRestore = onRestore, onDelete = { confirmDelete = true },
+            onToggleAuto = vm::setAuto, onFrequency = vm::setFrequency, onNotify = vm::setNotify, onSaveNow = vm::saveNow, onShare = vm::share, onRestore = onRestore, onDelete = { confirmDelete = true },
             busy = state.busy,
         )
     }
@@ -186,7 +186,7 @@ internal fun whenText(at: LocalDateTime, today: LocalDate, fmt: Formatter): Stri
 @Composable
 fun BackupContent(
     s: BackupSettings, fmt: Formatter, today: LocalDate, host: SnackbarHostState, onBack: () -> Unit,
-    onToggleAuto: (Boolean) -> Unit, onSaveNow: () -> Unit, onReport: () -> Unit, onShare: () -> Unit, onRestore: () -> Unit, onDelete: () -> Unit,
+    onToggleAuto: (Boolean) -> Unit, onSaveNow: () -> Unit, onShare: () -> Unit, onRestore: () -> Unit, onDelete: () -> Unit,
     busy: Boolean = false, onFrequency: (BackupFrequency) -> Unit = {}, onNotify: (Boolean) -> Unit = {}, onDrive: (Boolean) -> Unit = {},
 ) {
     val c = PillBox.colors
@@ -258,8 +258,6 @@ fun BackupContent(
                 Column {
                     Caption(stringResource(R.string.bk_sec_more))
                     Card {
-                        BackupRow(stringResource(R.string.bk_report), stringResource(R.string.bk_report_sub), onReport) { Text("PDF", style = MaterialTheme.typography.labelMedium, color = c.accent, maxLines = 1) }
-                        RowDivider()
                         BackupRow(stringResource(R.string.bk_share), stringResource(R.string.bk_share_sub), onShare) { Icon(Icons.Filled.Share, contentDescription = null, tint = c.accent) }
                         RowDivider()
                         BackupRow(stringResource(R.string.bk_restore), stringResource(R.string.bk_restore_sub), onRestore) { Icon(Icons.Filled.Refresh, contentDescription = null, tint = c.accent) }

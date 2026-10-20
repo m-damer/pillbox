@@ -78,6 +78,10 @@ interface DoseEventDao {
     @Query("SELECT takenAt FROM dose_event WHERE medicineId = :medicineId AND status = 'TAKEN' AND takenAt >= :sinceAt ORDER BY takenAt DESC")
     suspend fun takenSince(medicineId: Long, sinceAt: String): List<String>
 
+    /** Taken doses since [sinceAt], newest first, with their ids (as-needed log and its Undo). */
+    @Query("SELECT * FROM dose_event WHERE medicineId = :medicineId AND status = 'TAKEN' AND takenAt >= :sinceAt ORDER BY takenAt DESC")
+    suspend fun takenEventsSince(medicineId: Long, sinceAt: String): List<DoseEventEntity>
+
     @Query("SELECT * FROM dose_event WHERE medicineId = :medicineId ORDER BY COALESCE(takenAt, plannedAt) DESC LIMIT :limit")
     suspend fun latest(medicineId: Long, limit: Int): List<DoseEventEntity>
 }

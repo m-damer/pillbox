@@ -13,4 +13,7 @@
 - [x] M9 Backup and restore (weekly to folder, optional Google Drive, restore checks, delete all)
 - [x] M10 Feedback, rating, crash-report prompt (email intents), privacy policy, about
 - [x] M11 Widget
-- [ ] M12 Large-text and TalkBack polish; test on real phones
+- [x] M12 Large-text and TalkBack polish (static pass; real-phone test pending)
+- [x] M13 Review plan after every add, as-needed log and limit, Welcome, Settings clean-up (Dark theme in Display, Report in Settings, People row removed)
+- [ ] M14 Today timeline callouts and group icons, Settings row style, full-height screenshots, issues from the phone test
+- [ ] M15 Release: signed build, Google sign-in publishing

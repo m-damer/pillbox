@@ -47,7 +47,7 @@ class BackupScreenshotTest {
     private val confirm = RestoreState.Confirm("pillbox-2026-10-12.pillbox", LocalDateTime.of(2026, 10, 12, 9, 41), summary, BackupData(emptyList(), emptyList(), emptyList(), emptyList(), emptyList()))
 
     @Composable private fun content(s: BackupSettings, f: Formatter) =
-        BackupContent(s, f, today, remember { SnackbarHostState() }, {}, {}, {}, {}, {}, {}, {})
+        BackupContent(s, f, today, remember { SnackbarHostState() }, {}, {}, {}, {}, {}, {})
 
     @Test fun backup_en() = shoot("backup_en", "en") { content(folder, it) }
     @Test fun backup_en_dark_2x() = shoot("backup_en_dark_2x", "en", ThemeMode.Dark, 2f) { content(folder, it) }

@@ -109,7 +109,7 @@ import java.time.temporal.WeekFields
 
 /** The 3-step Add medicine flow, with its prompts. [onClose] leaves the flow. */
 @Composable
-fun AddMedicineScreen(vm: AddMedicineViewModel, onClose: () -> Unit, modifier: Modifier = Modifier) {
+fun AddMedicineScreen(vm: AddMedicineViewModel, onClose: () -> Unit, modifier: Modifier = Modifier, onEditMeals: () -> Unit = {}) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
     val back = { if (vm.back()) onClose() }
@@ -118,7 +118,7 @@ fun AddMedicineScreen(vm: AddMedicineViewModel, onClose: () -> Unit, modifier: M
 
     AddMedicineContent(
         state = state, fmt = fmt, today = LocalDate.now(),
-        edit = vm::edit, onBack = back, onNext = vm::next, onSave = vm::save, modifier = modifier,
+        edit = vm::edit, onBack = back, onNext = vm::next, onSave = vm::save, modifier = modifier, onEditMeals = onEditMeals,
     )
 
     when (val d = state.dialog) {
@@ -171,7 +171,9 @@ fun AddMedicineContent(
     onNext: () -> Unit,
     onSave: () -> Unit,
     modifier: Modifier = Modifier,
+    onEditMeals: () -> Unit = {},
 ) {
+    if (state.step == 4) { ReviewPlanContent(state, fmt, today, edit, onBack, onSave, onEditMeals, modifier); return }
     val form = state.form
     var timeTarget by remember { mutableStateOf<Int?>(null) } // -1 = first dose, 0.. = a dose chip
     var showDatePicker by remember { mutableStateOf(false) }

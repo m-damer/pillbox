@@ -58,7 +58,7 @@ import com.pillbox.ui.theme.Space
 import com.pillbox.ui.theme.illustration
 
 /** Where a Settings row leads. */
-enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, LANGUAGE, PEOPLE, BACKUP, PRIVACY }
+enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, THEME, LANGUAGE, REPORT, BACKUP, PRIVACY }
 
 @Composable
 fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings()) {
@@ -124,12 +124,17 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                     stringResource(R.string.settings_language), languageName(com.pillbox.ui.AppLocale.active(androidx.compose.ui.platform.LocalContext.current)),
                     tints[5], { RowGlyph("A ع") }, { onOpen(SettingsTarget.LANGUAGE) },
                 )
+                Divider()
+                SettingsRow(
+                    stringResource(R.string.acc_dark), stringResource(themeLabel(state.display.theme)),
+                    tints[2], { RowGlyph("☾", large = true) }, { onOpen(SettingsTarget.THEME) },
+                )
             }
-            Section(stringResource(R.string.settings_sec_people))
+            Section(stringResource(R.string.settings_sec_data))
             Group {
                 SettingsRow(
-                    stringResource(R.string.settings_people), pluralStringResource(R.plurals.people_count, state.people, fmt.number(state.people)),
-                    tints[4], { RowIcon(Icons.Filled.Person) }, { onOpen(SettingsTarget.PEOPLE) },
+                    stringResource(R.string.settings_report), stringResource(R.string.settings_report_value),
+                    tints[4], { RowGlyph("PDF") }, { onOpen(SettingsTarget.REPORT) },
                 )
                 Divider()
                 SettingsRow(
@@ -172,6 +177,12 @@ private fun backupValue(b: BackupSettings, fmt: Formatter): String {
         at == today.minusDays(1) -> stringResource(R.string.bk_yesterday)
         else -> com.pillbox.ui.shortDate(at, fmt)
     }
+}
+
+internal fun themeLabel(t: com.pillbox.domain.ThemeChoice) = when (t) {
+    com.pillbox.domain.ThemeChoice.SYSTEM -> R.string.theme_system
+    com.pillbox.domain.ThemeChoice.LIGHT -> R.string.theme_light
+    com.pillbox.domain.ThemeChoice.DARK -> R.string.theme_dark
 }
 
 internal fun toneName(t: com.pillbox.domain.Tone) = when (t) {

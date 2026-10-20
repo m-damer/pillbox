@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -33,6 +34,8 @@ data class AddMedUiState(
     /** Edit mode: the name shown in the header, and the form as it was when opened. */
     val editingName: String? = null,
     val original: AddMedicineForm? = null,
+    /** Step 4 (review plan): the person's other active medicines, so their doses show next to the new one. */
+    val others: List<Pair<com.pillbox.domain.Medicine, com.pillbox.domain.Schedule>> = emptyList(),
     /** Edit mode: the changes were saved. The screen closes. */
     val saved: Boolean = false,
 ) {
@@ -86,10 +89,27 @@ class AddMedicineViewModel(
 
     fun addAnyway() { duplicateAccepted = true; goTo(2) }
 
+    /** The button on step 3: when adding, shows the daily plan first; when editing, saves. */
     fun save() {
         val s = _state.value
         if (s.saving) return
         if (s.form.step3Errors().isNotEmpty()) { _state.update { it.copy(showErrors = true) }; return }
+        if (editing == null && s.step == 3) review() else commit()
+    }
+
+    /** Step 4: "Your daily plan", every medicine together, before reminders start. */
+    private fun review() {
+        viewModelScope.launch {
+            val me = repo.activePerson(meName)
+            val others = repo.observeMedicines(me.id).first().mapNotNull { m -> m.schedule?.let { m.medicine to it } }
+            _state.update { it.copy(others = others, step = 4, showErrors = false) }
+        }
+    }
+
+    /** "Start my reminders" (or Edit save): writes the medicine. */
+    private fun commit() {
+        val s = _state.value
+        if (s.saving) return
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {
             try {

@@ -526,7 +526,9 @@
     <string name="settings_title">Settings</string>
     <string name="settings_sec_reminders">Reminders</string>
     <string name="settings_sec_display">Display</string>
-    <string name="settings_sec_people">People and data</string>
+    <string name="settings_report">Doctor report</string>
+    <string name="settings_report_value">PDF, last 30 days</string>
+    <string name="settings_sec_data">Your data</string>
     <string name="settings_refill">Refill alert</string>
     <string name="settings_accessibility">Accessibility</string>
     <string name="settings_language">Language and numbers</string>
@@ -912,4 +914,47 @@
     <string name="w_cfg_save">Save</string>
     <string name="w_saved_title">Widget updated</string>
     <string name="w_saved_body">The changes show on your home screen.</string>
+
+    <!-- M13: review plan -->
+    <string name="plan_title">Your daily plan</string>
+    <string name="plan_sub">Tap a time to change it.</string>
+    <string name="plan_sub_fixed">This is how your day will ring.</string>
+    <string name="plan_coming_up">Coming up</string>
+    <string name="plan_last_dose">Last dose %1$s</string>
+    <string name="plan_refill_by">Ongoing · refill by %1$s</string>
+    <string name="plan_ongoing">Ongoing</string>
+    <string name="plan_as_needed">As needed</string>
+    <string name="plan_meal_timing">Meal timing</string>
+    <string name="plan_edit">Edit</string>
+    <string name="plan_meal_edit_a11y">Edit meal timing</string>
+    <string name="plan_start">Start my reminders</string>
+    <string name="plan_new">New</string>
+    <string name="plan_change_time_a11y">%1$s, %2$s. Tap to change the time.</string>
+
+    <!-- M13: as-needed log -->
+    <string name="prn_title">%1$s (as needed)</string>
+    <string name="prn_each_time">%1$s each time</string>
+    <string name="prn_taken_today">Taken today</string>
+    <string name="prn_x_of_y">%1$s of %2$s</string>
+    <string name="prn_count_a11y">Taken today: %1$s of %2$s allowed.</string>
+    <string name="prn_count_a11y_nomax">Taken today: %1$s.</string>
+    <string name="prn_next_allowed">Next dose is allowed from %1$s (%2$s after the last one).</string>
+    <string name="prn_limit_body">You reached the most for today (%1$s). Next dose is allowed %2$s. Taking more can be dangerous. If you still have pain, call your doctor or pharmacist.</string>
+    <string name="prn_tomorrow">tomorrow</string>
+    <string name="prn_tomorrow_at">tomorrow at %1$s</string>
+    <string name="prn_today">Today</string>
+    <string name="prn_taken">Taken</string>
+    <string name="prn_taken_early">Taken early</string>
+    <string name="prn_logged">Dose logged</string>
+    <string name="prn_take_now">Take now</string>
+    <string name="prn_ok_wait">OK, I will wait</string>
+    <string name="prn_undo_last">Undo last dose</string>
+    <string name="prn_card_title">Taken today</string>
+    <string name="prn_card_sub">Tap to see today\'s doses</string>
+
+    <!-- M13: welcome -->
+    <string name="wl_title">Welcome</string>
+    <string name="wl_sub">Never miss a dose. Let us set it up your way.</string>
+    <string name="wl_agree">By continuing you agree to:</string>
+    <string name="wl_continue">Continue</string>
 </resources>

@@ -119,8 +119,15 @@ class MainActivity : PillBoxActivity() {
                 // A new Add medicine flow every time, so an old "was added" prompt never comes back.
                 var addSession by rememberSaveable { mutableIntStateOf(0) }
                 var showPermissions by rememberSaveable { mutableStateOf(false) }
+                // First launch: language and text size, shown once.
+                var welcomeDone by rememberSaveable { mutableStateOf(prefs.getBoolean("welcome_done", false)) }
+                var welcomeLegal by rememberSaveable { mutableIntStateOf(0) }
                 // Medicines tab: which medicine is open, which list tab, and a toast to show after Stop or Restart.
                 var detailId by rememberSaveable { mutableStateOf<Long?>(null) }
+                // As-needed log: which medicine, whether to log a dose on opening, and a counter so each opening starts fresh.
+                var prnId by rememberSaveable { mutableStateOf<Long?>(null) }
+                var prnAuto by rememberSaveable { mutableStateOf(false) }
+                var prnSession by rememberSaveable { mutableIntStateOf(0) }
                 var showFinishedTab by rememberSaveable { mutableStateOf(false) }
                 var listToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
                 var listToastBody by rememberSaveable { mutableStateOf<String?>(null) }
@@ -181,7 +188,30 @@ class MainActivity : PillBoxActivity() {
                     }
                 }
 
-                if (personMode != 0) {
+                if (!welcomeDone) {
+                    val wvm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
+                    val back = { welcomeLegal = 0 }
+                    Box(Modifier.fillMaxSize().statusBarsPadding()) {
+                        when (welcomeLegal) {
+                            16 -> { BackHandler(onBack = back); TermsContent(onBack = back, onDone = back) }
+                            15 -> { BackHandler(onBack = back); PrivacyPolicyContent(onBack = back, onDelete = {}, onClose = back, showDelete = false) }
+                            else -> com.pillbox.ui.welcome.WelcomeContent(
+                                language = AppLocale.active(context), textSize = display.textSize,
+                                onLanguage = { code ->
+                                    if (code != AppLocale.active(context)) {
+                                        wvm.saveLanguage(com.pillbox.ui.settings.LanguageChoice(code, code == "ar", display.timeFormat, java.time.temporal.WeekFields.of(java.util.Locale.forLanguageTag(code)).firstDayOfWeek)) {
+                                            AppLocale.set(context, code)
+                                            if (android.os.Build.VERSION.SDK_INT < 33 && AppLocale.active(context) != code) this@MainActivity.recreate()
+                                        }
+                                    }
+                                },
+                                onTextSize = wvm::setTextSize,
+                                onTerms = { welcomeLegal = 16 }, onPrivacy = { welcomeLegal = 15 },
+                                onContinue = { prefs.edit().putBoolean("welcome_done", true).apply(); welcomeDone = true },
+                            )
+                        }
+                    }
+                } else if (personMode != 0) {
                     val mode = when (personMode) { 1 -> PersonMode.ADD; 2 -> PersonMode.EDIT; else -> PersonMode.PROFILE }
                     val vm: PersonEditViewModel = viewModel(
                         key = "person-$personSession",
@@ -210,7 +240,7 @@ class MainActivity : PillBoxActivity() {
                     }
                 } else if (settingsScreen != 0) {
                     val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
-                    val close = { settingsScreen = when (settingsScreen) { 3, 9, 10 -> 1; 12 -> 11; 15, 16, 17, 18 -> 14; else -> 0 } }
+                    val close = { settingsScreen = when (settingsScreen) { 9, 10 -> 1; 12 -> 11; 15, 16, 17, 18 -> 14; else -> 0 } }
                     BackHandler { close() }
                     val savedToast = {
                         settingsToastTitle = context.getString(R.string.toast_setting_saved_title)
@@ -226,7 +256,7 @@ class MainActivity : PillBoxActivity() {
                             16 -> TermsContent(onBack = close, onDone = close)
                             17 -> FeedbackScreen(onBack = close, onOpened = { aboutThanks++; settingsScreen = 14 })
                             18 -> RateScreen(onBack = close, onOpened = { aboutThanks++; settingsScreen = 14 }, onWriteFeedback = { settingsScreen = 17 })
-                            1 -> AccessibilityScreen(vm, onBack = close, onOpenTheme = { settingsScreen = 3 }, onOpenSimple = { settingsScreen = 9 }, onOpenPreview = { settingsScreen = 10 })
+                            1 -> AccessibilityScreen(vm, onBack = close, onOpenSimple = { settingsScreen = 9 }, onOpenPreview = { settingsScreen = 10 })
                             9 -> SimpleModeScreen(vm, onBack = close)
                             10 -> HighContrastPreviewScreen(vm, onBack = close)
                             8 -> {
@@ -263,7 +293,7 @@ class MainActivity : PillBoxActivity() {
                                 })
                                 when (settingsScreen) {
                                     11 -> BackupScreen(
-                                        backupVm, onBack = close, openDelete = deleteFromPrivacy.also { androidx.compose.runtime.SideEffect { deleteFromPrivacy = false } }, onReport = { showReport = true },
+                                        backupVm, onBack = close, openDelete = deleteFromPrivacy.also { androidx.compose.runtime.SideEffect { deleteFromPrivacy = false } },
                                         onRestore = { backupVm.startRestore(); settingsScreen = 12 },
                                         onDeleted = { settingsScreen = 13 },
                                     )
@@ -323,7 +353,7 @@ class MainActivity : PillBoxActivity() {
                         key = "add-$addSession",
                         factory = viewModelFactory { initializer { AddMedicineViewModel(repo, meName, onChanged = { reminders.rearm() }, meals = ReminderState.current.meals) } },
                     )
-                    AddMedicineScreen(vm, onClose = {
+                    AddMedicineScreen(vm, onEditMeals = { settingsScreen = 6 }, onClose = {
                         adding = false
                         addSession++
                         tab = Tab.TODAY
@@ -347,6 +377,13 @@ class MainActivity : PillBoxActivity() {
                         }
                         editItem = null
                     })
+                } else if (prnId != null) {
+                    val pid = prnId!!
+                    val vm: com.pillbox.ui.prn.PrnViewModel = viewModel(
+                        key = "prn-$pid-$prnSession",
+                        factory = viewModelFactory { initializer { com.pillbox.ui.prn.PrnViewModel(repo, pid, prnAuto, onChanged = { reminders.rearm() }) } },
+                    )
+                    Box(Modifier.fillMaxSize().statusBarsPadding()) { com.pillbox.ui.prn.PrnScreen(vm, onBack = { prnId = null }) }
                 } else if (detailId != null) {
                     val id = detailId!!
                     val vm: MedicineDetailViewModel = viewModel(
@@ -358,6 +395,8 @@ class MainActivity : PillBoxActivity() {
                             vm, onBack = { detailId = null },
                             onEdit = { vm.state.value.item?.let { editItem = it; editSession++ } },
                             onSeeHistory = { showHistory = true },
+                            onTakeNow = { prnAuto = true; prnId = detailId; prnSession++ },
+                            onOpenLog = { prnAuto = false; prnId = detailId; prnSession++ },
                             toast = detailToastTitle?.let { ListToast(it, detailToastBody) },
                             onToastShown = { detailToastTitle = null; detailToastBody = null },
                             onDone = { toast, finishedTab ->
@@ -419,7 +458,8 @@ class MainActivity : PillBoxActivity() {
                                 SettingsTarget.PRIVACY -> settingsScreen = 14
                                 SettingsTarget.ACCESSIBILITY -> settingsScreen = 1
                                                 SettingsTarget.LANGUAGE -> settingsScreen = 2
-                                                SettingsTarget.PEOPLE -> tab = Tab.PEOPLE
+                                                SettingsTarget.THEME -> settingsScreen = 3
+                                                SettingsTarget.REPORT -> showReport = true
                                             }
                                         },
                                         toast = settingsToastTitle?.let { ListToast(it, settingsToastBody) },

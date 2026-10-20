@@ -563,7 +563,9 @@
     <string name="settings_title">الإعدادات</string>
     <string name="settings_sec_reminders">التنبيهات</string>
     <string name="settings_sec_display">العرض</string>
-    <string name="settings_sec_people">الأشخاص والبيانات</string>
+    <string name="settings_report">تقرير الطبيب</string>
+    <string name="settings_report_value">ملف PDF لآخر ٣٠ يوماً</string>
+    <string name="settings_sec_data">بياناتك</string>
     <string name="settings_refill">تنبيه التجديد</string>
     <string name="settings_accessibility">سهولة الاستخدام</string>
     <string name="settings_language">اللغة والأرقام</string>
@@ -973,4 +975,47 @@
     <string name="w_cfg_save">حفظ</string>
     <string name="w_saved_title">تم تحديث الأداة</string>
     <string name="w_saved_body">تظهر التغييرات على شاشتك الرئيسية.</string>
+
+    <!-- M13: review plan -->
+    <string name="plan_title">خطتك اليومية</string>
+    <string name="plan_sub">اضغط على الوقت لتغييره.</string>
+    <string name="plan_sub_fixed">هكذا سيرن يومك.</string>
+    <string name="plan_coming_up">القادم</string>
+    <string name="plan_last_dose">آخر جرعة %1$s</string>
+    <string name="plan_refill_by">مستمر · أعد الشراء قبل %1$s</string>
+    <string name="plan_ongoing">مستمر</string>
+    <string name="plan_as_needed">عند الحاجة</string>
+    <string name="plan_meal_timing">أوقات الوجبات</string>
+    <string name="plan_edit">تعديل</string>
+    <string name="plan_meal_edit_a11y">تعديل أوقات الوجبات</string>
+    <string name="plan_start">ابدأ تذكيراتي</string>
+    <string name="plan_new">جديد</string>
+    <string name="plan_change_time_a11y">%1$s، %2$s. اضغط لتغيير الوقت.</string>
+
+    <!-- M13: as-needed log -->
+    <string name="prn_title">%1$s (عند الحاجة)</string>
+    <string name="prn_each_time">%1$s في كل مرة</string>
+    <string name="prn_taken_today">المأخوذ اليوم</string>
+    <string name="prn_x_of_y">%1$s من %2$s</string>
+    <string name="prn_count_a11y">المأخوذ اليوم: %1$s من %2$s مسموحة.</string>
+    <string name="prn_count_a11y_nomax">المأخوذ اليوم: %1$s.</string>
+    <string name="prn_next_allowed">الجرعة التالية مسموحة من %1$s (بعد %2$s من الأخيرة).</string>
+    <string name="prn_limit_body">وصلت إلى الحد الأقصى لليوم (%1$s). الجرعة التالية مسموحة %2$s. أخذ المزيد قد يكون خطيراً. إذا استمر الألم فاتصل بطبيبك أو الصيدلاني.</string>
+    <string name="prn_tomorrow">غداً</string>
+    <string name="prn_tomorrow_at">غداً عند %1$s</string>
+    <string name="prn_today">اليوم</string>
+    <string name="prn_taken">مأخوذة</string>
+    <string name="prn_taken_early">مأخوذة مبكراً</string>
+    <string name="prn_logged">تم تسجيل الجرعة</string>
+    <string name="prn_take_now">خذها الآن</string>
+    <string name="prn_ok_wait">حسناً، سأنتظر</string>
+    <string name="prn_undo_last">تراجع عن آخر جرعة</string>
+    <string name="prn_card_title">المأخوذ اليوم</string>
+    <string name="prn_card_sub">اضغط لرؤية جرعات اليوم</string>
+
+    <!-- M13: welcome -->
+    <string name="wl_title">مرحباً</string>
+    <string name="wl_sub">لا تفوّت جرعة أبداً. دعنا نضبطه على طريقتك.</string>
+    <string name="wl_agree">بالمتابعة فإنك توافق على:</string>
+    <string name="wl_continue">متابعة</string>
 </resources>
