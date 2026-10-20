@@ -580,7 +580,7 @@ private fun Step3(
         when (form.days) {
             DaysChoice.SPECIFIC -> {
                 val missing = showErrors && FormError.DAYS_MISSING in form.step3Errors()
-                val first = WeekFields.of(locale()).firstDayOfWeek
+                val first = com.pillbox.ui.firstDayOfWeek()
                 val week = (0..6).map { first.plus(it.toLong()) }
                 Box(Modifier.size(Space.S10))
                 WeekdayRow(week, form.weekdays) { day -> edit { f -> f.copy(weekdays = if (day in f.weekdays) f.weekdays - day else f.weekdays + day) } }
@@ -719,7 +719,7 @@ private fun summaryText(form: AddMedicineForm, fmt: Formatter): String {
     val days = when (form.days) {
         DaysChoice.EVERY_DAY -> stringResource(R.string.sum_every_day)
         DaysChoice.SPECIFIC -> {
-            val first = WeekFields.of(locale()).firstDayOfWeek
+            val first = com.pillbox.ui.firstDayOfWeek()
             val names = (0..6).map { first.plus(it.toLong()) }.filter { it in form.weekdays }.map { it.getDisplayName(TextStyle.SHORT, locale()) }
             if (names.isEmpty()) stringResource(R.string.sum_specific_none)
             else stringResource(R.string.sum_on, fmt.list(names, stringResource(R.string.list_sep), stringResource(R.string.list_and)))

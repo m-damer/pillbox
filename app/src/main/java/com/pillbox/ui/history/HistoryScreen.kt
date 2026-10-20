@@ -61,7 +61,7 @@ import java.util.Locale
 @Composable
 fun HistoryScreen(vm: HistoryViewModel, onBack: () -> Unit, onGoToToday: () -> Unit, onShareReport: () -> Unit) {
     val state by vm.state.collectAsStateWithLifecycle()
-    HistoryContent(state, rememberFormatter(), WeekFields.of(Locale.getDefault()).firstDayOfWeek, onBack, onGoToToday, onShareReport)
+    HistoryContent(state, rememberFormatter(), com.pillbox.ui.firstDayOfWeek(), onBack, onGoToToday, onShareReport)
 }
 
 @Composable

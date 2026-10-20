@@ -2,7 +2,6 @@ package com.pillbox
 
 import android.content.Context
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -21,7 +20,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,8 +30,14 @@ import com.pillbox.data.Mappers
 import com.pillbox.reminder.PermissionsRoute
 import com.pillbox.reminder.ReminderPermissions
 import com.pillbox.reminder.Reminders
-import com.pillbox.ui.PlaceholderScreen
 import com.pillbox.ui.people.PeopleBar
+import com.pillbox.ui.AppLocale
+import com.pillbox.ui.settings.AccessibilityScreen
+import com.pillbox.ui.settings.LanguageScreen
+import com.pillbox.ui.settings.SettingsScreen
+import com.pillbox.ui.settings.SettingsTarget
+import com.pillbox.ui.settings.SettingsViewModel
+import com.pillbox.ui.settings.ThemeScreen
 import com.pillbox.ui.people.PeopleScreen
 import com.pillbox.ui.people.PeopleViewModel
 import com.pillbox.ui.people.PersonEditScreen
@@ -49,7 +53,8 @@ import com.pillbox.ui.medicines.MedicineDetailScreen
 import com.pillbox.ui.medicines.MedicineDetailViewModel
 import com.pillbox.ui.medicines.MedicinesScreen
 import com.pillbox.ui.medicines.MedicinesViewModel
-import com.pillbox.ui.theme.PillBoxTheme
+import com.pillbox.ui.DisplayState
+import com.pillbox.ui.theme.PillBoxAppTheme
 import com.pillbox.ui.today.TodayScreen
 import com.pillbox.ui.today.TodayViewModel
 import com.pillbox.ui.history.HistoryScreen
@@ -62,7 +67,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class MainActivity : ComponentActivity() {
+class MainActivity : PillBoxActivity() {
     /** A medicine to open, asked for by a refill notification. Taken once the screen shows it. */
     private val openMedicine = mutableStateOf<Long?>(null)
 
@@ -77,7 +82,8 @@ class MainActivity : ComponentActivity() {
         readOpenMedicine()
         val remindDays = app.refillSettings.flow.map { it.daysBefore }.distinctUntilChanged()
         setContent {
-            PillBoxTheme {
+            val display by app.displaySettings.flow.collectAsStateWithLifecycle(DisplayState.current)
+            PillBoxAppTheme(display) {
                 val context = LocalContext.current
                 val scope = rememberCoroutineScope()
                 val prefs = remember { context.getSharedPreferences("pillbox", Context.MODE_PRIVATE) }
@@ -107,6 +113,10 @@ class MainActivity : ComponentActivity() {
                 var personSession by rememberSaveable { mutableIntStateOf(0) }
                 var peopleToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
                 var peopleToastBody by rememberSaveable { mutableStateOf<String?>(null) }
+                // Settings: which settings screen is open (0 none, 1 accessibility, 2 language, 3 dark theme) and a toast for the Settings tab.
+                var settingsScreen by rememberSaveable { mutableIntStateOf(0) }
+                var settingsToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
+                var settingsToastBody by rememberSaveable { mutableStateOf<String?>(null) }
                 val peopleList by repo.observePeople().collectAsStateWithLifecycle(emptyList())
                 val activePersonId by repo.activePersonId.collectAsStateWithLifecycle()
                 val peopleBar = PeopleBar(peopleList, activePersonId, onSelect = { repo.selectPerson(it) })
@@ -155,6 +165,28 @@ class MainActivity : ComponentActivity() {
                             personMode = 0
                             tab = Tab.PEOPLE
                         })
+                    }
+                } else if (settingsScreen != 0) {
+                    val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo) } })
+                    val close = { settingsScreen = if (settingsScreen == 3) 1 else 0 }
+                    Box(Modifier.fillMaxSize().statusBarsPadding()) {
+                        when (settingsScreen) {
+                            1 -> AccessibilityScreen(vm, onBack = close, onOpenTheme = { settingsScreen = 3 })
+                            3 -> ThemeScreen(vm, onBack = close)
+                            else -> LanguageScreen(
+                                vm, activeLanguage = AppLocale.active(context), onBack = close,
+                                onSave = { choice ->
+                                    vm.saveLanguage(choice) {
+                                        settingsToastTitle = context.getString(R.string.toast_setting_saved_title)
+                                        settingsToastBody = context.getString(R.string.toast_setting_saved_body)
+                                        settingsScreen = 0
+                                        AppLocale.set(context, choice.language)
+                                        // Android 13 and newer recreate the screens by themselves; older phones need a nudge.
+                                        if (android.os.Build.VERSION.SDK_INT < 33 && AppLocale.active(context) != choice.language) this@MainActivity.recreate()
+                                    }
+                                },
+                            )
+                        }
                     }
                 } else if (showReport) {
                     val vm: ReportViewModel = viewModel(factory = viewModelFactory { initializer { ReportViewModel(applicationContext, repo, meName) } })
@@ -261,7 +293,22 @@ class MainActivity : ComponentActivity() {
                                         onToastShown = { peopleToastTitle = null; peopleToastBody = null },
                                     )
                                 }
-                                Tab.SETTINGS -> PlaceholderScreen(stringResource(R.string.nav_settings))
+                                Tab.SETTINGS -> {
+                                    val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo) } })
+                                    SettingsScreen(
+                                        vm,
+                                        onOpen = { target ->
+                                            when (target) {
+                                                SettingsTarget.REFILL -> { refillSession++; showRefill = true }
+                                                SettingsTarget.ACCESSIBILITY -> settingsScreen = 1
+                                                SettingsTarget.LANGUAGE -> settingsScreen = 2
+                                                SettingsTarget.PEOPLE -> tab = Tab.PEOPLE
+                                            }
+                                        },
+                                        toast = settingsToastTitle?.let { ListToast(it, settingsToastBody) },
+                                        onToastShown = { settingsToastTitle = null; settingsToastBody = null },
+                                    )
+                                }
                             }
                         }
                         PillBoxBottomBar(tab, onSelect = { tab = it }, onAdd = { adding = true })

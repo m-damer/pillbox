@@ -559,4 +559,50 @@
     <string name="viewing_banner_off">أنت تعرض أدوية %1$s. التنبيهات متوقفة.</string>
     <string name="notif_dose_for">%1$s: %2$s</string>
     <string name="reminder_for">لـ %1$s</string>
+    <!-- Settings (M8a) -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_sec_reminders">التنبيهات</string>
+    <string name="settings_sec_display">العرض</string>
+    <string name="settings_sec_people">الأشخاص والبيانات</string>
+    <string name="settings_refill">تنبيه التجديد</string>
+    <string name="settings_accessibility">سهولة الاستخدام</string>
+    <string name="settings_language">اللغة والأرقام</string>
+    <string name="settings_people">الأشخاص الذين أعتني بهم</string>
+    <plurals name="people_count">
+        <item quantity="zero">%1$s شخص</item><item quantity="one">شخص واحد</item><item quantity="two">شخصان</item>
+        <item quantity="few">%1$s أشخاص</item><item quantity="many">%1$s شخصاً</item><item quantity="other">%1$s شخص</item>
+    </plurals>
+    <string name="settings_made_with">صُنع بـ ♥ بواسطة محمود دامر</string>
+    <string name="settings_row_a11y">%1$s، %2$s</string>
+    <string name="lang_title">اللغة والأرقام</string>
+    <string name="lang_language">اللغة</string>
+    <string name="lang_en">English</string>
+    <string name="lang_en_sub">الإنجليزية، من اليسار إلى اليمين</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_ar_sub">من اليمين إلى اليسار</string>
+    <string name="lang_numbers">الأرقام</string>
+    <string name="lang_time">نظام الوقت</string>
+    <string name="lang_time_phone">الهاتف</string>
+    <string name="lang_time_12">١٢ ساعة</string>
+    <string name="lang_time_24">٢٤ ساعة</string>
+    <string name="lang_week">يبدأ الأسبوع يوم</string>
+    <string name="lang_note">اللغة العربية تقلب التطبيق كله من اليمين إلى اليسار.</string>
+    <string name="acc_title">سهولة الاستخدام</string>
+    <string name="acc_text_size">حجم الخط</string>
+    <string name="acc_size_standard">عادي</string>
+    <string name="acc_size_large">كبير</string>
+    <string name="acc_size_largest">الأكبر</string>
+    <string name="acc_preview_name">أموكسيسيلين ٥٠٠ ملغ</string>
+    <string name="acc_preview_sub">معاينة · كبسولة واحدة · مع الطعام</string>
+    <string name="acc_follows">يتبع التطبيق أيضاً حجم الخط في هاتفك.</string>
+    <string name="acc_high_contrast">تباين عالٍ</string>
+    <string name="acc_high_contrast_sub">ألوان وخطوط أوضح</string>
+    <string name="acc_dark">المظهر الداكن</string>
+    <string name="acc_dark_sub">أريح للعين في الليل</string>
+    <string name="theme_title">المظهر الداكن</string>
+    <string name="theme_system">مثل هاتفي</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
+    <string name="toast_setting_saved_title">تم حفظ الإعداد</string>
+    <string name="toast_setting_saved_body">يُطبَّق من الآن.</string>
 </resources>
