@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -38,6 +39,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.pillbox.R
+import com.pillbox.domain.LateChoice
 import com.pillbox.ui.Formatter
 import com.pillbox.ui.components.LinkButton
 import com.pillbox.ui.medicines.AddStockSheet
@@ -72,6 +74,7 @@ fun TodaySheets(sheet: TodaySheet?, vm: TodayViewModel, fmt: Formatter) {
                 is TodaySheet.Skip -> SkipSheet(sheet, vm)
                 is TodaySheet.TooSoon -> TooSoonSheet(sheet, vm, fmt)
                 is TodaySheet.OutOfStock -> OutOfStockSheet(sheet, vm, fmt)
+                is TodaySheet.Late -> LateSheet(sheet, fmt, vm::confirmLate)
                 is TodaySheet.AddStock -> Unit
             }
             Box(Modifier.size(Space.S12))
@@ -80,7 +83,7 @@ fun TodaySheets(sheet: TodaySheet?, vm: TodayViewModel, fmt: Formatter) {
 }
 
 @Composable
-private fun SheetTitle(title: String, subtitle: String? = null) {
+internal fun SheetTitle(title: String, subtitle: String? = null) {
     val c = PillBox.colors
     Text(title, style = MaterialTheme.typography.titleMedium, color = c.text, modifier = Modifier.semantics { heading() })
     if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
@@ -140,6 +143,96 @@ private fun TooSoonSheet(sheet: TodaySheet.TooSoon, vm: TodayViewModel, fmt: For
     )
     PrimaryButton(stringResource(R.string.wait_dont_take), vm::dismissSheet)
     OutlineButton(stringResource(R.string.take_anyway_long), vm::takeAnyway)
+}
+
+/** "40 min", "1 h 20 min" for the late and gap lines. */
+@Composable
+private fun gapText(minutes: Int, fmt: Formatter): String {
+    val m = minutes.coerceAtLeast(0)
+    return when {
+        m < 60 -> stringResource(R.string.min_short, fmt.number(m))
+        m % 60 == 0 -> stringResource(R.string.gap_h, fmt.number(m / 60))
+        else -> stringResource(R.string.gap_h_m, fmt.number(m / 60), fmt.number(m % 60))
+    }
+}
+
+@Composable
+internal fun LateSheet(sheet: TodaySheet.Late, fmt: Formatter, onConfirm: (LateChoice, Boolean) -> Unit) {
+    val c = PillBox.colors
+    var choice by remember { mutableStateOf<LateChoice?>(null) }
+    var always by remember { mutableStateOf(false) }
+    val late = gapText(sheet.minutesLate, fmt)
+    SheetTitle(
+        stringResource(if (sheet.askRows.size == 1) R.string.late_title_one else R.string.late_title_many, late),
+        stringResource(R.string.late_sub, fmt.time(sheet.duePlanned.toLocalTime()), fmt.time(sheet.takenAt.toLocalTime()), sheet.askRows.joinToString(", ") { it.medicine.name }),
+    )
+    val moveText = when {
+        sheet.gapHours != null && sheet.moveTimes.size >= 2 -> stringResource(
+            R.string.late_move_gap_two, pluralStringResource(R.plurals.n_hours, sheet.gapHours, fmt.number(sheet.gapHours)),
+            fmt.time(sheet.moveTimes[0].toLocalTime()), fmt.time(sheet.moveTimes[1].toLocalTime()),
+        )
+        sheet.gapHours != null && sheet.moveTimes.size == 1 -> stringResource(
+            R.string.late_move_gap_one, pluralStringResource(R.plurals.n_hours, sheet.gapHours, fmt.number(sheet.gapHours)), fmt.time(sheet.moveTimes[0].toLocalTime()),
+        )
+        sheet.moveTimes.isEmpty() -> stringResource(R.string.late_move_none)
+        else -> stringResource(R.string.late_move_fixed, gapText(sheet.delayMinutes, fmt), fmt.time(sheet.moveTimes[0].toLocalTime()))
+    }
+    val keepText = if (sheet.gapHours != null && sheet.keepNext != null && sheet.keepGapMinutes != null) {
+        stringResource(R.string.late_keep_gap, fmt.time(sheet.keepNext.toLocalTime()), gapText(sheet.keepGapMinutes, fmt))
+    } else stringResource(R.string.late_keep_fixed)
+    Column(Modifier.selectableGroup(), verticalArrangement = Arrangement.spacedBy(Space.S12)) {
+        LateOption(stringResource(R.string.late_move), moveText, choice == LateChoice.MOVE) { choice = LateChoice.MOVE }
+        LateOption(stringResource(R.string.late_keep), keepText, choice == LateChoice.KEEP) { choice = LateChoice.KEEP }
+    }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = Dimens.TouchTargetMin)
+            .toggleable(value = always, role = Role.Checkbox, onValueChange = { always = it }),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Space.S12),
+    ) {
+        Box(
+            Modifier
+                .size(28.dp)
+                .background(if (always) c.primary else c.card, MaterialTheme.shapes.small)
+                .border(Dimens.ChipBorder, if (always) c.primary else c.placeholder, MaterialTheme.shapes.small),
+            contentAlignment = Alignment.Center,
+        ) { if (always) Icon(Icons.Filled.Check, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
+        Text(stringResource(R.string.late_always), style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
+    }
+    PrimaryButton(
+        stringResource(if (choice == null) R.string.late_choose else R.string.late_continue),
+        { choice?.let { onConfirm(it, always) } }, enabled = choice != null,
+    )
+}
+
+@Composable
+private fun LateOption(title: String, body: String, selected: Boolean, onClick: () -> Unit) {
+    val c = PillBox.colors
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = Dimens.ListRowMinHeight)
+            .background(if (selected) c.primaryContainer else c.card, MaterialTheme.shapes.large)
+            .border(if (selected) Dimens.ChipBorder * 2 else Dimens.ChipBorder, if (selected) c.primary else c.border, MaterialTheme.shapes.large)
+            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
+            .padding(Space.S12),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Space.S12),
+    ) {
+        Box(
+            Modifier
+                .size(28.dp)
+                .background(if (selected) c.primary else c.card, CircleShape)
+                .border(Dimens.ChipBorder, if (selected) c.primary else c.placeholder, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) { if (selected) Icon(Icons.Filled.Check, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
+        Column(Modifier.weight(1f)) {
+            Text(title, style = MaterialTheme.typography.labelLarge, color = c.text)
+            Text(body, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+        }
+    }
 }
 
 @Composable

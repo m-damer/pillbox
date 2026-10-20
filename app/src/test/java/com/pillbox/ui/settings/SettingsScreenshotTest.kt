@@ -67,6 +67,10 @@ class SettingsScreenshotTest {
     @Test fun meals_en_dark_2x() = shoot("meals_en_dark_2x", "en", ThemeMode.Dark, 2f) { MealTimesContent(com.pillbox.domain.MealTimes(), fmt(false), {}, { _, _ -> }, {}) }
     @Config(qualifiers = "+ar-ldrtl") @Test fun meals_ar() = shoot("meals_ar", "ar") { MealTimesContent(com.pillbox.domain.MealTimes(), fmt(true), {}, { _, _ -> }, {}) }
 
+    @Test fun late_en() = shoot("late_en", "en") { LateSettingContent(com.pillbox.domain.LateSetting.ASK, com.pillbox.domain.LateThreshold.MIN_30, fmt(false), {}, {}, {}, {}) }
+    @Test fun late_en_dark_2x() = shoot("late_en_dark_2x", "en", ThemeMode.Dark, 2f) { LateSettingContent(com.pillbox.domain.LateSetting.MOVE_NEXT, com.pillbox.domain.LateThreshold.HOUR_1, fmt(false), {}, {}, {}, {}) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun late_ar() = shoot("late_ar", "ar") { LateSettingContent(com.pillbox.domain.LateSetting.ASK, com.pillbox.domain.LateThreshold.MIN_30, fmt(true), {}, {}, {}, {}) }
+
     @Composable
     private fun language(code: String) = LanguageContent(code, code == "ar", TimeFormat.PHONE, DayOfWeek.SUNDAY, {}, {}, {}, {}, {}, {})
 

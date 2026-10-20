@@ -655,4 +655,36 @@
     <string name="meal_time_a11y">%1$s، %2$s. تغيير الوقت.</string>
     <string name="channel_doses_quiet">تنبيهات الأدوية (ساعات الهدوء)</string>
     <string name="channel_doses_quiet_desc">تنبيهات صامتة تُستخدم في ساعات الهدوء عندما تختار ألا ترن.</string>
+    <!-- Late dose -->
+    <string name="late_title_one">أخذت هذه الجرعة متأخراً %1$s</string>
+    <string name="late_title_many">أخذت هذه الجرعات متأخراً %1$s</string>
+    <string name="late_sub">موعدها %1$s · أُخذت %2$s · %3$s</string>
+    <string name="late_move">تأخير الجرعات التالية</string>
+    <string name="late_move_gap_one">للحفاظ على فاصل %1$s: %2$s</string>
+    <string name="late_move_gap_two">للحفاظ على فاصل %1$s: %2$s ثم %3$s</string>
+    <string name="late_move_fixed">تأخير بقية اليوم بمقدار %1$s: %2$s</string>
+    <string name="late_move_none">لا توجد جرعات متبقية اليوم. يبقى الغد كما هو.</string>
+    <string name="late_keep">إبقاء المواعيد الأصلية</string>
+    <string name="late_keep_gap">تبقى الجرعة التالية عند %1$s (الفاصل %2$s)</string>
+    <string name="late_keep_fixed">تبقى الجرعات التالية كما خُطط لها. تُسجَّل هذه الجرعة كمتأخرة.</string>
+    <string name="late_always">افعل هذا دائماً. لا تسأل مرة أخرى.</string>
+    <string name="late_choose">اختر واحداً للمتابعة</string>
+    <string name="late_continue">متابعة</string>
+    <string name="gap_h_m">%1$s س %2$s د</string>
+    <string name="gap_h">%1$s س</string>
+    <string name="settings_late">عند تأخري عن جرعة</string>
+    <string name="late_value_ask">اسألني</string>
+    <string name="late_value_move">تأخير</string>
+    <string name="late_value_keep">إبقاء</string>
+    <string name="late_setting_title">عند تأخري عن جرعة</string>
+    <string name="late_ask">اسألني في كل مرة</string>
+    <string name="late_ask_sub">أختار بين تأخير الجرعات التالية أو إبقاء مواعيدي.</string>
+    <string name="late_suggested">مقترح</string>
+    <string name="late_move_next">تأخير الجرعات التالية</string>
+    <string name="late_move_next_sub">يُزاح بقية اليوم لتبقى الجرعات متباعدة بالتساوي.</string>
+    <string name="late_keep_times">إبقاء مواعيدي</string>
+    <string name="late_keep_times_sub">لا يتغير الجدول أبداً. تُسجَّل الجرعة المتأخرة فقط.</string>
+    <string name="late_threshold_caption">تُعدّ الجرعة متأخرة بعد</string>
+    <string name="late_threshold_hour">ساعة</string>
+    <string name="late_setting_note">الأدوية التي تحتاج فاصلاً ثابتاً، مثل كل 8 ساعات، تسألك دائماً أولاً.</string>
 </resources>
