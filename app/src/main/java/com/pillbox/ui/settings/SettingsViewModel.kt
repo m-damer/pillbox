@@ -47,10 +47,10 @@ class SettingsViewModel(
     fun setHighContrast(on: Boolean) = change { it.copy(highContrast = on) }
     fun setTheme(theme: ThemeChoice) = change { it.copy(theme = theme) }
 
-    fun setTone(tone: Tone) = remind { it.copy(tone = tone) }
-    fun setVibration(on: Boolean) = remind { it.copy(vibration = on) }
-    fun setRepeat(minutes: Int) = remind { it.copy(repeatMinutes = minutes) }
-    fun setKeepRinging(on: Boolean) = remind { it.copy(keepRinging = on) }
+    fun setTone(tone: Tone) = remind({ it.copy(tone = tone) })
+    fun setVibration(on: Boolean) = remind({ it.copy(vibration = on) })
+    fun setRepeat(minutes: Int) = remind({ it.copy(repeatMinutes = minutes) })
+    fun setKeepRinging(on: Boolean) = remind({ it.copy(keepRinging = on) })
     fun saveQuiet(q: QuietHours, onSaved: () -> Unit) = remind({ it.copy(quiet = q) }, onSaved)
     fun saveMeals(m: MealTimes, onSaved: () -> Unit) = remind({ it.copy(meals = m) }, onSaved)
 
