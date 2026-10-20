@@ -165,5 +165,52 @@
     "contrastMin": "4.5:1 for text",
     "colorNeverOnlySignal": true,
     "arabicTime": "digits then ص or م, with ص and م on the left (use a right-to-left isolate)"
+  },
+  "illustration": {
+    "$description": "Colors for drawings (medicine shapes, day bar, stock bar, avatars). Mirrors app/src/main/java/com/pillbox/ui/theme/Illustration.kt.",
+    "light": {
+      "tablet": "#2F6FED",
+      "capsule": "#E4572E",
+      "paused": "#8A90A8",
+      "stockLow": "#D98200",
+      "dayBar": {
+        "night": "#26304D",
+        "dusk": "#3B4A7A",
+        "sunrise": "#FFC970",
+        "sky": "#9ED3F5",
+        "sunsetOrange": "#FFB36B",
+        "sunsetPurple": "#7A5FD0"
+      },
+      "avatars": [
+        "#DDE1F5",
+        "#E3F4E8",
+        "#FFE4E0",
+        "#FFF1D6",
+        "#F0E8FF",
+        "#DDF0FF"
+      ]
+    },
+    "dark": {
+      "tablet": "#2F6FED",
+      "capsule": "#E4572E",
+      "paused": "#AEB5D3",
+      "stockLow": "#D98200",
+      "dayBar": {
+        "night": "#C5CCEE",
+        "dusk": "#B8C2F0",
+        "sunrise": "#FFC970",
+        "sky": "#9ED3F5",
+        "sunsetOrange": "#FFB36B",
+        "sunsetPurple": "#7A5FD0"
+      },
+      "avatars": [
+        "#2B3158",
+        "#1F3B2C",
+        "#4A2A2A",
+        "#4A3E22",
+        "#3A2E5A",
+        "#1F3A4F"
+      ]
+    }
   }
 }

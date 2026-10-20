@@ -583,7 +583,7 @@
     <string name="sound_vibration">Vibration</string>
     <string name="sound_unanswered">If I don\'t answer</string>
     <string name="sound_repeat_every">Remind me again every</string>
-    <string name="min_short">%1$s min</string>
+    <string name="min_short">%1$s min</string>
     <string name="sound_test">Play test sound</string>
     <string name="sound_volume_note">The loudness follows your phone\'s volume buttons.</string>
     <string name="acc_keep">Keep ringing until I answer</string>
@@ -630,8 +630,8 @@
     <string name="late_always">Always do this. Don\'t ask again.</string>
     <string name="late_choose">Choose one to continue</string>
     <string name="late_continue">Continue</string>
-    <string name="gap_h_m">%1$s h %2$s min</string>
-    <string name="gap_h">%1$s h</string>
+    <string name="gap_h_m">%1$s h %2$s min</string>
+    <string name="gap_h">%1$s h</string>
     <string name="settings_late">When I take a dose late</string>
     <string name="late_value_ask">Ask me</string>
     <string name="late_value_move">Move</string>
