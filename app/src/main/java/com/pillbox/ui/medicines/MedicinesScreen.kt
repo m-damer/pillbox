@@ -142,7 +142,7 @@ fun MedicinesContent(
                 item {
                     InfoNote(
                         pluralStringResource(R.plurals.meds_remind_note, state.remindDays, fmt.number(state.remindDays)),
-                        Icons.Filled.Notifications,
+                        com.pillbox.ui.components.DesignIcons.Bell,
                         onClick = onRefillAlert,
                     )
                 }
@@ -194,7 +194,7 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
                 Text(m.name, style = MaterialTheme.typography.titleMedium, color = c.text)
                 Text(sub, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
             }
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.textMuted)
+            Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.textMuted)
         }
         // Stock bar: the words under it carry the meaning, the color only supports them.
         Box(Modifier.fillMaxWidth().height(8.dp).background(c.divider, CircleShape)) {
@@ -316,7 +316,7 @@ private fun AddMedicineButton(onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
-        Icon(Icons.Filled.Add, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+        Icon(com.pillbox.ui.components.DesignIcons.Plus, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
         Box(Modifier.width(Space.S8))
         Text(stringResource(R.string.add_medicine), style = MaterialTheme.typography.labelLarge, color = c.accent)
     }
@@ -325,7 +325,7 @@ private fun AddMedicineButton(onClick: () -> Unit) {
 @Composable
 internal fun InfoNote(
     text: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Filled.Info,
+    icon: androidx.compose.ui.graphics.vector.ImageVector = com.pillbox.ui.components.DesignIcons.Info,
     /** When set, the whole note is a button (the refill note opens the Refill alert screen). */
     onClick: (() -> Unit)? = null,
 ) {
@@ -338,6 +338,6 @@ internal fun InfoNote(
     ) {
         Icon(icon, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
         Text(text, style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
-        if (onClick != null) Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+        if (onClick != null) Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
     }
 }

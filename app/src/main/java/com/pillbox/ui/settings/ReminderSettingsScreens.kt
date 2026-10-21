@@ -276,7 +276,7 @@ fun MealTimesContent(meals: MealTimes, fmt: Formatter, onBack: () -> Unit, onCha
     val tints = PillBox.illustration.avatars
     var picking by rememberSaveable { mutableStateOf(-1) }
     // The day filling up: a quarter, half, three quarters, then night.
-    val glyphs = listOf("◔", "◑", "◕", "☾")
+    val glyphs = listOf(com.pillbox.ui.components.DesignIcons.Utensils, com.pillbox.ui.components.DesignIcons.Utensils, com.pillbox.ui.components.DesignIcons.Utensils, com.pillbox.ui.components.DesignIcons.Moon)
     val rows = listOf(
         Triple(MealTimes.Meal.BREAKFAST, R.string.meal_breakfast, R.string.meal_breakfast_sub),
         Triple(MealTimes.Meal.LUNCH, R.string.meal_lunch, R.string.meal_lunch_sub),
@@ -301,7 +301,7 @@ fun MealTimesContent(meals: MealTimes, fmt: Formatter, onBack: () -> Unit, onCha
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
                     ) {
                         Box(Modifier.size(40.dp).background(tints[i], androidx.compose.foundation.shape.RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
-                            RowGlyph(glyphs[i], large = true)
+                            androidx.compose.material3.Icon(glyphs[i], contentDescription = null, tint = c.accent, modifier = Modifier.size(22.dp))
                         }
                         Column(Modifier.weight(1f)) {
                             Text(name, style = MaterialTheme.typography.labelLarge, color = c.text)
@@ -372,7 +372,7 @@ fun LateSettingContent(
                             Modifier.size(28.dp).background(if (on) c.primary else c.card, CircleShape)
                                 .border(Dimens.ChipBorder, if (on) c.primary else c.placeholder, CircleShape),
                             contentAlignment = Alignment.Center,
-                        ) { if (on) androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Filled.Check, null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
+                        ) { if (on) androidx.compose.material3.Icon(androidx.compose.material.icons.com.pillbox.ui.components.DesignIcons.Check, null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
                         Column(Modifier.weight(1f)) {
                             Text(stringResource(title), style = MaterialTheme.typography.labelLarge, color = c.text)
                             if (value == com.pillbox.domain.LateSetting.ASK) {

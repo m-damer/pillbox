@@ -89,7 +89,7 @@ fun NotRingingContent(state: PermissionState, onBack: () -> Unit, onFix: (RingFi
                 Modifier.fillMaxWidth().background(if (issues > 0) c.warningContainer else c.successContainer, MaterialTheme.shapes.large).padding(Space.S16),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
             ) {
-                Icon(if (issues > 0) Icons.Filled.Warning else Icons.Filled.Check, contentDescription = null, tint = if (issues > 0) c.warning else c.success, modifier = Modifier.size(28.dp))
+                Icon(if (issues > 0) com.pillbox.ui.components.DesignIcons.Warning else com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = if (issues > 0) c.warning else c.success, modifier = Modifier.size(28.dp))
                 Text(
                     if (issues > 0) pluralStringResource(R.plurals.ring_banner_fix, issues, rememberFormatter().number(issues)) else stringResource(R.string.ring_banner_ok),
                     style = MaterialTheme.typography.bodyLarge, color = if (issues > 0) c.warning else c.success, modifier = Modifier.weight(1f),
@@ -122,7 +122,7 @@ private fun RingRow(title: Int, sub: Int, ok: Boolean, onFix: () -> Unit) {
         }
         if (ok) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S4)) {
-                Icon(Icons.Filled.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(20.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(20.dp))
                 Text(stringResource(R.string.perm_allowed), style = MaterialTheme.typography.labelLarge, color = c.success)
             }
         } else {

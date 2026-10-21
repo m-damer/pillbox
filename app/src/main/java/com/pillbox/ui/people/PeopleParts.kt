@@ -56,7 +56,7 @@ fun Avatar(initials: String, colorIndex: Int, solid: Boolean, modifier: Modifier
     val bg = if (solid) c.primary else PillBox.illustration.avatars[PeopleRules.colorFor(colorIndex)]
     val fg = if (solid) c.onPrimary else c.accent
     Box(modifier.size(size).background(bg, CircleShape), contentAlignment = Alignment.Center) {
-        if (initials.isEmpty()) Icon(Icons.Filled.Person, contentDescription = null, tint = fg, modifier = Modifier.size(size / 2))
+        if (initials.isEmpty()) Icon(com.pillbox.ui.components.DesignIcons.Person, contentDescription = null, tint = fg, modifier = Modifier.size(size / 2))
         else Text(initials, style = MaterialTheme.typography.labelLarge, color = fg, maxLines = 1)
     }
 }
@@ -116,7 +116,7 @@ fun ViewingBanner(bar: PeopleBar?, modifier: Modifier = Modifier) {
         modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S12),
         horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.Top,
     ) {
-        Icon(Icons.Filled.Person, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+        Icon(com.pillbox.ui.components.DesignIcons.Person, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
         Text(
             stringResource(if (p.ring) R.string.viewing_banner else R.string.viewing_banner_off, p.name),
             style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f),

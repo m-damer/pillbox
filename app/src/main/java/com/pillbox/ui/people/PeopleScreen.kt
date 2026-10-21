@@ -185,7 +185,7 @@ private fun PersonCard(row: PersonRow, chip: PersonChip, active: Boolean, fmt: F
                 .clickable(role = Role.Button, onClick = onEdit)
                 .semantics { contentDescription = editDesc },
             contentAlignment = Alignment.Center,
-        ) { Icon(Icons.Filled.Edit, contentDescription = null, tint = c.accent, modifier = Modifier.size(20.dp)) }
+        ) { Icon(com.pillbox.ui.components.DesignIcons.Edit, contentDescription = null, tint = c.accent, modifier = Modifier.size(20.dp)) }
     }
 }
 
@@ -211,7 +211,7 @@ private fun AddPersonCard(onAdd: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(Space.S12),
     ) {
         Box(Modifier.size(48.dp).background(c.primaryContainer, CircleShape), contentAlignment = Alignment.Center) {
-            Icon(Icons.Filled.Add, contentDescription = null, tint = c.accent)
+            Icon(com.pillbox.ui.components.DesignIcons.Plus, contentDescription = null, tint = c.accent)
         }
         Text(stringResource(R.string.people_add), style = MaterialTheme.typography.labelLarge, color = c.accent)
     }
@@ -224,7 +224,7 @@ private fun Note(text: String) {
         Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S16),
         horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.Top,
     ) {
-        Icon(Icons.Filled.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+        Icon(com.pillbox.ui.components.DesignIcons.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
         Text(text, style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
     }
 }

@@ -279,7 +279,7 @@ private fun LowStockStrip(item: LowStock, onClick: () -> Unit) {
         PillIcon(item.unit, null, 26.dp)
         Text(text, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
         Text(label, style = MaterialTheme.typography.labelMedium, color = c.warning)
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
+        Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
     }
 }
 
@@ -358,7 +358,7 @@ private fun RemindersOffBanner(onFix: () -> Unit) {
             .padding(Space.S12),
         horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(24.dp))
+        Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(24.dp))
         Column(Modifier.weight(1f)) {
             Text(stringResource(R.string.banner_off_title), style = MaterialTheme.typography.labelLarge, color = c.warning)
             Text(stringResource(R.string.banner_off_body), style = MaterialTheme.typography.bodySmall, color = c.warning)
@@ -420,7 +420,7 @@ private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) 
                 Modifier.fillMaxWidth().background(c.warningContainer, MaterialTheme.shapes.medium).padding(Space.S12),
                 horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top,
             ) {
-                Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(20.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(20.dp))
                 Text(stringResourceIso(R.string.late_banner, timeText), style = MaterialTheme.typography.labelMedium, color = c.warning)
             }
         }
@@ -468,6 +468,18 @@ internal fun foodText(f: WithFood): String? = when (f) {
     WithFood.BEFORE_MEAL -> stringResource(R.string.food_line_before)
     WithFood.WITH_MEAL -> stringResource(R.string.food_line_with)
     WithFood.AFTER_MEAL -> stringResource(R.string.food_line_after)
+}
+
+/** "After breakfast" for the daily plan: the food rule worded with the meal nearest [time]; the plain wording when no meal is near. */
+@Composable
+internal fun foodTextFor(f: WithFood, time: java.time.LocalTime, meals: com.pillbox.domain.MealTimes): String? {
+    val meal = meals.mealFor(f, time) ?: return foodText(f)
+    val id = if (meal == com.pillbox.domain.MealTimes.Meal.BEDTIME) R.string.food_snack else when (f) {
+        WithFood.BEFORE_MEAL -> when (meal) { com.pillbox.domain.MealTimes.Meal.BREAKFAST -> R.string.food_before_breakfast; com.pillbox.domain.MealTimes.Meal.LUNCH -> R.string.food_before_lunch; else -> R.string.food_before_dinner }
+        WithFood.WITH_MEAL -> when (meal) { com.pillbox.domain.MealTimes.Meal.BREAKFAST -> R.string.food_with_breakfast; com.pillbox.domain.MealTimes.Meal.LUNCH -> R.string.food_with_lunch; else -> R.string.food_with_dinner }
+        else -> when (meal) { com.pillbox.domain.MealTimes.Meal.BREAKFAST -> R.string.food_after_breakfast; com.pillbox.domain.MealTimes.Meal.LUNCH -> R.string.food_after_lunch; else -> R.string.food_after_dinner }
+    }
+    return stringResource(id)
 }
 
 @Composable
@@ -522,17 +534,17 @@ private fun DoseRowItem(
     val trailing: @Composable () -> Unit = {
         when {
             status == RowStatus.TAKEN -> Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.Check, contentDescription = null, tint = c.textMuted, modifier = Modifier.size(18.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.textMuted, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(Space.S4))
                 Text(fmt.time(row.event?.taken?.toLocalTime() ?: row.planned.toLocalTime()), style = MaterialTheme.typography.labelLarge, color = c.textMuted)
             }
             skipped -> Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.Close, contentDescription = null, tint = c.danger, modifier = Modifier.size(18.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Close, contentDescription = null, tint = c.danger, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(Space.S4))
                 Text(stringResource(R.string.skipped), style = MaterialTheme.typography.labelLarge, color = c.danger)
             }
             row.missed && !actionable -> Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.Info, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Info, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(Space.S4))
                 Text(stringResource(R.string.missed), style = MaterialTheme.typography.labelLarge, color = c.warning)
             }
@@ -581,7 +593,7 @@ private fun InfoNote(text: String) {
         Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S12),
         horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.Top,
     ) {
-        Icon(Icons.Filled.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+        Icon(com.pillbox.ui.components.DesignIcons.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
         Text(text, style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
     }
 }

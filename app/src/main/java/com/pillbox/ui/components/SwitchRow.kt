@@ -43,7 +43,7 @@ fun SwitchRow(title: String, checked: Boolean, onChange: (Boolean) -> Unit, modi
         }
         Switch(
             checked = checked, onCheckedChange = null,
-            thumbContent = if (checked) { { Icon(Icons.Filled.Check, contentDescription = null, modifier = Modifier.size(16.dp)) } } else null,
+            thumbContent = if (checked) { { Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, modifier = Modifier.size(16.dp)) } } else null,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = c.card, checkedTrackColor = c.primary, checkedIconColor = c.primary,
                 uncheckedThumbColor = c.card, uncheckedTrackColor = c.placeholder, uncheckedBorderColor = c.placeholder,

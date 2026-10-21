@@ -116,7 +116,7 @@ fun PBChip(label: String, selected: Boolean, onClick: () -> Unit, modifier: Modi
         horizontalArrangement = Arrangement.Center,
     ) {
         if (selected) {
-            Icon(Icons.Filled.Check, contentDescription = null, tint = colors.onPrimary, modifier = Modifier.size(18.dp))
+            Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = colors.onPrimary, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(Space.S6))
         }
         Text(label, style = MaterialTheme.typography.labelLarge, color = if (selected) colors.onPrimary else colors.text)
@@ -302,9 +302,9 @@ fun MessageDialog(
 ) {
     val colors = PillBox.colors
     val (bg, fg, kindIcon) = when (kind) {
-        DialogKind.Success -> Triple(colors.successContainer, colors.success, Icons.Filled.Check)
-        DialogKind.Warning -> Triple(colors.warningContainer, colors.warning, Icons.Filled.Warning)
-        DialogKind.Danger -> Triple(colors.dangerContainer, colors.danger, Icons.Filled.Warning)
+        DialogKind.Success -> Triple(colors.successContainer, colors.success, com.pillbox.ui.components.DesignIcons.Check)
+        DialogKind.Warning -> Triple(colors.warningContainer, colors.warning, com.pillbox.ui.components.DesignIcons.Warning)
+        DialogKind.Danger -> Triple(colors.dangerContainer, colors.danger, com.pillbox.ui.components.DesignIcons.Warning)
     }
     Dialog(onDismissRequest = onDismiss) {
         Column(
@@ -349,7 +349,7 @@ fun StepHeader(title: String, subtitle: String, step: Int, steps: Int, backLabel
                     .semantics { contentDescription = backLabel; role = Role.Button }
                     .clickable(onClick = onBack),
                 contentAlignment = Alignment.Center,
-            ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = colors.text) }
+            ) { Icon(com.pillbox.ui.components.DesignIcons.Back, contentDescription = null, tint = colors.text) }
             Column(Modifier.weight(1f)) {
                 Text(title, style = MaterialTheme.typography.titleLarge, color = colors.text, modifier = Modifier.semantics { heading() })
                 Text(subtitle, style = MaterialTheme.typography.bodySmall, color = colors.textMuted)

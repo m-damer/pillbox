@@ -162,15 +162,15 @@ fun AboutContent(version: String, host: SnackbarHostState, onBack: () -> Unit, o
                     Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.large).padding(Space.S16),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
                 ) {
-                    Icon(Icons.Filled.Lock, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+                    Icon(com.pillbox.ui.components.DesignIcons.Lock, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
                     Text(stringResource(R.string.ab_privacy_short), style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
                 }
                 Card {
-                    AboutRow(stringResource(R.string.ab_privacy), Icons.Filled.Lock, onPrivacy)
+                    AboutRow(stringResource(R.string.ab_privacy), com.pillbox.ui.components.DesignIcons.Lock, onPrivacy)
                     Divider()
-                    AboutRow(stringResource(R.string.ab_terms), Icons.Filled.Info, onTerms)
+                    AboutRow(stringResource(R.string.ab_terms), com.pillbox.ui.components.DesignIcons.Info, onTerms)
                     Divider()
-                    AboutRow(stringResource(R.string.ab_feedback), Icons.Filled.Email, onFeedback)
+                    AboutRow(stringResource(R.string.ab_feedback), com.pillbox.ui.components.DesignIcons.Mail, onFeedback)
                     Divider()
                     AboutRow(stringResource(R.string.ab_rate), StarOutline, onRate)
                 }
@@ -203,7 +203,7 @@ private fun AboutRow(title: String, icon: ImageVector, onClick: () -> Unit, dang
             Icon(icon, contentDescription = null, tint = if (danger) c.danger else c.accent)
         }
         Text(title, style = MaterialTheme.typography.labelLarge, color = if (danger) c.danger else c.text, modifier = Modifier.weight(1f))
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.textMuted)
+        Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.textMuted)
     }
 }
 
@@ -244,13 +244,13 @@ private fun LegalPage(title: String, updated: String, blocks: List<Block>, onBac
 fun PrivacyPolicyContent(onBack: () -> Unit, onDelete: () -> Unit, onClose: () -> Unit, showDelete: Boolean = true) {
     val c = PillBox.colors
     val blocks = listOf(
-        Block(Icons.Filled.Lock, R.string.pp_1_title, R.string.pp_1_body, { c.primaryContainer }, { c.accent }),
-        Block(Icons.Filled.Share, R.string.pp_2_title, R.string.pp_2_body, { c.successContainer }, { c.success }),
-        Block(Icons.Filled.Person, R.string.pp_3_title, R.string.pp_3_body, { c.primaryContainer }, { c.accent }),
-        Block(Icons.Filled.Check, R.string.pp_4_title, R.string.pp_4_body, { c.successContainer }, { c.success }),
+        Block(com.pillbox.ui.components.DesignIcons.Lock, R.string.pp_1_title, R.string.pp_1_body, { c.primaryContainer }, { c.accent }),
+        Block(com.pillbox.ui.components.DesignIcons.Share, R.string.pp_2_title, R.string.pp_2_body, { c.successContainer }, { c.success }),
+        Block(com.pillbox.ui.components.DesignIcons.Person, R.string.pp_3_title, R.string.pp_3_body, { c.primaryContainer }, { c.accent }),
+        Block(com.pillbox.ui.components.DesignIcons.Check, R.string.pp_4_title, R.string.pp_4_body, { c.successContainer }, { c.success }),
     )
     LegalPage(stringResource(R.string.pp_title), stringResource(R.string.legal_updated), blocks, onBack) {
-        if (showDelete) Card { AboutRow(stringResource(R.string.bk_delete), Icons.Filled.Delete, onDelete, danger = true) }
+        if (showDelete) Card { AboutRow(stringResource(R.string.bk_delete), com.pillbox.ui.components.DesignIcons.Trash, onDelete, danger = true) }
         OutlineButton(stringResource(R.string.pp_close), onClose)
     }
 }
@@ -259,10 +259,10 @@ fun PrivacyPolicyContent(onBack: () -> Unit, onDelete: () -> Unit, onClose: () -
 fun TermsContent(onBack: () -> Unit, onDone: () -> Unit) {
     val c = PillBox.colors
     val blocks = listOf(
-        Block(Icons.Filled.Info, R.string.tm_1_title, R.string.tm_1_body, { c.primaryContainer }, { c.accent }),
-        Block(Icons.Filled.Warning, R.string.tm_2_title, R.string.tm_2_body, { c.warningContainer }, { c.warning }),
-        Block(Icons.Filled.Check, R.string.tm_3_title, R.string.tm_3_body, { c.successContainer }, { c.success }),
-        Block(Icons.Filled.Person, R.string.tm_4_title, R.string.tm_4_body, { c.primaryContainer }, { c.accent }),
+        Block(com.pillbox.ui.components.DesignIcons.Info, R.string.tm_1_title, R.string.tm_1_body, { c.primaryContainer }, { c.accent }),
+        Block(com.pillbox.ui.components.DesignIcons.Warning, R.string.tm_2_title, R.string.tm_2_body, { c.warningContainer }, { c.warning }),
+        Block(com.pillbox.ui.components.DesignIcons.Check, R.string.tm_3_title, R.string.tm_3_body, { c.successContainer }, { c.success }),
+        Block(com.pillbox.ui.components.DesignIcons.Person, R.string.tm_4_title, R.string.tm_4_body, { c.primaryContainer }, { c.accent }),
     )
     LegalPage(stringResource(R.string.tm_title), stringResource(R.string.legal_updated), blocks, onBack) {
         PrimaryButton(stringResource(R.string.tm_ok), onDone)
@@ -336,20 +336,20 @@ fun FeedbackContent(
                 value = email, onValueChange = onEmail, textStyle = MaterialTheme.typography.bodyLarge, singleLine = true, shape = MaterialTheme.shapes.large, colors = fieldColors(),
                 isError = emailCheck != EmailCheck.OK,
                 placeholder = { Text(stringResource(R.string.fb_email), style = MaterialTheme.typography.bodyLarge) },
-                leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) },
+                leadingIcon = { Icon(com.pillbox.ui.components.DesignIcons.Mail, contentDescription = null) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth().heightIn(min = Dimens.StepperButton),
             )
             OutlinedTextField(
                 value = phone, onValueChange = onPhone, textStyle = MaterialTheme.typography.bodyLarge, singleLine = true, shape = MaterialTheme.shapes.large, colors = fieldColors(),
                 placeholder = { Text(stringResource(R.string.fb_phone), style = MaterialTheme.typography.bodyLarge) },
-                leadingIcon = { Icon(Icons.Filled.Phone, contentDescription = null) },
+                leadingIcon = { Icon(com.pillbox.ui.components.DesignIcons.Phone, contentDescription = null) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                 modifier = Modifier.fillMaxWidth().heightIn(min = Dimens.StepperButton),
             )
             if (emailCheck != EmailCheck.OK) {
                 Row(horizontalArrangement = Arrangement.spacedBy(Space.S8), modifier = Modifier.semantics(mergeDescendants = true) {}) {
-                    Icon(Icons.Filled.Warning, contentDescription = null, tint = c.danger, modifier = Modifier.size(20.dp))
+                    Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.danger, modifier = Modifier.size(20.dp))
                     Text(
                         stringResource(if (emailCheck == EmailCheck.EMPTY) R.string.fb_email_missing else R.string.fb_email_invalid),
                         style = MaterialTheme.typography.bodyMedium, color = c.danger,
@@ -412,7 +412,7 @@ fun RateContent(stars: Int, onStars: (Int) -> Unit, onBack: () -> Unit, onWriteF
                         Modifier.size(Dimens.TouchTargetMin + Space.S4).selectable(selected = stars == i, role = Role.RadioButton, onClick = { onStars(i) }).semantics { contentDescription = label },
                         contentAlignment = Alignment.Center,
                     ) {
-                        Icon(if (i <= stars) Icons.Filled.Star else StarOutline, contentDescription = null, tint = if (i <= stars) c.star else c.textMuted, modifier = Modifier.size(Dimens.StarSize))
+                        Icon(if (i <= stars) com.pillbox.ui.components.DesignIcons.Star else StarOutline, contentDescription = null, tint = if (i <= stars) c.star else c.textMuted, modifier = Modifier.size(Dimens.StarSize))
                     }
                 }
             }
@@ -434,7 +434,7 @@ fun RateContent(stars: Int, onStars: (Int) -> Unit, onBack: () -> Unit, onWriteF
 
 @Composable
 fun CrashReportDialog(onSend: () -> Unit, onSkip: () -> Unit) {
-    MessageDialog(DialogKind.Warning, stringResource(R.string.cr_title), stringResource(R.string.cr_body), onDismiss = onSkip, icon = Icons.Filled.Warning) {
+    MessageDialog(DialogKind.Warning, stringResource(R.string.cr_title), stringResource(R.string.cr_body), onDismiss = onSkip, icon = com.pillbox.ui.components.DesignIcons.Warning) {
         Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
             PrimaryButton(stringResource(R.string.cr_open_mail), onSend)
             OutlineButton(stringResource(R.string.cr_skip), onSkip)

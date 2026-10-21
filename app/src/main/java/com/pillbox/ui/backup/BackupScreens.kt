@@ -149,7 +149,7 @@ fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onRestore: () -> Unit,
         DriveConnectDialog(onChoose = { askDrive = false; vm.connectDrive() }, onNotNow = { askDrive = false })
     }
     if (stopDrive) {
-        MessageDialog(DialogKind.Warning, stringResource(R.string.dr_disconnect_title), stringResource(R.string.dr_disconnect_body), onDismiss = { stopDrive = false }, icon = Icons.Filled.Info) {
+        MessageDialog(DialogKind.Warning, stringResource(R.string.dr_disconnect_title), stringResource(R.string.dr_disconnect_body), onDismiss = { stopDrive = false }, icon = com.pillbox.ui.components.DesignIcons.Info) {
             Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
                 PrimaryButton(stringResource(R.string.dr_keep), { stopDrive = false })
                 OutlineButton(stringResource(R.string.dr_disconnect), { stopDrive = false; vm.disconnectDrive() })
@@ -160,7 +160,7 @@ fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onRestore: () -> Unit,
         MessageDialog(
             DialogKind.Danger, stringResource(R.string.dr_failed_title),
             stringResource(when (p) { DriveProblem.NO_INTERNET -> R.string.dr_failed_net; DriveProblem.SIGN_IN -> R.string.dr_failed_signin; else -> R.string.dr_failed_other }),
-            onDismiss = { driveProblem = null }, icon = Icons.Filled.Warning,
+            onDismiss = { driveProblem = null }, icon = com.pillbox.ui.components.DesignIcons.Warning,
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
                 PrimaryButton(stringResource(R.string.bk_try_again), { driveProblem = null; vm.saveNow() })
@@ -199,7 +199,7 @@ fun BackupContent(
             ) {
                 Card {
                     Row(Modifier.fillMaxWidth().padding(Space.S12), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12)) {
-                        Tile(c.successContainer) { Icon(Icons.Filled.Check, contentDescription = null, tint = c.success) }
+                        Tile(c.successContainer) { Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.success) }
                         Column(Modifier.weight(1f)) {
                             val at = s.lastSuccessAt
                             if (at != null) {
@@ -242,7 +242,7 @@ fun BackupContent(
                         Modifier.fillMaxWidth().background(c.successContainer, MaterialTheme.shapes.large).padding(Space.S16),
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
                     ) {
-                        Icon(Icons.Filled.Lock, contentDescription = null, tint = c.success, modifier = Modifier.size(28.dp))
+                        Icon(com.pillbox.ui.components.DesignIcons.Lock, contentDescription = null, tint = c.success, modifier = Modifier.size(28.dp))
                         Text(stringResource(R.string.dr_private), style = MaterialTheme.typography.bodyMedium, color = c.success, modifier = Modifier.weight(1f))
                     }
                 } else {
@@ -250,7 +250,7 @@ fun BackupContent(
                         Modifier.fillMaxWidth().background(c.warningContainer, MaterialTheme.shapes.large).padding(Space.S16),
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
                     ) {
-                        Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(28.dp))
+                        Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(28.dp))
                         Text(stringResource(R.string.bk_warn_phone_only), style = MaterialTheme.typography.bodyMedium, color = c.warning, modifier = Modifier.weight(1f))
                     }
                 }
@@ -258,13 +258,13 @@ fun BackupContent(
                 Column {
                     Caption(stringResource(R.string.bk_sec_more))
                     Card {
-                        BackupRow(stringResource(R.string.bk_share), stringResource(R.string.bk_share_sub), onShare) { Icon(Icons.Filled.Share, contentDescription = null, tint = c.accent) }
+                        BackupRow(stringResource(R.string.bk_share), stringResource(R.string.bk_share_sub), onShare) { Icon(com.pillbox.ui.components.DesignIcons.Share, contentDescription = null, tint = c.accent) }
                         RowDivider()
-                        BackupRow(stringResource(R.string.bk_restore), stringResource(R.string.bk_restore_sub), onRestore) { Icon(Icons.Filled.Refresh, contentDescription = null, tint = c.accent) }
+                        BackupRow(stringResource(R.string.bk_restore), stringResource(R.string.bk_restore_sub), onRestore) { Icon(com.pillbox.ui.components.DesignIcons.Refresh, contentDescription = null, tint = c.accent) }
                     }
                 }
                 Card {
-                    BackupRow(stringResource(R.string.bk_delete), null, onDelete, danger = true, tile = c.dangerContainer) { Icon(Icons.Filled.Delete, contentDescription = null, tint = c.danger) }
+                    BackupRow(stringResource(R.string.bk_delete), null, onDelete, danger = true, tile = c.dangerContainer) { Icon(com.pillbox.ui.components.DesignIcons.Trash, contentDescription = null, tint = c.danger) }
                 }
             }
         }
@@ -298,7 +298,7 @@ private fun BackupRow(title: String, subtitle: String?, onClick: () -> Unit, dan
             Text(title, style = MaterialTheme.typography.labelLarge, color = if (danger) c.danger else c.text)
             if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
         }
-        if (!danger) Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.textMuted)
+        if (!danger) Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.textMuted)
     }
 }
 
@@ -315,7 +315,7 @@ fun BackupFailedContent(s: BackupSettings, fmt: Formatter, today: LocalDate, bus
                 Modifier.fillMaxWidth().background(c.dangerContainer, MaterialTheme.shapes.large).padding(Space.S16),
                 horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.Top,
             ) {
-                Icon(Icons.Filled.Warning, contentDescription = null, tint = c.danger, modifier = Modifier.size(28.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.danger, modifier = Modifier.size(28.dp))
                 Column(Modifier.weight(1f).semantics(mergeDescendants = true) {}) {
                     Text(stringResource(R.string.bk_failed_title), style = MaterialTheme.typography.labelLarge, color = c.danger)
                     Text(stringResource(if (space) R.string.bk_failed_space else R.string.bk_failed_other), style = MaterialTheme.typography.bodyMedium, color = c.danger)
@@ -356,7 +356,7 @@ private fun dayOnly(at: LocalDateTime, today: LocalDate, fmt: Formatter): String
 
 @Composable
 fun DriveConnectDialog(onChoose: () -> Unit, onNotNow: () -> Unit) {
-    MessageDialog(DialogKind.Success, stringResource(R.string.dr_connect_title), stringResource(R.string.dr_connect_body), onDismiss = onNotNow, icon = Icons.Filled.Lock) {
+    MessageDialog(DialogKind.Success, stringResource(R.string.dr_connect_title), stringResource(R.string.dr_connect_body), onDismiss = onNotNow, icon = com.pillbox.ui.components.DesignIcons.Lock) {
         Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
             PrimaryButton(stringResource(R.string.dr_choose_account), onChoose)
             OutlineButton(stringResource(R.string.dr_not_now), onNotNow)
@@ -383,7 +383,7 @@ fun FolderUnavailableDialog(label: String?, onChoose: () -> Unit, onLater: () ->
 fun DeleteAllDialog(onKeep: () -> Unit, onDelete: () -> Unit) {
     var understood by rememberSaveable { mutableStateOf(false) }
     val c = PillBox.colors
-    MessageDialog(DialogKind.Danger, stringResource(R.string.da_title), stringResource(R.string.da_body), onKeep, icon = Icons.Filled.Delete) {
+    MessageDialog(DialogKind.Danger, stringResource(R.string.da_title), stringResource(R.string.da_body), onKeep, icon = com.pillbox.ui.components.DesignIcons.Trash) {
         Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
             Row(
                 Modifier.fillMaxWidth().heightIn(min = Dimens.TouchTargetMin)
@@ -409,7 +409,7 @@ fun DeleteDoneContent(onStartAgain: () -> Unit, onRestore: () -> Unit) {
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) {
         Column(Modifier.weight(1f).fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
             Box(Modifier.size(80.dp).background(c.primaryContainer, androidx.compose.foundation.shape.CircleShape), contentAlignment = Alignment.Center) {
-                Icon(Icons.Filled.Delete, contentDescription = null, tint = c.textMuted, modifier = Modifier.size(36.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Trash, contentDescription = null, tint = c.textMuted, modifier = Modifier.size(36.dp))
             }
             Text(
                 stringResource(R.string.da_done_title), style = MaterialTheme.typography.headlineSmall, color = c.text, textAlign = TextAlign.Center,
@@ -446,7 +446,7 @@ fun RestoreScreen(vm: BackupViewModel, onBack: () -> Unit, onSetUpReminders: () 
         RestoreState.DriveOffline -> RestoreErrorContent(onBack, onAnother = choose, body = R.string.rs_drive_offline_body, safe = R.string.rs_err_safe, title = R.string.rs_drive_offline_title)
         RestoreState.Newer -> {
             RestoreIntroContent(onBack, choose, busy = false, onDrive = vm::startDriveRestore)
-            MessageDialog(DialogKind.Warning, stringResource(R.string.rs_newer_title), stringResource(R.string.rs_newer_body), onDismiss = vm::startRestore, icon = Icons.Filled.Info) {
+            MessageDialog(DialogKind.Warning, stringResource(R.string.rs_newer_title), stringResource(R.string.rs_newer_body), onDismiss = vm::startRestore, icon = com.pillbox.ui.components.DesignIcons.Info) {
                 Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
                     PrimaryButton(stringResource(R.string.rs_ok), vm::startRestore)
                     OutlineButton(stringResource(R.string.rs_another), choose)
@@ -464,7 +464,7 @@ fun RestoreIntroContent(onBack: () -> Unit, onChoose: () -> Unit, busy: Boolean 
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH), verticalArrangement = Arrangement.spacedBy(Dimens.CardGap)) {
             Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S20), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Space.S8)) {
                 Box(Modifier.size(64.dp).background(c.primaryContainer, androidx.compose.foundation.shape.CircleShape), contentAlignment = Alignment.Center) {
-                    Icon(Icons.Filled.Refresh, contentDescription = null, tint = c.accent, modifier = Modifier.size(28.dp))
+                    Icon(com.pillbox.ui.components.DesignIcons.Refresh, contentDescription = null, tint = c.accent, modifier = Modifier.size(28.dp))
                 }
                 Text(stringResource(R.string.rs_choose_title), style = MaterialTheme.typography.titleMedium, color = c.text, textAlign = TextAlign.Center, modifier = Modifier.semantics { heading() })
                 Text(stringResource(R.string.rs_choose_body), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.Center)
@@ -473,7 +473,7 @@ fun RestoreIntroContent(onBack: () -> Unit, onChoose: () -> Unit, busy: Boolean 
                 Modifier.fillMaxWidth().background(c.warningContainer, MaterialTheme.shapes.large).padding(Space.S16),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
             ) {
-                Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(28.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(28.dp))
                 Text(stringResource(R.string.rs_warn_replace), style = MaterialTheme.typography.bodyMedium, color = c.warning, modifier = Modifier.weight(1f))
             }
         }
@@ -493,7 +493,7 @@ fun RestoreConfirmContent(s: RestoreState.Confirm, fmt: Formatter, today: LocalD
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH), verticalArrangement = Arrangement.spacedBy(Dimens.CardGap)) {
             Card {
                 Row(Modifier.fillMaxWidth().padding(Space.S12), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12)) {
-                    Tile(c.successContainer) { Icon(Icons.Filled.Check, contentDescription = null, tint = c.success) }
+                    Tile(c.successContainer) { Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.success) }
                     Column(Modifier.weight(1f)) {
                         if (s.fileName.isNotEmpty()) Text(s.fileName, style = MaterialTheme.typography.labelLarge, color = c.text)
                         s.savedAt?.let { Text(stringResourceIso(R.string.rs_saved, whenText(it, today, fmt)), style = MaterialTheme.typography.bodyMedium, color = c.textMuted) }
@@ -510,7 +510,7 @@ fun RestoreConfirmContent(s: RestoreState.Confirm, fmt: Formatter, today: LocalD
                 Modifier.fillMaxWidth().background(c.warningContainer, MaterialTheme.shapes.large).padding(Space.S16),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
             ) {
-                Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(28.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(28.dp))
                 Text(stringResource(R.string.rs_warn_confirm), style = MaterialTheme.typography.bodyMedium, color = c.warning, modifier = Modifier.weight(1f))
             }
         }
@@ -540,7 +540,7 @@ fun RestoreDoneContent(summary: BackupSummary, fmt: Formatter, onSetUpReminders:
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) {
         Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
             Box(Modifier.size(80.dp).background(c.successContainer, androidx.compose.foundation.shape.CircleShape), contentAlignment = Alignment.Center) {
-                Icon(Icons.Filled.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(40.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(40.dp))
             }
             Text(
                 stringResource(R.string.rs_done_title), style = MaterialTheme.typography.headlineSmall, color = c.text, textAlign = TextAlign.Center,
@@ -559,7 +559,7 @@ fun RestoreDoneContent(summary: BackupSummary, fmt: Formatter, onSetUpReminders:
                 Modifier.padding(top = Space.S16).fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S12),
                 horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.Top,
             ) {
-                Icon(Icons.Filled.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
                 Text(stringResource(R.string.rs_remind_note), style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
             }
         }
@@ -580,7 +580,7 @@ fun RestoreErrorContent(onBack: () -> Unit, onAnother: () -> Unit, title: Int, b
                 Modifier.fillMaxWidth().background(c.dangerContainer, MaterialTheme.shapes.large).padding(Space.S16),
                 horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.Top,
             ) {
-                Icon(Icons.Filled.Warning, contentDescription = null, tint = c.danger, modifier = Modifier.size(28.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.danger, modifier = Modifier.size(28.dp))
                 Column(Modifier.weight(1f).semantics(mergeDescendants = true) {}) {
                     Text(stringResource(title), style = MaterialTheme.typography.labelLarge, color = c.danger)
                     Text(stringResource(body), style = MaterialTheme.typography.bodyMedium, color = c.danger)
@@ -590,7 +590,7 @@ fun RestoreErrorContent(onBack: () -> Unit, onAnother: () -> Unit, title: Int, b
                 Modifier.fillMaxWidth().background(c.successContainer, MaterialTheme.shapes.medium).padding(Space.S12),
                 horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(Icons.Filled.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(24.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(24.dp))
                 Text(stringResource(safe), style = MaterialTheme.typography.bodyMedium, color = c.success, modifier = Modifier.weight(1f))
             }
         }

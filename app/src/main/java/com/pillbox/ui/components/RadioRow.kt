@@ -47,6 +47,6 @@ fun RadioRow(title: String, selected: Boolean, onClick: () -> Unit, modifier: Mo
         Box(
             Modifier.size(28.dp).then(if (selected) Modifier.background(c.primary, CircleShape) else Modifier.border(2.dp, c.border, CircleShape)),
             contentAlignment = Alignment.Center,
-        ) { if (selected) Icon(Icons.Filled.Check, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
+        ) { if (selected) Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
     }
 }

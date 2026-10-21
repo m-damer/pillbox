@@ -103,7 +103,7 @@ fun RefillAlertContent(
             Box(
                 Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = leave),
                 contentAlignment = Alignment.Center,
-            ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = c.text) }
+            ) { Icon(com.pillbox.ui.components.DesignIcons.Back, contentDescription = stringResource(R.string.back), tint = c.text) }
             Text(
                 stringResource(R.string.refill_title), style = MaterialTheme.typography.titleLarge, color = c.text,
                 modifier = Modifier.weight(1f).semantics { heading() },
@@ -150,7 +150,7 @@ fun RefillAlertContent(
                     }
                     Switch(
                         checked = s.includePeople, onCheckedChange = null,
-                        thumbContent = if (s.includePeople) { { Icon(Icons.Filled.Check, contentDescription = null, modifier = Modifier.size(16.dp)) } } else null,
+                        thumbContent = if (s.includePeople) { { Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, modifier = Modifier.size(16.dp)) } } else null,
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = c.card, checkedTrackColor = c.primary, checkedIconColor = c.primary,
                             uncheckedThumbColor = c.card, uncheckedTrackColor = c.placeholder, uncheckedBorderColor = c.placeholder,

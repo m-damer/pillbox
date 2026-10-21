@@ -106,7 +106,7 @@ fun PrnContent(
             Box(
                 Modifier.size(Dimens.TouchTargetMin).semantics { contentDescription = backLabel; role = Role.Button }.clickable(onClick = onBack),
                 contentAlignment = Alignment.Center,
-            ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = c.text) }
+            ) { Icon(com.pillbox.ui.components.DesignIcons.Back, contentDescription = null, tint = c.text) }
             Column(Modifier.weight(1f)) {
                 Text(stringResourceIso(R.string.prn_title, m.name), style = MaterialTheme.typography.titleLarge, color = c.text, modifier = Modifier.semantics { heading() })
                 Text(
@@ -125,7 +125,7 @@ fun PrnContent(
                     Modifier.fillMaxWidth().background(c.dangerContainer, MaterialTheme.shapes.medium).padding(Space.S12),
                     horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top,
                 ) {
-                    Icon(Icons.Filled.Warning, contentDescription = null, tint = c.danger, modifier = Modifier.size(20.dp))
+                    Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.danger, modifier = Modifier.size(20.dp))
                     Text(
                         stringResourceIso(R.string.prn_limit_body, pluralStringResource(R.plurals.n_doses, day.max ?: day.count, fmt.number(day.max ?: day.count)), nextText(day, fmt)),
                         style = MaterialTheme.typography.bodyMedium, color = c.danger,
@@ -136,7 +136,7 @@ fun PrnContent(
                     Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S12),
                     horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top,
                 ) {
-                    Icon(Icons.Filled.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(20.dp))
+                    Icon(com.pillbox.ui.components.DesignIcons.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(20.dp))
                     Text(
                         stringResourceIso(R.string.prn_next_allowed, nextText(day, fmt), hoursText(day.minGapMinutes, fmt)),
                         style = MaterialTheme.typography.bodyMedium, color = c.accent,

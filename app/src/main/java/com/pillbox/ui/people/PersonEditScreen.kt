@@ -104,7 +104,7 @@ fun PersonEditContent(
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Row(Modifier.fillMaxWidth().padding(horizontal = Space.S8), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onBack), contentAlignment = Alignment.Center) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = c.text)
+                Icon(com.pillbox.ui.components.DesignIcons.Back, contentDescription = stringResource(R.string.back), tint = c.text)
             }
             Text(title, style = MaterialTheme.typography.titleLarge, color = c.text, modifier = Modifier.weight(1f).semantics { heading() })
         }
@@ -131,7 +131,7 @@ fun PersonEditContent(
                     Modifier.padding(top = Space.S12).fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S12),
                     horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.Top,
                 ) {
-                    Icon(Icons.Filled.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+                    Icon(com.pillbox.ui.components.DesignIcons.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
                     Text(stringResource(R.string.profile_note), style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
                 }
                 FieldLabel(stringResource(R.string.profile_birth))
@@ -195,7 +195,7 @@ private fun ColorRow(selected: Int, onColor: (Int) -> Unit) {
                     .selectable(selected = on, role = Role.RadioButton, onClick = { onColor(i) })
                     .semantics { contentDescription = names[i] },
                 contentAlignment = Alignment.Center,
-            ) { if (on) Icon(Icons.Filled.Check, contentDescription = null, tint = c.accent, modifier = Modifier.size(20.dp)) }
+            ) { if (on) Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.accent, modifier = Modifier.size(20.dp)) }
         }
     }
 }
