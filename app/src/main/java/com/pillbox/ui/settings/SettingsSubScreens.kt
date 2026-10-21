@@ -107,9 +107,8 @@ fun AccessibilityScreen(vm: SettingsViewModel, onBack: () -> Unit, onOpenSimple:
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     val savedTitle = stringResource(R.string.toast_setting_saved_title)
-    val savedBody = stringResource(R.string.toast_setting_saved_body)
     var changes by remember { mutableStateOf(0) }
-    LaunchedEffect(changes) { if (changes > 0) snackbar.showToast(savedTitle, savedBody) }
+    LaunchedEffect(changes) { if (changes > 0) snackbar.showToast(savedTitle) }
     BackHandler(onBack = onBack)
     Box(Modifier.fillMaxSize()) {
         AccessibilityContent(

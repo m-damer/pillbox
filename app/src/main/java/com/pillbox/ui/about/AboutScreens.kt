@@ -220,9 +220,11 @@ fun DeveloperContent(onBack: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
         ) {
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Space.S4)) {
-                Box(Modifier.size(Dimens.LogoSmall).clip(androidx.compose.foundation.shape.CircleShape).background(c.primary), contentAlignment = Alignment.Center) {
-                    Text(stringResource(R.string.dev_initial), style = MaterialTheme.typography.headlineSmall, color = c.onPrimary)
-                }
+                Image(
+                    painterResource(R.drawable.dev_photo), contentDescription = stringResource(R.string.dev_name),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+                    modifier = Modifier.size(Dimens.LogoSize).clip(androidx.compose.foundation.shape.CircleShape),
+                )
                 Text(stringResource(R.string.dev_name), style = MaterialTheme.typography.titleMedium, color = c.text, modifier = Modifier.padding(top = Space.S8))
                 Text(stringResource(R.string.dev_role), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
             }

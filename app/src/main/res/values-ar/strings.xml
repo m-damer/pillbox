@@ -597,7 +597,6 @@
     </plurals>
     <string name="dev_title">عن المطوّر</string>
     <string name="dev_name">محمود دامر</string>
-    <string name="dev_initial">م</string>
     <string name="dev_role">مصمم تجربة وواجهة مستخدم</string>
     <string name="dev_body">ستجدون هنا قريباً نبذة قصيرة عني.</string>
     <string name="settings_made_with">صنعهُ محمود دامر لكم بكل حب ❤️</string>
@@ -632,7 +631,6 @@
     <string name="theme_light">فاتح</string>
     <string name="theme_dark">داكن</string>
     <string name="toast_setting_saved_title">تم حفظ الإعداد</string>
-    <string name="toast_setting_saved_body">يُطبَّق من الآن.</string>
     <!-- Settings (M8b) -->
     <string name="settings_sound">الصوت والتكرار</string>
     <string name="settings_quiet">ساعات الهدوء</string>

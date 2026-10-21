@@ -554,7 +554,6 @@
     </plurals>
     <string name="dev_title">About the developer</string>
     <string name="dev_name">Mahmoud Damer</string>
-    <string name="dev_initial">M</string>
     <string name="dev_role">Product UX/UI designer</string>
     <string name="dev_body">A few words about me will be here soon.</string>
     <string name="settings_made_with">Made with ♥ by Mahmoud Damer</string>
@@ -589,7 +588,6 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="toast_setting_saved_title">Setting saved</string>
-    <string name="toast_setting_saved_body">It applies from now on.</string>
     <!-- Settings (M8b) -->
     <string name="settings_sound">Sound and repeat</string>
     <string name="settings_quiet">Quiet hours</string>
