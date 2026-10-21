@@ -3,8 +3,10 @@
 
     <!-- Reminders. No network permission: the app is offline. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- Only for the optional Google Drive backup. Nothing else in the app uses the network. -->
+    <!-- Only for the optional Google Drive backup and the weekly look for a new version. Nothing else in the app uses the network. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Lets the user install a downloaded update. Android still asks for confirmation every time. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />

@@ -38,6 +38,11 @@ jobs:
         run: |
           grep -E "^e: |What went wrong|FAILED|Caused by|error:" -A3 build.log | head -40 | while IFS= read -r l; do echo "::error::${l}"; done
 
+      - name: Show the first test exceptions
+        if: failure()
+        run: |
+          cat app/build/test-results/testDebugUnitTest/*.xml 2>/dev/null | grep -E "Exception|Error|Caused by" | grep -v "UncaughtExceptionsBeforeTest" | sort | uniq -c | sort -rn | head -12 | while IFS= read -r l; do echo "::error::${l:0:400}"; done
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:

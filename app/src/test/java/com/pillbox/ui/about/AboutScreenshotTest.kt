@@ -62,6 +62,19 @@ class AboutScreenshotTest {
     @Test fun rate_en_dark_2x() = shoot("rate_en_dark_2x", "en", ThemeMode.Dark, 2f) { RateContent(4, {}, {}, {}, {}, {}) }
     @Config(qualifiers = "+ar-ldrtl") @Test fun rate_ar() = shoot("rate_ar", "ar") { RateContent(4, {}, {}, {}, {}, {}) }
 
+    private val found = com.pillbox.domain.UpdateInfo("1.1.0", 10100, "What's new\nBigger medicine pictures\nFaster backups\nSmall fixes", "https://x/a.apk", null, 0)
+    @Composable private fun update(ui: UpdateUi) = UpdateContent(ui, true, {}, {}, {}, {}, {}, {})
+    @Test fun update_found_en() = shoot("update_found_en", "en") { update(UpdateUi.Available(found)) }
+    @Test fun update_found_en_dark_2x() = shoot("update_found_en_dark_2x", "en", ThemeMode.Dark, 2f) { update(UpdateUi.Available(found)) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun update_found_ar() = shoot("update_found_ar", "ar") { update(UpdateUi.Available(found)) }
+    @Test fun update_uptodate_en() = shoot("update_uptodate_en", "en") { update(UpdateUi.UpToDate) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun update_uptodate_ar() = shoot("update_uptodate_ar", "ar") { update(UpdateUi.UpToDate) }
+    @Test fun update_downloading_en() = shoot("update_downloading_en", "en") { update(UpdateUi.Downloading(found, 0.4f)) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun update_downloading_ar() = shoot("update_downloading_ar", "ar") { update(UpdateUi.Downloading(found, 0.4f)) }
+    @Test fun update_allow_en() = shoot("update_allow_en", "en") { update(UpdateUi.AllowInstall(found)) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun update_allow_ar() = shoot("update_allow_ar", "ar") { update(UpdateUi.AllowInstall(found)) }
+    @Test fun update_failed_en() = shoot("update_failed_en", "en") { update(UpdateUi.Failed(null)) }
+
     private fun shoot(name: String, lang: String, mode: ThemeMode = ThemeMode.Light, fontScale: Float = 1f, content: @Composable () -> Unit) {
         compose.setContent {
             val density = LocalDensity.current

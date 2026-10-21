@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Only the doctor report PDFs and the backup file to share, both in the cache folder, can be sent to other apps. -->
+<!-- Only the doctor report PDFs, the backup file to share and a downloaded update, both in the cache folder, can be sent to other apps. -->
 <paths>
     <cache-path name="reports" path="reports/" />
     <cache-path name="backups" path="backups/" />
+    <cache-path name="updates" path="updates/" />
 </paths>
