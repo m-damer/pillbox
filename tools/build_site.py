@@ -40,7 +40,7 @@ def img(name, ar_alt, en_alt, eager=False):
 def phone(name, ar_alt, en_alt, eager=False):
     return f'<div class="phone">{img(name, ar_alt, en_alt, eager)}</div>'
 
-LOGO = '<svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11.5" fill="#4338CA"/><rect x="6" y="10.8" width="12" height="2.4" rx="1.2" fill="#fff"/></svg>'
+LOGO = '<img src="logo.svg" width="40" height="40" alt="">'
 
 def head(title_ar, title_en, desc_ar, desc_en):
     return f"""<!doctype html>
@@ -54,6 +54,7 @@ def head(title_ar, title_en, desc_ar, desc_en):
 <meta property="og:description" content="{E(desc_ar)}">
 <meta name="theme-color" content="#4338CA">
 <link rel="preload" href="fonts/baloo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
