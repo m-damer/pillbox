@@ -1,42 +1,89 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl" data-lang="ar" data-title-ar="علبة الدواء - تذكير بالدواء بخط كبير وواضح" data-title-en="Pill Box - Medicine reminder with large, readable text">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pill Box - Medicine reminder · علبة الدواء</title>
-<meta name="description" content="Pill Box is a free, offline medicine reminder for Android with large, readable text. Arabic and English.">
-<style>
-:root{--bg:#F6F7FB;--card:#fff;--text:#16192B;--muted:#4A5070;--accent:#3B3FC4;--border:#DDE1F2}
-@media (prefers-color-scheme:dark){:root{--bg:#0F1220;--card:#1B2033;--text:#EDEFFA;--muted:#AEB5D3;--accent:#B4AFFF;--border:#2C3350}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:18px/1.7 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",sans-serif}
-main{max-width:720px;margin:0 auto;padding:24px 16px 64px}
-h1{font-size:2rem;line-height:1.3;margin:.2em 0 .3em}
-h2{font-size:1.25rem;margin:1.6em 0 .3em}
-p{margin:.4em 0}
-.muted{color:var(--muted)}
-.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:8px 20px 16px;margin-top:20px}
-a{color:var(--accent)}
-.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:14px 24px;border-radius:999px;margin:12px 8px 0 0;min-height:48px}
-@media (prefers-color-scheme:dark){.btn{color:#0F1220}}
-nav{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:8px}
-nav a{padding:12px 0;min-height:48px}
-section[lang]{margin-top:40px;padding-top:8px}
-section[lang=ar]{direction:rtl;text-align:right}
-.btn:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-</style>
+<title>علبة الدواء - تذكير بالدواء بخط كبير وواضح</title>
+<meta name="description" content="علبة الدواء تطبيق مجاني لتذكير الدواء على أندرويد. خط كبير وواضح، يعمل بدون إنترنت، وبياناتك تبقى على هاتفك.">
+<meta property="og:title" content="علبة الدواء - تذكير بالدواء بخط كبير وواضح">
+<meta property="og:description" content="علبة الدواء تطبيق مجاني لتذكير الدواء على أندرويد. خط كبير وواضح، يعمل بدون إنترنت، وبياناتك تبقى على هاتفك.">
+<meta name="theme-color" content="#4338CA">
+<link rel="preload" href="fonts/baloo.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+<header><div class="wrap">
+<a class="brand" href="index.html"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11.5" fill="#4338CA"/><rect x="6" y="10.8" width="12" height="2.4" rx="1.2" fill="#fff"/></svg><span class="ar" lang="ar">علبة الدواء</span><span class="en" lang="en">Pill Box</span></a>
+<div class="tools">
+<div class="sizes" role="group" aria-label="Text size"><button type="button" aria-pressed="true">A</button><button type="button" aria-pressed="false">A</button><button type="button" aria-pressed="false">A</button></div>
+<button type="button" id="lang" lang="en">English</button>
+</div></div></header>
 <main>
-<nav><a href="index.html">Home · الرئيسية</a><a href="privacy.html">Privacy policy · سياسة الخصوصية</a><a href="terms.html">Terms of use · شروط الاستخدام</a></nav>
-<section lang="en" dir="ltr">
+<section class="hero"><div class="wrap">
+<div>
+<h1 class="ar" lang="ar">لا تفوّت جرعة دواء</h1><h1 class="en" lang="en">Never miss a dose</h1>
+<p class="ar lead" lang="ar">علبة الدواء تذكّرك بكل دواء في وقته، بخط كبير وواضح. مجانية، تعمل بدون إنترنت، وتبقى بياناتك على هاتفك.</p><p class="en lead" lang="en">Pill Box reminds you of every medicine on time, in large, readable text. It is free, works offline, and keeps your data on your phone.</p>
+<a class="btn" href="https://github.com/m-damer/pillbox/releases/latest/download/PillBox.apk" download><span class="ar" lang="ar">تنزيل لأندرويد</span><span class="en" lang="en">Download for Android</span></a>
+<p class="ar note" lang="ar">لأندرويد ٨ أو أحدث. مجاني، بلا حساب وبلا إعلانات.</p><p class="en note" lang="en">For Android 8 or newer. Free, no account, no ads.</p>
+</div>
+<div class="sun"><div class="phone"><img class="ar" src="img/ar/notification.webp" width="540" height="1168" alt="شاشة التذكير الكاملة عند موعد الدواء"><img class="en" src="img/en/notification.webp" width="540" height="1168" alt="The full-screen reminder when a dose is due"></div></div>
+</div></section>
 
-<h1>Pill Box</h1><p>A free medicine reminder for Android with large, readable text. It works offline, has no account and no ads, and keeps your data on your phone.</p><p><a class="btn" href="https://github.com/m-damer/pillbox/releases/latest/download/PillBox.apk">Download for Android</a></p><p><a href="https://github.com/m-damer/pillbox/releases/latest">All versions</a></p><div class="card"><h2>How to install</h2><p>1. Tap Download and open the file when it finishes.</p><p>2. If Android asks, allow installing from this browser. This is needed once, because Pill Box is not on Google Play.</p><p>3. Tap Install. New versions appear on this page, and you install them the same way, over the old one.</p></div><div class="card"><h2>Privacy policy</h2><p>Your medicine data stays on your phone. There is no account and no server. Nothing is sent unless you choose to contact the developer.</p><p><a href="privacy.html">Privacy policy</a> · <a href="terms.html">Terms of use</a></p><p class="muted">This app helps you remember your medicine. It does not replace advice from your doctor or pharmacist.</p></div>
-</section>
-<section lang="ar" dir="rtl">
+<section class="overview"><div class="wrap">
+<div><h3 class="ar" lang="ar">تذكير يرنّ في وقته</h3><h3 class="en" lang="en">Reminders that ring on time</h3><p class="ar" lang="ar">ينبّهك التطبيق في الموعد بالضبط، حتى لو كان الهاتف مقفلاً. تضغط «أخذتها» أو «تخطَّ» لكل دواء.</p><p class="en" lang="en">The app alerts you at the exact time, even when the phone is locked. Tap Take or Skip for each medicine.</p></div>
+<div><h3 class="ar" lang="ar">خط كبير وواضح</h3><h3 class="en" lang="en">Large, clear text</h3><p class="ar" lang="ar">كبّر الخط حتى ٢٠٠٪، مع تباين عالٍ ووضع داكن. صُمّم لمن يصعب عليهم قراءة الخط الصغير.</p><p class="en" lang="en">Enlarge the text up to 200%, with high contrast and a dark theme. Made for people who find small text hard to read.</p></div>
+<div><h3 class="ar" lang="ar">بياناتك لك وحدك</h3><h3 class="en" lang="en">Your data stays yours</h3><p class="ar" lang="ar">بلا حساب وبلا إعلانات وبلا خادم. أدويتك ومواعيدك تبقى على هاتفك.</p><p class="en" lang="en">No account, no ads, no server. Your medicines and times stay on your phone.</p></div>
+</div></section>
+<section class="feature morning"><div class="wrap">
+<div class="text"><h2 class="ar" lang="ar">يومك كله في شاشة واحدة</h2><h2 class="en" lang="en">Your whole day on one screen</h2><p class="ar" lang="ar">الأدوية مجمّعة حسب الوقت: صباحاً وظهراً ومساءً وليلاً. ترى ما أخذته وما بقي، وتتنقل بين الأيام لترى ما سبق وما هو قادم.</p><p class="en" lang="en">Medicines are grouped by time of day: morning, noon, evening and night. You see what you took and what is left, and you can move between days to look back or ahead.</p></div>
+<div class="phone"><img class="ar" src="img/ar/today.webp" width="540" height="1168" alt="شاشة اليوم" loading="lazy"><img class="en" src="img/en/today.webp" width="540" height="1168" alt="The Today screen" loading="lazy"></div>
+</div></section>
+<section class="feature noon flip"><div class="wrap">
+<div class="text"><h2 class="ar" lang="ar">تذكير لا يفوتك</h2><h2 class="en" lang="en">A reminder you cannot miss</h2><p class="ar" lang="ar">في الموعد يظهر التنبيه حتى على شاشة القفل: خذها كلها بضغطة واحدة، أو أجّل ١٥ دقيقة، أو افتح الشاشة الكاملة لتأخذ كل دواء أو تتخطاه على حدة.</p><p class="en" lang="en">At the exact time the alert appears, even on the lock screen: take everything with one tap, snooze for 15 minutes, or open the full screen to take or skip each medicine on its own.</p></div>
+<div class="phone"><img class="ar" src="img/ar/notification-shade.webp" width="540" height="1168" alt="تنبيه الدواء على شاشة القفل" loading="lazy"><img class="en" src="img/en/notification-shade.webp" width="540" height="1168" alt="The medicine alert on the lock screen" loading="lazy"></div>
+</div></section>
+<section class="feature evening"><div class="wrap">
+<div class="text"><h2 class="ar" lang="ar">إضافة دواء بخطوات بسيطة</h2><h2 class="en" lang="en">Add a medicine in a few simple steps</h2><p class="ar" lang="ar">اسم الدواء ونوعه وجرعته، ثم المواعيد: مرة أو عدة مرات في اليوم، أو كل عدد من الساعات، أو عند الحاجة فقط. وإن كانت العلبة قيد الاستعمال، قل للتطبيق كم بقي فيها.</p><p class="en" lang="en">The name, type and dose, then the times: once or several times a day, every few hours, or only when needed. If the box is already in use, tell the app how many are left.</p></div>
+<div class="phone"><img class="ar" src="img/ar/add-med-1.webp" width="540" height="1168" alt="الخطوة الأولى من إضافة دواء" loading="lazy"><img class="en" src="img/en/add-med-1.webp" width="540" height="1168" alt="Step one of adding a medicine" loading="lazy"></div>
+</div></section>
+<section class="feature noon flip"><div class="wrap">
+<div class="text"><h2 class="ar" lang="ar">مقروء لكل العيون</h2><h2 class="en" lang="en">Readable for every eye</h2><p class="ar" lang="ar">كبّر الخط حتى ٢٠٠٪ فيتّسع كل شيء ويلتفّ النص بدل أن يُقطع. أزرار كبيرة وسهلة اللمس، وألوان واضحة، ووضع داكن لليل.</p><p class="en" lang="en">Enlarge the text up to 200% and everything makes room: text wraps instead of being cut off. Large, easy-to-tap buttons, clear colours, and a dark theme for the evening.</p></div>
+<div class="pair"><div class="phone"><img class="ar" src="img/ar/large-today.webp" width="540" height="1168" alt="شاشة اليوم بخط كبير جداً" loading="lazy"><img class="en" src="img/en/large-today.webp" width="540" height="1168" alt="The Today screen with very large text" loading="lazy"></div><div class="phone"><img class="ar" src="img/ar/today-dark.webp" width="540" height="1168" alt="شاشة اليوم في الوضع الداكن" loading="lazy"><img class="en" src="img/en/today-dark.webp" width="540" height="1168" alt="The Today screen in the dark theme" loading="lazy"></div></div>
+</div></section>
+<section class="feature morning"><div class="wrap">
+<div class="text"><h2 class="ar" lang="ar">ينبّهك قبل أن ينتهي الدواء</h2><h2 class="en" lang="en">Warns you before a medicine runs out</h2><p class="ar" lang="ar">يتابع التطبيق ما بقي في العلبة وينبّهك قبل نفاده بأيام، لتشتري في الوقت المناسب ولا تنقطع عن دوائك.</p><p class="en" lang="en">The app keeps track of what is left in the box and warns you days before it runs out, so you can buy more in time.</p></div>
+<div class="phone"><img class="ar" src="img/ar/refill-alert.webp" width="540" height="1168" alt="تنبيه قرب نفاد الدواء" loading="lazy"><img class="en" src="img/en/refill-alert.webp" width="540" height="1168" alt="The low-stock alert" loading="lazy"></div>
+</div></section>
+<section class="feature evening flip"><div class="wrap">
+<div class="text"><h2 class="ar" lang="ar">سجلّ وتقرير لطبيبك</h2><h2 class="en" lang="en">A record and a report for your doctor</h2><p class="ar" lang="ar">ترى ما أخذته وما فاتك. وعند زيارة الطبيب، صدّر تقريراً بصيغة PDF يعرض أدويتك والتزامك بها.</p><p class="en" lang="en">See what you took and what you missed. Before a doctor's visit, export a PDF report of your medicines and how regularly you took them.</p></div>
+<div class="pair"><div class="phone"><img class="ar" src="img/ar/history.webp" width="540" height="1168" alt="سجل الجرعات" loading="lazy"><img class="en" src="img/en/history.webp" width="540" height="1168" alt="The dose history" loading="lazy"></div><div class="phone"><img class="ar" src="img/ar/report-export.webp" width="540" height="1168" alt="تصدير تقرير للطبيب" loading="lazy"><img class="en" src="img/en/report-export.webp" width="540" height="1168" alt="Exporting a report for the doctor" loading="lazy"></div></div>
+</div></section>
+<section class="feature noon"><div class="wrap">
+<div class="text"><h2 class="ar" lang="ar">اعتنِ بمن تحب</h2><h2 class="en" lang="en">Look after the people you love</h2><p class="ar" lang="ar">أضف والديك أو أبناءك. لكل شخص قائمة أدويته وتذكيراته، وكل ذلك محفوظ على هاتفك وحده.</p><p class="en" lang="en">Add your parents or children. Each person has their own medicines and reminders, all kept on your phone only.</p></div>
+<div class="phone"><img class="ar" src="img/ar/family.webp" width="540" height="1168" alt="قائمة أفراد العائلة" loading="lazy"><img class="en" src="img/en/family.webp" width="540" height="1168" alt="The list of family members" loading="lazy"></div>
+</div></section>
+<section class="more"><div class="wrap">
+<h2 class="ar" lang="ar">وأكثر من ذلك</h2><h2 class="en" lang="en">And more</h2>
+<div class="ar" lang="ar"><ul><li>أدوية عند الحاجة مع حدّ يومي وفاصل أدنى بين الجرعات</li><li>نسخ احتياطي أسبوعي تلقائي إلى مجلد تختاره، أو إلى Google Drive اختيارياً</li><li>عربي وإنجليزي، مع نظام ١٢ أو ٢٤ ساعة</li><li>تنبيه خاص للجرعة المتأخرة</li><li>إيقاف دواء مؤقتاً ثم استئنافه</li><li>أرقام عربية أو إنجليزية حسب اختيارك</li></ul></div><div class="en" lang="en"><ul><li>As-needed medicines with a daily limit and a minimum gap between doses</li><li>Automatic weekly backup to a folder you choose, or optionally to Google Drive</li><li>Arabic and English, with 12 or 24-hour time</li><li>A special alert for a late dose</li><li>Pause a medicine, then resume it</li><li>Arabic or Western digits, as you prefer</li></ul></div>
+</div></section>
 
-<h1>علبة الدواء</h1><p>تطبيق مجاني لتذكير الدواء على أندرويد بخط كبير وواضح. يعمل بدون إنترنت، بلا حساب ولا إعلانات، وتبقى بياناتك على هاتفك.</p><p><a class="btn" href="https://github.com/m-damer/pillbox/releases/latest/download/PillBox.apk">تنزيل لأندرويد</a></p><p><a href="https://github.com/m-damer/pillbox/releases/latest">كل الإصدارات</a></p><div class="card"><h2>طريقة التثبيت</h2><p>١. اضغط تنزيل ثم افتح الملف عند اكتماله.</p><p>٢. إذا طلب أندرويد ذلك، اسمح بالتثبيت من هذا المتصفح. يلزم ذلك مرة واحدة لأن التطبيق ليس على Google Play.</p><p>٣. اضغط تثبيت. تظهر الإصدارات الجديدة في هذه الصفحة وتثبّتها بالطريقة نفسها فوق القديم.</p></div><div class="card"><h2>سياسة الخصوصية</h2><p>تبقى بيانات أدويتك على هاتفك. لا حساب ولا خادم. ولا يُرسل شيء إلا إذا اخترت التواصل مع المطوّر.</p><p><a href="privacy.html">سياسة الخصوصية</a> · <a href="terms.html">شروط الاستخدام</a></p><p class="muted">يساعدك هذا التطبيق على تذكّر أدويتك، ولا يغني عن نصيحة طبيبك أو الصيدلاني.</p></div>
-</section>
+<section class="night"><div class="wrap">
+<h2 class="ar" lang="ar">بلا حساب. بلا إعلانات. بلا خادم.</h2><h2 class="en" lang="en">No account. No ads. No server.</h2>
+<p class="ar" lang="ar">أدويتك ومواعيدك وسجلّك محفوظة على هاتفك فقط. لا نرى بياناتك ولا نبيعها ولا نشاركها مع أحد. لا يحتاج التطبيق إلى الإنترنت إلا لنسخة Google Drive الاختيارية وللبحث عن إصدار جديد، ويمكنك إيقاف البحث من الإعدادات.</p><p class="en" lang="en">Your medicines, times and history are saved on your phone only. We never see your data, sell it or share it. The app uses the internet only for the optional Google Drive backup and to look for a new version, and you can turn the update check off in Settings.</p>
+<div class="ar" lang="ar"><p><a href='privacy.html'>اقرأ سياسة الخصوصية</a></p></div><div class="en" lang="en"><p><a href='privacy.html'>Read the privacy policy</a></p></div>
+</div></section>
+
+<section class="install"><div class="wrap">
+<h2 class="ar" lang="ar">ثبّته في دقيقة</h2><h2 class="en" lang="en">Install it in a minute</h2>
+<div class="ar" lang="ar"><ol><li>اضغط «تنزيل» وافتح الملف عند اكتماله.</li><li>إذا طلب أندرويد ذلك، اسمح بالتثبيت من هذا المتصفح. يلزم ذلك مرة واحدة لأن التطبيق ليس على Google Play.</li><li>اضغط «تثبيت». تظهر الإصدارات الجديدة في هذه الصفحة، وتثبّتها بالطريقة نفسها فوق القديم.</li></ol></div><div class="en" lang="en"><ol><li>Tap Download and open the file when it finishes.</li><li>If Android asks, allow installing from this browser. This is needed once, because Pill Box is not on Google Play.</li><li>Tap Install. New versions appear on this page, and you install them the same way, over the old one.</li></ol></div>
+<div class="row"><a class="btn" href="https://github.com/m-damer/pillbox/releases/latest/download/PillBox.apk" download><span class="ar" lang="ar">تنزيل لأندرويد</span><span class="en" lang="en">Download for Android</span></a>
+<span class="ar" lang="ar"><a class='link' href='https://github.com/m-damer/pillbox/releases/latest'>كل الإصدارات</a></span><span class="en" lang="en"><a class='link' href='https://github.com/m-damer/pillbox/releases/latest'>All versions</a></span></div>
+<div class="ar" lang="ar"><p class='note'>التطبيق يساعدك على التذكّر ولا يغني عن نصيحة طبيبك أو الصيدلاني.</p></div><div class="en" lang="en"><p class='note'>This app helps you remember. It does not replace advice from your doctor or pharmacist.</p></div>
+</div></section>
 </main>
-</body>
-</html>
+<footer><div class="wrap">
+<nav><span class="ar" lang="ar"><a href='privacy.html'>سياسة الخصوصية</a></span><span class="en" lang="en"><a href='privacy.html'>Privacy policy</a></span><span class="ar" lang="ar"><a href='terms.html'>شروط الاستخدام</a></span><span class="en" lang="en"><a href='terms.html'>Terms of use</a></span><span class="ar" lang="ar"><a href='https://github.com/m-damer/pillbox/releases/latest'>كل الإصدارات</a></span><span class="en" lang="en"><a href='https://github.com/m-damer/pillbox/releases/latest'>All versions</a></span><span class="ar" lang="ar"><a href='https://github.com/m-damer/pillbox'>الشفرة المصدرية</a></span><span class="en" lang="en"><a href='https://github.com/m-damer/pillbox'>Source code</a></span></nav>
+<div><span class="ar" lang="ar">صنعهُ محمود دامر لكم بكل حب ❤️</span><span class="en" lang="en">Made with ♥ by Mahmoud Damer</span></div>
+</div></footer>
+<script src="site.js"></script>
+</body></html>
