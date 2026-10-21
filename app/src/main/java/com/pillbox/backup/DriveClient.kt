@@ -48,6 +48,24 @@ class DriveClient(private val context: Context) {
             .addOnFailureListener { e -> if (cont.isActive) cont.resume(Auth.Failed(problemOf(e))) }
     }
 
+    /**
+     * Withdraws Pill Box's permission for [email]. Turning Drive off must do this, or Google keeps the permission and
+     * turning Drive on again silently picks the same account instead of showing the account chooser.
+     * Failing (no internet, no email known) is not an error: the person can still turn Drive off.
+     */
+    suspend fun revoke(email: String?): Boolean {
+        if (email.isNullOrBlank()) return false
+        val revoke = com.google.android.gms.auth.api.identity.RevokeAccessRequest.builder()
+            .setAccount(android.accounts.Account(email, "com.google"))
+            .setScopes(listOf(Scope(DriveApi.SCOPE)))
+            .build()
+        return suspendCancellableCoroutine { cont ->
+            Identity.getAuthorizationClient(context).revokeAccess(revoke)
+                .addOnSuccessListener { if (cont.isActive) cont.resume(true) }
+                .addOnFailureListener { if (cont.isActive) cont.resume(false) }
+        }
+    }
+
     /** What came back from the authorization screen. */
     fun fromIntent(data: Intent?): Auth = try {
         toAuth(Identity.getAuthorizationClient(context).getAuthorizationResultFromIntent(data))

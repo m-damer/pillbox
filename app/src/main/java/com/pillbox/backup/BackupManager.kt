@@ -19,6 +19,7 @@ import java.io.IOException
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 /** Makes, shares and reads backup files. Everything stays on the phone unless the person shares the file. */
@@ -99,6 +100,8 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
     }
 
     suspend fun disconnectDrive() {
+        // Let Google forget the permission too, so the next "connect" offers the account chooser.
+        runCatching { driveClient.revoke(settings.flow.first().driveEmail) }
         settings.update { it.copy(driveOn = false, driveEmail = null, driveProblem = null, driveProblemAt = null) }
         reconcile()
     }
