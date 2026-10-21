@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -103,6 +104,7 @@ fun TodayScreen(
     vm: TodayViewModel, onAddMedicine: () -> Unit, modifier: Modifier = Modifier,
     remindersOff: Boolean = false, onFixReminders: () -> Unit = {}, onGoToMeds: () -> Unit = {},
     people: com.pillbox.ui.people.PeopleBar? = null,
+    onTakeAsNeeded: (Long) -> Unit = {},
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
@@ -126,7 +128,7 @@ fun TodayScreen(
             state = state, fmt = fmt, onSelectDate = vm::selectDate, onBackToToday = vm::backToToday,
             onTake = vm::take, onSkip = vm::skip, onAddMedicine = onAddMedicine,
             remindersOff = remindersOff, onFixReminders = onFixReminders,
-            onResumeAll = vm::resumeAll, onGoToMeds = onGoToMeds, people = people,
+            onResumeAll = vm::resumeAll, onGoToMeds = onGoToMeds, people = people, onTakeAsNeeded = onTakeAsNeeded,
         )
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) { data ->
             val c = PillBox.colors
@@ -171,6 +173,7 @@ fun TodayContent(
     onResumeAll: () -> Unit = {},
     onGoToMeds: () -> Unit = {},
     people: com.pillbox.ui.people.PeopleBar? = null,
+    onTakeAsNeeded: (Long) -> Unit = {},
 ) {
     val today = state.now.toLocalDate()
     val model = state.model
@@ -206,7 +209,7 @@ fun TodayContent(
         if (remindersOff) item { RemindersOffBanner(onFixReminders) }
         item { WeekStrip(state.selectedDate, today, fmt, onSelectDate) }
         if (state.selectedDate != today) item { BackToToday(onBackToToday) }
-        if (state.selectedDate == today && model != null && model.groups.isNotEmpty()) item { Timeline(model, fmt) }
+        if (state.selectedDate == today && model != null && model.groups.isNotEmpty()) item { DayTimeline(model, fmt) }
         if (model != null) {
             if (model.groups.isEmpty() && state.loaded) {
                 item { InfoNote(stringResource(R.string.nothing_planned)) }
@@ -216,6 +219,7 @@ fun TodayContent(
             }
             if (state.selectedDate > today && model.groups.isNotEmpty()) item { InfoNote(stringResource(R.string.future_note)) }
         }
+        if (state.selectedDate == today && state.asNeeded.isNotEmpty()) item { AsNeededCard(state.asNeeded, onTakeAsNeeded) }
     }
     if (state.lowStock.isNotEmpty()) {
         Column(
@@ -223,6 +227,33 @@ fun TodayContent(
             verticalArrangement = Arrangement.spacedBy(Space.S8),
         ) { state.lowStock.take(2).forEach { LowStockStrip(it, onGoToMeds) } }
     }
+    }
+}
+
+/** "As needed": each as-needed medicine with a Take now button that opens its log. */
+@Composable
+private fun AsNeededCard(items: List<AsNeededItem>, onTake: (Long) -> Unit) {
+    val c = PillBox.colors
+    Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(vertical = Space.S4)) {
+        Text(
+            stringResource(R.string.today_as_needed).uppercase(), style = MaterialTheme.typography.labelMedium, color = c.textMuted,
+            modifier = Modifier.padding(horizontal = Space.S16, vertical = Space.S8).semantics { heading() },
+        )
+        items.forEachIndexed { i, item ->
+            if (i > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(c.divider))
+            val label = stringResource(R.string.prn_take_now)
+            val a11y = stringResourceIso(R.string.prn_take_now_a11y, item.name)
+            Row(
+                Modifier.fillMaxWidth().heightIn(min = Dimens.TouchTargetMin).padding(horizontal = Space.S16, vertical = Space.S8),
+                horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.CenterVertically,
+            ) {
+                PillIcon(item.unit, null, 26.dp)
+                Text(item.name, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
+                Box(Modifier.width(IntrinsicSize.Max).semantics { contentDescription = a11y }) {
+                    com.pillbox.ui.components.OutlineButton(label, { onTake(item.id) })
+                }
+            }
+        }
     }
 }
 
@@ -348,65 +379,13 @@ private fun BackToToday(onClick: () -> Unit) {
     ) { Text(stringResource(R.string.back_to_today), style = MaterialTheme.typography.labelLarge, color = c.accent) }
 }
 
-/** The day as a bar: parts of the day in token colors with a dot for every dose. Decorative; the list says the same in words. */
-@Composable
-private fun Timeline(model: TodayModel, fmt: Formatter) {
-    val c = PillBox.colors
-    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val stops = PillBox.illustration.dayBar.map { (p, color) -> (if (rtl) 1f - p else p) to color }.sortedBy { it.first }.toTypedArray()
-    val ink = c.text
-    val done = c.success
-    val ring = c.primary
-    val white = c.card
-    val dots = model.groups.map { g -> Triple(g.time.hour * 60 + g.time.minute, g.state, g.rows.all { it.status != RowStatus.PENDING }) }
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .background(c.card, MaterialTheme.shapes.large)
-            .padding(Space.S16)
-            .clearAndSetSemantics { },
-    ) {
-        Canvas(Modifier.fillMaxWidth().height(32.dp)) {
-            val barH = 18.dp.toPx()
-            val top = (size.height - barH) / 2
-            fun x(min: Int): Float = (min / 1440f * size.width).let { if (rtl) size.width - it else it }
-            drawRoundRect(
-                androidx.compose.ui.graphics.Brush.horizontalGradient(colorStops = stops),
-                Offset(0f, top), Size(size.width, barH), CornerRadius(barH / 2),
-            )
-            for ((min, state, finished) in dots) {
-                val center = Offset(x(min).coerceIn(10.dp.toPx(), size.width - 10.dp.toPx()), size.height / 2)
-                when {
-                    finished -> { drawCircle(done, 8.dp.toPx(), center) }
-                    state == GroupState.NEXT || state == GroupState.LATE -> {
-                        drawCircle(white, 10.dp.toPx(), center); drawCircle(ring, 10.dp.toPx(), center, style = Stroke(3.dp.toPx()))
-                    }
-                    else -> { drawCircle(white, 7.dp.toPx(), center); drawCircle(ink, 7.dp.toPx(), center, style = Stroke(2.dp.toPx())) }
-                }
-            }
-        }
-        Row(Modifier.fillMaxWidth().padding(top = Space.S4), horizontalArrangement = Arrangement.SpaceBetween) {
-            // At large text five labels run into each other, so only midnight, noon and midnight stay.
-            val hours = if (LocalDensity.current.fontScale > 1.3f) listOf(0, 12, 24) else listOf(0, 6, 12, 18, 24)
-            hours.forEach { h ->
-                Text(fmt.hour(h), style = MaterialTheme.typography.labelSmall, color = c.textMuted)
-            }
-        }
-    }
-}
-
 // ---------------------------------------------------------------- groups and rows
 
 @Composable
 private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) -> Unit, onSkip: (List<DoseRow>) -> Unit) {
     val c = PillBox.colors
-    val allSkipped = group.rows.all { it.status == RowStatus.SKIPPED }
     val block = blockOf(group.time.toLocalTime())
-    val (bg, fg) = when {
-        group.state == GroupState.DONE && allSkipped -> c.dangerContainer to c.danger
-        group.state == GroupState.DONE || group.state == GroupState.MISSED_DAY -> c.night to c.nightText
-        else -> blockColors(block)
-    }
+    val (bg, fg) = groupColors(group)
     val outline = when (group.state) {
         GroupState.NEXT -> c.primary
         GroupState.LATE -> c.warning
@@ -432,6 +411,7 @@ private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) 
             Modifier.fillMaxWidth().semantics(mergeDescendants = true) { heading() },
             horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically,
         ) {
+            BlockIcon(block, fg, Modifier.padding(end = Space.S8))
             Text(blockName(block, afternoon = true), style = MaterialTheme.typography.labelLarge, color = fg, modifier = Modifier.weight(1f))
             Text(timeText + suffix, style = MaterialTheme.typography.labelLarge, color = fg, textAlign = TextAlign.End)
         }

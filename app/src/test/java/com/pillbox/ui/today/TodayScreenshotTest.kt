@@ -66,6 +66,16 @@ class TodayScreenshotTest {
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar_late() = shoot("ar_late", state(sat, lateNow, listOf(taken6)), "ar")
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar_dark_2x_next() = shoot("ar_dark_2x_next", state(sat, nextNow, listOf(taken6)), "ar", ThemeMode.Dark, 2f)
 
+    private fun full(day: LocalDate, now: LocalDateTime) = state(day, now, listOf(taken6)).copy(
+        asNeeded = listOf(AsNeededItem(3, "Paracetamol", DoseUnit.TABLET), AsNeededItem(4, "Ibuprofen", DoseUnit.TABLET)),
+        lowStock = listOf(LowStock("Metformin", DoseUnit.TABLET, 4, com.pillbox.domain.StockLevel.BUY_SOON)),
+    )
+
+    /** Full phone height (844dp) so the timeline, the As needed card and the low stock strip are all in view. */
+    @Config(qualifiers = "+h844dp") @Test fun en_full() = shoot("en_full", full(sat, nextNow), "en")
+    @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun ar_full() = shoot("ar_full", full(sat, nextNow), "ar")
+    @Config(qualifiers = "+h844dp") @Test fun en_dark_2x_full() = shoot("en_dark_2x_full", full(sat, lateNow), "en", ThemeMode.Dark, 2f)
+
     private fun shoot(name: String, state: TodayUiState, lang: String, mode: ThemeMode = ThemeMode.Light, fontScale: Float = 1f) {
         val ar = lang == "ar"
         val fmt = Formatter(arabicDigits = ar, is24Hour = false, am = if (ar) "ص" else "AM", pm = if (ar) "م" else "PM", rtl = ar)

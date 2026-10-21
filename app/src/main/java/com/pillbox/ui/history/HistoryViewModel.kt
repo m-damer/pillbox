@@ -32,7 +32,7 @@ class HistoryViewModel(repo: PillBoxRepository, meName: String) : ViewModel() {
             combine(
                 repo.observeMedicines(me.id),
                 repo.observeFinished(me.id),
-                repo.observeDoseEvents(me.id, start.atStartOfDay(), now.toLocalDate().plusDays(1).atStartOfDay()),
+                repo.observeHistoryEvents(me.id, start.atStartOfDay(), now.toLocalDate().plusDays(1).atStartOfDay()),
             ) { active, finished, events ->
                 val items = (active + finished).mapNotNull { m -> m.schedule?.let { Triple(m.medicine, it, m.pauses) } }
                 val at = LocalDateTime.now()

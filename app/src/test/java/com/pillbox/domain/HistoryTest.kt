@@ -112,4 +112,15 @@ class HistoryTest {
         val h = HistoryBuilder.build(listOf(Triple(med, hours, emptyList())), emptyList(), now)
         assertTrue(h.records.all { it.planned.toLocalDate() in h.start..today })
     }
+
+    @Test fun asNeededDosesAreCountedApartAndNotInThePercent() {
+        val prn = Medicine(id = 2, personId = 1, name = "Paracetamol", stock = 20.0)
+        val sched = Schedule(today.minusDays(40), null, Frequency.AsNeeded())
+        fun dose(d: LocalDate, h: Int) = DoseEvent(medicineId = 2, planned = null, taken = d.atTime(h, 0), status = DoseStatus.TAKEN)
+        val events = allTaken() + dose(today, 9) + dose(today.minusDays(3), 14) + dose(today.minusDays(40), 9)
+        val h = HistoryBuilder.build(items() + Triple(prn, sched, emptyList()), events, now)
+        assertEquals(100, h.percent)
+        assertEquals(60, h.total)
+        assertEquals(listOf(AsNeededCount(prn, 2)), h.asNeeded)
+    }
 }

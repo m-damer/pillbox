@@ -14,7 +14,7 @@ data class ReportOptions(
 }
 
 /** One medicine's row in the report. */
-data class ReportMedicine(val medicine: Medicine, val schedule: Schedule, val onTime: Int, val late: Int, val missed: Int)
+data class ReportMedicine(val medicine: Medicine, val schedule: Schedule, val onTime: Int, val late: Int, val missed: Int, val asNeeded: Int = 0)
 
 /** The symbol for one day in the day-by-day grid. */
 enum class ReportDay { OK, LATE, MISSED, PAUSED, PENDING, NONE }
@@ -55,7 +55,7 @@ object ReportBuilder {
     ): ReportModel {
         val history = HistoryBuilder.build(items, events, now, options.days)
         val rows = items
-            .filter { (m, _, _) -> m.status == MedicineStatus.ACTIVE || history.records.any { it.medicine.id == m.id } }
+            .filter { (m, _, _) -> m.status == MedicineStatus.ACTIVE || history.records.any { it.medicine.id == m.id } || history.asNeeded.any { it.medicine.id == m.id } }
             .map { (m, s, _) ->
                 val mine = history.records.filter { it.medicine.id == m.id }
                 ReportMedicine(
@@ -63,6 +63,7 @@ object ReportBuilder {
                     onTime = mine.count { it.outcome == DoseOutcome.ON_TIME },
                     late = mine.count { it.outcome == DoseOutcome.LATE },
                     missed = mine.count { it.outcome == DoseOutcome.SKIPPED || it.outcome == DoseOutcome.MISSED },
+                    asNeeded = history.asNeeded.firstOrNull { it.medicine.id == m.id }?.count ?: 0,
                 )
             }
             .sortedBy { it.medicine.name.lowercase() }

@@ -2,6 +2,8 @@ package com.pillbox.ui.welcome
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -69,9 +71,15 @@ fun WelcomeContent(
             Text(stringResource(R.string.wl_title), style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.semantics { heading() })
             Text(stringResource(R.string.wl_sub), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.Center)
             Section(stringResource(R.string.lang_language))
-            Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large)) {
-                RadioRow(stringResource(R.string.lang_en), language == "en", { onLanguage("en") })
-                RadioRow(stringResource(R.string.lang_ar), language == "ar", { onLanguage("ar") })
+            Column(Modifier.fillMaxWidth().selectableGroup(), verticalArrangement = Arrangement.spacedBy(Space.S8)) {
+                listOf("en" to R.string.lang_en, "ar" to R.string.lang_ar).forEach { (code, label) ->
+                    val on = language == code
+                    RadioRow(
+                        stringResource(label), on, { onLanguage(code) },
+                        Modifier.background(c.card, MaterialTheme.shapes.large)
+                            .then(if (on) Modifier.border(Dimens.ChipBorder, c.primary, MaterialTheme.shapes.large) else Modifier),
+                    )
+                }
             }
             Section(stringResource(R.string.acc_text_size))
             Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S16), verticalArrangement = Arrangement.spacedBy(Space.S12)) {
