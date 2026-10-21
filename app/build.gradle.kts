@@ -16,8 +16,8 @@ android {
         applicationId = "com.pillbox"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = (findProperty("pillbox.versionCode") as String?)?.toInt() ?: 1
+        versionName = (findProperty("pillbox.versionName") as String?) ?: "1.0"
         // Only the languages we ship; drops translations pulled in by libraries.
         resourceConfigurations += listOf("en", "ar")
     }
