@@ -237,7 +237,11 @@ private fun DayBar(q: QuietHours, fmt: Formatter) {
             drawRoundRect(c.night, size = Size(size.width, h), cornerRadius = androidx.compose.ui.geometry.CornerRadius(h / 2))
             fun seg(a: Float, b: Float) {
                 if (b <= a) return
-                drawRect(c.primary, Offset(size.width * a / day, 0f), Size(size.width * (b - a) / day, h))
+                val w = size.width * (b - a) / day
+                val x = size.width * a / day
+                // Right to left reads the day from the right, like the hour labels under the bar.
+                val left = if (layoutDirection == androidx.compose.ui.unit.LayoutDirection.Rtl) size.width - x - w else x
+                drawRect(c.primary, Offset(left, 0f), Size(w, h))
             }
             val f = q.from.hour * 60f + q.from.minute
             val u = q.until.hour * 60f + q.until.minute
@@ -248,7 +252,7 @@ private fun DayBar(q: QuietHours, fmt: Formatter) {
             }
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            (if (LocalDensity.current.fontScale > 1.3f) listOf(0, 12) else listOf(0, 6, 12, 18)).forEach { Text(fmt.hour(it), style = MaterialTheme.typography.labelSmall, color = c.textMuted) }
+            (if (LocalDensity.current.fontScale > 1.3f) listOf(0, 12, 24) else listOf(0, 6, 12, 18, 24)).forEach { Text(fmt.hour(it % 24), style = MaterialTheme.typography.labelSmall, color = c.textMuted) }
         }
     }
 }
