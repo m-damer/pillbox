@@ -27,6 +27,7 @@ AR["legal_updated"] = "آخر تحديث ٢١ أكتوبر ٢٠٢٦"
 
 REPO = "https://github.com/m-damer/pillbox"
 RELEASES = REPO + "/releases/latest"
+DIRECT = REPO + "/releases/latest/download/PillBox.apk"
 
 CSS = """
 :root{--bg:#F6F7FB;--card:#fff;--text:#16192B;--muted:#4A5070;--accent:#3B3FC4;--border:#DDE1F2}
@@ -84,9 +85,11 @@ def blocks(D, keys):
 
 def home():
     def intro(D, dl, desc):
-        return f'<h1>{html.escape(D["app_name"])}</h1><p>{html.escape(desc)}</p><p><a class="btn" href="{RELEASES}">{html.escape(dl)}</a></p>'
+        return f'<h1>{html.escape(D["app_name"])}</h1><p>{html.escape(desc)}</p><p><a class="btn" href="{DIRECT}">{html.escape(dl)}</a></p>'
     en = intro(EN, "Download for Android", "A free medicine reminder for Android with large, readable text. It works offline, has no account and no ads, and keeps your data on your phone.")
     ar = intro(AR, "تنزيل لأندرويد", "تطبيق مجاني لتذكير الدواء على أندرويد بخط كبير وواضح. يعمل بدون إنترنت، بلا حساب ولا إعلانات، وتبقى بياناتك على هاتفك.")
+    en += f'<p><a href="{RELEASES}">All versions</a></p><div class="card"><h2>How to install</h2><p>1. Tap Download and open the file when it finishes.</p><p>2. If Android asks, allow installing from this browser. This is needed once, because Pill Box is not on Google Play.</p><p>3. Tap Install. New versions appear on this page, and you install them the same way, over the old one.</p></div>'
+    ar += f'<p><a href="{RELEASES}">كل الإصدارات</a></p><div class="card"><h2>طريقة التثبيت</h2><p>١. اضغط تنزيل ثم افتح الملف عند اكتماله.</p><p>٢. إذا طلب أندرويد ذلك، اسمح بالتثبيت من هذا المتصفح. يلزم ذلك مرة واحدة لأن التطبيق ليس على Google Play.</p><p>٣. اضغط تثبيت. تظهر الإصدارات الجديدة في هذه الصفحة وتثبّتها بالطريقة نفسها فوق القديم.</p></div>'
     en += f'<div class="card"><h2>{html.escape(EN["ab_privacy"])}</h2><p>{html.escape(EN["ab_privacy_short"])}</p><p><a href="privacy.html">{html.escape(EN["pp_title"])}</a> · <a href="terms.html">{html.escape(EN["tm_title"])}</a></p><p class="muted">{html.escape(EN["ab_disclaimer"])}</p></div>'
     ar += f'<div class="card"><h2>{html.escape(AR["ab_privacy"])}</h2><p>{html.escape(AR["ab_privacy_short"])}</p><p><a href="privacy.html">{html.escape(AR["pp_title"])}</a> · <a href="terms.html">{html.escape(AR["tm_title"])}</a></p><p class="muted">{html.escape(AR["ab_disclaimer"])}</p></div>'
     return page("Pill Box - Medicine reminder · علبة الدواء", "", en, "", ar, "index")

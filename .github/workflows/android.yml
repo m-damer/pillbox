@@ -101,11 +101,13 @@ jobs:
         run: |
           APK=$(ls app/build/outputs/apk/release/*.apk | head -1)
           cp "$APK" "PillBox-${{ steps.v.outputs.name }}.apk"
+          # Same file under a fixed name, so releases/latest/download/PillBox.apk is a permanent link.
+          cp "$APK" PillBox.apk
           sha256sum "PillBox-${{ steps.v.outputs.name }}.apk" > "PillBox-${{ steps.v.outputs.name }}.apk.sha256"
           "$ANDROID_HOME"/build-tools/*/apksigner verify --print-certs "PillBox-${{ steps.v.outputs.name }}.apk" | grep -E "SHA-(1|256) digest" | while IFS= read -r l; do echo "::notice::${l}"; done
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "v${{ steps.v.outputs.name }}" --target "$GITHUB_SHA" "PillBox-${{ steps.v.outputs.name }}.apk" "PillBox-${{ steps.v.outputs.name }}.apk.sha256" \
+          gh release create "v${{ steps.v.outputs.name }}" --target "$GITHUB_SHA" "PillBox-${{ steps.v.outputs.name }}.apk" PillBox.apk "PillBox-${{ steps.v.outputs.name }}.apk.sha256" \
             --title "Pill Box ${{ steps.v.outputs.name }}" --generate-notes
