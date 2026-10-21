@@ -1,4 +1,4 @@
-name: Release
+name: Release APK
 # Create a release by pushing a tag such as v1.0.1, or run it by hand from the Actions tab with a version number.
 # Needs four repository secrets: PILLBOX_KEYSTORE_BASE64, PILLBOX_STORE_PASSWORD, PILLBOX_KEY_ALIAS, PILLBOX_KEY_PASSWORD.
 on:
