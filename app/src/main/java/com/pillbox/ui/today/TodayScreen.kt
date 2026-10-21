@@ -470,7 +470,7 @@ private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) 
     }
 }
 
-/** The medicine's shape as the design draws it: a blue round tablet with a dash, an orange diagonal capsule. */
+/** The medicine's shape: blue tablet, orange capsule, green syrup bottle, purple syringe, cyan drop, brown square for other. */
 @Composable
 internal fun PillIcon(unit: DoseUnit, tint: Color? = null, size: androidx.compose.ui.unit.Dp = 32.dp) {
     val ill = PillBox.illustration
@@ -490,7 +490,49 @@ internal fun PillIcon(unit: DoseUnit, tint: Color? = null, size: androidx.compos
                     drawRoundRect(color, Offset(1.5f * u, 7 * u), Size(21 * u, 10 * u), CornerRadius(5 * u), Stroke(1.6f * u))
                 }
             }
-            else -> {
+            DoseUnit.ML -> {
+                // Syrup: a bottle with a cap and a white label band.
+                val color = tint ?: ill.syrup
+                drawRoundRect(color, Offset(8 * u, 2 * u), Size(8 * u, 3.5f * u), CornerRadius(1.2f * u))
+                drawRect(color, Offset(9.5f * u, 5 * u), Size(5 * u, 4.5f * u))
+                drawRoundRect(color, Offset(5.5f * u, 9 * u), Size(13 * u, 13 * u), CornerRadius(3.5f * u))
+                drawRoundRect(white, Offset(8 * u, 13.5f * u), Size(8 * u, 5 * u), CornerRadius(1f * u))
+            }
+            DoseUnit.INJECTION -> {
+                // Syringe: barrel, plunger and needle, tilted.
+                val color = tint ?: ill.injection
+                rotate(-45f, center) {
+                    drawRoundRect(color, Offset(6 * u, 8.5f * u), Size(11 * u, 7 * u), CornerRadius(1.5f * u))
+                    drawLine(color, Offset(17 * u, 7 * u), Offset(17 * u, 17 * u), 1.8f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+                    drawLine(color, Offset(17 * u, 12 * u), Offset(23 * u, 12 * u), 1.2f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+                    drawLine(color, Offset(1.8f * u, 12 * u), Offset(6 * u, 12 * u), 1.8f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+                    drawLine(color, Offset(1.8f * u, 9 * u), Offset(1.8f * u, 15 * u), 1.8f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+                    drawLine(white, Offset(9 * u, 10.5f * u), Offset(9 * u, 13.5f * u), 1.2f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+                    drawLine(white, Offset(12 * u, 10.5f * u), Offset(12 * u, 13.5f * u), 1.2f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+                    drawLine(white, Offset(15 * u, 10.5f * u), Offset(15 * u, 13.5f * u), 1.2f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+                }
+            }
+            DoseUnit.DROPS -> {
+                // Drops: one drop with a white highlight.
+                val color = tint ?: ill.drops
+                val drop = androidx.compose.ui.graphics.Path().apply {
+                    moveTo(12 * u, 2.5f * u)
+                    cubicTo(12 * u, 2.5f * u, 5 * u, 10.5f * u, 5 * u, 15 * u)
+                    arcTo(androidx.compose.ui.geometry.Rect(5 * u, 8 * u, 19 * u, 22 * u), 180f, -180f, false)
+                    cubicTo(19 * u, 10.5f * u, 12 * u, 2.5f * u, 12 * u, 2.5f * u)
+                    close()
+                }
+                drawPath(drop, color)
+                drawLine(white, Offset(8.8f * u, 14.5f * u), Offset(8.8f * u, 17.5f * u), 1.6f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+            }
+            DoseUnit.OTHER -> {
+                // Other: a rounded square with a plus.
+                val color = tint ?: ill.other
+                drawRoundRect(color, Offset(3 * u, 3 * u), Size(18 * u, 18 * u), CornerRadius(5 * u))
+                drawLine(white, Offset(12 * u, 7.5f * u), Offset(12 * u, 16.5f * u), 2 * u, androidx.compose.ui.graphics.StrokeCap.Round)
+                drawLine(white, Offset(7.5f * u, 12 * u), Offset(16.5f * u, 12 * u), 2 * u, androidx.compose.ui.graphics.StrokeCap.Round)
+            }
+            DoseUnit.TABLET -> {
                 drawCircle(tint ?: ill.tablet, 9.5f * u, center)
                 drawLine(white, Offset(5.5f * u, 12 * u), Offset(18.5f * u, 12 * u), 2 * u, androidx.compose.ui.graphics.StrokeCap.Round)
             }

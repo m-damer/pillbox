@@ -103,7 +103,7 @@ fun ChipGroup(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
 }
 
 @Composable
-fun PBChip(label: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun PBChip(label: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier, leading: (@Composable (selected: Boolean) -> Unit)? = null) {
     val colors = PillBox.colors
     Row(
         modifier = modifier
@@ -118,6 +118,10 @@ fun PBChip(label: String, selected: Boolean, onClick: () -> Unit, modifier: Modi
         if (selected) {
             Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = colors.onPrimary, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(Space.S6))
+        }
+        if (leading != null) {
+            leading(selected)
+            Spacer(Modifier.width(Space.S8))
         }
         Text(label, style = MaterialTheme.typography.labelLarge, color = if (selected) colors.onPrimary else colors.text)
     }

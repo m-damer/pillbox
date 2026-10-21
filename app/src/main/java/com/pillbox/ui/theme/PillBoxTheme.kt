@@ -155,9 +155,9 @@ object PillBox {
 private fun variableFont(id: Int, weight: FontWeight) =
     Font(id, weight, variationSettings = FontVariation.Settings(FontVariation.weight(weight.weight)))
 
-val Inter = FontFamily(variableFont(R.font.inter, FontWeight.Normal), variableFont(R.font.inter, FontWeight.SemiBold))
+val Inter = FontFamily(variableFont(R.font.inter, FontWeight.Normal), variableFont(R.font.inter, FontWeight.SemiBold), variableFont(R.font.inter, FontWeight.Bold))
 val BalooBhaijaan2 = FontFamily(
-    variableFont(R.font.baloo_bhaijaan_2, FontWeight.Normal), variableFont(R.font.baloo_bhaijaan_2, FontWeight.SemiBold),
+    variableFont(R.font.baloo_bhaijaan_2, FontWeight.Normal), variableFont(R.font.baloo_bhaijaan_2, FontWeight.SemiBold), variableFont(R.font.baloo_bhaijaan_2, FontWeight.Bold),
 )
 
 private fun t(font: FontFamily, size: Int, w: FontWeight = FontWeight.Normal) =
@@ -165,8 +165,8 @@ private fun t(font: FontFamily, size: Int, w: FontWeight = FontWeight.Normal) =
 
 fun pillBoxTypography(font: FontFamily) = Typography(
     labelSmall = t(font, 13), bodySmall = t(font, 14), bodyMedium = t(font, 15), bodyLarge = t(font, 16),
-    titleMedium = t(font, 20, FontWeight.SemiBold), titleLarge = t(font, 22, FontWeight.SemiBold),
-    headlineSmall = t(font, 24, FontWeight.SemiBold), displaySmall = t(font, 36, FontWeight.SemiBold),
+    titleMedium = t(font, 20, FontWeight.SemiBold), titleLarge = t(font, 22, FontWeight.Bold),
+    headlineSmall = t(font, 24, FontWeight.Bold), displaySmall = t(font, 36, FontWeight.SemiBold),
     displayMedium = t(font, 40, FontWeight.SemiBold), displayLarge = t(font, 48, FontWeight.SemiBold),
     labelLarge = t(font, 16, FontWeight.SemiBold), labelMedium = t(font, 15, FontWeight.SemiBold),
 )

@@ -282,7 +282,12 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
         DoseUnit.INJECTION to R.string.type_injection, DoseUnit.DROPS to R.string.type_drops, DoseUnit.OTHER to R.string.type_other,
     )
     ChipGroup {
-        types.forEach { (t, label) -> PBChip(stringResource(label), form.type == t, { edit { it.withType(t) } }) }
+        types.forEach { (t, label) ->
+            PBChip(
+                stringResource(label), form.type == t, { edit { it.withType(t) } },
+                leading = { sel -> com.pillbox.ui.today.PillIcon(t, if (sel) PillBox.colors.onPrimary else null, 24.dp) },
+            )
+        }
     }
 
     FieldLabel(stringResource(R.string.strength_label))

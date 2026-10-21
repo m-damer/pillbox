@@ -105,7 +105,8 @@
     },
     "weight": {
       "regular": 400,
-      "semibold": 600
+      "semibold": 600,
+      "bold": 700
     },
     "scale": {
       "caption": 13,
@@ -177,6 +178,10 @@
     "light": {
       "tablet": "#2F6FED",
       "capsule": "#E4572E",
+      "syrup": "#1F9E6E",
+      "injection": "#7A5FD0",
+      "drops": "#1A8FC9",
+      "other": "#8A6D3B",
       "paused": "#8A90A8",
       "stockLow": "#D98200",
       "dayBar": {
@@ -199,6 +204,10 @@
     "dark": {
       "tablet": "#2F6FED",
       "capsule": "#E4572E",
+      "syrup": "#1F9E6E",
+      "injection": "#7A5FD0",
+      "drops": "#1A8FC9",
+      "other": "#C9A66B",
       "paused": "#AEB5D3",
       "stockLow": "#D98200",
       "dayBar": {

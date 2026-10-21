@@ -20,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -163,8 +164,8 @@ class MainActivity : PillBoxActivity() {
                         onSkip = { CrashReporter.clear(context); crashReport = null },
                     )
                 }
-                var settingsToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
-                var settingsToastBody by rememberSaveable { mutableStateOf<String?>(null) }
+                // Only a flag is kept: the words are looked up when the toast shows, so they follow a language switch.
+                var settingsSaved by rememberSaveable { mutableStateOf(false) }
                 val peopleList by repo.observePeople().collectAsStateWithLifecycle(emptyList())
                 val activePersonId by repo.activePersonId.collectAsStateWithLifecycle()
                 val peopleBar = PeopleBar(peopleList, activePersonId, onSelect = { repo.selectPerson(it) })
@@ -244,10 +245,7 @@ class MainActivity : PillBoxActivity() {
                     val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
                     val close = { settingsScreen = when (settingsScreen) { 9, 10 -> 1; 12 -> 11; 15, 16, 17, 18 -> 14; else -> 0 } }
                     BackHandler { close() }
-                    val savedToast = {
-                        settingsToastTitle = context.getString(R.string.toast_setting_saved_title)
-                        settingsToastBody = context.getString(R.string.toast_setting_saved_body)
-                    }
+                    val savedToast = { settingsSaved = true }
                     Box(Modifier.fillMaxSize().statusBarsPadding()) {
                         when (settingsScreen) {
                             14 -> AboutScreen(
@@ -320,8 +318,7 @@ class MainActivity : PillBoxActivity() {
                                 vm, activeLanguage = AppLocale.active(context), onBack = close,
                                 onSave = { choice ->
                                     vm.saveLanguage(choice) {
-                                        settingsToastTitle = context.getString(R.string.toast_setting_saved_title)
-                                        settingsToastBody = context.getString(R.string.toast_setting_saved_body)
+                                        settingsSaved = true
                                         settingsScreen = 0
                                         AppLocale.set(context, choice.language)
                                         // Android 13 and newer recreate the screens by themselves; older phones need a nudge.
@@ -467,8 +464,8 @@ class MainActivity : PillBoxActivity() {
                                                 SettingsTarget.DEVELOPER -> settingsScreen = 19
                                             }
                                         },
-                                        toast = settingsToastTitle?.let { ListToast(it, settingsToastBody) },
-                                        onToastShown = { settingsToastTitle = null; settingsToastBody = null },
+                                        toast = if (settingsSaved) ListToast(stringResource(R.string.toast_setting_saved_title), null) else null,
+                                        onToastShown = { settingsSaved = false },
                                         ringingIssues = permissions.issues,
                                         backup = backup,
                                         scroll = settingsScroll,

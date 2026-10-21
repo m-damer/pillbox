@@ -54,6 +54,9 @@ class AboutScreenshotTest {
     @Config(qualifiers = "+ar-ldrtl") @Test fun feedback_ar() = shoot("feedback_ar", "ar") { feedback(EmailCheck.OK) }
     @Config(qualifiers = "+ar-ldrtl") @Test fun feedback_invalid_ar() = shoot("feedback_invalid_ar", "ar") { feedback(EmailCheck.INVALID, "name@") }
 
+    @Test fun developer_en() = shoot("developer_en", "en") { DeveloperContent({}) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun developer_ar() = shoot("developer_ar", "ar") { DeveloperContent({}) }
+
     @Test fun rate_en() = shoot("rate_en", "en") { RateContent(4, {}, {}, {}, {}, {}) }
     @Test fun rate_none_en() = shoot("rate_none_en", "en") { RateContent(0, {}, {}, {}, {}, {}) }
     @Test fun rate_en_dark_2x() = shoot("rate_en_dark_2x", "en", ThemeMode.Dark, 2f) { RateContent(4, {}, {}, {}, {}, {}) }
