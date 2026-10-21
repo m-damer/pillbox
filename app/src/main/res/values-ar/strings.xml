@@ -595,7 +595,12 @@
         <item quantity="zero">%1$s شخص</item><item quantity="one">شخص واحد</item><item quantity="two">شخصان</item>
         <item quantity="few">%1$s أشخاص</item><item quantity="many">%1$s شخصاً</item><item quantity="other">%1$s شخص</item>
     </plurals>
-    <string name="settings_made_with">صُنع بـ ♥ بواسطة محمود دامر</string>
+    <string name="dev_title">عن المطوّر</string>
+    <string name="dev_name">محمود دامر</string>
+    <string name="dev_initial">م</string>
+    <string name="dev_role">مصمم تجربة وواجهة مستخدم</string>
+    <string name="dev_body">ستجدون هنا قريباً نبذة قصيرة عني.</string>
+    <string name="settings_made_with">صنعهُ محمود دامر لكم بكل حب ❤️</string>
     <string name="settings_row_a11y">%1$s، %2$s</string>
     <string name="lang_title">اللغة والأرقام</string>
     <string name="lang_language">اللغة</string>

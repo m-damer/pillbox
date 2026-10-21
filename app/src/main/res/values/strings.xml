@@ -552,6 +552,11 @@
         <item quantity="one">%1$s person</item>
         <item quantity="other">%1$s people</item>
     </plurals>
+    <string name="dev_title">About the developer</string>
+    <string name="dev_name">Mahmoud Damer</string>
+    <string name="dev_initial">M</string>
+    <string name="dev_role">Product UX/UI designer</string>
+    <string name="dev_body">A few words about me will be here soon.</string>
     <string name="settings_made_with">Made with ♥ by Mahmoud Damer</string>
     <string name="settings_row_a11y">%1$s, %2$s</string>
     <string name="lang_title">Language and numbers</string>
