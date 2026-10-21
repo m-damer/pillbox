@@ -1,9 +1,14 @@
 name: Release
-# Create a release by pushing a tag such as v1.0.1 (or run it by hand with a version).
+# Create a release by pushing a tag such as v1.0.1, or run it by hand from the Actions tab with a version number.
 # Needs four repository secrets: PILLBOX_KEYSTORE_BASE64, PILLBOX_STORE_PASSWORD, PILLBOX_KEY_ALIAS, PILLBOX_KEY_PASSWORD.
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number, for example 1.0.1 (the tag v1.0.1 is created for you)'
+        required: true
 permissions:
   contents: write
 jobs:
@@ -19,7 +24,9 @@ jobs:
       - name: Version from the tag
         id: v
         run: |
-          TAG="${GITHUB_REF_NAME#v}"
+          TAG="${{ inputs.version }}"
+          TAG="${TAG:-${GITHUB_REF_NAME#v}}"
+          TAG="${TAG#v}"
           IFS=. read -r MA MI PA <<< "$TAG"
           echo "name=$TAG" >> "$GITHUB_OUTPUT"
           echo "code=$((MA*10000 + MI*100 + ${PA:-0}))" >> "$GITHUB_OUTPUT"
@@ -46,5 +53,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" "PillBox-${{ steps.v.outputs.name }}.apk" "PillBox-${{ steps.v.outputs.name }}.apk.sha256" \
+          gh release create "v${{ steps.v.outputs.name }}" --target "$GITHUB_SHA" "PillBox-${{ steps.v.outputs.name }}.apk" "PillBox-${{ steps.v.outputs.name }}.apk.sha256" \
             --title "Pill Box ${{ steps.v.outputs.name }}" --generate-notes
