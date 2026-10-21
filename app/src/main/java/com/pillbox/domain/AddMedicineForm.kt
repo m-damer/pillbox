@@ -22,6 +22,8 @@ data class AddMedicineForm(
     val strengthUnit: StrengthUnit = StrengthUnit.MG,
     val dose: Double = 1.0,
     val boxCount: Int? = 30,
+    /** Adding only: how many are left when the box is already in use. Null means the box is new, so all of [boxCount]. */
+    val leftCount: Int? = null,
     val freq: FreqChoice = FreqChoice.TWICE,
     val firstDose: LocalTime = DEFAULT_FIRST_DOSE,
     /** Set when the user changed one of the automatic dose times. Cleared when frequency or first dose changes. */
@@ -50,7 +52,20 @@ data class AddMedicineForm(
     val isEdit get() = originalStock != null
 
     // ---- edits that reset dependent fields ----
-    fun withType(t: DoseUnit) = copy(type = t, dose = defaultDose(t), boxCount = defaultBox(t))
+    fun withType(t: DoseUnit) = copy(type = t, dose = defaultDose(t), boxCount = defaultBox(t), leftCount = null)
+
+    /** The box size changed: what is left can never be more than the box. */
+    fun withBox(n: Int?) = copy(boxCount = n, leftCount = leftCount?.takeIf { n != null && it < n })
+
+    /** What is left in the box, as the form shows it. */
+    fun left(): Int = leftCount ?: (boxCount ?: 0)
+
+    /** Sets what is left, between 1 and the box size. A full box is stored as null. */
+    fun withLeft(n: Int?): AddMedicineForm {
+        val box = boxCount ?: return this
+        val v = (n ?: box).coerceIn(1, box)
+        return copy(leftCount = v.takeIf { it < box })
+    }
     fun withFreq(f: FreqChoice) = copy(freq = f, customTimes = null)
     fun withFirstDose(t: LocalTime) = copy(firstDose = t, customTimes = null)
 
@@ -119,7 +134,7 @@ data class AddMedicineForm(
         val box = boxCount ?: 0
         return Medicine(
             personId = personId, name = name.trim(), strength = strengthText, unit = type,
-            doseAmount = dose, stock = box.toDouble(), packSize = box,
+            doseAmount = dose, stock = left().toDouble(), packSize = box,
         )
     }
 

@@ -48,6 +48,8 @@
     <string name="dose_label">How much each time?</string>
     <string name="dose_half_hint">Use − and + to take half a tablet.</string>
     <string name="box_label">How many are in the box?</string>
+    <string name="box_left_label">How many are left in this box?</string>
+    <string name="box_left_hint">Already using this box? Lower this number. Leave it as it is for a new box.</string>
     <string name="box_error">Type how many are in the box.</string>
 
     <string name="how_often">How often?</string>

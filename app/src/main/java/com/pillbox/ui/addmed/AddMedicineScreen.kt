@@ -327,12 +327,27 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
         valueText = form.boxCount?.let { fmt.number(it) } ?: "",
         unit = pluralStringResource(unitPlural(form.type), form.boxCount ?: 0),
         label = boxLabel,
-        onMinus = { edit { it.copy(boxCount = ((it.boxCount ?: 0) - 1).coerceAtLeast(0).takeIf { n -> n > 0 }) } },
-        onPlus = { edit { it.copy(boxCount = ((it.boxCount ?: 0) + 1).coerceAtMost(99999)) } },
-        onValueText = { text -> edit { it.copy(boxCount = fmt.parseInt(text)) } },
+        onMinus = { edit { it.withBox(((it.boxCount ?: 0) - 1).coerceAtLeast(0).takeIf { n -> n > 0 }) } },
+        onPlus = { edit { it.withBox(((it.boxCount ?: 0) + 1).coerceAtMost(99999)) } },
+        onValueText = { text -> edit { it.withBox(fmt.parseInt(text)) } },
         isError = boxError,
     )
     if (boxError) ErrorText(stringResource(R.string.box_error))
+
+    if (!form.isEdit && (form.boxCount ?: 0) > 1) {
+        val leftLabel = stringResource(R.string.box_left_label)
+        FieldLabel(leftLabel)
+        Stepper(
+            valueText = fmt.number(form.left()),
+            unit = pluralStringResource(unitPlural(form.type), form.left()),
+            label = leftLabel,
+            onMinus = { edit { it.withLeft(it.left() - 1) } },
+            onPlus = { edit { it.withLeft(it.left() + 1) } },
+            onValueText = { text -> edit { it.withLeft(fmt.parseInt(text)) } },
+            minusEnabled = form.left() > 1,
+        )
+        HelperText(stringResource(R.string.box_left_hint))
+    }
 }
 
 // ---------------------------------------------------------------- step 2

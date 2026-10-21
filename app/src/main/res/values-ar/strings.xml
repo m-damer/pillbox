@@ -48,6 +48,8 @@
     <string name="dose_label">كم في كل مرة؟</string>
     <string name="dose_half_hint">استخدم − و + لأخذ نصف قرص.</string>
     <string name="box_label">كم عدد ما في العلبة؟</string>
+    <string name="box_left_label">كم بقي في هذه العلبة؟</string>
+    <string name="box_left_hint">هل تستخدم هذه العلبة بالفعل؟ قلّل هذا الرقم. اتركه كما هو إن كانت العلبة جديدة.</string>
     <string name="box_error">اكتب كم عدد ما في العلبة.</string>
 
     <string name="how_often">كم مرة؟</string>

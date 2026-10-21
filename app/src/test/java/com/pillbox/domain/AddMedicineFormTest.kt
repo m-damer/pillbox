@@ -14,6 +14,23 @@ class AddMedicineFormTest {
     private fun t(h: Int, m: Int = 0) = LocalTime.of(h, m)
     private val base = AddMedicineForm(name = "Metformin")
 
+    @Test fun newBoxStocksTheWholeBox() {
+        val m = base.withBox(30).medicine(1)
+        assertEquals(30.0, m.stock, 0.0); assertEquals(30, m.packSize)
+    }
+
+    @Test fun boxInUseStocksOnlyWhatIsLeft() {
+        val m = base.withBox(30).withLeft(12).medicine(1)
+        assertEquals(12.0, m.stock, 0.0); assertEquals(30, m.packSize)
+    }
+
+    @Test fun leftIsKeptBetweenOneAndTheBox() {
+        val f = base.withBox(30)
+        assertEquals(30, f.withLeft(99).left()); assertEquals(1, f.withLeft(0).left())
+        assertEquals(10, f.withLeft(25).withBox(10).left()) // a smaller box pulls "left" down with it
+        assertEquals(null, f.withLeft(30).leftCount)
+    }
+
     @Test fun autoTimes() {
         assertEquals(listOf(t(8)), base.withFreq(FreqChoice.ONCE).times())
         assertEquals(listOf(t(8), t(20)), base.withFreq(FreqChoice.TWICE).times())
