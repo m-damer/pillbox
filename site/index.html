@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pill Box - Medicine reminder · علبة الدواء</title>
+<meta name="description" content="Pill Box is a free, offline medicine reminder for Android with large, readable text. Arabic and English.">
+<style>
+:root{--bg:#F6F7FB;--card:#fff;--text:#16192B;--muted:#4A5070;--accent:#3B3FC4;--border:#DDE1F2}
+@media (prefers-color-scheme:dark){:root{--bg:#0F1220;--card:#1B2033;--text:#EDEFFA;--muted:#AEB5D3;--accent:#B4AFFF;--border:#2C3350}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:18px/1.7 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Arabic",sans-serif}
+main{max-width:720px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:2rem;line-height:1.3;margin:.2em 0 .3em}
+h2{font-size:1.25rem;margin:1.6em 0 .3em}
+p{margin:.4em 0}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:8px 20px 16px;margin-top:20px}
+a{color:var(--accent)}
+.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:14px 24px;border-radius:999px;margin:12px 8px 0 0;min-height:48px}
+@media (prefers-color-scheme:dark){.btn{color:#0F1220}}
+nav{display:flex;flex-wrap:wrap;gap:8px 20px;margin-bottom:8px}
+nav a{padding:12px 0;min-height:48px}
+section[lang]{margin-top:40px;padding-top:8px}
+section[lang=ar]{direction:rtl;text-align:right}
+.btn:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="index.html">Home · الرئيسية</a><a href="privacy.html">Privacy policy · سياسة الخصوصية</a><a href="terms.html">Terms of use · شروط الاستخدام</a></nav>
+<section lang="en" dir="ltr">
+
+<h1>Pill Box</h1><p>A free medicine reminder for Android with large, readable text. It works offline, has no account and no ads, and keeps your data on your phone.</p><p><a class="btn" href="https://github.com/m-damer/pillbox/releases/latest">Download for Android</a></p><div class="card"><h2>Privacy policy</h2><p>Your medicine data stays on your phone. There is no account and no server. Nothing is sent unless you choose to contact the developer.</p><p><a href="privacy.html">Privacy policy</a> · <a href="terms.html">Terms of use</a></p><p class="muted">This app helps you remember your medicine. It does not replace advice from your doctor or pharmacist.</p></div>
+</section>
+<section lang="ar" dir="rtl">
+
+<h1>علبة الدواء</h1><p>تطبيق مجاني لتذكير الدواء على أندرويد بخط كبير وواضح. يعمل بدون إنترنت، بلا حساب ولا إعلانات، وتبقى بياناتك على هاتفك.</p><p><a class="btn" href="https://github.com/m-damer/pillbox/releases/latest">تنزيل لأندرويد</a></p><div class="card"><h2>سياسة الخصوصية</h2><p>تبقى بيانات أدويتك على هاتفك. لا حساب ولا خادم. ولا يُرسل شيء إلا إذا اخترت التواصل مع المطوّر.</p><p><a href="privacy.html">سياسة الخصوصية</a> · <a href="terms.html">شروط الاستخدام</a></p><p class="muted">يساعدك هذا التطبيق على تذكّر أدويتك، ولا يغني عن نصيحة طبيبك أو الصيدلاني.</p></div>
+</section>
+</main>
+</body>
+</html>
