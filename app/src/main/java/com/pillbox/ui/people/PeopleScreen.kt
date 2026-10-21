@@ -66,6 +66,7 @@ fun PeopleScreen(
     toast: ListToast?,
     onToastShown: () -> Unit,
     modifier: Modifier = Modifier,
+    listState: androidx.compose.foundation.lazy.LazyListState = androidx.compose.foundation.lazy.rememberLazyListState(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
@@ -80,7 +81,7 @@ fun PeopleScreen(
         PeopleContent(
             state, fmt,
             onOpen = { id -> vm.select(id); onOpenPerson(id) },
-            onEdit = onEditPerson, onAdd = onAddPerson, onRingOthers = vm::setRingOthers,
+            onEdit = onEditPerson, onAdd = onAddPerson, onRingOthers = vm::setRingOthers, listState = listState,
         )
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
@@ -95,6 +96,7 @@ fun PeopleContent(
     onEdit: (Long) -> Unit,
     onAdd: () -> Unit,
     onRingOthers: (Boolean) -> Unit,
+    listState: androidx.compose.foundation.lazy.LazyListState = androidx.compose.foundation.lazy.rememberLazyListState(),
 ) {
     val c = PillBox.colors
     val chips = rememberChips(state.rows.map { it.person })
@@ -108,7 +110,7 @@ fun PeopleContent(
             )
         }
         LazyColumn(
-            Modifier.weight(1f),
+            Modifier.weight(1f), state = listState,
             contentPadding = PaddingValues(start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Space.S12, bottom = 96.dp),
             verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
         ) {

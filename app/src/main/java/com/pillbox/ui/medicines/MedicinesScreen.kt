@@ -79,6 +79,7 @@ fun MedicinesScreen(
     modifier: Modifier = Modifier,
     onRefillAlert: () -> Unit = {},
     people: com.pillbox.ui.people.PeopleBar? = null,
+    listState: androidx.compose.foundation.lazy.LazyListState = androidx.compose.foundation.lazy.rememberLazyListState(),
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
@@ -90,7 +91,7 @@ fun MedicinesScreen(
         }
     }
     Box(modifier.fillMaxSize()) {
-        MedicinesContent(state, fmt, showFinished, onShowFinished, onOpen, onAddMedicine, onRefillAlert = onRefillAlert, people = people)
+        MedicinesContent(state, fmt, showFinished, onShowFinished, onOpen, onAddMedicine, onRefillAlert = onRefillAlert, people = people, listState = listState)
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
 }
@@ -106,6 +107,7 @@ fun MedicinesContent(
     modifier: Modifier = Modifier,
     onRefillAlert: () -> Unit = {},
     people: com.pillbox.ui.people.PeopleBar? = null,
+    listState: androidx.compose.foundation.lazy.LazyListState = androidx.compose.foundation.lazy.rememberLazyListState(),
 ) {
     val c = PillBox.colors
     Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -129,7 +131,7 @@ fun MedicinesContent(
             modifier = Modifier.padding(horizontal = Dimens.ScreenPaddingH),
         )
         LazyColumn(
-            Modifier.weight(1f),
+            Modifier.weight(1f), state = listState,
             contentPadding = PaddingValues(start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Space.S12, bottom = 48.dp),
             verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
         ) {

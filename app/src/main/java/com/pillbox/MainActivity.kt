@@ -134,6 +134,8 @@ class MainActivity : PillBoxActivity() {
                 var prnSession by rememberSaveable { mutableIntStateOf(0) }
                 // Kept here so Settings opens where it was left after a sub-screen closes.
                 val settingsScroll = androidx.compose.foundation.rememberScrollState()
+                val medsListState = androidx.compose.foundation.lazy.rememberLazyListState()
+                val peopleListState = androidx.compose.foundation.lazy.rememberLazyListState()
                 var showFinishedTab by rememberSaveable { mutableStateOf(false) }
                 var listToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
                 var listToastBody by rememberSaveable { mutableStateOf<String?>(null) }
@@ -437,7 +439,7 @@ class MainActivity : PillBoxActivity() {
                                     MedicinesScreen(
                                         vm, showFinished = showFinishedTab, onShowFinished = { showFinishedTab = it },
                                         onOpen = { detailId = it }, onAddMedicine = { adding = true },
-                                        onRefillAlert = { refillSession++; showRefill = true }, people = peopleBar,
+                                        onRefillAlert = { refillSession++; showRefill = true }, people = peopleBar, listState = medsListState,
                                         toast = listToastTitle?.let { ListToast(it, listToastBody) },
                                         onToastShown = { listToastTitle = null; listToastBody = null },
                                     )
@@ -452,7 +454,7 @@ class MainActivity : PillBoxActivity() {
                                         },
                                         onAddPerson = { personId = 0L; personMode = 1; personSession++ },
                                         toast = peopleToastTitle?.let { ListToast(it, peopleToastBody) },
-                                        onToastShown = { peopleToastTitle = null; peopleToastBody = null },
+                                        onToastShown = { peopleToastTitle = null; peopleToastBody = null }, listState = peopleListState,
                                     )
                                 }
                                 Tab.SETTINGS -> {
