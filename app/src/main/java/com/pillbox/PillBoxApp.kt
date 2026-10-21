@@ -39,7 +39,7 @@ class PillBoxApp : Application() {
         reminders.createChannels()
         // The weekly job survives restarts; this only makes sure it exists (KEEP leaves a running one alone).
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch { if (backups.wantsAutomatic()) backups.schedule() }
-        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch { updates.reconcile() }
+        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch { runCatching { updates.reconcile() } }
         // A new tone or vibration choice needs its own channel; everything else is read from ReminderState when it rings.
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
             reminderSettings.flow.collect { ReminderState.current = it; reminders.createChannels() }
