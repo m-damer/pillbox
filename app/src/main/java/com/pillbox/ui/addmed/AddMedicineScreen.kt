@@ -286,7 +286,10 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
     }
 
     FieldLabel(stringResource(R.string.strength_label))
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12)) {
+    // At large text the number and the unit switch no longer fit side by side ("mg" would break in two): stack them.
+    val stackStrength = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f
+    val units = StrengthUnit.values().toList()
+    val strengthField: @Composable (Modifier) -> Unit = { m ->
         OutlinedTextField(
             value = form.strength,
             onValueChange = { v -> edit { it.copy(strength = v.take(10)) } },
@@ -296,15 +299,27 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
             shape = MaterialTheme.shapes.large,
             colors = fieldColors(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-            modifier = Modifier.weight(1f).heightIn(min = Dimens.StepperButton),
+            modifier = m.heightIn(min = Dimens.StepperButton),
         )
-        val units = StrengthUnit.values().toList()
+    }
+    val strengthUnit: @Composable (Modifier) -> Unit = { m ->
         Segmented(
             options = listOf(stringResource(R.string.unit_mg), stringResource(R.string.unit_g), stringResource(R.string.unit_ml)),
             selectedIndex = units.indexOf(form.strengthUnit),
             onSelect = { i -> edit { it.copy(strengthUnit = units[i]) } },
-            modifier = Modifier.weight(1.3f),
+            modifier = m,
         )
+    }
+    if (stackStrength) {
+        Column(verticalArrangement = Arrangement.spacedBy(Space.S12)) {
+            strengthField(Modifier.fillMaxWidth())
+            strengthUnit(Modifier.fillMaxWidth())
+        }
+    } else {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12)) {
+            strengthField(Modifier.weight(1f))
+            strengthUnit(Modifier.weight(1.3f))
+        }
     }
 
     val doseLabel = stringResource(R.string.dose_label)
