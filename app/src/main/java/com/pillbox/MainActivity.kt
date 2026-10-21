@@ -256,6 +256,7 @@ class MainActivity : PillBoxActivity() {
                             )
                             15 -> PrivacyPolicyContent(onBack = close, onDelete = { deleteFromPrivacy = true; settingsScreen = 11 }, onClose = close)
                             16 -> TermsContent(onBack = close, onDone = close)
+                            19 -> com.pillbox.ui.about.DeveloperContent(onBack = close)
                             17 -> FeedbackScreen(onBack = close, onOpened = { aboutThanks++; settingsScreen = 14 })
                             18 -> RateScreen(onBack = close, onOpened = { aboutThanks++; settingsScreen = 14 }, onWriteFeedback = { settingsScreen = 17 })
                             1 -> AccessibilityScreen(vm, onBack = close, onOpenSimple = { settingsScreen = 9 }, onOpenPreview = { settingsScreen = 10 })
@@ -463,6 +464,7 @@ class MainActivity : PillBoxActivity() {
                                                 SettingsTarget.LANGUAGE -> settingsScreen = 2
                                                 SettingsTarget.THEME -> settingsScreen = 3
                                                 SettingsTarget.REPORT -> showReport = true
+                                                SettingsTarget.DEVELOPER -> settingsScreen = 19
                                             }
                                         },
                                         toast = settingsToastTitle?.let { ListToast(it, settingsToastBody) },

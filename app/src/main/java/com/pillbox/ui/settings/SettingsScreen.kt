@@ -58,7 +58,7 @@ import com.pillbox.ui.theme.Space
 import com.pillbox.ui.theme.illustration
 
 /** Where a Settings row leads. */
-enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, THEME, LANGUAGE, REPORT, BACKUP, PRIVACY }
+enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, THEME, LANGUAGE, REPORT, BACKUP, PRIVACY, DEVELOPER }
 
 @Composable
 fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings(), scroll: androidx.compose.foundation.ScrollState = rememberScrollState()) {
@@ -81,6 +81,13 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(Modifier.weight(1f).verticalScroll(scroll).padding(horizontal = Dimens.ScreenPaddingH, vertical = Dimens.ScreenPaddingTop)) {
             Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.semantics { heading() })
+            Spacer(Modifier.size(Space.S8))
+            Group {
+                SettingsRow(
+                    stringResource(R.string.dev_title), stringResource(R.string.dev_name),
+                    c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Person) }, { onOpen(SettingsTarget.DEVELOPER) },
+                )
+            }
             Section(stringResource(R.string.settings_sec_reminders))
             Group {
                 SettingsRow(stringResource(R.string.settings_sound), stringResource(toneName(state.reminder.tone)), tints[4], { RowIcon(com.pillbox.ui.components.DesignIcons.Sound) }, { onOpen(SettingsTarget.SOUND) })

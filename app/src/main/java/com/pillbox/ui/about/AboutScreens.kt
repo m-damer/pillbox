@@ -207,6 +207,35 @@ private fun AboutRow(title: String, icon: ImageVector, onClick: () -> Unit, dang
     }
 }
 
+// ---------------------------------------------------------------- About the developer
+
+/** Settings > About the developer. The text is in strings (dev_*), so it can be rewritten without touching code. */
+@Composable
+fun DeveloperContent(onBack: () -> Unit) {
+    val c = PillBox.colors
+    Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        SubHeader(stringResource(R.string.dev_title), onBack)
+        Column(
+            Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH),
+            verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
+        ) {
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Space.S4)) {
+                Box(Modifier.size(Dimens.LogoSmall).clip(androidx.compose.foundation.shape.CircleShape).background(c.primary), contentAlignment = Alignment.Center) {
+                    Text(stringResource(R.string.dev_initial), style = MaterialTheme.typography.headlineSmall, color = c.onPrimary)
+                }
+                Text(stringResource(R.string.dev_name), style = MaterialTheme.typography.titleMedium, color = c.text, modifier = Modifier.padding(top = Space.S8))
+                Text(stringResource(R.string.dev_role), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+            }
+            Card {
+                Text(
+                    stringResource(R.string.dev_body), style = MaterialTheme.typography.bodyLarge, color = c.text,
+                    modifier = Modifier.fillMaxWidth().padding(Space.S16),
+                )
+            }
+        }
+    }
+}
+
 // ---------------------------------------------------------------- Privacy policy and Terms
 
 private class Block(val icon: ImageVector, val title: Int, val body: Int, val container: @Composable () -> androidx.compose.ui.graphics.Color, val tint: @Composable () -> androidx.compose.ui.graphics.Color)
