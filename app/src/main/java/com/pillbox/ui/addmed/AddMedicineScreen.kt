@@ -453,7 +453,7 @@ private fun Step2(
                 minusEnabled = form.minGapHours > 1, plusEnabled = form.minGapHours < 24,
             )
             Box(Modifier.size(Space.S12))
-            InfoCard(stringResource(R.string.prn_info), Icons.Filled.Info)
+            InfoCard(stringResource(R.string.prn_info), com.pillbox.ui.components.DesignIcons.Info)
         }
     }
 
@@ -694,7 +694,7 @@ private fun Step3(
     }
 
     Box(Modifier.size(Space.S16))
-    InfoCard(summaryText(form, fmt), Icons.Filled.DateRange)
+    InfoCard(summaryText(form, fmt), com.pillbox.ui.components.DesignIcons.Calendar)
 }
 
 @Composable

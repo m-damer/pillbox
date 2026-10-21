@@ -192,22 +192,27 @@ fun TodayContent(
         return
     }
     Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-    LazyColumn(
-        Modifier.fillMaxSize(),
-        contentPadding = androidx.compose.foundation.layout.PaddingValues(
-            start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Dimens.ScreenPaddingTop, bottom = 96.dp,
-        ),
-        verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
-    ) {
-        item {
+    Column(Modifier.fillMaxSize()) {
+        // The title and the week strip stay in place while the list scrolls.
+        Column(
+            Modifier.fillMaxWidth().padding(start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Dimens.ScreenPaddingTop),
+            verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
+        ) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top) {
                 Box(Modifier.weight(1f)) { Header(state.selectedDate, today, model, fmt) }
                 com.pillbox.ui.people.PeopleBarSwitcher(people)
             }
+            WeekStrip(state.selectedDate, today, fmt, onSelectDate)
         }
+    LazyColumn(
+        Modifier.weight(1f).fillMaxWidth(),
+        contentPadding = androidx.compose.foundation.layout.PaddingValues(
+            start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Dimens.CardGap, bottom = 96.dp,
+        ),
+        verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
+    ) {
         if (people?.active?.isMe == false) item { com.pillbox.ui.people.ViewingBanner(people) }
         if (remindersOff) item { RemindersOffBanner(onFixReminders) }
-        item { WeekStrip(state.selectedDate, today, fmt, onSelectDate) }
         if (state.selectedDate != today) item { BackToToday(onBackToToday) }
         if (state.selectedDate == today && model != null && model.groups.isNotEmpty()) item { DayTimeline(model, fmt) }
         if (model != null) {
@@ -220,6 +225,7 @@ fun TodayContent(
             if (state.selectedDate > today && model.groups.isNotEmpty()) item { InfoNote(stringResource(R.string.future_note)) }
         }
         if (state.selectedDate == today && state.asNeeded.isNotEmpty()) item { AsNeededCard(state.asNeeded, onTakeAsNeeded) }
+    }
     }
     if (state.lowStock.isNotEmpty()) {
         Column(
@@ -279,7 +285,7 @@ private fun LowStockStrip(item: LowStock, onClick: () -> Unit) {
         PillIcon(item.unit, null, 26.dp)
         Text(text, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
         Text(label, style = MaterialTheme.typography.labelMedium, color = c.warning)
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
+        Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
     }
 }
 
@@ -304,10 +310,17 @@ private fun Header(selected: LocalDate, today: LocalDate, model: TodayModel?, fm
         else -> selected.dayOfWeek.getDisplayName(TextStyle.FULL, locale())
     }
     val date = fmt.digits(shortDate(selected))
-    val sub = when {
+    val subText = when {
         model == null -> date
         selected > today -> stringResourceIso(R.string.sub_planned, date, pluralStringResource(R.plurals.n_doses, model.total, fmt.number(model.total)))
         else -> stringResourceIso(R.string.sub_taken, date, fmt.number(model.taken), fmt.number(model.total))
+    }
+    // "Wed 21 Oct - (0 of 2 taken)": the part in brackets is bold.
+    val sub = androidx.compose.ui.text.buildAnnotatedString {
+        append(subText)
+        val open = subText.indexOf('(')
+        val close = subText.lastIndexOf(')')
+        if (open >= 0 && close > open) addStyle(androidx.compose.ui.text.SpanStyle(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold), open, close + 1)
     }
     Column(Modifier.fillMaxWidth().padding(top = Space.S4)) {
         Text(title, style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.semantics { heading() })
@@ -315,32 +328,55 @@ private fun Header(selected: LocalDate, today: LocalDate, model: TodayModel?, fm
     }
 }
 
+/** Days shown in the strip: two weeks back to about two months ahead. Swipe sideways to see more. */
+private const val STRIP_DAYS_BACK = 14L
+private const val STRIP_DAYS_AHEAD = 62L
+
 @Composable
 private fun WeekStrip(selected: LocalDate, today: LocalDate, fmt: Formatter, onSelect: (LocalDate) -> Unit) {
     val c = PillBox.colors
     val first = com.pillbox.ui.firstDayOfWeek()
-    val start = today.minusDays(((today.dayOfWeek.value - first.value + 7) % 7).toLong())
-    Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.spacedBy(Space.S4)) {
-        for (i in 0..6) {
-            val day = start.plusDays(i.toLong())
-            val on = day == selected
-            val full = day.dayOfWeek.getDisplayName(TextStyle.FULL, locale()) + " " + fmt.number(day.dayOfMonth)
-            Column(
-                Modifier
-                    .weight(1f)
-                    .heightIn(min = 64.dp)
-                    .background(if (on) c.primary else Color.Transparent, MaterialTheme.shapes.medium)
-                    .selectable(selected = on, role = Role.Tab, onClick = { onSelect(day) })
-                    .semantics { contentDescription = full }
-                    .padding(vertical = Space.S8),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    day.dayOfWeek.getDisplayName(TextStyle.SHORT, locale()),
-                    style = MaterialTheme.typography.labelSmall, color = if (on) c.onPrimary else c.textMuted, maxLines = 1,
-                )
-                Text(fmt.number(day.dayOfMonth), style = MaterialTheme.typography.labelLarge, color = if (on) c.onPrimary else c.text)
+    val weekStart = today.minusDays(((today.dayOfWeek.value - first.value + 7) % 7).toLong())
+    val begin = weekStart.minusDays(STRIP_DAYS_BACK)
+    val count = (STRIP_DAYS_BACK + 7 + STRIP_DAYS_AHEAD).toInt()
+    val state = androidx.compose.foundation.lazy.rememberLazyListState(initialFirstVisibleItemIndex = STRIP_DAYS_BACK.toInt())
+    // Picking a day outside what is on screen (Back to today, a date from elsewhere) brings it into view.
+    LaunchedEffect(selected) {
+        val index = java.time.temporal.ChronoUnit.DAYS.between(begin, selected).toInt()
+        val visible = state.layoutInfo.visibleItemsInfo
+        if (index in 0 until count && (visible.isEmpty() || index < visible.first().index || index > visible.last().index)) {
+            state.animateScrollToItem((index - 3).coerceAtLeast(0))
+        }
+    }
+    androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxWidth()) {
+        // Seven days fit across the screen, like a week; the rest is a swipe away.
+        val gap = Space.S4
+        val itemWidth = (maxWidth - gap * 6) / 7
+        androidx.compose.foundation.lazy.LazyRow(
+            state = state, modifier = Modifier.fillMaxWidth().selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(gap),
+        ) {
+            items(count) { i ->
+                val day = begin.plusDays(i.toLong())
+                val on = day == selected
+                val full = day.dayOfWeek.getDisplayName(TextStyle.FULL, locale()) + " " + fmt.number(day.dayOfMonth)
+                Column(
+                    Modifier
+                        .width(itemWidth)
+                        .heightIn(min = 64.dp)
+                        .background(if (on) c.primary else Color.Transparent, MaterialTheme.shapes.medium)
+                        .selectable(selected = on, role = Role.Tab, onClick = { onSelect(day) })
+                        .semantics { contentDescription = full }
+                        .padding(vertical = Space.S8),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        day.dayOfWeek.getDisplayName(TextStyle.SHORT, locale()),
+                        style = MaterialTheme.typography.labelSmall, color = if (on) c.onPrimary else c.textMuted, maxLines = 1,
+                    )
+                    Text(fmt.number(day.dayOfMonth), style = MaterialTheme.typography.labelLarge, color = if (on) c.onPrimary else c.text)
+                }
             }
         }
     }
@@ -358,7 +394,7 @@ private fun RemindersOffBanner(onFix: () -> Unit) {
             .padding(Space.S12),
         horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(24.dp))
+        Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(24.dp))
         Column(Modifier.weight(1f)) {
             Text(stringResource(R.string.banner_off_title), style = MaterialTheme.typography.labelLarge, color = c.warning)
             Text(stringResource(R.string.banner_off_body), style = MaterialTheme.typography.bodySmall, color = c.warning)
@@ -420,7 +456,7 @@ private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) 
                 Modifier.fillMaxWidth().background(c.warningContainer, MaterialTheme.shapes.medium).padding(Space.S12),
                 horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top,
             ) {
-                Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(20.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(20.dp))
                 Text(stringResourceIso(R.string.late_banner, timeText), style = MaterialTheme.typography.labelMedium, color = c.warning)
             }
         }
@@ -468,6 +504,18 @@ internal fun foodText(f: WithFood): String? = when (f) {
     WithFood.BEFORE_MEAL -> stringResource(R.string.food_line_before)
     WithFood.WITH_MEAL -> stringResource(R.string.food_line_with)
     WithFood.AFTER_MEAL -> stringResource(R.string.food_line_after)
+}
+
+/** "After breakfast" for the daily plan: the food rule worded with the meal nearest [time]; the plain wording when no meal is near. */
+@Composable
+internal fun foodTextFor(f: WithFood, time: java.time.LocalTime, meals: com.pillbox.domain.MealTimes): String? {
+    val meal = meals.mealFor(f, time) ?: return foodText(f)
+    val id = if (meal == com.pillbox.domain.MealTimes.Meal.BEDTIME) R.string.food_snack else when (f) {
+        WithFood.BEFORE_MEAL -> when (meal) { com.pillbox.domain.MealTimes.Meal.BREAKFAST -> R.string.food_before_breakfast; com.pillbox.domain.MealTimes.Meal.LUNCH -> R.string.food_before_lunch; else -> R.string.food_before_dinner }
+        WithFood.WITH_MEAL -> when (meal) { com.pillbox.domain.MealTimes.Meal.BREAKFAST -> R.string.food_with_breakfast; com.pillbox.domain.MealTimes.Meal.LUNCH -> R.string.food_with_lunch; else -> R.string.food_with_dinner }
+        else -> when (meal) { com.pillbox.domain.MealTimes.Meal.BREAKFAST -> R.string.food_after_breakfast; com.pillbox.domain.MealTimes.Meal.LUNCH -> R.string.food_after_lunch; else -> R.string.food_after_dinner }
+    }
+    return stringResource(id)
 }
 
 @Composable
@@ -522,17 +570,17 @@ private fun DoseRowItem(
     val trailing: @Composable () -> Unit = {
         when {
             status == RowStatus.TAKEN -> Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.Check, contentDescription = null, tint = c.textMuted, modifier = Modifier.size(18.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.textMuted, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(Space.S4))
                 Text(fmt.time(row.event?.taken?.toLocalTime() ?: row.planned.toLocalTime()), style = MaterialTheme.typography.labelLarge, color = c.textMuted)
             }
             skipped -> Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.Close, contentDescription = null, tint = c.danger, modifier = Modifier.size(18.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Close, contentDescription = null, tint = c.danger, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(Space.S4))
                 Text(stringResource(R.string.skipped), style = MaterialTheme.typography.labelLarge, color = c.danger)
             }
             row.missed && !actionable -> Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Filled.Info, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Info, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(Space.S4))
                 Text(stringResource(R.string.missed), style = MaterialTheme.typography.labelLarge, color = c.warning)
             }
@@ -581,7 +629,7 @@ private fun InfoNote(text: String) {
         Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S12),
         horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.Top,
     ) {
-        Icon(Icons.Filled.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+        Icon(com.pillbox.ui.components.DesignIcons.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
         Text(text, style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
     }
 }

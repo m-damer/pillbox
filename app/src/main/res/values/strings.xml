@@ -149,8 +149,8 @@
     <!-- Today -->
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
-    <string name="sub_taken">%1$s · %2$s of %3$s taken</string>
-    <string name="sub_planned">%1$s · %2$s planned</string>
+    <string name="sub_taken">%1$s - (%2$s of %3$s taken)</string>
+    <string name="sub_planned">%1$s - (%2$s planned)</string>
     <string name="back_to_today">Back to today</string>
     <string name="nothing_planned">No doses are planned for this day.</string>
     <string name="future_note">These are planned doses. You can mark them on the day.</string>
@@ -169,6 +169,16 @@
     <string name="said_taken_at">taken at %1$s</string>
     <string name="said_not_taken">not taken</string>
     <string name="dot_sep">" · "</string>
+    <string name="food_before_breakfast">Before breakfast</string>
+    <string name="food_before_lunch">Before lunch</string>
+    <string name="food_before_dinner">Before dinner</string>
+    <string name="food_with_breakfast">With breakfast</string>
+    <string name="food_with_lunch">With lunch</string>
+    <string name="food_with_dinner">With dinner</string>
+    <string name="food_after_breakfast">After breakfast</string>
+    <string name="food_after_lunch">After lunch</string>
+    <string name="food_after_dinner">After dinner</string>
+    <string name="food_snack">With a light snack</string>
     <string name="food_line_before">before meal</string>
     <string name="food_line_with">with food</string>
     <string name="food_line_after">after meal</string>

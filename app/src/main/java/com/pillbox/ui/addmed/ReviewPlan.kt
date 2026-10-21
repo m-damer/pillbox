@@ -54,7 +54,7 @@ import com.pillbox.ui.theme.Dimens
 import com.pillbox.ui.theme.PillBox
 import com.pillbox.ui.theme.Space
 import com.pillbox.ui.today.PillIcon
-import com.pillbox.ui.today.foodText
+import com.pillbox.ui.today.foodTextFor
 import java.time.LocalDate
 
 /**
@@ -90,7 +90,7 @@ fun ReviewPlanContent(
             Box(
                 Modifier.size(Dimens.TouchTargetMin).semantics { contentDescription = backLabel; role = Role.Button }.clickable(onClick = onBack),
                 contentAlignment = Alignment.Center,
-            ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = c.text) }
+            ) { Icon(com.pillbox.ui.components.DesignIcons.Back, contentDescription = null, tint = c.text) }
             Column(Modifier.weight(1f)) {
                 Text(stringResource(R.string.plan_title), style = MaterialTheme.typography.titleLarge, color = c.text, modifier = Modifier.semantics { heading() })
                 Text(
@@ -103,7 +103,8 @@ fun ReviewPlanContent(
             Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12),
             verticalArrangement = Arrangement.spacedBy(Space.S12),
         ) {
-            plan.groups.forEach { g -> PlanGroupCard(g, fmt, onChange = { picking = it }) }
+            val meals = form.meals ?: com.pillbox.domain.MealTimes()
+            plan.groups.forEach { g -> PlanGroupCard(g, fmt, meals, onChange = { picking = it }) }
             Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large)) {
                 Column(Modifier.fillMaxWidth().padding(Space.S16), verticalArrangement = Arrangement.spacedBy(Space.S8)) {
                     Text(stringResource(R.string.plan_coming_up), style = MaterialTheme.typography.labelLarge, color = c.textMuted, modifier = Modifier.semantics { heading() })
@@ -136,7 +137,7 @@ fun ReviewPlanContent(
 }
 
 @Composable
-private fun PlanGroupCard(group: PlanGroup, fmt: Formatter, onChange: (Int) -> Unit) {
+private fun PlanGroupCard(group: PlanGroup, fmt: Formatter, meals: com.pillbox.domain.MealTimes, onChange: (Int) -> Unit) {
     val c = PillBox.colors
     val block = blockOf(group.time)
     val (bg, fg) = blockColors(block)
@@ -155,14 +156,14 @@ private fun PlanGroupCard(group: PlanGroup, fmt: Formatter, onChange: (Int) -> U
                 ) { Text(time, style = MaterialTheme.typography.labelLarge, color = fg, fontWeight = FontWeight.Bold) }
             } else Text(time, style = MaterialTheme.typography.labelLarge, color = fg, textAlign = TextAlign.End)
         }
-        group.entries.forEach { PlanEntryRow(it, fg) }
+        group.entries.forEach { PlanEntryRow(it, group.time, meals, fg) }
     }
 }
 
 @Composable
-private fun PlanEntryRow(e: PlanEntry, fg: androidx.compose.ui.graphics.Color) {
+private fun PlanEntryRow(e: PlanEntry, time: java.time.LocalTime, meals: com.pillbox.domain.MealTimes, fg: androidx.compose.ui.graphics.Color) {
     val c = PillBox.colors
-    val food = foodText(e.withFood)
+    val food = foodTextFor(e.withFood, time, meals)
     val newLabel = stringResource(R.string.plan_new)
     val said = listOfNotNull(e.name, food, if (e.isNew) newLabel else null).joinToString(", ")
     Row(

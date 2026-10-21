@@ -118,7 +118,7 @@ private fun SkipSheet(sheet: TodaySheet.Skip, vm: TodayViewModel) {
                         .background(if (on) c.primary else c.card, CircleShape)
                         .border(Dimens.ChipBorder, if (on) c.primary else c.placeholder, CircleShape),
                     contentAlignment = Alignment.Center,
-                ) { if (on) Icon(Icons.Filled.Check, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
+                ) { if (on) Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
             }
         }
     }
@@ -199,7 +199,7 @@ internal fun LateSheet(sheet: TodaySheet.Late, fmt: Formatter, onConfirm: (LateC
                 .background(if (always) c.primary else c.card, MaterialTheme.shapes.small)
                 .border(Dimens.ChipBorder, if (always) c.primary else c.placeholder, MaterialTheme.shapes.small),
             contentAlignment = Alignment.Center,
-        ) { if (always) Icon(Icons.Filled.Check, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
+        ) { if (always) Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
         Text(stringResource(R.string.late_always), style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
     }
     PrimaryButton(
@@ -228,7 +228,7 @@ private fun LateOption(title: String, body: String, selected: Boolean, onClick: 
                 .background(if (selected) c.primary else c.card, CircleShape)
                 .border(Dimens.ChipBorder, if (selected) c.primary else c.placeholder, CircleShape),
             contentAlignment = Alignment.Center,
-        ) { if (selected) Icon(Icons.Filled.Check, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
+        ) { if (selected) Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.labelLarge, color = c.text)
             Text(body, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)

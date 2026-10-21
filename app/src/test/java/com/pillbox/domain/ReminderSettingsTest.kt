@@ -110,4 +110,20 @@ class ReminderSettingsTest {
     @Test fun editModeIgnoresMeals() {
         assertEquals(listOf(t(8), t(20)), base.copy(originalStock = 10.0).times())
     }
+
+    @Test fun mealForMatchesTheNearestMeal() {
+        val m = MealTimes() // 7:30, 13:30, 20:00, bedtime 22:00
+        assertEquals(MealTimes.Meal.BREAKFAST, m.mealFor(WithFood.AFTER_MEAL, java.time.LocalTime.of(8, 0)))
+        assertEquals(MealTimes.Meal.BREAKFAST, m.mealFor(WithFood.BEFORE_MEAL, java.time.LocalTime.of(7, 0)))
+        assertEquals(MealTimes.Meal.LUNCH, m.mealFor(WithFood.WITH_MEAL, java.time.LocalTime.of(13, 30)))
+        assertEquals(MealTimes.Meal.DINNER, m.mealFor(WithFood.AFTER_MEAL, java.time.LocalTime.of(20, 30)))
+        assertEquals(MealTimes.Meal.BEDTIME, m.mealFor(WithFood.WITH_MEAL, java.time.LocalTime.of(22, 0)))
+    }
+
+    @Test fun mealForIsNullWhenNoMealIsNearOrAnyTime() {
+        val m = MealTimes()
+        assertNull(m.mealFor(WithFood.ANY, java.time.LocalTime.of(8, 0)))
+        assertNull(m.mealFor(WithFood.WITH_MEAL, java.time.LocalTime.of(16, 0)))
+        assertNull(m.mealFor(WithFood.AFTER_MEAL, java.time.LocalTime.of(3, 0)))
+    }
 }

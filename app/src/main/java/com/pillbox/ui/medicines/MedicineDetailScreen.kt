@@ -233,7 +233,7 @@ private fun TopBar(title: String, onBack: () -> Unit, onDelete: (() -> Unit)? = 
         Box(
             Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onBack),
             contentAlignment = Alignment.Center,
-        ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = c.text) }
+        ) { Icon(com.pillbox.ui.components.DesignIcons.Back, contentDescription = stringResource(R.string.back), tint = c.text) }
         Text(title, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, modifier = Modifier.weight(1f).semantics { heading() })
         if (onEdit != null) {
             Box(
@@ -250,7 +250,7 @@ private fun TopBar(title: String, onBack: () -> Unit, onDelete: (() -> Unit)? = 
             Box(
                 Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onDelete),
                 contentAlignment = Alignment.Center,
-            ) { Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_a11y), tint = c.danger) }
+            ) { Icon(com.pillbox.ui.components.DesignIcons.Trash, contentDescription = stringResource(R.string.delete_a11y), tint = c.danger) }
         }
     }
 }
@@ -586,10 +586,10 @@ private fun DayCircle(mark: DayMark, description: String) {
     ) {
         when (mark) {
             DayMark.ALL_TAKEN -> Box(Modifier.size(36.dp).background(c.successContainer, CircleShape), contentAlignment = Alignment.Center) {
-                Icon(Icons.Filled.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(20.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(20.dp))
             }
             DayMark.MISSED -> Box(Modifier.size(36.dp).background(c.dangerContainer, CircleShape), contentAlignment = Alignment.Center) {
-                Icon(Icons.Filled.Close, contentDescription = null, tint = c.danger, modifier = Modifier.size(20.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Close, contentDescription = null, tint = c.danger, modifier = Modifier.size(20.dp))
             }
             DayMark.PENDING, DayMark.NONE -> Canvas(Modifier.size(36.dp)) {
                 drawCircle(
@@ -637,7 +637,7 @@ private fun FinishedDetail(
                 Modifier.fillMaxWidth().background(c.successContainer, MaterialTheme.shapes.medium).padding(Space.S16),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
             ) {
-                Icon(Icons.Filled.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(24.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(24.dp))
                 Text(
                     stringResource(if (course) R.string.fin_banner_course else R.string.fin_banner_stopped),
                     style = MaterialTheme.typography.bodyMedium, color = c.success, modifier = Modifier.weight(1f),
@@ -689,6 +689,6 @@ private fun NavRowCard(title: String, subtitle: String, onClick: () -> Unit) {
             Text(title, style = MaterialTheme.typography.labelLarge, color = c.text)
             Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
         }
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.textMuted)
+        Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.textMuted)
     }
 }

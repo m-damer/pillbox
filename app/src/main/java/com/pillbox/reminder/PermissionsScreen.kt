@@ -63,15 +63,15 @@ fun PermissionsScreen(
             Text(stringResource(R.string.perm_title), style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.padding(top = Space.S16).semantics { heading() })
             Text(stringResource(R.string.perm_sub), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
             Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large)) {
-                PermRow(Icons.Filled.Notifications, c.successContainer, c.success, R.string.perm_notif, R.string.perm_notif_sub, state.notifications, onAllowNotifications)
-                PermRow(Icons.Filled.DateRange, c.noon, c.noonText, R.string.perm_exact, R.string.perm_exact_sub, state.exactAlarms, onAllowExact)
-                PermRow(Icons.Filled.Settings, c.warningContainer, c.warning, R.string.perm_battery, R.string.perm_battery_sub, state.battery, onAllowBattery)
+                PermRow(com.pillbox.ui.components.DesignIcons.Bell, c.successContainer, c.success, R.string.perm_notif, R.string.perm_notif_sub, state.notifications, onAllowNotifications)
+                PermRow(com.pillbox.ui.components.DesignIcons.Calendar, c.noon, c.noonText, R.string.perm_exact, R.string.perm_exact_sub, state.exactAlarms, onAllowExact)
+                PermRow(com.pillbox.ui.components.DesignIcons.Sliders, c.warningContainer, c.warning, R.string.perm_battery, R.string.perm_battery_sub, state.battery, onAllowBattery)
             }
             Row(
                 Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S12),
                 horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.Top,
             ) {
-                Icon(Icons.Filled.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Info, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
                 Text(stringResource(R.string.perm_later_info), style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
             }
         }
@@ -98,7 +98,7 @@ private fun PermRow(icon: ImageVector, bg: Color, fg: Color, title: Int, sub: In
         }
         if (granted) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S4)) {
-                Icon(Icons.Filled.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(20.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.success, modifier = Modifier.size(20.dp))
                 Text(stringResource(R.string.perm_allowed), style = MaterialTheme.typography.labelLarge, color = c.success)
             }
         } else {
@@ -117,7 +117,7 @@ fun RemindersOffScreen(onOpenSettings: () -> Unit, onContinueWithout: () -> Unit
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center,
         ) {
             Box(Modifier.size(80.dp).background(c.warningContainer, CircleShape), contentAlignment = Alignment.Center) {
-                Icon(Icons.Filled.Notifications, contentDescription = null, tint = c.warning, modifier = Modifier.size(40.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Bell, contentDescription = null, tint = c.warning, modifier = Modifier.size(40.dp))
             }
             Text(stringResource(R.string.off_title), style = MaterialTheme.typography.titleLarge, color = c.text, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.S20).semantics { heading() })
             Text(stringResource(R.string.off_body), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.S12))

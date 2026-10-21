@@ -237,7 +237,11 @@ private fun DayBar(q: QuietHours, fmt: Formatter) {
             drawRoundRect(c.night, size = Size(size.width, h), cornerRadius = androidx.compose.ui.geometry.CornerRadius(h / 2))
             fun seg(a: Float, b: Float) {
                 if (b <= a) return
-                drawRect(c.primary, Offset(size.width * a / day, 0f), Size(size.width * (b - a) / day, h))
+                val w = size.width * (b - a) / day
+                val x = size.width * a / day
+                // Right to left reads the day from the right, like the hour labels under the bar.
+                val left = if (layoutDirection == androidx.compose.ui.unit.LayoutDirection.Rtl) size.width - x - w else x
+                drawRect(c.primary, Offset(left, 0f), Size(w, h))
             }
             val f = q.from.hour * 60f + q.from.minute
             val u = q.until.hour * 60f + q.until.minute
@@ -248,7 +252,7 @@ private fun DayBar(q: QuietHours, fmt: Formatter) {
             }
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            (if (LocalDensity.current.fontScale > 1.3f) listOf(0, 12) else listOf(0, 6, 12, 18)).forEach { Text(fmt.hour(it), style = MaterialTheme.typography.labelSmall, color = c.textMuted) }
+            (if (LocalDensity.current.fontScale > 1.3f) listOf(0, 12, 24) else listOf(0, 6, 12, 18, 24)).forEach { Text(fmt.hour(it % 24), style = MaterialTheme.typography.labelSmall, color = c.textMuted) }
         }
     }
 }
@@ -276,7 +280,7 @@ fun MealTimesContent(meals: MealTimes, fmt: Formatter, onBack: () -> Unit, onCha
     val tints = PillBox.illustration.avatars
     var picking by rememberSaveable { mutableStateOf(-1) }
     // The day filling up: a quarter, half, three quarters, then night.
-    val glyphs = listOf("◔", "◑", "◕", "☾")
+    val glyphs = listOf(com.pillbox.ui.components.DesignIcons.Utensils, com.pillbox.ui.components.DesignIcons.Utensils, com.pillbox.ui.components.DesignIcons.Utensils, com.pillbox.ui.components.DesignIcons.Moon)
     val rows = listOf(
         Triple(MealTimes.Meal.BREAKFAST, R.string.meal_breakfast, R.string.meal_breakfast_sub),
         Triple(MealTimes.Meal.LUNCH, R.string.meal_lunch, R.string.meal_lunch_sub),
@@ -301,7 +305,7 @@ fun MealTimesContent(meals: MealTimes, fmt: Formatter, onBack: () -> Unit, onCha
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
                     ) {
                         Box(Modifier.size(40.dp).background(tints[i], androidx.compose.foundation.shape.RoundedCornerShape(12.dp)), contentAlignment = Alignment.Center) {
-                            RowGlyph(glyphs[i], large = true)
+                            androidx.compose.material3.Icon(glyphs[i], contentDescription = null, tint = c.accent, modifier = Modifier.size(22.dp))
                         }
                         Column(Modifier.weight(1f)) {
                             Text(name, style = MaterialTheme.typography.labelLarge, color = c.text)
@@ -372,7 +376,7 @@ fun LateSettingContent(
                             Modifier.size(28.dp).background(if (on) c.primary else c.card, CircleShape)
                                 .border(Dimens.ChipBorder, if (on) c.primary else c.placeholder, CircleShape),
                             contentAlignment = Alignment.Center,
-                        ) { if (on) androidx.compose.material3.Icon(androidx.compose.material.icons.Icons.Filled.Check, null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
+                        ) { if (on) androidx.compose.material3.Icon(com.pillbox.ui.components.DesignIcons.Check, null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
                         Column(Modifier.weight(1f)) {
                             Text(stringResource(title), style = MaterialTheme.typography.labelLarge, color = c.text)
                             if (value == com.pillbox.domain.LateSetting.ASK) {

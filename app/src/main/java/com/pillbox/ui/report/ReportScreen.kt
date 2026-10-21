@@ -130,7 +130,7 @@ fun ReportContent(
     Column(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = Space.S8), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onBack), contentAlignment = Alignment.Center) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = c.text)
+                Icon(com.pillbox.ui.components.DesignIcons.Back, contentDescription = stringResource(R.string.back), tint = c.text)
             }
             Column(Modifier.weight(1f).padding(vertical = Space.S8)) {
                 Text(stringResource(R.string.report_screen_title), style = MaterialTheme.typography.titleLarge, color = c.text, modifier = Modifier.semantics { heading() })
@@ -160,7 +160,7 @@ fun ReportContent(
                 Modifier.fillMaxWidth().background(c.warningContainer, MaterialTheme.shapes.medium).padding(Space.S16),
                 verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
             ) {
-                Icon(Icons.Filled.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(24.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(24.dp))
                 Text(stringResource(R.string.report_warning), style = MaterialTheme.typography.bodyMedium, color = c.warning, modifier = Modifier.weight(1f))
             }
             Spacer(Modifier.size(Space.S8))
@@ -209,7 +209,7 @@ private fun PreviewRow(pages: Int?, period: String, fmt: Formatter, onClick: () 
             Text(title, style = MaterialTheme.typography.labelLarge, color = c.text)
             Text(sub, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
         }
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.textMuted)
+        Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.textMuted)
     }
 }
 
@@ -238,7 +238,7 @@ private fun ReportPreview(pages: List<android.graphics.Bitmap>, onBack: () -> Un
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Row(Modifier.fillMaxWidth().padding(horizontal = Space.S8), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onBack), contentAlignment = Alignment.Center) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = c.text)
+                Icon(com.pillbox.ui.components.DesignIcons.Back, contentDescription = stringResource(R.string.back), tint = c.text)
             }
             Text(
                 stringResource(R.string.report_preview_title), style = MaterialTheme.typography.titleLarge, color = c.text,

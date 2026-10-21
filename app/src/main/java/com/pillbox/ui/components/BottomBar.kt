@@ -58,11 +58,11 @@ fun PillBoxBottomBar(selected: Tab, onSelect: (Tab) -> Unit, onAdd: () -> Unit, 
                 .selectableGroup(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            NavItem(Tab.TODAY, Icons.Filled.DateRange, R.string.nav_today, selected, onSelect, Modifier.weight(1f))
-            if (!onlyTodayAndSettings) NavItem(Tab.MEDS, Icons.Filled.List, R.string.nav_meds, selected, onSelect, Modifier.weight(1f))
+            NavItem(Tab.TODAY, com.pillbox.ui.components.DesignIcons.CalendarCheck, R.string.nav_today, selected, onSelect, Modifier.weight(1f))
+            if (!onlyTodayAndSettings) NavItem(Tab.MEDS, com.pillbox.ui.components.DesignIcons.Pill, R.string.nav_meds, selected, onSelect, Modifier.weight(1f))
             Box(Modifier.weight(0.9f))
-            if (!onlyTodayAndSettings) NavItem(Tab.PEOPLE, Icons.Filled.Person, R.string.nav_people, selected, onSelect, Modifier.weight(1f))
-            NavItem(Tab.SETTINGS, Icons.Filled.Settings, R.string.nav_settings, selected, onSelect, Modifier.weight(1f))
+            if (!onlyTodayAndSettings) NavItem(Tab.PEOPLE, com.pillbox.ui.components.DesignIcons.People, R.string.nav_people, selected, onSelect, Modifier.weight(1f))
+            NavItem(Tab.SETTINGS, com.pillbox.ui.components.DesignIcons.Sliders, R.string.nav_settings, selected, onSelect, Modifier.weight(1f))
         }
         val add = stringResource(R.string.add_medicine)
         Box(
@@ -75,7 +75,7 @@ fun PillBoxBottomBar(selected: Tab, onSelect: (Tab) -> Unit, onAdd: () -> Unit, 
                 .semantics { contentDescription = add; role = Role.Button }
                 .clickable(onClick = onAdd),
             contentAlignment = Alignment.Center,
-        ) { Icon(Icons.Filled.Add, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(28.dp)) }
+        ) { Icon(com.pillbox.ui.components.DesignIcons.Plus, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(28.dp)) }
     }
 }
 

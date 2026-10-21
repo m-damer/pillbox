@@ -156,8 +156,8 @@
     <!-- Today -->
     <string name="today">اليوم</string>
     <string name="tomorrow">غداً</string>
-    <string name="sub_taken">%1$s · %2$s من %3$s مأخوذة</string>
-    <string name="sub_planned">%1$s · %2$s مخططة</string>
+    <string name="sub_taken">%1$s - (%2$s من %3$s مأخوذة)</string>
+    <string name="sub_planned">%1$s - (%2$s مخططة)</string>
     <string name="back_to_today">العودة إلى اليوم</string>
     <string name="nothing_planned">لا توجد جرعات مخططة لهذا اليوم.</string>
     <string name="future_note">هذه جرعات مخططة. يمكنك تسجيلها في يومها.</string>
@@ -176,6 +176,16 @@
     <string name="said_taken_at">أُخذت عند %1$s</string>
     <string name="said_not_taken">لم تؤخذ</string>
     <string name="dot_sep">" · "</string>
+    <string name="food_before_breakfast">قبل الفطور</string>
+    <string name="food_before_lunch">قبل الغداء</string>
+    <string name="food_before_dinner">قبل العشاء</string>
+    <string name="food_with_breakfast">مع الفطور</string>
+    <string name="food_with_lunch">مع الغداء</string>
+    <string name="food_with_dinner">مع العشاء</string>
+    <string name="food_after_breakfast">بعد الفطور</string>
+    <string name="food_after_lunch">بعد الغداء</string>
+    <string name="food_after_dinner">بعد العشاء</string>
+    <string name="food_snack">مع وجبة خفيفة</string>
     <string name="food_line_before">قبل الأكل</string>
     <string name="food_line_with">مع الأكل</string>
     <string name="food_line_after">بعد الأكل</string>

@@ -69,6 +69,34 @@ data class MealTimes(
         return meals.map { it.plusMinutes(offset) }
     }
 
+    /**
+     * Which meal a dose at [time] belongs to, for the daily plan ("After breakfast"). The dose is matched to the meal whose
+     * time, moved by the food rule (30 minutes before or after), is closest and within an hour. Null for "any time" or when
+     * no meal is near. Bedtime is the "light snack" slot.
+     */
+    fun mealFor(food: WithFood, time: LocalTime): Meal? {
+        val offset = when (food) {
+            WithFood.ANY -> return null
+            WithFood.BEFORE_MEAL -> -OFFSET_MINUTES
+            WithFood.WITH_MEAL -> 0L
+            WithFood.AFTER_MEAL -> OFFSET_MINUTES
+        }
+        fun gap(m: Meal): Long {
+            val d = Math.abs(java.time.Duration.between(this[m].plusMinutes(offset), time).toMinutes())
+            return minOf(d, 24 * 60 - d)
+        }
+        // Bedtime is a snack, so the food rule's offset does not apply to it.
+        fun snackGap(): Long { val d = Math.abs(java.time.Duration.between(bedtime, time).toMinutes()); return minOf(d, 24 * 60 - d) }
+        val best = Meal.values().filter { it != Meal.BEDTIME }.minByOrNull { gap(it) }
+        val bestGap = best?.let { gap(it) } ?: Long.MAX_VALUE
+        val snack = snackGap()
+        return when {
+            snack <= 60 && snack < bestGap -> Meal.BEDTIME
+            bestGap <= 60 -> best
+            else -> null
+        }
+    }
+
     companion object { const val OFFSET_MINUTES = 30L }
 }
 

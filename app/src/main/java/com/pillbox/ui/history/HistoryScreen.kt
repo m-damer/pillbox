@@ -75,7 +75,7 @@ fun HistoryContent(
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Row(Modifier.fillMaxWidth().padding(horizontal = Space.S8), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onBack), contentAlignment = Alignment.Center) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = c.text)
+                Icon(com.pillbox.ui.components.DesignIcons.Back, contentDescription = stringResource(R.string.back), tint = c.text)
             }
             Column(Modifier.weight(1f).padding(vertical = Space.S8)) {
                 Text(stringResource(R.string.history_title), style = MaterialTheme.typography.titleLarge, color = c.text, modifier = Modifier.semantics { heading() })
@@ -214,13 +214,13 @@ private fun MarkCircle(mark: HistoryMark, size: androidx.compose.ui.unit.Dp) {
     val icon = size * 0.55f
     when (mark) {
         HistoryMark.ALL_TAKEN -> Box(Modifier.size(size).background(c.success, CircleShape), contentAlignment = Alignment.Center) {
-            Icon(Icons.Filled.Check, null, tint = c.onPrimary, modifier = Modifier.size(icon))
+            Icon(com.pillbox.ui.components.DesignIcons.Check, null, tint = c.onPrimary, modifier = Modifier.size(icon))
         }
         HistoryMark.SOME_MISSED -> Box(Modifier.size(size).background(c.warningContainer, CircleShape).border(2.dp, PillBox.illustration.stockLow, CircleShape), contentAlignment = Alignment.Center) {
             Text("!", style = if (size > 24.dp) MaterialTheme.typography.labelLarge else MaterialTheme.typography.labelSmall, color = c.warning)
         }
         HistoryMark.MISSED_DAY -> Box(Modifier.size(size).background(c.dangerContainer, CircleShape).border(2.dp, c.danger, CircleShape), contentAlignment = Alignment.Center) {
-            Icon(Icons.Filled.Close, null, tint = c.danger, modifier = Modifier.size(icon))
+            Icon(com.pillbox.ui.components.DesignIcons.Close, null, tint = c.danger, modifier = Modifier.size(icon))
         }
         HistoryMark.PAUSED -> Box(Modifier.size(size).background(PillBox.illustration.paused.copy(alpha = 0.25f), CircleShape), contentAlignment = Alignment.Center) {
             PauseGlyph(PillBox.illustration.paused, Modifier.size(icon))
@@ -271,7 +271,7 @@ private fun EmptyHistory(onGoToToday: () -> Unit, modifier: Modifier = Modifier)
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center,
         ) {
             Box(Modifier.size(80.dp).background(c.primaryContainer, CircleShape), contentAlignment = Alignment.Center) {
-                Icon(Icons.Filled.DateRange, null, tint = c.accent, modifier = Modifier.size(40.dp))
+                Icon(com.pillbox.ui.components.DesignIcons.Calendar, null, tint = c.accent, modifier = Modifier.size(40.dp))
             }
             Spacer(Modifier.size(Space.S16))
             Text(stringResource(R.string.history_empty_title), style = MaterialTheme.typography.titleLarge, color = c.text, textAlign = TextAlign.Center)

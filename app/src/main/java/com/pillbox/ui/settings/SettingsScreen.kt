@@ -61,29 +61,29 @@ import com.pillbox.ui.theme.illustration
 enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, THEME, LANGUAGE, REPORT, BACKUP, PRIVACY }
 
 @Composable
-fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings()) {
+fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings(), scroll: androidx.compose.foundation.ScrollState = rememberScrollState()) {
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     LaunchedEffect(toast) {
         if (toast != null) { snackbar.showToast(toast.title, toast.body); onToastShown() }
     }
     Box(modifier.fillMaxSize()) {
-        SettingsContent(state, rememberFormatter(), onOpen, ringingIssues, backup)
+        SettingsContent(state, rememberFormatter(), onOpen, ringingIssues, backup, scroll)
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
 }
 
 /** The Settings home without a ViewModel, so screenshots can draw it. Only the rows that lead somewhere are shown. */
 @Composable
-fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTarget) -> Unit, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings()) {
+fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTarget) -> Unit, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings(), scroll: androidx.compose.foundation.ScrollState = rememberScrollState()) {
     val c = PillBox.colors
     val tints = PillBox.illustration.avatars
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH, vertical = Dimens.ScreenPaddingTop)) {
+        Column(Modifier.weight(1f).verticalScroll(scroll).padding(horizontal = Dimens.ScreenPaddingH, vertical = Dimens.ScreenPaddingTop)) {
             Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.semantics { heading() })
             Section(stringResource(R.string.settings_sec_reminders))
             Group {
-                SettingsRow(stringResource(R.string.settings_sound), stringResource(toneName(state.reminder.tone)), tints[0], { RowGlyph("♪", large = true) }, { onOpen(SettingsTarget.SOUND) })
+                SettingsRow(stringResource(R.string.settings_sound), stringResource(toneName(state.reminder.tone)), tints[4], { RowIcon(com.pillbox.ui.components.DesignIcons.Sound) }, { onOpen(SettingsTarget.SOUND) })
                 Divider()
                 SettingsRow(
                     stringResource(R.string.settings_late),
@@ -92,54 +92,54 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                         com.pillbox.domain.LateSetting.MOVE_NEXT -> R.string.late_value_move
                         com.pillbox.domain.LateSetting.KEEP -> R.string.late_value_keep
                     }),
-                    tints[5], { RowIcon(Icons.Filled.Refresh) }, { onOpen(SettingsTarget.LATE) },
+                    tints[5], { RowIcon(com.pillbox.ui.components.DesignIcons.ClockLate) }, { onOpen(SettingsTarget.LATE) },
                 )
                 Divider()
                 SettingsRow(
                     stringResource(R.string.settings_refill),
                     pluralStringResource(R.plurals.n_days, state.refillDays, fmt.number(state.refillDays)),
-                    tints[1], { RowIcon(Icons.Filled.Notifications) }, { onOpen(SettingsTarget.REFILL) },
+                    tints[1], { RowIcon(com.pillbox.ui.components.DesignIcons.Bell) }, { onOpen(SettingsTarget.REFILL) },
                 )
                 Divider()
                 val q = state.reminder.quiet
                 SettingsRow(
                     stringResource(R.string.settings_quiet),
                     if (q.enabled) stringResourceIso(R.string.settings_quiet_range, fmt.time(q.from), fmt.time(q.until)) else stringResource(R.string.settings_off),
-                    tints[2], { RowGlyph("☾", large = true) }, { onOpen(SettingsTarget.QUIET) },
+                    tints[0], { RowIcon(com.pillbox.ui.components.DesignIcons.Moon) }, { onOpen(SettingsTarget.QUIET) },
                 )
                 Divider()
                 SettingsRow(
                     stringResource(R.string.settings_meals), pluralStringResource(R.plurals.meals_count, 4, fmt.number(4)),
-                    tints[3], { RowGlyph("◔", large = true) }, { onOpen(SettingsTarget.MEALS) },
+                    tints[3], { RowIcon(com.pillbox.ui.components.DesignIcons.Utensils) }, { onOpen(SettingsTarget.MEALS) },
                 )
             }
             Section(stringResource(R.string.settings_sec_display))
             Group {
                 SettingsRow(
                     stringResource(R.string.settings_accessibility), textSizeName(state.display.effectiveTextSize),
-                    tints[0], { RowGlyph("Aa") }, { onOpen(SettingsTarget.ACCESSIBILITY) },
+                    c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Accessibility) }, { onOpen(SettingsTarget.ACCESSIBILITY) },
                 )
                 Divider()
                 SettingsRow(
                     stringResource(R.string.settings_language), languageName(com.pillbox.ui.AppLocale.active(androidx.compose.ui.platform.LocalContext.current)),
-                    tints[5], { RowGlyph("A ع") }, { onOpen(SettingsTarget.LANGUAGE) },
+                    c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Globe) }, { onOpen(SettingsTarget.LANGUAGE) },
                 )
                 Divider()
                 SettingsRow(
                     stringResource(R.string.acc_dark), stringResource(themeLabel(state.display.theme)),
-                    tints[2], { RowGlyph("☾", large = true) }, { onOpen(SettingsTarget.THEME) },
+                    tints[0], { RowIcon(com.pillbox.ui.components.DesignIcons.Moon) }, { onOpen(SettingsTarget.THEME) },
                 )
             }
             Section(stringResource(R.string.settings_sec_data))
             Group {
                 SettingsRow(
                     stringResource(R.string.settings_report), stringResource(R.string.settings_report_value),
-                    tints[4], { RowGlyph("PDF") }, { onOpen(SettingsTarget.REPORT) },
+                    tints[1], { RowIcon(com.pillbox.ui.components.DesignIcons.Doc) }, { onOpen(SettingsTarget.REPORT) },
                 )
                 Divider()
                 SettingsRow(
                     stringResource(R.string.settings_backup), backupValue(backup, fmt),
-                    tints[1], { RowIcon(Icons.Filled.Share) }, { onOpen(SettingsTarget.BACKUP) },
+                    c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Cloud) }, { onOpen(SettingsTarget.BACKUP) },
                 )
             }
             Section(stringResource(R.string.settings_sec_help))
@@ -147,13 +147,13 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                 SettingsRow(
                     stringResource(R.string.settings_ring),
                     if (ringingIssues > 0) pluralStringResource(R.plurals.settings_ring_fix, ringingIssues, fmt.number(ringingIssues)) else stringResource(R.string.settings_ring_ok),
-                    tints[2], { RowIcon(Icons.Filled.Notifications) }, { onOpen(SettingsTarget.RINGING) },
+                    tints[2], { RowIcon(com.pillbox.ui.components.DesignIcons.Alarm) }, { onOpen(SettingsTarget.RINGING) },
                 )
                 Divider()
                 SettingsRow(
                     stringResource(R.string.settings_privacy),
                     stringResourceIso(R.string.ab_version, fmt.digits(com.pillbox.ui.about.appVersion(androidx.compose.ui.platform.LocalContext.current))),
-                    tints[1], { RowIcon(Icons.Filled.Lock) }, { onOpen(SettingsTarget.PRIVACY) },
+                    c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Info) }, { onOpen(SettingsTarget.PRIVACY) },
                 )
             }
             Spacer(Modifier.size(Space.S20))
@@ -247,6 +247,6 @@ private fun SettingsRow(title: String, value: String, tint: Color, icon: @Compos
             Text(title, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
             Text(value, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
         }
-        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = c.textMuted)
+        Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.textMuted)
     }
 }

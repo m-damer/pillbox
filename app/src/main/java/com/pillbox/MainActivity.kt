@@ -128,6 +128,8 @@ class MainActivity : PillBoxActivity() {
                 var prnId by rememberSaveable { mutableStateOf<Long?>(null) }
                 var prnAuto by rememberSaveable { mutableStateOf(false) }
                 var prnSession by rememberSaveable { mutableIntStateOf(0) }
+                // Kept here so Settings opens where it was left after a sub-screen closes.
+                val settingsScroll = androidx.compose.foundation.rememberScrollState()
                 var showFinishedTab by rememberSaveable { mutableStateOf(false) }
                 var listToastTitle by rememberSaveable { mutableStateOf<String?>(null) }
                 var listToastBody by rememberSaveable { mutableStateOf<String?>(null) }
@@ -467,6 +469,7 @@ class MainActivity : PillBoxActivity() {
                                         onToastShown = { settingsToastTitle = null; settingsToastBody = null },
                                         ringingIssues = permissions.issues,
                                         backup = backup,
+                                        scroll = settingsScroll,
                                     )
                                 }
                             }
