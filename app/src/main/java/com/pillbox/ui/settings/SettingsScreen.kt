@@ -61,25 +61,25 @@ import com.pillbox.ui.theme.illustration
 enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, THEME, LANGUAGE, REPORT, BACKUP, PRIVACY }
 
 @Composable
-fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings()) {
+fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings(), scroll: androidx.compose.foundation.ScrollState = rememberScrollState()) {
     val state by vm.state.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
     LaunchedEffect(toast) {
         if (toast != null) { snackbar.showToast(toast.title, toast.body); onToastShown() }
     }
     Box(modifier.fillMaxSize()) {
-        SettingsContent(state, rememberFormatter(), onOpen, ringingIssues, backup)
+        SettingsContent(state, rememberFormatter(), onOpen, ringingIssues, backup, scroll)
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
 }
 
 /** The Settings home without a ViewModel, so screenshots can draw it. Only the rows that lead somewhere are shown. */
 @Composable
-fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTarget) -> Unit, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings()) {
+fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTarget) -> Unit, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings(), scroll: androidx.compose.foundation.ScrollState = rememberScrollState()) {
     val c = PillBox.colors
     val tints = PillBox.illustration.avatars
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH, vertical = Dimens.ScreenPaddingTop)) {
+        Column(Modifier.weight(1f).verticalScroll(scroll).padding(horizontal = Dimens.ScreenPaddingH, vertical = Dimens.ScreenPaddingTop)) {
             Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.semantics { heading() })
             Section(stringResource(R.string.settings_sec_reminders))
             Group {

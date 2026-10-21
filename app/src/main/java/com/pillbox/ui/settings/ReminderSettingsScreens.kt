@@ -372,7 +372,7 @@ fun LateSettingContent(
                             Modifier.size(28.dp).background(if (on) c.primary else c.card, CircleShape)
                                 .border(Dimens.ChipBorder, if (on) c.primary else c.placeholder, CircleShape),
                             contentAlignment = Alignment.Center,
-                        ) { if (on) androidx.compose.material3.Icon(androidx.compose.material.icons.com.pillbox.ui.components.DesignIcons.Check, null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
+                        ) { if (on) androidx.compose.material3.Icon(com.pillbox.ui.components.DesignIcons.Check, null, tint = c.onPrimary, modifier = Modifier.size(18.dp)) }
                         Column(Modifier.weight(1f)) {
                             Text(stringResource(title), style = MaterialTheme.typography.labelLarge, color = c.text)
                             if (value == com.pillbox.domain.LateSetting.ASK) {

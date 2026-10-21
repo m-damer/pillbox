@@ -149,8 +149,8 @@
     <!-- Today -->
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
-    <string name="sub_taken">%1$s · %2$s of %3$s taken</string>
-    <string name="sub_planned">%1$s · %2$s planned</string>
+    <string name="sub_taken">%1$s - (%2$s of %3$s taken)</string>
+    <string name="sub_planned">%1$s - (%2$s planned)</string>
     <string name="back_to_today">Back to today</string>
     <string name="nothing_planned">No doses are planned for this day.</string>
     <string name="future_note">These are planned doses. You can mark them on the day.</string>
