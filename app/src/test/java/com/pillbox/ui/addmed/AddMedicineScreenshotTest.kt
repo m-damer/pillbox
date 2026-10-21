@@ -52,6 +52,12 @@ class AddMedicineScreenshotTest {
         com.pillbox.domain.Schedule(today.minusDays(3), today.plusDays(6), com.pillbox.domain.Frequency.FixedTimes(listOf(java.time.LocalTime.of(6, 0), java.time.LocalTime.of(14, 0), java.time.LocalTime.of(22, 0))), com.pillbox.domain.WithFood.WITH_MEAL)
     private val review = AddMedUiState(base.copy(name = "Metformin").let { it.copy(customTimes = listOf(java.time.LocalTime.of(14, 0), java.time.LocalTime.of(20, 30))) }, 4, others = listOf(amox))
 
+    /** Full height, box already in use: shows "How many are left in this box?". */
+    private val inUse = AddMedicineForm(name = "Metformin", strength = "500").withBox(30).withLeft(12)
+    @Config(qualifiers = "w360dp-h844dp-xxhdpi") @Test fun en_step1_full() = shoot("en_step1_full", AddMedUiState(inUse, 1), "en")
+    @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun ar_step1_full() = shoot("ar_step1_full", AddMedUiState(inUse, 1), "ar")
+    @Config(qualifiers = "w360dp-h844dp-xxhdpi") @Test fun en_dark_2x_step1_full() = shoot("en_dark_2x_step1_full", AddMedUiState(inUse, 1), "en", ThemeMode.Dark, 2f)
+
     @Config(qualifiers = "w360dp-h844dp-xxhdpi") @Test fun en_review() = shoot("en_review", review, "en")
     @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun ar_review() = shoot("ar_review", review, "ar")
     @Config(qualifiers = "w360dp-h844dp-xxhdpi") @Test fun en_dark_2x_review() = shoot("en_dark_2x_review", review, "en", ThemeMode.Dark, 2f)
