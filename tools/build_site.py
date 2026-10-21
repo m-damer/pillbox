@@ -69,7 +69,7 @@ def head(title_ar, title_en, desc_ar, desc_en):
 def foot():
     made = f'<span class="ar" lang="ar">{E(AR["settings_made_with"])}</span><span class="en" lang="en">{E(EN["settings_made_with"])}</span>'
     return f"""<footer><div class="wrap">
-<nav>{bi("<a href='privacy.html'>سياسة الخصوصية</a>", "<a href='privacy.html'>Privacy policy</a>")}{bi("<a href='terms.html'>شروط الاستخدام</a>", "<a href='terms.html'>Terms of use</a>")}{bi(f"<a href='{RELEASES}'>كل الإصدارات</a>", f"<a href='{RELEASES}'>All versions</a>")}{bi(f"<a href='{REPO}'>الشفرة المصدرية</a>", f"<a href='{REPO}'>Source code</a>")}</nav>
+<nav>{bi("<a href='privacy.html'>سياسة الخصوصية</a>", "<a href='privacy.html'>Privacy policy</a>")}{bi("<a href='terms.html'>شروط الاستخدام</a>", "<a href='terms.html'>Terms of use</a>")}{bi(f"<a href='{REPO}'>الشفرة المصدرية</a>", f"<a href='{REPO}'>Source code</a>")}</nav>
 <div>{made}</div>
 </div></footer>
 <script src="site.js"></script>
@@ -150,7 +150,7 @@ def home():
 {bi("ثبّته في دقيقة", "Install it in a minute", "h2")}
 {bi("<ol><li>اضغط «تنزيل» وافتح الملف عند اكتماله.</li><li>إذا طلب أندرويد ذلك، اسمح بالتثبيت من هذا المتصفح. يلزم ذلك مرة واحدة لأن التطبيق ليس على Google Play.</li><li>اضغط «تثبيت». تظهر الإصدارات الجديدة في هذه الصفحة، وتثبّتها بالطريقة نفسها فوق القديم.</li></ol>", "<ol><li>Tap Download and open the file when it finishes.</li><li>If Android asks, allow installing from this browser. This is needed once, because Pill Box is not on Google Play.</li><li>Tap Install. New versions appear on this page, and you install them the same way, over the old one.</li></ol>", "div")}
 <div class="row"><a class="btn" href="{DIRECT}" download>{bi("تنزيل لأندرويد", "Download for Android")}</a>
-{bi(f"<a class='link' href='{RELEASES}'>كل الإصدارات</a>", f"<a class='link' href='{RELEASES}'>All versions</a>")}</div>
+</div>
 {bi("<p class='note'>التطبيق يساعدك على التذكّر ولا يغني عن نصيحة طبيبك أو الصيدلاني.</p>", "<p class='note'>This app helps you remember. It does not replace advice from your doctor or pharmacist.</p>", "div")}
 </div></section>
 </main>
