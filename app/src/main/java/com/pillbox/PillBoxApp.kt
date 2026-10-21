@@ -26,6 +26,7 @@ class PillBoxApp : Application() {
     val reminderSettings: ReminderSettingsStore by lazy { ReminderSettingsStore(this) }
     val widgetSettings: com.pillbox.data.WidgetSettingsStore by lazy { com.pillbox.data.WidgetSettingsStore(this) }
     val backups: BackupManager by lazy { BackupManager(this, repository, BackupSettingsStore(this)) }
+    val updates: com.pillbox.update.UpdateManager by lazy { com.pillbox.update.UpdateManager(this, com.pillbox.data.UpdateSettingsStore(this)) }
     val reminders: Reminders by lazy { Reminders(this, repository, refillSettings) }
 
     override fun onCreate() {
@@ -38,6 +39,7 @@ class PillBoxApp : Application() {
         reminders.createChannels()
         // The weekly job survives restarts; this only makes sure it exists (KEEP leaves a running one alone).
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch { if (backups.wantsAutomatic()) backups.schedule() }
+        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch { updates.reconcile() }
         // A new tone or vibration choice needs its own channel; everything else is read from ReminderState when it rings.
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
             reminderSettings.flow.collect { ReminderState.current = it; reminders.createChannels() }

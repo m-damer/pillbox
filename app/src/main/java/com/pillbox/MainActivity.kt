@@ -98,6 +98,9 @@ class MainActivity : PillBoxActivity() {
     /** A medicine to open, asked for by a refill notification. Taken once the screen shows it. */
     private val openMedicine = mutableStateOf<Long?>(null)
 
+    /** The update notification was tapped: show the update screen. Taken once it shows. */
+    private val openUpdate = mutableStateOf(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -169,6 +172,14 @@ class MainActivity : PillBoxActivity() {
                 val peopleList by repo.observePeople().collectAsStateWithLifecycle(emptyList())
                 val activePersonId by repo.activePersonId.collectAsStateWithLifecycle()
                 val peopleBar = PeopleBar(peopleList, activePersonId, onSelect = { repo.selectPerson(it) })
+                // The update notification was tapped.
+                val wantUpdate = openUpdate.value
+                LaunchedEffect(wantUpdate) {
+                    if (wantUpdate) {
+                        showRefill = false; showHistory = false; showReport = false; adding = false; editItem = null; detailId = null
+                        settingsScreen = 20; openUpdate.value = false
+                    }
+                }
                 // A refill notification asked for a medicine.
                 val wanted = openMedicine.value
                 LaunchedEffect(wanted) {
@@ -243,15 +254,16 @@ class MainActivity : PillBoxActivity() {
                     }
                 } else if (settingsScreen != 0) {
                     val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
-                    val close = { settingsScreen = when (settingsScreen) { 9, 10 -> 1; 12 -> 11; 15, 16, 17, 18 -> 14; else -> 0 } }
+                    val close = { settingsScreen = when (settingsScreen) { 9, 10 -> 1; 12 -> 11; 15, 16, 17, 18, 20 -> 14; else -> 0 } }
                     BackHandler { close() }
                     val savedToast = { settingsSaved = true }
                     Box(Modifier.fillMaxSize().statusBarsPadding()) {
                         when (settingsScreen) {
                             14 -> AboutScreen(
                                 aboutThanks, onBack = close,
-                                onPrivacy = { settingsScreen = 15 }, onTerms = { settingsScreen = 16 }, onFeedback = { settingsScreen = 17 }, onRate = { settingsScreen = 18 },
+                                onPrivacy = { settingsScreen = 15 }, onTerms = { settingsScreen = 16 }, onFeedback = { settingsScreen = 17 }, onRate = { settingsScreen = 18 }, onUpdates = { settingsScreen = 20 },
                             )
+                            20 -> com.pillbox.ui.about.UpdateScreen(onBack = close)
                             15 -> PrivacyPolicyContent(onBack = close, onDelete = { deleteFromPrivacy = true; settingsScreen = 11 }, onClose = close)
                             16 -> TermsContent(onBack = close, onDone = close)
                             19 -> com.pillbox.ui.about.DeveloperContent(onBack = close)
@@ -490,6 +502,7 @@ class MainActivity : PillBoxActivity() {
     private fun readOpenMedicine() {
         val id = intent?.getLongExtra(Reminders.EXTRA_OPEN_MEDICINE, -1L) ?: -1L
         if (id > 0) openMedicine.value = id
+        if (intent?.action == com.pillbox.update.UpdateManager.ACTION_OPEN_UPDATE) { openUpdate.value = true; intent?.action = null }
         intent?.removeExtra(Reminders.EXTRA_OPEN_MEDICINE)
     }
 

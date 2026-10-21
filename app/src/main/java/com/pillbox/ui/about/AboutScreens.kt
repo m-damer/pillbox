@@ -133,16 +133,16 @@ private fun shareApp(context: Context, text: String, chooser: String) {
 // ---------------------------------------------------------------- Privacy and about
 
 @Composable
-fun AboutScreen(thanks: Int, onBack: () -> Unit, onPrivacy: () -> Unit, onTerms: () -> Unit, onFeedback: () -> Unit, onRate: () -> Unit) {
+fun AboutScreen(thanks: Int, onBack: () -> Unit, onPrivacy: () -> Unit, onTerms: () -> Unit, onFeedback: () -> Unit, onRate: () -> Unit, onUpdates: () -> Unit = {}) {
     val host = remember { SnackbarHostState() }
     val title = stringResource(R.string.ab_thanks_title)
     val body = stringResource(R.string.ab_thanks_body)
     LaunchedEffect(thanks) { if (thanks > 0) host.showToast(title, body) }
-    AboutContent(rememberFormatter().digits(appVersion(LocalContext.current)), host, onBack, onPrivacy, onTerms, onFeedback, onRate)
+    AboutContent(rememberFormatter().digits(appVersion(LocalContext.current)), host, onBack, onPrivacy, onTerms, onFeedback, onRate, onUpdates)
 }
 
 @Composable
-fun AboutContent(version: String, host: SnackbarHostState, onBack: () -> Unit, onPrivacy: () -> Unit, onTerms: () -> Unit, onFeedback: () -> Unit, onRate: () -> Unit) {
+fun AboutContent(version: String, host: SnackbarHostState, onBack: () -> Unit, onPrivacy: () -> Unit, onTerms: () -> Unit, onFeedback: () -> Unit, onRate: () -> Unit, onUpdates: () -> Unit = {}) {
     val c = PillBox.colors
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(Modifier.fillMaxSize()) {
@@ -166,6 +166,8 @@ fun AboutContent(version: String, host: SnackbarHostState, onBack: () -> Unit, o
                     Text(stringResource(R.string.ab_privacy_short), style = MaterialTheme.typography.bodyMedium, color = c.text, modifier = Modifier.weight(1f))
                 }
                 Card {
+                    AboutRow(stringResource(R.string.ab_updates), com.pillbox.ui.components.DesignIcons.Refresh, onUpdates)
+                    Divider()
                     AboutRow(stringResource(R.string.ab_privacy), com.pillbox.ui.components.DesignIcons.Lock, onPrivacy)
                     Divider()
                     AboutRow(stringResource(R.string.ab_terms), com.pillbox.ui.components.DesignIcons.Info, onTerms)
@@ -278,6 +280,7 @@ fun PrivacyPolicyContent(onBack: () -> Unit, onDelete: () -> Unit, onClose: () -
         Block(com.pillbox.ui.components.DesignIcons.Lock, R.string.pp_1_title, R.string.pp_1_body, { c.primaryContainer }, { c.accent }),
         Block(com.pillbox.ui.components.DesignIcons.Share, R.string.pp_2_title, R.string.pp_2_body, { c.successContainer }, { c.success }),
         Block(com.pillbox.ui.components.DesignIcons.Person, R.string.pp_3_title, R.string.pp_3_body, { c.primaryContainer }, { c.accent }),
+        Block(com.pillbox.ui.components.DesignIcons.Refresh, R.string.pp_5_title, R.string.pp_5_body, { c.primaryContainer }, { c.accent }),
         Block(com.pillbox.ui.components.DesignIcons.Check, R.string.pp_4_title, R.string.pp_4_body, { c.successContainer }, { c.success }),
     )
     LegalPage(stringResource(R.string.pp_title), stringResource(R.string.legal_updated), blocks, onBack) {
