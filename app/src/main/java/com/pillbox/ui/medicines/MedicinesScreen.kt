@@ -172,7 +172,7 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
     val left = when {
         info.level == StockLevel.OUT -> label
         end != null -> stringResourceIso(R.string.stock_left, fmt.amount(m.stock)) + sep + label
-        info.daysLeft != null -> pluralStringResource(R.plurals.stock_days_left, info.daysLeft.coerceAtLeast(0), fmt.number(info.daysLeft)) + sep + label
+        info.daysLeft != null -> pluralStringResource(R.plurals.stock_days_left, info.daysLeft.coerceAtLeast(0), com.pillbox.ui.components.isolate(fmt.number(info.daysLeft))) + sep + label
         else -> label
     }
     val right = if (end != null && info.level != StockLevel.OUT) stringResourceIso(R.string.ends_on, shortDate(end, fmt)) else stockAmountText(m, fmt)

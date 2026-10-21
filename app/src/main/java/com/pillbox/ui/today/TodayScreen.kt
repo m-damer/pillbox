@@ -262,7 +262,7 @@ private fun AsNeededCard(items: List<AsNeededItem>, onTake: (Long) -> Unit) {
 private fun LowStockStrip(item: LowStock, onClick: () -> Unit) {
     val c = PillBox.colors
     val what = if (item.level == StockLevel.BUY_SOON && item.daysLeft != null)
-        pluralStringResource(R.plurals.stock_days_left, item.daysLeft.coerceAtLeast(0), rememberFormatter().number(item.daysLeft))
+        pluralStringResource(R.plurals.stock_days_left, item.daysLeft.coerceAtLeast(0), com.pillbox.ui.components.isolate(rememberFormatter().number(item.daysLeft)))
     else stringResource(R.string.stock_out)
     val label = stringResource(if (item.level == StockLevel.OUT) R.string.out_update else R.string.stock_buy_soon)
     val text = stringResourceIso(R.string.low_stock_strip, item.name, what)
