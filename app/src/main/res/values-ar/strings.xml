@@ -1090,4 +1090,20 @@
     <string name="tone_water_drops">قطرات ماء</string>
     <string name="tone_soft_marimba">ماريمبا ناعمة</string>
     <string name="sound_tap_hear">اضغط على نغمة لتسمعها.</string>
+    <string name="expiry_label">تاريخ انتهاء الصلاحية (اختياري)</string>
+    <string name="expiry_add">أضف تاريخ الانتهاء</string>
+    <string name="expiry_change">تغيير</string>
+    <string name="expiry_remove">حذف</string>
+    <string name="expiry_hint">انسخ الشهر والسنة المطبوعين على العلبة. وسننبّهك قبل أن تنتهي صلاحيته.</string>
+    <string name="expiry_dialog_title">تاريخ الانتهاء</string>
+    <string name="expiry_year_less">السنة السابقة</string>
+    <string name="expiry_year_more">السنة التالية</string>
+    <string name="expiry_save">حفظ</string>
+    <string name="expiry_ok">ينتهي في %1$s</string>
+    <string name="expiry_soon">ينتهي بعد %1$s (%2$s)</string>
+    <string name="expiry_today">آخر يوم للاستخدام (%1$s)</string>
+    <string name="expiry_expired">منتهي الصلاحية: %1$s</string>
+    <string name="expiry_soon_note">راجع التاريخ المطبوع قبل الاستخدام. اسأل الصيدلاني إن لم تكن متأكداً.</string>
+    <string name="expiry_expired_note">لا تستخدم الدواء بعد تاريخ انتهاء صلاحيته. اسأل الصيدلاني كيف تتخلص منه.</string>
+    <string name="expiry_notif_title">%1$s: راجع تاريخ الانتهاء</string>
 </resources>

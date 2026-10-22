@@ -1023,4 +1023,20 @@
     <string name="tone_water_drops">Water drops</string>
     <string name="tone_soft_marimba">Soft marimba</string>
     <string name="sound_tap_hear">Tap a tone to hear it.</string>
+    <string name="expiry_label">Expiry date (optional)</string>
+    <string name="expiry_add">Add expiry date</string>
+    <string name="expiry_change">Change</string>
+    <string name="expiry_remove">Remove</string>
+    <string name="expiry_hint">Copy the month and year printed on the box. You will be told before it expires.</string>
+    <string name="expiry_dialog_title">Expiry date</string>
+    <string name="expiry_year_less">Previous year</string>
+    <string name="expiry_year_more">Next year</string>
+    <string name="expiry_save">Save</string>
+    <string name="expiry_ok">Expires %1$s</string>
+    <string name="expiry_soon">Expires in %1$s (%2$s)</string>
+    <string name="expiry_today">Last day to use it (%1$s)</string>
+    <string name="expiry_expired">Expired: %1$s</string>
+    <string name="expiry_soon_note">Check the printed date before you use it. Ask your pharmacist if you are not sure.</string>
+    <string name="expiry_expired_note">Do not use a medicine after its expiry date. Ask your pharmacist how to throw it away.</string>
+    <string name="expiry_notif_title">%1$s: check the expiry date</string>
 </resources>

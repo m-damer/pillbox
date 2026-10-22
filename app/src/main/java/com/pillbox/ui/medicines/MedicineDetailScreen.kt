@@ -294,6 +294,7 @@ private fun ActiveDetail(
                 }
             }
             if (paused != null) PausedBanner(paused, fmt)
+            ExpiryBanner(m.expiry, java.time.LocalDate.now(), fmt)
             StatTiles(item, info?.daysLeft, info?.level ?: StockLevel.ENOUGH, fmt)
             // Paused: the cards stay readable but fade, so it is clear nothing will ring.
             Column(Modifier.alpha(if (paused != null) 0.6f else 1f), verticalArrangement = Arrangement.spacedBy(Dimens.CardGap)) {
@@ -643,6 +644,7 @@ private fun FinishedDetail(
                     style = MaterialTheme.typography.bodyMedium, color = c.success, modifier = Modifier.weight(1f),
                 )
             }
+            if (m.stock > 0.0) ExpiryBanner(m.expiry, java.time.LocalDate.now(), fmt)
             Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(horizontal = Space.S16)) {
                 FactRow(stringResource(R.string.fin_dose), doseText(m, fmt))
                 HorizontalDivider(color = c.divider)

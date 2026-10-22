@@ -99,6 +99,20 @@ class MedicinesScreenshotTest {
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar_detail_paused() = shoot("ar_detail_paused", "ar") { f -> MedicineDetailContent(pausedDetail, f) }
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar_list_paused() = shoot("ar_list_paused", "ar") { f -> MedicinesContent(pausedList, f, false, {}, {}, {}) }
 
+    // Expiry: dates relative to the real month, because the cards compare with the device date.
+    private val soonMetformin = metformItem.copy(medicine = metformin.copy(expiry = java.time.YearMonth.now()))
+    private val expiredAmox = amoxItem.copy(medicine = amox.copy(expiry = java.time.YearMonth.now().minusMonths(2)))
+    private val expiryList = listState.copy(
+        active = listOf(soonMetformin, expiredAmox).map { MedRow(it, StockMath.info(it.medicine, it.schedule, today)) },
+    )
+    private val expiryDetailSoon = detail.copy(item = soonMetformin)
+    private val expiryDetailExpired = detail.copy(item = expiredAmox, info = StockMath.info(expiredAmox.medicine, expiredAmox.schedule, today))
+    @Test fun en_list_expiry() = shoot("en_list_expiry", "en") { f -> MedicinesContent(expiryList, f, false, {}, {}, {}) }
+    @Test fun en_detail_expiry_soon() = shoot("en_detail_expiry_soon", "en") { f -> MedicineDetailContent(expiryDetailSoon, f) }
+    @Test fun en_dark_2x_detail_expired() = shoot("en_dark_2x_detail_expired", "en", ThemeMode.Dark, 2f) { f -> MedicineDetailContent(expiryDetailExpired, f) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun ar_list_expiry() = shoot("ar_list_expiry", "ar") { f -> MedicinesContent(expiryList, f, false, {}, {}, {}) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun ar_detail_expired() = shoot("ar_detail_expired", "ar") { f -> MedicineDetailContent(expiryDetailExpired, f) }
+
     @Test fun en_list() = shoot("en_list", "en") { f -> MedicinesContent(listState, f, false, {}, {}, {}) }
     @Test fun en_list_finished() = shoot("en_list_finished", "en") { f -> MedicinesContent(listState, f, true, {}, {}, {}) }
     @Test fun en_detail() = shoot("en_detail", "en") { f -> MedicineDetailContent(detail, f) }

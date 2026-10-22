@@ -98,6 +98,8 @@ data class Medicine(
     val status: MedicineStatus = MedicineStatus.ACTIVE,
     /** Day the course finished or the user stopped it. Null while active. */
     val endedOn: LocalDate? = null,
+    /** Optional printed expiry month of the box. The last day is the end of that month. */
+    val expiry: java.time.YearMonth? = null,
 )
 
 enum class DoseStatus { PLANNED, TAKEN, SKIPPED, MISSED }
