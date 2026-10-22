@@ -92,18 +92,8 @@ fun AddStockSheet(
     val total = StockMath.newTotal(medicine.stock, boxes, perBox ?: 0)
     val days = StockMath.daysFor(total, medicine, schedule)
 
-    val bottles = medicine.unit == DoseUnit.ML || medicine.unit == DoseUnit.DROPS
-    val boxesLabel = stringResource(if (bottles) R.string.stock_bottles else R.string.stock_boxes)
-    val perLabel = stringResource(
-        when (medicine.unit) {
-            DoseUnit.TABLET -> R.string.per_tablet
-            DoseUnit.CAPSULE -> R.string.per_capsule
-            DoseUnit.ML -> R.string.per_ml
-            DoseUnit.DROPS -> R.string.per_drops
-            DoseUnit.INJECTION -> R.string.per_injection
-            DoseUnit.OTHER -> R.string.per_other
-        },
-    )
+    val boxesLabel = stringResource(com.pillbox.ui.boughtLabel(medicine.unit))
+    val perLabel = stringResource(com.pillbox.ui.perPackLabel(medicine.unit))
     val unitWord = pluralStringResource(unitPlural(medicine.unit), quantityFor(2.0))
     val totalText = fmt.amount(total) + " " + pluralStringResource(unitPlural(medicine.unit), quantityFor(total))
     val summary = if (days != null) {

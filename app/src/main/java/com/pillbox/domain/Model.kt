@@ -7,7 +7,26 @@ import java.time.LocalTime
 
 /** Pure Kotlin domain model. No Android imports, so every rule can be unit tested on the JVM. */
 
-enum class DoseUnit { TABLET, CAPSULE, ML, DROPS, INJECTION, OTHER }
+/**
+ * The medicine types, in the order the type popup shows them. Saved by name, so a name never changes.
+ * ML is the Syrup type (it was the first liquid, so its name stays). Each type has its own unit word and icon.
+ */
+enum class DoseUnit { TABLET, CAPSULE, POWDER, ML, SOLUTION, DROPS, SPRAY, INHALER, SUPPOSITORY, CREAM, OINTMENT, GEL, PATCH, INJECTION, OTHER }
+
+/** What a pack is called when more is bought: box, bottle, tube or inhaler. */
+enum class PackKind { BOX, BOTTLE, TUBE, INHALER }
+
+object MedicineTypes {
+    fun packKind(t: DoseUnit): PackKind = when (t) {
+        DoseUnit.ML, DoseUnit.SOLUTION, DoseUnit.DROPS, DoseUnit.SPRAY -> PackKind.BOTTLE
+        DoseUnit.CREAM, DoseUnit.OINTMENT, DoseUnit.GEL -> PackKind.TUBE
+        DoseUnit.INHALER -> PackKind.INHALER
+        else -> PackKind.BOX
+    }
+
+    /** A tube of cream has no honest count of applications, so for these the number is only an estimate. */
+    fun isEstimate(t: DoseUnit) = packKind(t) == PackKind.TUBE
+}
 
 enum class WithFood { ANY, BEFORE_MEAL, WITH_MEAL, AFTER_MEAL }
 

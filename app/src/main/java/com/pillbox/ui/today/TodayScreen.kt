@@ -471,7 +471,7 @@ private fun GroupCard(group: DoseGroup, fmt: Formatter, now: java.time.LocalDate
     }
 }
 
-/** The medicine's shape: blue tablet, orange capsule, green syrup bottle, purple syringe, cyan drop, brown square for other. */
+/** The medicine's shape, one per type, each with its own color from the illustration tokens. */
 @Composable
 internal fun PillIcon(unit: DoseUnit, tint: Color? = null, size: androidx.compose.ui.unit.Dp = 32.dp) {
     val ill = PillBox.illustration
@@ -532,6 +532,100 @@ internal fun PillIcon(unit: DoseUnit, tint: Color? = null, size: androidx.compos
                 drawRoundRect(color, Offset(3 * u, 3 * u), Size(18 * u, 18 * u), CornerRadius(5 * u))
                 drawLine(white, Offset(12 * u, 7.5f * u), Offset(12 * u, 16.5f * u), 2 * u, androidx.compose.ui.graphics.StrokeCap.Round)
                 drawLine(white, Offset(7.5f * u, 12 * u), Offset(16.5f * u, 12 * u), 2 * u, androidx.compose.ui.graphics.StrokeCap.Round)
+            }
+            DoseUnit.POWDER -> {
+                // Powder or granules: a sachet with a serrated top and a few grains.
+                val color = tint ?: ill.powder
+                val sachet = androidx.compose.ui.graphics.Path().apply {
+                    moveTo(5 * u, 5 * u); lineTo(7 * u, 3 * u); lineTo(9 * u, 5 * u); lineTo(11 * u, 3 * u); lineTo(13 * u, 5 * u)
+                    lineTo(15 * u, 3 * u); lineTo(17 * u, 5 * u); lineTo(19 * u, 3 * u); lineTo(19 * u, 20 * u)
+                    lineTo(5 * u, 20 * u); close()
+                }
+                drawPath(sachet, color)
+                drawCircle(white, 1.3f * u, Offset(9 * u, 11 * u)); drawCircle(white, 1.3f * u, Offset(14.5f * u, 12.5f * u))
+                drawCircle(white, 1.3f * u, Offset(11 * u, 16 * u)); drawCircle(white, 1.1f * u, Offset(15.5f * u, 17 * u))
+            }
+            DoseUnit.SOLUTION -> {
+                // Solution: a flask with a wave of liquid.
+                val color = tint ?: ill.solution
+                val flask = androidx.compose.ui.graphics.Path().apply {
+                    moveTo(9 * u, 2.5f * u); lineTo(15 * u, 2.5f * u); lineTo(15 * u, 9 * u); lineTo(20.5f * u, 19 * u)
+                    lineTo(20.5f * u, 20.5f * u); lineTo(3.5f * u, 20.5f * u); lineTo(3.5f * u, 19 * u); lineTo(9 * u, 9 * u); close()
+                }
+                drawPath(flask, color)
+                drawLine(white, Offset(6.5f * u, 15.5f * u), Offset(17.5f * u, 15.5f * u), 1.6f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+            }
+            DoseUnit.SPRAY -> {
+                // Spray: a bottle with a nozzle and three puffs.
+                val color = tint ?: ill.spray
+                drawRoundRect(color, Offset(11 * u, 8 * u), Size(9 * u, 14 * u), CornerRadius(2.5f * u))
+                drawRoundRect(color, Offset(13 * u, 3.5f * u), Size(5 * u, 4 * u), CornerRadius(1f * u))
+                drawRect(color, Offset(9.5f * u, 4 * u), Size(4 * u, 2 * u))
+                drawCircle(color, 1.1f * u, Offset(6 * u, 4.5f * u)); drawCircle(color, 1.1f * u, Offset(4 * u, 7 * u)); drawCircle(color, 1.1f * u, Offset(6 * u, 9.5f * u))
+                drawRoundRect(white, Offset(13 * u, 13 * u), Size(5 * u, 5 * u), CornerRadius(1f * u))
+            }
+            DoseUnit.INHALER -> {
+                // Inhaler: the L shape of a puffer, a body and a mouthpiece.
+                val color = tint ?: ill.inhaler
+                drawRoundRect(color, Offset(6 * u, 2 * u), Size(9 * u, 14 * u), CornerRadius(2f * u))
+                drawRoundRect(color, Offset(6 * u, 13 * u), Size(15 * u, 8 * u), CornerRadius(2.5f * u))
+                drawCircle(white, 1.6f * u, Offset(10.5f * u, 17 * u))
+                drawLine(white, Offset(9 * u, 6 * u), Offset(12 * u, 6 * u), 1.4f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+            }
+            DoseUnit.SUPPOSITORY -> {
+                // Suppository: a bullet shape, tilted.
+                val color = tint ?: ill.suppository
+                rotate(-45f, center) {
+                    val bullet = androidx.compose.ui.graphics.Path().apply {
+                        moveTo(3 * u, 9 * u); lineTo(13 * u, 9 * u)
+                        cubicTo(18 * u, 9 * u, 21.5f * u, 11 * u, 21.5f * u, 12 * u)
+                        cubicTo(21.5f * u, 13 * u, 18 * u, 15 * u, 13 * u, 15 * u)
+                        lineTo(3 * u, 15 * u); close()
+                    }
+                    drawPath(bullet, color)
+                    drawLine(white, Offset(8 * u, 10.8f * u), Offset(8 * u, 13.2f * u), 1.3f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+                }
+            }
+            DoseUnit.CREAM -> {
+                // Cream: a squeeze tube with a cap and a crimped end.
+                val color = tint ?: ill.cream
+                drawRoundRect(color, Offset(9 * u, 2 * u), Size(6 * u, 4.5f * u), CornerRadius(1f * u))
+                val tube = androidx.compose.ui.graphics.Path().apply {
+                    moveTo(7 * u, 6.5f * u); lineTo(17 * u, 6.5f * u); lineTo(15.5f * u, 19 * u); lineTo(8.5f * u, 19 * u); close()
+                }
+                drawPath(tube, color)
+                drawRect(color, Offset(7.5f * u, 19 * u), Size(9 * u, 3 * u))
+                drawLine(white, Offset(8 * u, 12 * u), Offset(16 * u, 12 * u), 1.6f * u, androidx.compose.ui.graphics.StrokeCap.Round)
+            }
+            DoseUnit.OINTMENT -> {
+                // Ointment: a jar with a lid and a label band.
+                val color = tint ?: ill.ointment
+                drawRoundRect(color, Offset(4 * u, 4 * u), Size(16 * u, 5 * u), CornerRadius(1.5f * u))
+                drawRoundRect(color, Offset(5 * u, 9 * u), Size(14 * u, 12 * u), CornerRadius(3f * u))
+                drawRoundRect(white, Offset(8 * u, 12.5f * u), Size(8 * u, 5 * u), CornerRadius(1f * u))
+            }
+            DoseUnit.GEL -> {
+                // Gel or lotion: a pump bottle.
+                val color = tint ?: ill.gel
+                drawRoundRect(color, Offset(8 * u, 2 * u), Size(9 * u, 3 * u), CornerRadius(1.2f * u))
+                drawRect(color, Offset(11 * u, 4.5f * u), Size(3 * u, 3 * u))
+                drawRoundRect(color, Offset(6 * u, 7 * u), Size(13 * u, 15 * u), CornerRadius(3.5f * u))
+                val drop = androidx.compose.ui.graphics.Path().apply {
+                    moveTo(12.5f * u, 11 * u); cubicTo(12.5f * u, 11 * u, 9.5f * u, 14.5f * u, 9.5f * u, 16.5f * u)
+                    arcTo(androidx.compose.ui.geometry.Rect(9.5f * u, 14 * u, 15.5f * u, 20 * u), 180f, -180f, false)
+                    cubicTo(15.5f * u, 14.5f * u, 12.5f * u, 11 * u, 12.5f * u, 11 * u); close()
+                }
+                drawPath(drop, white)
+            }
+            DoseUnit.PATCH -> {
+                // Medicated patch: a bandage shape with a white pad.
+                val color = tint ?: ill.patch
+                rotate(-35f, center) {
+                    drawRoundRect(color, Offset(2 * u, 6.5f * u), Size(20 * u, 11 * u), CornerRadius(5 * u))
+                    drawRoundRect(white, Offset(8.5f * u, 8.5f * u), Size(7 * u, 7 * u), CornerRadius(1.5f * u))
+                    drawCircle(color, 0.8f * u, Offset(10.5f * u, 10.5f * u)); drawCircle(color, 0.8f * u, Offset(13.5f * u, 13.5f * u))
+                    drawCircle(color, 0.8f * u, Offset(13.5f * u, 10.5f * u)); drawCircle(color, 0.8f * u, Offset(10.5f * u, 13.5f * u))
+                }
             }
             DoseUnit.TABLET -> {
                 drawCircle(tint ?: ill.tablet, 9.5f * u, center)

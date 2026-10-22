@@ -277,18 +277,9 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
     if (nameError) ErrorText(stringResource(R.string.name_error))
 
     FieldLabel(stringResource(R.string.type_label))
-    val types = listOf(
-        DoseUnit.TABLET to R.string.type_tablet, DoseUnit.CAPSULE to R.string.type_capsule, DoseUnit.ML to R.string.type_syrup,
-        DoseUnit.INJECTION to R.string.type_injection, DoseUnit.DROPS to R.string.type_drops, DoseUnit.OTHER to R.string.type_other,
-    )
-    ChipGroup {
-        types.forEach { (t, label) ->
-            PBChip(
-                stringResource(label), form.type == t, { edit { it.withType(t) } },
-                leading = { sel -> com.pillbox.ui.today.PillIcon(t, if (sel) PillBox.colors.onPrimary else null, 24.dp) },
-            )
-        }
-    }
+    var choosingType by remember { mutableStateOf(false) }
+    TypeButton(form.type, { choosingType = true })
+    if (choosingType) TypePickerDialog(form.type, onDismiss = { choosingType = false }) { t -> edit { it.withType(t) }; choosingType = false }
 
     FieldLabel(stringResource(R.string.strength_label))
     // At large text the number and the unit switch no longer fit side by side ("mg" would break in two): stack them.
@@ -353,6 +344,7 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
         isError = boxError,
     )
     if (boxError) ErrorText(stringResource(R.string.box_error))
+    if (com.pillbox.domain.MedicineTypes.isEstimate(form.type)) HelperText(stringResource(R.string.box_estimate_hint))
 
     if (!form.isEdit && (form.boxCount ?: 0) > 1) {
         val leftLabel = stringResource(R.string.box_left_label)
