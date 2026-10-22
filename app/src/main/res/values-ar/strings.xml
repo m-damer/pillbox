@@ -576,8 +576,10 @@
     <string name="profile_birth_error">اكتب سنة مثل ١٩٥٨</string>
     <string name="switcher_a11y">%1$s</string>
     <string name="switcher_selected">معروض الآن</string>
-    <string name="viewing_banner">أنت تعرض أدوية %1$s. التنبيهات تعمل على هذا الهاتف.</string>
-    <string name="viewing_banner_off">أنت تعرض أدوية %1$s. التنبيهات متوقفة.</string>
+    <string name="switcher_title">أدوية مَن؟</string>
+    <string name="switcher_pill_a11y">تعرض %1$s. انقر مرتين لتغيير الشخص.</string>
+    <string name="viewing_banner">تعرض أدوية %1$s.</string>
+    <string name="viewing_banner_off">تعرض أدوية %1$s. التنبيهات متوقفة.</string>
     <string name="notif_dose_for">%1$s: %2$s</string>
     <string name="reminder_for">لـ %1$s</string>
     <!-- Settings (M8a) -->
