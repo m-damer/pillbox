@@ -278,6 +278,8 @@ private fun FinishedCard(item: MedicineWithSchedule, fmt: Formatter, onClick: ()
         if (course) add(lengthText(item.schedule, fmt))
     }.joinToString(sep)
     val tag = stringResource(if (course) R.string.tag_course_done else R.string.tag_stopped)
+    val expiryText = if (m.stock > 0.0) expiryLineText(m.expiry, com.pillbox.domain.ExpiryRules.info(m.expiry, java.time.LocalDate.now()), fmt) else null
+    val description = listOfNotNull(title, sub, tag, expiryText).joinToString(", ")
     Row(
         Modifier
             .fillMaxWidth()
@@ -285,7 +287,7 @@ private fun FinishedCard(item: MedicineWithSchedule, fmt: Formatter, onClick: ()
             .background(c.card, MaterialTheme.shapes.large)
             .border(Dimens.ChipBorder, c.border, MaterialTheme.shapes.large)
             .clickable(role = Role.Button, onClick = onClick)
-            .semantics(mergeDescendants = true) { contentDescription = listOfNotNull(title, sub, tag, if (m.stock > 0.0) expiryLineText(m.expiry, com.pillbox.domain.ExpiryRules.info(m.expiry, java.time.LocalDate.now()), fmt) else null).joinToString(", ") }
+            .semantics(mergeDescendants = true) { contentDescription = description }
             .padding(Space.S16),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Space.S12),
