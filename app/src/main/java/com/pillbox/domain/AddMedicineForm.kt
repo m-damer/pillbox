@@ -48,6 +48,8 @@ data class AddMedicineForm(
     val originalPackSize: Int? = null,
     /** The user's meal times from Settings. When set, once, twice and 3 times a day start at suggested times for the food rule. */
     val meals: MealTimes? = null,
+    /** Optional printed expiry month. */
+    val expiry: java.time.YearMonth? = null,
 ) {
     val isEdit get() = originalStock != null
 
@@ -134,7 +136,7 @@ data class AddMedicineForm(
         val box = boxCount ?: 0
         return Medicine(
             personId = personId, name = name.trim(), strength = strengthText, unit = type,
-            doseAmount = dose, stock = left().toDouble(), packSize = box,
+            doseAmount = dose, stock = left().toDouble(), packSize = box, expiry = expiry,
         )
     }
 
@@ -148,7 +150,7 @@ data class AddMedicineForm(
         val box = boxCount ?: 0
         return existing.copy(
             name = name.trim(), strength = strengthText, unit = type, doseAmount = dose,
-            stock = if (originalStock != null && box == shown) originalStock else box.toDouble(),
+            stock = if (originalStock != null && box == shown) originalStock else box.toDouble(), expiry = expiry,
         )
     }
 
@@ -180,7 +182,7 @@ data class AddMedicineForm(
             var f = AddMedicineForm(
                 name = m.name, type = m.unit, strength = strengthNumber, strengthUnit = strengthUnit, dose = m.doseAmount,
                 boxCount = Math.round(m.stock).toInt().coerceAtLeast(0).takeIf { it > 0 },
-                withFood = s.withFood, fixedStart = s.start, originalStock = m.stock, originalPackSize = m.packSize,
+                withFood = s.withFood, fixedStart = s.start, originalStock = m.stock, originalPackSize = m.packSize, expiry = m.expiry,
             )
             val days: DayPattern? = when (val fr = s.frequency) {
                 is Frequency.FixedTimes -> {
@@ -211,17 +213,20 @@ data class AddMedicineForm(
         }
 
         fun defaultDose(t: DoseUnit) = when (t) {
-            DoseUnit.ML -> 5.0
-            DoseUnit.DROPS -> 2.0
+            DoseUnit.ML, DoseUnit.SOLUTION -> 5.0
+            DoseUnit.DROPS, DoseUnit.INHALER -> 2.0
             else -> 1.0
         }
 
         fun doseStep(t: DoseUnit) = if (t == DoseUnit.TABLET) 0.5 else 1.0
 
         fun defaultBox(t: DoseUnit) = when (t) {
-            DoseUnit.ML -> 100
-            DoseUnit.DROPS -> 10
+            DoseUnit.ML, DoseUnit.SOLUTION -> 100
+            DoseUnit.DROPS, DoseUnit.SUPPOSITORY, DoseUnit.PATCH -> 10
             DoseUnit.INJECTION -> 5
+            DoseUnit.POWDER -> 14
+            DoseUnit.SPRAY -> 100
+            DoseUnit.INHALER -> 120
             else -> 30
         }
     }

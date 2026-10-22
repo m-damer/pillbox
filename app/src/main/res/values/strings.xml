@@ -38,8 +38,8 @@
     <string name="type_tablet">Tablet</string>
     <string name="type_capsule">Capsule</string>
     <string name="type_syrup">Syrup</string>
-    <string name="type_injection">Injection</string>
-    <string name="type_drops">Drops</string>
+    <string name="type_injection">Injection (ampoule or vial)</string>
+    <string name="type_drops">Drops (eye, ear or nose)</string>
     <string name="type_other">Other</string>
     <string name="strength_label">Strength</string>
     <string name="unit_mg">mg</string>
@@ -533,8 +533,10 @@
     <string name="profile_birth_error">Type a year like 1958</string>
     <string name="switcher_a11y">%1$s</string>
     <string name="switcher_selected">showing now</string>
-    <string name="viewing_banner">You are viewing %1$s\'s medicines. Their reminders ring on this phone.</string>
-    <string name="viewing_banner_off">You are viewing %1$s\'s medicines. Their reminders are off.</string>
+    <string name="switcher_title">Whose medicines?</string>
+    <string name="switcher_pill_a11y">Viewing %1$s. Double-tap to switch person.</string>
+    <string name="viewing_banner">You\'re viewing %1$s\'s medicines.</string>
+    <string name="viewing_banner_off">You\'re viewing %1$s\'s medicines. Reminders off.</string>
     <string name="notif_dose_for">%1$s: %2$s</string>
     <string name="reminder_for">For %1$s</string>
     <!-- Settings (M8a) -->
@@ -1023,4 +1025,47 @@
     <string name="tone_water_drops">Water drops</string>
     <string name="tone_soft_marimba">Soft marimba</string>
     <string name="sound_tap_hear">Tap a tone to hear it.</string>
+    <string name="expiry_label">Expiry date (optional)</string>
+    <string name="expiry_add">Add expiry date</string>
+    <string name="expiry_change">Change</string>
+    <string name="expiry_remove">Remove</string>
+    <string name="expiry_hint">Copy the month and year printed on the box. You will be told before it expires.</string>
+    <string name="expiry_dialog_title">Expiry date</string>
+    <string name="expiry_year_less">Previous year</string>
+    <string name="expiry_year_more">Next year</string>
+    <string name="expiry_save">Save</string>
+    <string name="expiry_ok">Expires %1$s</string>
+    <string name="expiry_soon">Expires in %1$s (%2$s)</string>
+    <string name="expiry_today">Last day to use it (%1$s)</string>
+    <string name="expiry_expired">Expired: %1$s</string>
+    <string name="expiry_soon_note">Check the printed date before you use it. Ask your pharmacist if you are not sure.</string>
+    <string name="expiry_expired_note">Do not use a medicine after its expiry date. Ask your pharmacist how to throw it away.</string>
+    <string name="expiry_notif_title">%1$s: check the expiry date</string>
+    <plurals name="unit_powder"><item quantity="one">sachet</item><item quantity="other">sachets</item></plurals>
+    <plurals name="unit_spray"><item quantity="one">spray</item><item quantity="other">sprays</item></plurals>
+    <plurals name="unit_inhaler"><item quantity="one">puff</item><item quantity="other">puffs</item></plurals>
+    <plurals name="unit_suppository"><item quantity="one">suppository</item><item quantity="other">suppositories</item></plurals>
+    <plurals name="unit_application"><item quantity="one">application</item><item quantity="other">applications</item></plurals>
+    <plurals name="unit_patch"><item quantity="one">patch</item><item quantity="other">patches</item></plurals>
+    <string name="type_powder">Powder or granules</string>
+    <string name="type_solution">Solution</string>
+    <string name="type_spray">Spray (nose or throat)</string>
+    <string name="type_inhaler">Inhaler</string>
+    <string name="type_suppository">Suppository</string>
+    <string name="type_cream">Cream</string>
+    <string name="type_ointment">Ointment</string>
+    <string name="type_gel">Gel or lotion</string>
+    <string name="type_patch">Medicated patch</string>
+    <string name="type_choose_title">Choose the type</string>
+    <string name="type_choose">Choose</string>
+    <string name="type_button_desc">Medicine type: %1$s. Double tap to change.</string>
+    <string name="per_powder">Sachets per box</string>
+    <string name="per_spray">Sprays per bottle</string>
+    <string name="per_inhaler">Puffs per inhaler</string>
+    <string name="per_suppository">Suppositories per box</string>
+    <string name="per_tube">Applications per tube</string>
+    <string name="per_patch">Patches per box</string>
+    <string name="stock_tubes">Tubes bought</string>
+    <string name="stock_inhalers">Inhalers bought</string>
+    <string name="box_estimate_hint">A rough number is fine. For creams you can also leave refill alerts off.</string>
 </resources>

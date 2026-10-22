@@ -25,6 +25,7 @@ object DesignIcons {
 
     val Back by lazy { icon("Back", "M19 12H5M11 6l-6 6 6 6", mirror = true) }
     val Chevron by lazy { icon("Chevron", "M9 5l7 7-7 7", mirror = true, width = 2.2f) }
+    val ChevronDown by lazy { icon("ChevronDown", "M5 9l7 7 7-7", width = 2.2f) }
     val Check by lazy { icon("Check", "M5 12.5l4.5 4.5L19 7.5", width = 2.6f) }
     val Close by lazy { icon("Close", "M6 6l12 12M18 6L6 18", width = 2.6f) }
     val Plus by lazy { icon("Plus", "M12 5v14M5 12h14", width = 2.4f) }

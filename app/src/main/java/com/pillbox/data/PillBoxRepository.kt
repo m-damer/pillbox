@@ -126,6 +126,8 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
         id
     }
 
+    suspend fun medicinesWithExpiry(): List<Medicine> = db.medicines().withExpiry().map(Mappers::toDomain)
+
     suspend fun isDuplicateName(personId: Long, name: String): Boolean = db.medicines().countActiveWithName(personId, name.trim()) > 0
 
     suspend fun updateMedicine(medicine: Medicine, schedule: Schedule) = db.withTransaction {

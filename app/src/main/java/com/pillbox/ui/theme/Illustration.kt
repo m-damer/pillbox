@@ -16,6 +16,15 @@ data class Illustration(
     val injection: Color,
     val drops: Color,
     val other: Color,
+    val powder: Color,
+    val solution: Color,
+    val spray: Color,
+    val inhaler: Color,
+    val suppository: Color,
+    val cream: Color,
+    val ointment: Color,
+    val gel: Color,
+    val patch: Color,
     val paused: Color,
     val stockLow: Color,
     /** Day bar gradient from midnight to midnight: position (0..1) to color. */
@@ -37,7 +46,10 @@ private fun bar(night: Color, dusk: Color) = listOf(
 
 private val LightIllustration = Illustration(
     tablet = Color(0xFF2F6FED), capsule = Color(0xFFE4572E),
-    syrup = Color(0xFF1F9E6E), injection = Color(0xFF7A5FD0), drops = Color(0xFF1A8FC9), other = Color(0xFF8A6D3B), paused = Color(0xFF8A90A8), stockLow = Color(0xFFD98200),
+    syrup = Color(0xFF1F9E6E), injection = Color(0xFF7A5FD0), drops = Color(0xFF1A8FC9), other = Color(0xFF8A6D3B),
+    powder = Color(0xFFB7791F), solution = Color(0xFF6B7F1E), spray = Color(0xFF0E9AA7), inhaler = Color(0xFF5B7083), suppository = Color(0xFFC2477F),
+    cream = Color(0xFF3E8E41), ointment = Color(0xFFD6336C), gel = Color(0xFF2F8F83), patch = Color(0xFFC2571A),
+    paused = Color(0xFF8A90A8), stockLow = Color(0xFFD98200),
     dayBar = bar(Color(0xFF26304D), Color(0xFF3B4A7A)),
     avatars = listOf(0xFFDDE1F5, 0xFFE3F4E8, 0xFFFFE4E0, 0xFFFFF1D6, 0xFFF0E8FF, 0xFFDDF0FF).map { Color(it) },
     legendNight = Color(0xFF26304D), legendSunrise = Sunrise, legendDay = DaySky, legendSunset = SunsetPurple,

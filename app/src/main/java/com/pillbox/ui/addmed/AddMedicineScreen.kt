@@ -277,18 +277,9 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
     if (nameError) ErrorText(stringResource(R.string.name_error))
 
     FieldLabel(stringResource(R.string.type_label))
-    val types = listOf(
-        DoseUnit.TABLET to R.string.type_tablet, DoseUnit.CAPSULE to R.string.type_capsule, DoseUnit.ML to R.string.type_syrup,
-        DoseUnit.INJECTION to R.string.type_injection, DoseUnit.DROPS to R.string.type_drops, DoseUnit.OTHER to R.string.type_other,
-    )
-    ChipGroup {
-        types.forEach { (t, label) ->
-            PBChip(
-                stringResource(label), form.type == t, { edit { it.withType(t) } },
-                leading = { sel -> com.pillbox.ui.today.PillIcon(t, if (sel) PillBox.colors.onPrimary else null, 24.dp) },
-            )
-        }
-    }
+    var choosingType by remember { mutableStateOf(false) }
+    TypeButton(form.type, { choosingType = true })
+    if (choosingType) TypePickerDialog(form.type, onDismiss = { choosingType = false }) { t -> edit { it.withType(t) }; choosingType = false }
 
     FieldLabel(stringResource(R.string.strength_label))
     // At large text the number and the unit switch no longer fit side by side ("mg" would break in two): stack them.
@@ -353,6 +344,7 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
         isError = boxError,
     )
     if (boxError) ErrorText(stringResource(R.string.box_error))
+    if (com.pillbox.domain.MedicineTypes.isEstimate(form.type)) HelperText(stringResource(R.string.box_estimate_hint))
 
     if (!form.isEdit && (form.boxCount ?: 0) > 1) {
         val leftLabel = stringResource(R.string.box_left_label)
@@ -368,6 +360,35 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
         )
         HelperText(stringResource(R.string.box_left_hint))
     }
+
+    ExpiryField(form.expiry, fmt) { v -> edit { it.copy(expiry = v) } }
+}
+
+/** Optional expiry date: a button to add it, and Change / Remove once it is set. */
+@Composable
+private fun ExpiryField(expiry: java.time.YearMonth?, fmt: Formatter, onChange: (java.time.YearMonth?) -> Unit) {
+    val c = PillBox.colors
+    var picking by remember { mutableStateOf(false) }
+    val today = remember { java.time.LocalDate.now() }
+    FieldLabel(stringResource(R.string.expiry_label))
+    if (expiry == null) {
+        com.pillbox.ui.components.OutlineButton(stringResource(R.string.expiry_add), { picking = true })
+    } else {
+        Row(
+            Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).border(Dimens.ChipBorder, c.border, MaterialTheme.shapes.large).padding(Space.S12),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S8),
+        ) {
+            Text(com.pillbox.ui.medicines.expiryMonthText(expiry, fmt), style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
+            androidx.compose.material3.TextButton(onClick = { picking = true }, modifier = Modifier.heightIn(min = Dimens.TouchTargetMin)) {
+                Text(stringResource(R.string.expiry_change), style = MaterialTheme.typography.labelLarge, color = c.accent)
+            }
+            androidx.compose.material3.TextButton(onClick = { onChange(null) }, modifier = Modifier.heightIn(min = Dimens.TouchTargetMin)) {
+                Text(stringResource(R.string.expiry_remove), style = MaterialTheme.typography.labelLarge, color = c.danger)
+            }
+        }
+    }
+    HelperText(stringResource(R.string.expiry_hint))
+    if (picking) com.pillbox.ui.medicines.ExpiryPickerDialog(expiry, today, onDismiss = { picking = false }) { onChange(it); picking = false }
 }
 
 // ---------------------------------------------------------------- step 2

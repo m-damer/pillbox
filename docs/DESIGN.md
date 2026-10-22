@@ -274,3 +274,12 @@ Every success, warning and error message now has a designed screen in English an
 **Message screens:** each success, warning and error screen carries a "From: …" label naming the screen and action that triggers it.
 
 - **3 times a day (changed by Mahmoud):** doses are every 8 hours around the clock (first dose, +8 h, +16 h). The canvas hint said "About every 6 hours while you are awake"; the app now says "Every 8 hours, around the clock". Existing medicines keep their saved times until the first dose is changed in Edit.
+
+## M16 decisions (from testing, Oct 2026)
+- **Log a dose taken but not logged:** a missed or due dose has "I took it". A sheet asks for the time (default: the planned time). Allowed for the last 7 days; a time in the future is not accepted. The row then reads "Taken at 9:10 PM, logged later". Doing nothing keeps the dose missed. Tapping the time on a taken dose changes it.
+- **Alarm tones:** 7 soft tones plus the loud alarm. Choosing a tone plays it once. A hint says the phone volume controls the sound.
+- **Expiry date (optional):** month and year only (as printed on the box). Cards show "Expires Mar 2027" with a text label when near or past (never color only). Notices: 30 days before, 7 days before, and on the last day. Expired medicines are flagged, never deleted.
+- **Medicine types:** 15 types: tablet, capsule, powder or granules, syrup, solution, drops (eye, ear or nose), spray (nose or throat), inhaler, suppository, cream, ointment, gel or lotion, patch, injection (ampoule or vial), other. IV infusion is left out (given by a nurse). Aerosol is part of spray.
+- **Type picker:** Step 1 shows one button with the chosen type, its icon and "Change". It opens a popup list (icon, name, radio mark) with Choose and Cancel. Nothing changes until Choose. Changing the type resets the dose and box size to that type's defaults.
+- **Tubes (cream, ointment, gel):** stock counts applications, which is an estimate; a hint says so.
+- **Drawings:** the new screens are drawn by the app itself with the real tokens (CI `screenshots` artifact: `type_*`, `log_*`, `expiry_*`), not hand-drawn in the canvas.
