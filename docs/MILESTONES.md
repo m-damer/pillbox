@@ -17,3 +17,7 @@
 - [x] M13 Review plan after every add, as-needed log and limit, Welcome, Settings clean-up (Dark theme in Display, Report in Settings, People row removed)
 - [x] M14 Today timeline callouts and group icons, Settings row style, As needed card on Today, as-needed doses in History and report, full-height screenshots
 - [ ] M15 Release: signed build, Google sign-in publishing, app updates (weekly check with notification, update screen with download and install, About button, Settings switch, privacy text)
+- [ ] M16 Enhancements from testing (PRs stacked: merge in order)
+  - [x] A (#50) Soft alarm tones (7 new, played when chosen) and "I took it" to log a dose taken but not logged (choose the time, last 7 days, marked "Logged later"); untouched doses stay missed
+  - [x] B (#51) Optional expiry month and year when adding or editing; shown on cards and detail; notices 30 days, 7 days and on the last day
+  - [x] C (#52) 15 medicine types, chosen with one button that opens a popup list with an icon for each and a Choose button
