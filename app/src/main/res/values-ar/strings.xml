@@ -1142,4 +1142,25 @@
     <string name="low_stock_title">أوشكت على النفاد</string>
     <string name="low_stock_see_list">يفتح القائمة</string>
     <string name="low_stock_close">إغلاق</string>
+    <string name="notices_title">الإشعارات</string>
+    <string name="notices_tab_all">الكل</string>
+    <string name="notices_tab_doses">الجرعات</string>
+    <string name="notices_tab_stock">المخزون</string>
+    <string name="notices_tab_expiry">الصلاحية</string>
+    <string name="notices_tab_app">التطبيق</string>
+    <string name="notices_empty">لا شيء هنا بعد. ستظهر هنا التذكيرات والتنبيهات.</string>
+    <string name="notices_kept">تُحفظ على هذا الهاتف ٣٠ يوماً.</string>
+    <string name="notices_new">جديد</string>
+    <string name="notices_yesterday">أمس</string>
+    <string name="notices_clear_all">مسح الكل</string>
+    <string name="notices_clear_tab">مسح هذه القائمة</string>
+    <string name="notices_clear_all_title">مسح كل الإشعارات؟</string>
+    <string name="notices_clear_tab_title">مسح هذه القائمة؟</string>
+    <string name="notices_clear_body">هذا يمسح القائمة هنا فقط. أدويتك وجرعاتك لا تتغير.</string>
+    <string name="notices_clear_yes">مسح</string>
+    <string name="notices_bell">الإشعارات</string>
+    <plurals name="notices_bell_new">
+        <item quantity="zero">الإشعارات، لا جديد</item><item quantity="one">الإشعارات، واحد جديد</item><item quantity="two">الإشعارات، اثنان جديدان</item>
+        <item quantity="few">الإشعارات، %1$s جديدة</item><item quantity="many">الإشعارات، %1$s جديداً</item><item quantity="other">الإشعارات، %1$s جديد</item>
+    </plurals>
 </resources>

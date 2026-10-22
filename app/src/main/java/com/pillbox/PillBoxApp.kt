@@ -20,6 +20,11 @@ import kotlinx.coroutines.runBlocking
 
 /** Tiny manual "container": one database, one repository and one reminder engine for the whole app. */
 class PillBoxApp : Application() {
+    /** Saves a line for the notifications screen. Never throws: the notification itself matters more. */
+    fun recordNotice(n: com.pillbox.domain.Notice) {
+        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch { runCatching { notices.record(n) } }
+    }
+
     val repository: PillBoxRepository by lazy { PillBoxRepository(PillBoxDatabase.create(this)) }
     val refillSettings: RefillSettingsStore by lazy { RefillSettingsStore(this) }
     val displaySettings: DisplaySettingsStore by lazy { DisplaySettingsStore(this) }
@@ -27,6 +32,7 @@ class PillBoxApp : Application() {
     val widgetSettings: com.pillbox.data.WidgetSettingsStore by lazy { com.pillbox.data.WidgetSettingsStore(this) }
     val backups: BackupManager by lazy { BackupManager(this, repository, BackupSettingsStore(this)) }
     val updates: com.pillbox.update.UpdateManager by lazy { com.pillbox.update.UpdateManager(this, com.pillbox.data.UpdateSettingsStore(this)) }
+    val notices: com.pillbox.data.NoticeStore by lazy { com.pillbox.data.NoticeStore(this) }
     val reminders: Reminders by lazy { Reminders(this, repository, refillSettings) }
 
     override fun onCreate() {

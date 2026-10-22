@@ -146,6 +146,12 @@ class UpdateManager(private val context: Context, val settings: UpdateSettingsSt
     /** One quiet notification per version. Not sent when notifications are off. */
     fun notifyAvailable(info: UpdateInfo) {
         val nm = NotificationManagerCompat.from(context)
+        (context.applicationContext as? com.pillbox.PillBoxApp)?.recordNotice(
+            com.pillbox.domain.Notice(
+                "app:update:${info.versionName}", com.pillbox.domain.NoticeKind.APP, context.getString(R.string.upd_notif_title),
+                context.getString(R.string.upd_notif_text, info.versionName), System.currentTimeMillis(), target = "updates",
+            ),
+        )
         if (!nm.areNotificationsEnabled()) return
         context.getSystemService(NotificationManager::class.java)
             .createNotificationChannel(NotificationChannel(CHANNEL, context.getString(R.string.channel_update), NotificationManager.IMPORTANCE_LOW))

@@ -146,6 +146,8 @@ class MainActivity : PillBoxActivity() {
                 var detailToastBody by rememberSaveable { mutableStateOf<String?>(null) }
                 var tab by rememberSaveable { mutableStateOf(Tab.TODAY) }
                 var showRefill by rememberSaveable { mutableStateOf(false) }
+                var showNotices by rememberSaveable { mutableStateOf(false) }
+                val notices by app.notices.flow.collectAsStateWithLifecycle(emptyList())
                 var showHistory by rememberSaveable { mutableStateOf(false) }
                 var showReport by rememberSaveable { mutableStateOf(false) }
                 var refillSession by rememberSaveable { mutableIntStateOf(0) }
@@ -253,6 +255,27 @@ class MainActivity : PillBoxActivity() {
                             personMode = 0
                             tab = Tab.PEOPLE
                         })
+                    }
+                } else if (showNotices) {
+                    BackHandler { showNotices = false }
+                    // New ones stay bold while the screen is open; they count as read once you leave it.
+                    androidx.compose.runtime.DisposableEffect(Unit) { onDispose { scope.launch { app.notices.markAllRead() } } }
+                    Box(Modifier.fillMaxSize().statusBarsPadding()) {
+                        com.pillbox.ui.notices.NoticesScreen(
+                            notices, onBack = { showNotices = false },
+                            onClear = { k -> scope.launch { app.notices.clear(k) } },
+                            onOpen = { n ->
+                                scope.launch { app.notices.markRead(n.key) }
+                                showNotices = false
+                                val t = n.target.orEmpty()
+                                when {
+                                    t.startsWith("medicine:") -> t.removePrefix("medicine:").toLongOrNull()?.let { detailId = it }
+                                    t == "updates" -> settingsScreen = 20
+                                    t == "backup" -> settingsScreen = 11
+                                    else -> tab = Tab.TODAY
+                                }
+                            },
+                        )
                     }
                 } else if (settingsScreen != 0) {
                     val vm: SettingsViewModel = viewModel(factory = viewModelFactory { initializer { SettingsViewModel(app.displaySettings, app.refillSettings, repo, app.reminderSettings) } })
@@ -431,6 +454,7 @@ class MainActivity : PillBoxActivity() {
                                         vm, onAddMedicine = { adding = true },
                                         remindersOff = !permissions.remindersWork, onFixReminders = { showPermissions = true },
                                         onGoToMeds = { tab = Tab.MEDS }, people = peopleBar,
+                                        unreadNotices = com.pillbox.domain.NoticeRules.unread(notices), onOpenNotices = { showNotices = true },
                                         onTakeAsNeeded = { prnAuto = true; prnId = it; prnSession++ },
                                     )
                                 }

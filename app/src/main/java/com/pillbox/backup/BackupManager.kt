@@ -199,7 +199,6 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
     /** One quiet notification after an automatic backup: saved, or did not finish. Not sent when notifications are off. */
     private fun notify(run: Run, folderLabel: String?) {
         val nm = androidx.core.app.NotificationManagerCompat.from(context)
-        if (!nm.areNotificationsEnabled()) return
         val failed = (run.folderTried && run.folder != null) || (run.driveTried && run.drive != null)
         val channel = if (failed) CHANNEL_FAILED else CHANNEL_OK
         val system = context.getSystemService(android.app.NotificationManager::class.java)
@@ -226,6 +225,10 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
             title = context.getString(com.pillbox.R.string.dr_failed_title)
             text = context.getString(driveReason(run.drive))
         }
+        (context.applicationContext as? com.pillbox.PillBoxApp)?.recordNotice(
+            com.pillbox.domain.Notice("app:backup:${System.currentTimeMillis() / 60_000}", com.pillbox.domain.NoticeKind.APP, title, text, System.currentTimeMillis(), target = "backup"),
+        )
+        if (!nm.areNotificationsEnabled()) return
         val open = android.app.PendingIntent.getActivity(
             context, NOTIFICATION_ID, android.content.Intent(context, com.pillbox.MainActivity::class.java).addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP),
             android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE,
@@ -291,6 +294,7 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
     /** "Delete all my data": the database, the settings and every alarm and notification. Backups saved elsewhere stay. */
     suspend fun deleteEverything() = withContext(Dispatchers.IO) {
         repo.deleteEverything()
+        (context.applicationContext as? com.pillbox.PillBoxApp)?.notices?.deleteAll()
         cancelWeekly()
         settings.clear()
         File(context.cacheDir, "backups").deleteRecursively()

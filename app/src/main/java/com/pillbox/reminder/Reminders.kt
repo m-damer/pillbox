@@ -27,6 +27,8 @@ import com.pillbox.domain.Pause
 import com.pillbox.domain.LateChoice
 import com.pillbox.domain.LateRules
 import com.pillbox.domain.Medicine
+import com.pillbox.domain.Notice
+import com.pillbox.domain.NoticeKind
 import com.pillbox.domain.RefillAlert
 import com.pillbox.domain.RefillPlanner
 import com.pillbox.domain.ReminderPlanner
@@ -150,7 +152,6 @@ class Reminders(
     @SuppressLint("MissingPermission")
     private fun showExpiry(m: Medicine, info: ExpiryInfo) {
         val nm = notificationManager()
-        if (!nm.areNotificationsEnabled()) return
         val fmt = Formatter.from(context)
         val res = context.resources
         val ym = m.expiry ?: return
@@ -160,6 +161,9 @@ class Reminders(
         val title = context.getStringIso(R.string.expiry_notif_title, name)
         val text = if (left == 0) context.getStringIso(R.string.expiry_today, month)
         else context.getStringIso(R.string.expiry_soon, res.getQuantityString(R.plurals.n_days, left, fmt.number(left)), month)
+        val stage = if (left <= 0) 0 else if (left <= 7) 7 else 30
+        record(Notice("expiry:${m.id}:$ym:$stage", NoticeKind.EXPIRY, title, text, System.currentTimeMillis(), target = "medicine:${m.id}"))
+        if (!nm.areNotificationsEnabled()) return
         val open = Intent(context, MainActivity::class.java)
             .putExtra(EXTRA_OPEN_MEDICINE, m.id)
             .setData(Uri.parse("pillbox://expiry/open/${m.id}"))
@@ -182,7 +186,6 @@ class Reminders(
     @SuppressLint("MissingPermission")
     private fun showRefill(a: RefillAlert, today: java.time.LocalDate) {
         val nm = notificationManager()
-        if (!nm.areNotificationsEnabled()) return
         val fmt = Formatter.from(context)
         val res = context.resources
         val m = a.medicine
@@ -203,6 +206,8 @@ class Reminders(
             val about = res.getQuantityString(R.plurals.n_days, days, fmt.number(days))
             big = text + "\n" + context.getString(R.string.refill_notif_about, about, a.runsOutOn?.let { com.pillbox.ui.shortDate(it, fmt) } ?: "")
         }
+        record(Notice("stock:${m.id}:$today", NoticeKind.STOCK, title, text, System.currentTimeMillis(), target = "medicine:${m.id}"))
+        if (!nm.areNotificationsEnabled()) return
         val open = Intent(context, MainActivity::class.java)
             .putExtra(EXTRA_OPEN_MEDICINE, m.id)
             .setData(Uri.parse("pillbox://refill/open/${m.id}"))
@@ -323,6 +328,8 @@ class Reminders(
 
     private fun notificationManager() = NotificationManagerCompat.from(context)
 
+    private fun record(n: Notice) { (context.applicationContext as? com.pillbox.PillBoxApp)?.recordNotice(n) }
+
     private fun notificationId(at: LocalDateTime) = (at.atZone(ZoneId.systemDefault()).toEpochSecond() / 60).toInt()
 
     private fun actionPending(action: String, at: LocalDateTime): PendingIntent {
@@ -342,13 +349,15 @@ class Reminders(
     private suspend fun show(rows: List<DoseRow>, at: LocalDateTime) {
         val owners = repo.otherPeopleNames()
         val nm = notificationManager()
-        if (!nm.areNotificationsEnabled()) return
         val title = context.getString(R.string.notif_title, context.getString(blockNameRes(blockOf(at.toLocalTime()))))
         // A dose for someone I care for says whose it is, so the wrong person never gets it.
         val text = rows.joinToString(" · ") { r ->
             val line = r.medicine.name + (com.pillbox.ui.localizedStrength(r.medicine.strength, context.resources)?.let { " $it" } ?: "")
             owners[r.medicine.personId]?.let { context.getStringIso(R.string.notif_dose_for, it, line) } ?: line
         }
+        // Saved for the notifications screen even when Android notifications are off, so a missed alert can still be seen there.
+        record(Notice("dose:${notificationId(at)}", NoticeKind.DOSE, title, text, at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), target = "today"))
+        if (!nm.areNotificationsEnabled()) return
         val builder = NotificationCompat.Builder(context, channelFor(LocalDateTime.now().toLocalTime()))
             .setSmallIcon(R.drawable.ic_stat_pill)
             .setContentTitle(title)

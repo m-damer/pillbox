@@ -1074,4 +1074,24 @@
     <string name="low_stock_title">Running low</string>
     <string name="low_stock_see_list">Opens the list</string>
     <string name="low_stock_close">Close</string>
+    <string name="notices_title">Notifications</string>
+    <string name="notices_tab_all">All</string>
+    <string name="notices_tab_doses">Doses</string>
+    <string name="notices_tab_stock">Stock</string>
+    <string name="notices_tab_expiry">Expiry</string>
+    <string name="notices_tab_app">App</string>
+    <string name="notices_empty">Nothing here yet. Reminders and alerts will be listed here.</string>
+    <string name="notices_kept">Kept on this phone for 30 days.</string>
+    <string name="notices_new">New</string>
+    <string name="notices_yesterday">Yesterday</string>
+    <string name="notices_clear_all">Clear all</string>
+    <string name="notices_clear_tab">Clear this list</string>
+    <string name="notices_clear_all_title">Clear all notifications?</string>
+    <string name="notices_clear_tab_title">Clear this list?</string>
+    <string name="notices_clear_body">This only clears the list here. Your medicines and doses are not changed.</string>
+    <string name="notices_clear_yes">Clear</string>
+    <string name="notices_bell">Notifications</string>
+    <plurals name="notices_bell_new">
+        <item quantity="one">Notifications, %1$s new</item><item quantity="other">Notifications, %1$s new</item>
+    </plurals>
 </resources>
