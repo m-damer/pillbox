@@ -147,13 +147,14 @@ internal fun LogTakenSheet(
         stringResourceIso(R.string.log_sub, row.medicine.name, fmt.time(row.planned.toLocalTime()), dayText),
     )
     val timeText = fmt.time(picked)
+    val timeDesc = stringResourceIso(R.string.log_time_desc, timeText)
     Row(
         Modifier
             .fillMaxWidth()
             .heightIn(min = Dimens.PrimaryButtonHeight)
             .border(Dimens.ChipBorder, if (valid) c.border else c.danger, Dimens.ButtonShape)
             .clickable(role = Role.Button, onClickLabel = stringResource(R.string.log_pick_time)) { picking = true }
-            .semantics(mergeDescendants = true) { contentDescription = stringResourceIso(R.string.log_time_desc, timeText) }
+            .semantics(mergeDescendants = true) { contentDescription = timeDesc }
             .padding(horizontal = Space.S16, vertical = Space.S8),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
     ) {

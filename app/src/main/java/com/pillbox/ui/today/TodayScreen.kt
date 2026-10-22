@@ -602,6 +602,7 @@ private fun DoseRowItem(
     val sentence = listOf(med.name, amount, foodText(row.schedule.withFood), plannedText, statusText).filterNotNull().joinToString(", ")
     val actionable = group.actionable && status == RowStatus.PENDING
     val canLog = com.pillbox.domain.LateLog.canLog(row.planned, now)
+    val changeTime = status == RowStatus.TAKEN && canLog
     val big = LocalDensity.current.fontScale > 1.3f
 
     val text: @Composable (Modifier) -> Unit = { m ->
@@ -640,7 +641,6 @@ private fun DoseRowItem(
             }
         }
     }
-    val changeTime = status == RowStatus.TAKEN && canLog
     val stack = big || (row.missed && !actionable && canLog && status == RowStatus.PENDING)
     Column(
         Modifier.fillMaxWidth().background(groupInk.copy(alpha = 0.08f), MaterialTheme.shapes.medium)
