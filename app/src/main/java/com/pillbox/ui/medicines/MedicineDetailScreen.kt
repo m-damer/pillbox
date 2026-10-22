@@ -227,7 +227,14 @@ private fun TopBar(title: String, onBack: () -> Unit, onDelete: (() -> Unit)? = 
             contentAlignment = Alignment.Center,
         ) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back), tint = c.text) }
         Text(title, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, modifier = Modifier.weight(1f).semantics { heading() })
+        if (onDelete != null) {
+            Box(
+                Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onDelete),
+                contentAlignment = Alignment.Center,
+            ) { Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_a11y), tint = c.danger) }
+        }
         if (onEdit != null) {
+            Box(Modifier.size(Space.S8))
             Box(
                 Modifier
                     .heightIn(min = Dimens.TouchTargetMin)
@@ -236,13 +243,6 @@ private fun TopBar(title: String, onBack: () -> Unit, onDelete: (() -> Unit)? = 
                     .padding(horizontal = Space.S16),
                 contentAlignment = Alignment.Center,
             ) { Text(stringResource(R.string.btn_edit), style = MaterialTheme.typography.labelLarge, color = c.accent) }
-            Box(Modifier.size(Space.S8))
-        }
-        if (onDelete != null) {
-            Box(
-                Modifier.size(Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onDelete),
-                contentAlignment = Alignment.Center,
-            ) { Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.delete_a11y), tint = c.danger) }
         }
     }
 }
