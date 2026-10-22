@@ -108,6 +108,7 @@ fun TodayScreen(
     remindersOff: Boolean = false, onFixReminders: () -> Unit = {}, onGoToMeds: () -> Unit = {},
     people: com.pillbox.ui.people.PeopleBar? = null,
     onTakeAsNeeded: (Long) -> Unit = {},
+    unreadNotices: Int = 0, onOpenNotices: () -> Unit = {},
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     val fmt = rememberFormatter()
@@ -132,6 +133,7 @@ fun TodayScreen(
             onTake = vm::take, onSkip = vm::skip, onLog = vm::logTaken, onAddMedicine = onAddMedicine,
             remindersOff = remindersOff, onFixReminders = onFixReminders,
             onResumeAll = vm::resumeAll, onGoToMeds = onGoToMeds, people = people, onTakeAsNeeded = onTakeAsNeeded,
+            unreadNotices = unreadNotices, onOpenNotices = onOpenNotices,
         )
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) { data ->
             val c = PillBox.colors
@@ -178,6 +180,8 @@ fun TodayContent(
     people: com.pillbox.ui.people.PeopleBar? = null,
     onTakeAsNeeded: (Long) -> Unit = {},
     onLog: (DoseRow) -> Unit = {},
+    unreadNotices: Int = 0,
+    onOpenNotices: () -> Unit = {},
 ) {
     val today = state.now.toLocalDate()
     val model = state.model
@@ -211,6 +215,7 @@ fun TodayContent(
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top) {
                 Box(Modifier.weight(1f)) { Header(state.selectedDate, today, model, fmt) }
                 com.pillbox.ui.people.PeopleBarSwitcher(people)
+                com.pillbox.ui.notices.NoticeBell(unreadNotices, onOpenNotices)
             }
             if (state.lowStock.isNotEmpty()) LowStockBar(state.lowStock.size) { showLow = true }
             WeekStrip(state.selectedDate, today, fmt, onSelectDate)
