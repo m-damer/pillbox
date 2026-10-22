@@ -2,8 +2,8 @@ package com.pillbox.domain
 
 import java.time.LocalTime
 
-/** The three alarm tones the app carries (res/raw). */
-enum class Tone { GENTLE_BELL, MORNING_CHIME, LOUD_ALARM }
+/** The alarm tones the app carries (res/raw). Soft ones first, the loud alarm last. Saved by name, so the order can change. */
+enum class Tone { GENTLE_BELL, SOFT_HARP, CALM_BELLS, WARM_GLOW, WATER_DROPS, SOFT_MARIMBA, MORNING_CHIME, LOUD_ALARM }
 
 /**
  * A quiet window such as 10:00 PM to 7:00 AM. It may cross midnight. A dose reminder is never silenced unless

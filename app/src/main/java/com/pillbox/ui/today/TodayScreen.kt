@@ -126,7 +126,7 @@ fun TodayScreen(
     Box(modifier.fillMaxSize()) {
         TodayContent(
             state = state, fmt = fmt, onSelectDate = vm::selectDate, onBackToToday = vm::backToToday,
-            onTake = vm::take, onSkip = vm::skip, onAddMedicine = onAddMedicine,
+            onTake = vm::take, onSkip = vm::skip, onLog = vm::logTaken, onAddMedicine = onAddMedicine,
             remindersOff = remindersOff, onFixReminders = onFixReminders,
             onResumeAll = vm::resumeAll, onGoToMeds = onGoToMeds, people = people, onTakeAsNeeded = onTakeAsNeeded,
         )
@@ -174,6 +174,7 @@ fun TodayContent(
     onGoToMeds: () -> Unit = {},
     people: com.pillbox.ui.people.PeopleBar? = null,
     onTakeAsNeeded: (Long) -> Unit = {},
+    onLog: (DoseRow) -> Unit = {},
 ) {
     val today = state.now.toLocalDate()
     val model = state.model
@@ -220,7 +221,7 @@ fun TodayContent(
                 item { InfoNote(stringResource(R.string.nothing_planned)) }
             }
             items(model.groups, key = { it.time.toString() }) { group ->
-                GroupCard(group, fmt, onTake, onSkip)
+                GroupCard(group, fmt, state.now, onTake, onSkip, onLog)
             }
             if (state.selectedDate > today && model.groups.isNotEmpty()) item { InfoNote(stringResource(R.string.future_note)) }
         }
@@ -418,7 +419,7 @@ private fun BackToToday(onClick: () -> Unit) {
 // ---------------------------------------------------------------- groups and rows
 
 @Composable
-private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) -> Unit, onSkip: (List<DoseRow>) -> Unit) {
+private fun GroupCard(group: DoseGroup, fmt: Formatter, now: java.time.LocalDateTime, onTake: (List<DoseRow>) -> Unit, onSkip: (List<DoseRow>) -> Unit, onLog: (DoseRow) -> Unit) {
     val c = PillBox.colors
     val block = blockOf(group.time.toLocalTime())
     val (bg, fg) = groupColors(group)
@@ -460,7 +461,7 @@ private fun GroupCard(group: DoseGroup, fmt: Formatter, onTake: (List<DoseRow>) 
                 Text(stringResourceIso(R.string.late_banner, timeText), style = MaterialTheme.typography.labelMedium, color = c.warning)
             }
         }
-        group.rows.forEach { row -> DoseRowItem(row, group, fmt, fg, onTake, onSkip) }
+        group.rows.forEach { row -> DoseRowItem(row, group, fmt, fg, now, onTake, onSkip, onLog) }
         if (group.actionable && group.pending.size > 1) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
                 PrimaryButton(stringResource(R.string.take_all), { onTake(group.pending) }, Modifier.weight(1f))
@@ -572,7 +573,8 @@ private fun reasonText(code: String?): String? = when (SkipReason.fromCode(code)
 
 @Composable
 private fun DoseRowItem(
-    row: DoseRow, group: DoseGroup, fmt: Formatter, groupInk: Color, onTake: (List<DoseRow>) -> Unit, onSkip: (List<DoseRow>) -> Unit,
+    row: DoseRow, group: DoseGroup, fmt: Formatter, groupInk: Color, now: java.time.LocalDateTime,
+    onTake: (List<DoseRow>) -> Unit, onSkip: (List<DoseRow>) -> Unit, onLog: (DoseRow) -> Unit,
 ) {
     val c = PillBox.colors
     val med = row.medicine
@@ -587,6 +589,7 @@ private fun DoseRowItem(
         } else {
             add(amount)
             foodText(row.schedule.withFood)?.let { add(it) }
+            if (row.event?.loggedLater == true) add(stringResource(R.string.logged_later))
         }
     }.joinToString(sep)
 
@@ -598,6 +601,7 @@ private fun DoseRowItem(
     }
     val sentence = listOf(med.name, amount, foodText(row.schedule.withFood), plannedText, statusText).filterNotNull().joinToString(", ")
     val actionable = group.actionable && status == RowStatus.PENDING
+    val canLog = com.pillbox.domain.LateLog.canLog(row.planned, now)
     val big = LocalDensity.current.fontScale > 1.3f
 
     val text: @Composable (Modifier) -> Unit = { m ->
@@ -615,16 +619,20 @@ private fun DoseRowItem(
                 Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.textMuted, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(Space.S4))
                 Text(fmt.time(row.event?.taken?.toLocalTime() ?: row.planned.toLocalTime()), style = MaterialTheme.typography.labelLarge, color = c.textMuted)
+                if (changeTime) {
+                    Spacer(Modifier.width(Space.S8))
+                    Icon(com.pillbox.ui.components.DesignIcons.Edit, contentDescription = null, tint = c.accent, modifier = Modifier.size(18.dp))
+                }
             }
             skipped -> Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(com.pillbox.ui.components.DesignIcons.Close, contentDescription = null, tint = c.danger, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(Space.S4))
                 Text(stringResource(R.string.skipped), style = MaterialTheme.typography.labelLarge, color = c.danger)
             }
-            row.missed && !actionable -> Row(verticalAlignment = Alignment.CenterVertically) {
+            row.missed && !actionable -> Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
                 Icon(com.pillbox.ui.components.DesignIcons.Info, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
-                Spacer(Modifier.width(Space.S4))
                 Text(stringResource(R.string.missed), style = MaterialTheme.typography.labelLarge, color = c.warning)
+                if (canLog) RowButton(stringResource(R.string.i_took_it), stringResourceIso(R.string.i_took_it_med, med.name), filled = false) { onLog(row) }
             }
             actionable -> Row(horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
                 RowButton(stringResource(R.string.take), stringResourceIso(R.string.take_med, med.name), filled = true) { onTake(listOf(row)) }
@@ -632,11 +640,15 @@ private fun DoseRowItem(
             }
         }
     }
+    val changeTime = status == RowStatus.TAKEN && canLog
+    val stack = big || (row.missed && !actionable && canLog && status == RowStatus.PENDING)
     Column(
-        Modifier.fillMaxWidth().background(groupInk.copy(alpha = 0.08f), MaterialTheme.shapes.medium).padding(Space.S10),
+        Modifier.fillMaxWidth().background(groupInk.copy(alpha = 0.08f), MaterialTheme.shapes.medium)
+            .then(if (changeTime) Modifier.clickable(onClickLabel = stringResourceIso(R.string.change_time_med, med.name), role = Role.Button) { onLog(row) } else Modifier)
+            .padding(Space.S10),
         verticalArrangement = Arrangement.spacedBy(Space.S8),
     ) {
-        if (big) {
+        if (stack) {
             text(Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { trailing() }
         } else {

@@ -57,6 +57,11 @@ class TodayScreenshotTest {
     @Test fun en_next() = shoot("en_next", state(sat, nextNow, listOf(taken6)), "en")
     @Test fun en_late() = shoot("en_late", state(sat, lateNow, listOf(taken6)), "en")
     @Test fun en_past_day() = shoot("en_past_day", state(sat.minusDays(1), nextNow, listOf(skippedFri)), "en")
+    // Yesterday: both 2 PM doses and the evening one were never logged (Missed with "I took it"); one dose was logged later.
+    private val loggedLater = DoseEvent(medicineId = 1, planned = sat.minusDays(1).atTime(6, 0), taken = sat.minusDays(1).atTime(6, 40), status = DoseStatus.TAKEN, lateMinutes = 40, loggedLater = true)
+    @Test fun en_past_missed() = shoot("en_past_missed", state(sat.minusDays(1), nextNow, listOf(loggedLater)), "en")
+    @Test fun en_past_missed_dark_2x() = shoot("en_past_missed_dark_2x", state(sat.minusDays(1), nextNow, listOf(loggedLater)), "en", ThemeMode.Dark, 2f)
+    @Config(qualifiers = "+ar-ldrtl") @Test fun ar_past_missed() = shoot("ar_past_missed", state(sat.minusDays(1), nextNow, listOf(loggedLater)), "ar")
     @Test fun en_future_day() = shoot("en_future_day", state(sat.plusDays(1), nextNow, emptyList()), "en")
     @Test fun en_empty() = shoot("en_empty", TodayUiState(loaded = true, hasMedicines = false, now = nextNow, selectedDate = sat), "en")
     @Test fun en_dark_2x_next() = shoot("en_dark_2x_next", state(sat, nextNow, listOf(taken6)), "en", ThemeMode.Dark, 2f)

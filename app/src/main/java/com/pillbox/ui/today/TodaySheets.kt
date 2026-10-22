@@ -2,6 +2,7 @@ package com.pillbox.ui.today
 
 import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -76,6 +78,7 @@ fun TodaySheets(sheet: TodaySheet?, vm: TodayViewModel, fmt: Formatter) {
                 is TodaySheet.TooSoon -> TooSoonSheet(sheet, vm, fmt)
                 is TodaySheet.OutOfStock -> OutOfStockSheet(sheet, vm, fmt)
                 is TodaySheet.Late -> LateSheet(sheet, fmt, vm::confirmLate)
+                is TodaySheet.LogTaken -> LogTakenSheet(sheet, fmt, onSave = vm::confirmLog, onCancel = vm::dismissSheet)
                 is TodaySheet.AddStock -> Unit
             }
             Box(Modifier.size(Space.S12))
@@ -124,6 +127,50 @@ private fun SkipSheet(sheet: TodaySheet.Skip, vm: TodayViewModel) {
     }
     PrimaryButton(stringResource(R.string.skip_dose), { vm.confirmSkip(reason) })
     LinkButton(stringResource(R.string.cancel), vm::dismissSheet)
+}
+
+/** "When did you take it?" Starts on the planned time; Save is off while the chosen time has not happened yet. */
+@Composable
+internal fun LogTakenSheet(
+    sheet: TodaySheet.LogTaken, fmt: Formatter, onSave: (java.time.LocalTime) -> Unit, onCancel: () -> Unit,
+    now: LocalDateTime = LocalDateTime.now(),
+) {
+    val c = PillBox.colors
+    val row = sheet.row
+    val start = (row.event?.taken ?: row.planned).toLocalTime().withSecond(0).withNano(0)
+    var picked by remember { mutableStateOf(start) }
+    var picking by remember { mutableStateOf(false) }
+    val valid = com.pillbox.domain.LateLog.takenAt(row.planned, picked, now) != null
+    val dayText = com.pillbox.ui.shortDate(row.planned.toLocalDate(), fmt)
+    SheetTitle(
+        stringResource(if (sheet.edit) R.string.log_change_title else R.string.log_title),
+        stringResourceIso(R.string.log_sub, row.medicine.name, fmt.time(row.planned.toLocalTime()), dayText),
+    )
+    val timeText = fmt.time(picked)
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(min = Dimens.PrimaryButtonHeight)
+            .border(Dimens.ChipBorder, if (valid) c.border else c.danger, Dimens.ButtonShape)
+            .clickable(role = Role.Button, onClickLabel = stringResource(R.string.log_pick_time)) { picking = true }
+            .semantics(mergeDescendants = true) { contentDescription = stringResourceIso(R.string.log_time_desc, timeText) }
+            .padding(horizontal = Space.S16, vertical = Space.S8),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S12),
+    ) {
+        Icon(com.pillbox.ui.components.DesignIcons.ClockLate, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
+        Text(timeText, style = MaterialTheme.typography.titleMedium, color = c.text, modifier = Modifier.weight(1f))
+        Text(stringResource(R.string.log_change), style = MaterialTheme.typography.labelLarge, color = c.accent)
+    }
+    if (!valid) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top) {
+            Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.danger, modifier = Modifier.size(20.dp))
+            Text(stringResource(R.string.log_future), style = MaterialTheme.typography.bodyMedium, color = c.danger)
+        }
+    }
+    Text(stringResource(R.string.log_note), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+    PrimaryButton(stringResource(R.string.log_save), { onSave(picked) }, enabled = valid)
+    LinkButton(stringResource(R.string.cancel), onCancel)
+    if (picking) com.pillbox.ui.addmed.PBTimePickerDialog(picked, fmt.is24Hour, onDismiss = { picking = false }) { picked = it; picking = false }
 }
 
 /** "2 hours", "45 minutes" for the gap text. */

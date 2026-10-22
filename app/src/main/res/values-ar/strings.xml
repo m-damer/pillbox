@@ -1071,4 +1071,23 @@
     <string name="wl_sub">لا تفوّت جرعة أبداً. دعنا نضبطه على طريقتك.</string>
     <string name="wl_agree">بالمتابعة فإنك توافق على:</string>
     <string name="wl_continue">متابعة</string>
+    <string name="i_took_it">أخذتُها</string>
+    <string name="i_took_it_med">أخذتُ %1$s سابقاً</string>
+    <string name="change_time_med">غيّر وقت أخذ %1$s</string>
+    <string name="logged_later">سُجّلت لاحقاً</string>
+    <string name="log_title">متى أُخذت الجرعة؟</string>
+    <string name="log_change_title">غيّر الوقت</string>
+    <string name="log_sub">%1$s · الموعد %2$s، %3$s</string>
+    <string name="log_pick_time">اختر الوقت</string>
+    <string name="log_time_desc">وقت الأخذ: %1$s. انقر مرتين للتغيير.</string>
+    <string name="log_change">تغيير</string>
+    <string name="log_future">هذا الوقت لم يحن بعد. اختر وقتاً مضى.</string>
+    <string name="log_note">يمكنك تسجيل جرعات آخر سبعة أيام. الجرعة التي لا تسجّلها تبقى فائتة.</string>
+    <string name="log_save">حفظ</string>
+    <string name="tone_soft_harp">قيثارة هادئة</string>
+    <string name="tone_calm_bells">أجراس هادئة</string>
+    <string name="tone_warm_glow">وهج دافئ</string>
+    <string name="tone_water_drops">قطرات ماء</string>
+    <string name="tone_soft_marimba">ماريمبا ناعمة</string>
+    <string name="sound_tap_hear">اضغط على نغمة لتسمعها.</string>
 </resources>

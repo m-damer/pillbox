@@ -196,6 +196,11 @@ internal fun toneName(t: com.pillbox.domain.Tone) = when (t) {
     com.pillbox.domain.Tone.GENTLE_BELL -> R.string.tone_gentle_bell
     com.pillbox.domain.Tone.MORNING_CHIME -> R.string.tone_morning_chime
     com.pillbox.domain.Tone.LOUD_ALARM -> R.string.tone_loud_alarm
+    com.pillbox.domain.Tone.SOFT_HARP -> R.string.tone_soft_harp
+    com.pillbox.domain.Tone.CALM_BELLS -> R.string.tone_calm_bells
+    com.pillbox.domain.Tone.WARM_GLOW -> R.string.tone_warm_glow
+    com.pillbox.domain.Tone.WATER_DROPS -> R.string.tone_water_drops
+    com.pillbox.domain.Tone.SOFT_MARIMBA -> R.string.tone_soft_marimba
 }
 
 @Composable

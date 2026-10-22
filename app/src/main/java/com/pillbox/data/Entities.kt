@@ -105,4 +105,5 @@ data class DoseEventEntity(
     val skipReason: String?,
     val early: Boolean,
     val lateMinutes: Int?,
+    @ColumnInfo(defaultValue = "0") val loggedLater: Boolean = false,
 )

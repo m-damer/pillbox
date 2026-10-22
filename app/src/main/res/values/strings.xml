@@ -1004,4 +1004,23 @@
     <string name="wl_sub">Never miss a dose. Let us set it up your way.</string>
     <string name="wl_agree">By continuing you agree to:</string>
     <string name="wl_continue">Continue</string>
+    <string name="i_took_it">I took it</string>
+    <string name="i_took_it_med">I took %1$s earlier</string>
+    <string name="change_time_med">Change the time %1$s was taken</string>
+    <string name="logged_later">Logged later</string>
+    <string name="log_title">When did you take it?</string>
+    <string name="log_change_title">Change the time</string>
+    <string name="log_sub">%1$s · planned %2$s, %3$s</string>
+    <string name="log_pick_time">Pick the time</string>
+    <string name="log_time_desc">Time taken: %1$s. Double tap to change.</string>
+    <string name="log_change">Change</string>
+    <string name="log_future">That time has not come yet. Pick a time that has passed.</string>
+    <string name="log_note">You can log doses from the last 7 days. A dose you do not log stays Missed.</string>
+    <string name="log_save">Save</string>
+    <string name="tone_soft_harp">Soft harp</string>
+    <string name="tone_calm_bells">Calm bells</string>
+    <string name="tone_warm_glow">Warm glow</string>
+    <string name="tone_water_drops">Water drops</string>
+    <string name="tone_soft_marimba">Soft marimba</string>
+    <string name="sound_tap_hear">Tap a tone to hear it.</string>
 </resources>

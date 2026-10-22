@@ -9,6 +9,7 @@ import com.pillbox.domain.DoseRow
 import com.pillbox.domain.DoseStatus
 import com.pillbox.domain.Frequency
 import com.pillbox.domain.LateAction
+import com.pillbox.domain.LateLog
 import com.pillbox.domain.LateChoice
 import com.pillbox.domain.LateRules
 import com.pillbox.domain.LateSetting
@@ -71,6 +72,11 @@ sealed interface TodaySheet {
         val keepNext: LocalDateTime?, val keepGapMinutes: Int?,
     ) : TodaySheet
     data class OutOfStock(val rows: List<DoseRow>, val medicine: Medicine, val earlyMedicineIds: Set<Long>) : TodaySheet
+    /**
+     * "I took it" on a missed dose, or a change of time on a dose already marked taken ([edit]). Only the last 7 days.
+     * Nothing is saved until the person picks the time and presses Save.
+     */
+    data class LogTaken(val row: DoseRow, val edit: Boolean) : TodaySheet
     /** Add stock, opened from "Update my stock" on the out-of-stock sheet. */
     data class AddStock(val medicine: Medicine, val schedule: Schedule?) : TodaySheet
 }
@@ -286,6 +292,33 @@ class TodayViewModel(
             }
             if (moved) onChanged()
             toast.value = TodayToast(++toastCounter, ToastKind.Taken(rows.map { it.medicine.name }), undo)
+        }
+    }
+
+    // ---- log a dose taken earlier ----
+    fun logTaken(row: DoseRow) {
+        if (!LateLog.canLog(row.planned, LocalDateTime.now())) return
+        sheet.value = TodaySheet.LogTaken(row, edit = row.status == RowStatus.TAKEN)
+    }
+
+    /** Save on the log sheet. [picked] is the clock time chosen; the sheet only enables Save for a time that has already passed. */
+    fun confirmLog(picked: java.time.LocalTime) {
+        val s = sheet.value as? TodaySheet.LogTaken ?: return
+        val now = LocalDateTime.now()
+        val takenAt = LateLog.takenAt(s.row.planned, picked, now) ?: return
+        sheet.value = null
+        val r = s.row
+        viewModelScope.launch {
+            val late = LateRules.lateMinutes(r.planned, takenAt, ReminderState.current.lateThreshold)
+            val existing = r.event
+            if (s.edit && existing != null) {
+                repo.updateDose(existing.copy(taken = takenAt, lateMinutes = late, early = false))
+                toast.value = TodayToast(++toastCounter, ToastKind.Taken(listOf(r.medicine.name)), emptyList())
+            } else {
+                val id = repo.takeDose(r.medicine, DoseEvent(planned = r.planned, taken = takenAt, status = DoseStatus.TAKEN, lateMinutes = late, loggedLater = true))
+                toast.value = TodayToast(++toastCounter, ToastKind.Taken(listOf(r.medicine.name)), listOf(Undo(r.medicine, id, wasTake = true, restore = minOf(r.medicine.doseAmount, r.medicine.stock))))
+            }
+            onChanged()
         }
     }
 

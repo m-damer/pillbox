@@ -24,7 +24,7 @@ internal object BackupMapper {
         pauses = e.pauses.map { mapOf("id" to it.id, "medicineId" to it.medicineId, "fromAt" to it.fromAt, "untilAt" to it.untilAt) },
         doseEvents = e.doseEvents.map {
             mapOf("id" to it.id, "medicineId" to it.medicineId, "plannedAt" to it.plannedAt, "takenAt" to it.takenAt, "status" to it.status, "skipReason" to it.skipReason,
-                "early" to it.early, "lateMinutes" to it.lateMinutes)
+                "early" to it.early, "lateMinutes" to it.lateMinutes, "loggedLater" to it.loggedLater)
         },
     )
 
@@ -44,7 +44,7 @@ internal object BackupMapper {
         },
         pauses = d.pauses.map { PauseEntity(it.long("id"), it.long("medicineId"), it.str("fromAt"), it.strOrNull("untilAt")) },
         doseEvents = d.doseEvents.map {
-            DoseEventEntity(it.long("id"), it.long("medicineId"), it.strOrNull("plannedAt"), it.strOrNull("takenAt"), it.str("status"), it.strOrNull("skipReason"), it.bool("early", false), it.intOrNull("lateMinutes"))
+            DoseEventEntity(it.long("id"), it.long("medicineId"), it.strOrNull("plannedAt"), it.strOrNull("takenAt"), it.str("status"), it.strOrNull("skipReason"), it.bool("early", false), it.intOrNull("lateMinutes"), it.bool("loggedLater", false))
         },
     )
 

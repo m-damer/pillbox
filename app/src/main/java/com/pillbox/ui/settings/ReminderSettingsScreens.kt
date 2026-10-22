@@ -86,7 +86,7 @@ fun SoundScreen(vm: SettingsViewModel, onBack: () -> Unit) {
     Box(Modifier.fillMaxSize()) {
         SoundContent(
             state.reminder, rememberFormatter(), onBack,
-            onTone = { vm.setTone(it); changes++ }, onVibration = { vm.setVibration(it); changes++ },
+            onTone = { vm.setTone(it); player.play(it); changes++ }, onVibration = { vm.setVibration(it); changes++ },
             onRepeat = { vm.setRepeat(it); changes++ }, onTest = { player.play(state.reminder.tone) },
         )
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
@@ -108,6 +108,7 @@ fun SoundContent(
         SubHeader(stringResource(R.string.sound_title), onBack)
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = Dimens.ScreenPaddingH)) {
             Caption(stringResource(R.string.sound_tone))
+            Text(stringResource(R.string.sound_tap_hear), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, modifier = Modifier.padding(start = Space.S8, bottom = Space.S8))
             Card {
                 Column(Modifier.selectableGroup()) {
                     Tone.entries.forEach { t -> RadioRow(stringResource(toneName(t)), t == s.tone, { onTone(t) }) }
