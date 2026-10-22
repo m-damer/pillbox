@@ -38,8 +38,8 @@
     <string name="type_tablet">أقراص</string>
     <string name="type_capsule">كبسولات</string>
     <string name="type_syrup">شراب</string>
-    <string name="type_injection">حقنة</string>
-    <string name="type_drops">قطرة</string>
+    <string name="type_injection">حقنة (أمبولة أو قارورة)</string>
+    <string name="type_drops">قطرات (للعين أو الأذن أو الأنف)</string>
     <string name="type_other">آخر</string>
     <string name="strength_label">التركيز</string>
     <string name="unit_mg">ملغ</string>
@@ -1106,4 +1106,31 @@
     <string name="expiry_soon_note">راجع التاريخ المطبوع قبل الاستخدام. اسأل الصيدلاني إن لم تكن متأكداً.</string>
     <string name="expiry_expired_note">لا تستخدم الدواء بعد تاريخ انتهاء صلاحيته. اسأل الصيدلاني كيف تتخلص منه.</string>
     <string name="expiry_notif_title">%1$s: راجع تاريخ الانتهاء</string>
+    <plurals name="unit_powder"><item quantity="one">كيس</item><item quantity="other">أكياس</item></plurals>
+    <plurals name="unit_spray"><item quantity="one">بخّة</item><item quantity="other">بخّات</item></plurals>
+    <plurals name="unit_inhaler"><item quantity="one">نفخة</item><item quantity="other">نفخات</item></plurals>
+    <plurals name="unit_suppository"><item quantity="one">تحميلة</item><item quantity="other">تحاميل</item></plurals>
+    <plurals name="unit_application"><item quantity="one">دهنة</item><item quantity="other">دهنات</item></plurals>
+    <plurals name="unit_patch"><item quantity="one">لصقة</item><item quantity="other">لصقات</item></plurals>
+    <string name="type_powder">مسحوق أو حبيبات</string>
+    <string name="type_solution">محلول</string>
+    <string name="type_spray">بخاخ (للأنف أو الحلق)</string>
+    <string name="type_inhaler">بخاخ رئوي</string>
+    <string name="type_suppository">تحميلة</string>
+    <string name="type_cream">كريم</string>
+    <string name="type_ointment">مرهم</string>
+    <string name="type_gel">جل أو لوشن</string>
+    <string name="type_patch">لصقة طبية</string>
+    <string name="type_choose_title">اختر النوع</string>
+    <string name="type_choose">اختيار</string>
+    <string name="type_button_desc">نوع الدواء: %1$s. انقر مرتين للتغيير.</string>
+    <string name="per_powder">عدد الأكياس في العلبة</string>
+    <string name="per_spray">عدد البخّات في القارورة</string>
+    <string name="per_inhaler">عدد النفخات في البخاخ</string>
+    <string name="per_suppository">عدد التحاميل في العلبة</string>
+    <string name="per_tube">عدد مرات الدهن في الأنبوب</string>
+    <string name="per_patch">عدد اللصقات في العلبة</string>
+    <string name="stock_tubes">عدد الأنابيب المشتراة</string>
+    <string name="stock_inhalers">عدد البخاخات المشتراة</string>
+    <string name="box_estimate_hint">يكفي رقم تقريبي. ويمكنك إيقاف تنبيهات إعادة الشراء للكريمات.</string>
 </resources>

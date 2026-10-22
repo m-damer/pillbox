@@ -213,17 +213,20 @@ data class AddMedicineForm(
         }
 
         fun defaultDose(t: DoseUnit) = when (t) {
-            DoseUnit.ML -> 5.0
-            DoseUnit.DROPS -> 2.0
+            DoseUnit.ML, DoseUnit.SOLUTION -> 5.0
+            DoseUnit.DROPS, DoseUnit.INHALER -> 2.0
             else -> 1.0
         }
 
         fun doseStep(t: DoseUnit) = if (t == DoseUnit.TABLET) 0.5 else 1.0
 
         fun defaultBox(t: DoseUnit) = when (t) {
-            DoseUnit.ML -> 100
-            DoseUnit.DROPS -> 10
+            DoseUnit.ML, DoseUnit.SOLUTION -> 100
+            DoseUnit.DROPS, DoseUnit.SUPPOSITORY, DoseUnit.PATCH -> 10
             DoseUnit.INJECTION -> 5
+            DoseUnit.POWDER -> 14
+            DoseUnit.SPRAY -> 100
+            DoseUnit.INHALER -> 120
             else -> 30
         }
     }

@@ -18,6 +18,57 @@ fun unitPlural(t: DoseUnit) = when (t) {
     DoseUnit.DROPS -> R.plurals.unit_drops
     DoseUnit.INJECTION -> R.plurals.unit_injection
     DoseUnit.OTHER -> R.plurals.unit_other
+    DoseUnit.POWDER -> R.plurals.unit_powder
+    DoseUnit.SOLUTION -> R.plurals.unit_ml
+    DoseUnit.SPRAY -> R.plurals.unit_spray
+    DoseUnit.INHALER -> R.plurals.unit_inhaler
+    DoseUnit.SUPPOSITORY -> R.plurals.unit_suppository
+    DoseUnit.CREAM, DoseUnit.OINTMENT, DoseUnit.GEL -> R.plurals.unit_application
+    DoseUnit.PATCH -> R.plurals.unit_patch
+}
+
+/** The name shown in the type popup and on the type button. */
+fun typeName(t: DoseUnit) = when (t) {
+    DoseUnit.TABLET -> R.string.type_tablet
+    DoseUnit.CAPSULE -> R.string.type_capsule
+    DoseUnit.POWDER -> R.string.type_powder
+    DoseUnit.ML -> R.string.type_syrup
+    DoseUnit.SOLUTION -> R.string.type_solution
+    DoseUnit.DROPS -> R.string.type_drops
+    DoseUnit.SPRAY -> R.string.type_spray
+    DoseUnit.INHALER -> R.string.type_inhaler
+    DoseUnit.SUPPOSITORY -> R.string.type_suppository
+    DoseUnit.CREAM -> R.string.type_cream
+    DoseUnit.OINTMENT -> R.string.type_ointment
+    DoseUnit.GEL -> R.string.type_gel
+    DoseUnit.PATCH -> R.string.type_patch
+    DoseUnit.INJECTION -> R.string.type_injection
+    DoseUnit.OTHER -> R.string.type_other
+}
+
+/** "Tablets per box", "Puffs per inhaler": what Add stock asks for. */
+fun perPackLabel(t: DoseUnit) = when (t) {
+    DoseUnit.TABLET -> R.string.per_tablet
+    DoseUnit.CAPSULE -> R.string.per_capsule
+    DoseUnit.ML -> R.string.per_ml
+    DoseUnit.DROPS -> R.string.per_drops
+    DoseUnit.INJECTION -> R.string.per_injection
+    DoseUnit.OTHER -> R.string.per_other
+    DoseUnit.POWDER -> R.string.per_powder
+    DoseUnit.SOLUTION -> R.string.per_ml
+    DoseUnit.SPRAY -> R.string.per_spray
+    DoseUnit.INHALER -> R.string.per_inhaler
+    DoseUnit.SUPPOSITORY -> R.string.per_suppository
+    DoseUnit.CREAM, DoseUnit.OINTMENT, DoseUnit.GEL -> R.string.per_tube
+    DoseUnit.PATCH -> R.string.per_patch
+}
+
+/** "Boxes bought", "Bottles bought", "Tubes bought". */
+fun boughtLabel(t: DoseUnit) = when (com.pillbox.domain.MedicineTypes.packKind(t)) {
+    com.pillbox.domain.PackKind.BOX -> R.string.stock_boxes
+    com.pillbox.domain.PackKind.BOTTLE -> R.string.stock_bottles
+    com.pillbox.domain.PackKind.TUBE -> R.string.stock_tubes
+    com.pillbox.domain.PackKind.INHALER -> R.string.stock_inhalers
 }
 
 /** 1 is singular; whole numbers use themselves; halves count as plural. */
