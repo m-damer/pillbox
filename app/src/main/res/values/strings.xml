@@ -533,8 +533,10 @@
     <string name="profile_birth_error">Type a year like 1958</string>
     <string name="switcher_a11y">%1$s</string>
     <string name="switcher_selected">showing now</string>
-    <string name="viewing_banner">You are viewing %1$s\'s medicines. Their reminders ring on this phone.</string>
-    <string name="viewing_banner_off">You are viewing %1$s\'s medicines. Their reminders are off.</string>
+    <string name="switcher_title">Whose medicines?</string>
+    <string name="switcher_pill_a11y">Viewing %1$s. Double-tap to switch person.</string>
+    <string name="viewing_banner">You\'re viewing %1$s\'s medicines.</string>
+    <string name="viewing_banner_off">You\'re viewing %1$s\'s medicines. Reminders off.</string>
     <string name="notif_dose_for">%1$s: %2$s</string>
     <string name="reminder_for">For %1$s</string>
     <!-- Settings (M8a) -->
