@@ -29,6 +29,8 @@ interface MedicineDao {
     @Query("SELECT * FROM medicine WHERE personId = :personId AND status = :status ORDER BY name COLLATE NOCASE")
     fun observeForPerson(personId: Long, status: String): Flow<List<MedicineEntity>>
     @Query("SELECT * FROM medicine WHERE status = 'ACTIVE'") suspend fun allActive(): List<MedicineEntity>
+    /** Every box with an expiry date, whatever its status: a stopped medicine can still have tablets left. */
+    @Query("SELECT * FROM medicine WHERE expiry IS NOT NULL") suspend fun withExpiry(): List<MedicineEntity>
     @Query("SELECT COUNT(*) FROM medicine WHERE personId = :personId AND lower(name) = lower(:name) AND status = 'ACTIVE'")
     suspend fun countActiveWithName(personId: Long, name: String): Int
 }

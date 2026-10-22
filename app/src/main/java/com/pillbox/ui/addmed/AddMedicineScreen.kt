@@ -368,6 +368,35 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
         )
         HelperText(stringResource(R.string.box_left_hint))
     }
+
+    ExpiryField(form.expiry, fmt) { v -> edit { it.copy(expiry = v) } }
+}
+
+/** Optional expiry date: a button to add it, and Change / Remove once it is set. */
+@Composable
+private fun ExpiryField(expiry: java.time.YearMonth?, fmt: Formatter, onChange: (java.time.YearMonth?) -> Unit) {
+    val c = PillBox.colors
+    var picking by remember { mutableStateOf(false) }
+    val today = remember { java.time.LocalDate.now() }
+    FieldLabel(stringResource(R.string.expiry_label))
+    if (expiry == null) {
+        com.pillbox.ui.components.OutlineButton(stringResource(R.string.expiry_add), { picking = true })
+    } else {
+        Row(
+            Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).border(Dimens.ChipBorder, c.border, MaterialTheme.shapes.large).padding(Space.S12),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S8),
+        ) {
+            Text(com.pillbox.ui.medicines.expiryMonthText(expiry, fmt), style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
+            androidx.compose.material3.TextButton(onClick = { picking = true }, modifier = Modifier.heightIn(min = Dimens.TouchTargetMin)) {
+                Text(stringResource(R.string.expiry_change), style = MaterialTheme.typography.labelLarge, color = c.accent)
+            }
+            androidx.compose.material3.TextButton(onClick = { onChange(null) }, modifier = Modifier.heightIn(min = Dimens.TouchTargetMin)) {
+                Text(stringResource(R.string.expiry_remove), style = MaterialTheme.typography.labelLarge, color = c.danger)
+            }
+        }
+    }
+    HelperText(stringResource(R.string.expiry_hint))
+    if (picking) com.pillbox.ui.medicines.ExpiryPickerDialog(expiry, today, onDismiss = { picking = false }) { onChange(it); picking = false }
 }
 
 // ---------------------------------------------------------------- step 2

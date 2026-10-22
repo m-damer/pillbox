@@ -35,6 +35,9 @@ class AddMedicineScreenshotTest {
 
     @Test fun en_step1() = shoot("en_step1", AddMedUiState(base, 1), "en")
     @Test fun en_step1_error() = shoot("en_step1_error", AddMedUiState(AddMedicineForm(boxCount = null), 1, showErrors = true), "en")
+    @Config(qualifiers = "+h1000dp") @Test fun en_step1_expiry() = shoot("en_step1_expiry", AddMedUiState(base.copy(expiry = java.time.YearMonth.of(2027, 5)), 1), "en")
+    @Config(qualifiers = "+h1000dp") @Test fun en_step1_no_expiry() = shoot("en_step1_no_expiry", AddMedUiState(base, 1), "en")
+    @Config(qualifiers = "+ar-ldrtl-h1000dp") @Test fun ar_step1_expiry() = shoot("ar_step1_expiry", AddMedUiState(base.copy(expiry = java.time.YearMonth.of(2027, 5)), 1), "ar")
     @Test fun en_step2() = shoot("en_step2", AddMedUiState(base, 2), "en")
     @Test fun en_step2_hours() = shoot("en_step2_hours", AddMedUiState(hours, 2), "en")
     @Test fun en_step2_prn() = shoot("en_step2_prn", AddMedUiState(base.withFreq(FreqChoice.AS_NEEDED), 2), "en")

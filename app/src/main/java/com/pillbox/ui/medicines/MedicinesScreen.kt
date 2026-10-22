@@ -179,7 +179,9 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
     }
     val right = if (end != null && info.level != StockLevel.OUT) stringResourceIso(R.string.ends_on, shortDate(end, fmt)) else stockAmountText(m, fmt)
     val fraction = com.pillbox.domain.StockMath.barFraction(m)
-    val sentence = listOf(m.name, sub, left, right).joinToString(", ")
+    val expiryInfo = com.pillbox.domain.ExpiryRules.info(m.expiry, java.time.LocalDate.now())
+    val expiryText = expiryLineText(m.expiry, expiryInfo, fmt)
+    val sentence = listOfNotNull(m.name, sub, left, right, expiryText).joinToString(", ")
 
     Column(
         Modifier
@@ -207,6 +209,7 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
             Spacer4()
             Text(right, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.End)
         }
+        ExpiryLine(m.expiry, java.time.LocalDate.now(), fmt)
     }
 }
 
@@ -282,7 +285,7 @@ private fun FinishedCard(item: MedicineWithSchedule, fmt: Formatter, onClick: ()
             .background(c.card, MaterialTheme.shapes.large)
             .border(Dimens.ChipBorder, c.border, MaterialTheme.shapes.large)
             .clickable(role = Role.Button, onClick = onClick)
-            .semantics(mergeDescendants = true) { contentDescription = "$title, $sub, $tag" }
+            .semantics(mergeDescendants = true) { contentDescription = listOfNotNull(title, sub, tag, if (m.stock > 0.0) expiryLineText(m.expiry, com.pillbox.domain.ExpiryRules.info(m.expiry, java.time.LocalDate.now()), fmt) else null).joinToString(", ") }
             .padding(Space.S16),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Space.S12),
@@ -291,6 +294,8 @@ private fun FinishedCard(item: MedicineWithSchedule, fmt: Formatter, onClick: ()
         Column(Modifier.weight(1f)) {
             Text(title, style = MaterialTheme.typography.titleMedium, color = c.text)
             if (sub.isNotEmpty()) Text(sub, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+            // A stopped box can still have tablets left: its date matters until they are gone.
+            if (m.stock > 0.0) ExpiryLine(m.expiry, java.time.LocalDate.now(), fmt)
         }
         Text(
             tag, style = MaterialTheme.typography.labelMedium, color = c.textMuted,

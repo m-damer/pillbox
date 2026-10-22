@@ -42,6 +42,8 @@ data class MedicineEntity(
     val status: String,
     /** Epoch day the course finished or was stopped (null while active). */
     val endedOn: Long? = null,
+    /** Printed expiry month, "yyyy-MM". Null when not set. */
+    val expiry: String? = null,
 )
 
 @Entity(

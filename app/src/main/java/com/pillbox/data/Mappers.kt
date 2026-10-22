@@ -36,9 +36,9 @@ object Mappers {
     )
 
     // ---- medicine ----
-    fun toEntity(m: Medicine) = MedicineEntity(m.id, m.personId, m.name, m.strength, m.unit.name, m.doseAmount, m.stock, m.packSize, m.status.name, m.endedOn?.toEpochDay())
+    fun toEntity(m: Medicine) = MedicineEntity(m.id, m.personId, m.name, m.strength, m.unit.name, m.doseAmount, m.stock, m.packSize, m.status.name, m.endedOn?.toEpochDay(), m.expiry?.toString())
     fun toDomain(e: MedicineEntity) =
-        Medicine(e.id, e.personId, e.name, e.strength, DoseUnit.valueOf(e.unit), e.doseAmount, e.stock, e.packSize, MedicineStatus.valueOf(e.status), e.endedOn?.let { LocalDate.ofEpochDay(it) })
+        Medicine(e.id, e.personId, e.name, e.strength, DoseUnit.valueOf(e.unit), e.doseAmount, e.stock, e.packSize, MedicineStatus.valueOf(e.status), e.endedOn?.let { LocalDate.ofEpochDay(it) }, com.pillbox.domain.ExpiryRules.parse(e.expiry))
 
     // ---- schedule ----
     fun toEntity(medicineId: Long, s: Schedule, id: Long = 0): ScheduleEntity {

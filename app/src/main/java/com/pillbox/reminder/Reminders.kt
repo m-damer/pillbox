@@ -19,6 +19,8 @@ import com.pillbox.R
 import com.pillbox.data.Mappers
 import com.pillbox.data.PillBoxRepository
 import com.pillbox.domain.DoseEvent
+import com.pillbox.domain.ExpiryInfo
+import com.pillbox.domain.ExpiryRules
 import com.pillbox.domain.DoseRow
 import com.pillbox.domain.DoseStatus
 import com.pillbox.domain.Pause
@@ -137,8 +139,40 @@ class Reminders(
         // A medicine that is no longer low (stock added, paused) loses its old alert.
         items.map { notificationIdForRefill(it.first.id) }.filter { it !in shown }.forEach { notificationManager().cancel(it) }
         alerts.forEach { showRefill(it, now.toLocalDate()) }
+        runCatching { ExpiryRules.noticesFor(repo.medicinesWithExpiry(), now.toLocalDate()).forEach { (m, info) -> showExpiry(m, info) } }
         // One minute on, so an alarm that arrives a moment early does not ring twice.
         rearmRefill(now.plusMinutes(1))
+    }
+
+    private fun notificationIdForExpiry(medicineId: Long) = EXPIRY_ID_BASE + (medicineId % 1_000_000L).toInt()
+
+    /** One quiet notice, 30 days before, 7 days before and on the last day. It never says the medicine is safe. */
+    @SuppressLint("MissingPermission")
+    private fun showExpiry(m: Medicine, info: ExpiryInfo) {
+        val nm = notificationManager()
+        if (!nm.areNotificationsEnabled()) return
+        val fmt = Formatter.from(context)
+        val res = context.resources
+        val ym = m.expiry ?: return
+        val month = fmt.digits(ym.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault()) + " " + ym.year)
+        val left = info.daysLeft ?: 0
+        val name = m.name + (com.pillbox.ui.localizedStrength(m.strength, res)?.let { " $it" } ?: "")
+        val title = context.getStringIso(R.string.expiry_notif_title, name)
+        val text = if (left == 0) context.getStringIso(R.string.expiry_today, month)
+        else context.getStringIso(R.string.expiry_soon, res.getQuantityString(R.plurals.n_days, left, fmt.number(left)), month)
+        val open = Intent(context, MainActivity::class.java)
+            .putExtra(EXTRA_OPEN_MEDICINE, m.id)
+            .setData(Uri.parse("pillbox://expiry/open/${m.id}"))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val openPending = PendingIntent.getActivity(context, 32, open, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val n = NotificationCompat.Builder(context, CHANNEL_REFILLS)
+            .setSmallIcon(R.drawable.ic_stat_pill)
+            .setContentTitle(title).setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text + "\n" + context.getString(R.string.expiry_soon_note)))
+            .setCategory(NotificationCompat.CATEGORY_REMINDER).setPriority(NotificationCompat.PRIORITY_LOW)
+            .setAutoCancel(true).setContentIntent(openPending)
+            .build()
+        runCatching { nm.notify(notificationIdForExpiry(m.id), n) }
     }
 
     fun dismissRefill(medicineId: Long) = notificationManager().cancel(notificationIdForRefill(medicineId))
@@ -394,6 +428,7 @@ class Reminders(
         const val EXTRA_OPEN_MEDICINE = "open_medicine"
         /** Refill notification ids start here so they never clash with dose notification ids (minutes since 1970). */
         private const val REFILL_ID_BASE = 1_000_000_000
+        private const val EXPIRY_ID_BASE = 1_100_000_000
 
         fun blockNameRes(b: Block) = when (b) {
             Block.MORNING -> R.string.block_morning
