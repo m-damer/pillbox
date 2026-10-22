@@ -83,10 +83,10 @@ object Mappers {
 
     // ---- dose event ----
     fun toEntity(d: DoseEvent) = DoseEventEntity(
-        d.id, d.medicineId, d.planned?.let { dt(it) }, d.taken?.let { dt(it) }, d.status.name, d.skipReason, d.early, d.lateMinutes,
+        d.id, d.medicineId, d.planned?.let { dt(it) }, d.taken?.let { dt(it) }, d.status.name, d.skipReason, d.early, d.lateMinutes, d.loggedLater,
     )
 
     fun toDomain(e: DoseEventEntity) = DoseEvent(
-        e.id, e.medicineId, e.plannedAt?.let { dt(it) }, e.takenAt?.let { dt(it) }, DoseStatus.valueOf(e.status), e.skipReason, e.early, e.lateMinutes,
+        e.id, e.medicineId, e.plannedAt?.let { dt(it) }, e.takenAt?.let { dt(it) }, DoseStatus.valueOf(e.status), e.skipReason, e.early, e.lateMinutes, e.loggedLater,
     )
 }

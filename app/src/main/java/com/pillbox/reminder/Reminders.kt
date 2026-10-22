@@ -377,6 +377,11 @@ class Reminders(
             com.pillbox.domain.Tone.GENTLE_BELL -> R.raw.tone_gentle_bell
             com.pillbox.domain.Tone.MORNING_CHIME -> R.raw.tone_morning_chime
             com.pillbox.domain.Tone.LOUD_ALARM -> R.raw.tone_loud_alarm
+            com.pillbox.domain.Tone.SOFT_HARP -> R.raw.tone_soft_harp
+            com.pillbox.domain.Tone.CALM_BELLS -> R.raw.tone_calm_bells
+            com.pillbox.domain.Tone.WARM_GLOW -> R.raw.tone_warm_glow
+            com.pillbox.domain.Tone.WATER_DROPS -> R.raw.tone_water_drops
+            com.pillbox.domain.Tone.SOFT_MARIMBA -> R.raw.tone_soft_marimba
         }
         const val CHANNEL_REFILLS = "refills"
         private const val TEST_ID = 999_999_999

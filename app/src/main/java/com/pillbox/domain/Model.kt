@@ -111,6 +111,8 @@ data class DoseEvent(
     val skipReason: String? = null,
     val early: Boolean = false,
     val lateMinutes: Int? = null,
+    /** Taken earlier and logged afterwards ("I took it" on a missed dose), not marked at the time. */
+    val loggedLater: Boolean = false,
 )
 
 /** Every medicine is paused. [until] is when the first one resumes, or null if all wait for the user. */
