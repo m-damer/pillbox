@@ -1068,4 +1068,10 @@
     <string name="stock_tubes">Tubes bought</string>
     <string name="stock_inhalers">Inhalers bought</string>
     <string name="box_estimate_hint">A rough number is fine. For creams you can also leave refill alerts off.</string>
+    <plurals name="low_stock_count">
+        <item quantity="one">%1$s medicine is running low</item><item quantity="other">%1$s medicines are running low</item>
+    </plurals>
+    <string name="low_stock_title">Running low</string>
+    <string name="low_stock_see_list">Opens the list</string>
+    <string name="low_stock_close">Close</string>
 </resources>

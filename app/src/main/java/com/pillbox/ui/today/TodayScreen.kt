@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -192,6 +194,12 @@ fun TodayContent(
         }
         return
     }
+    var showLow by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    if (showLow && state.lowStock.isNotEmpty()) {
+        androidx.compose.ui.window.Dialog(onDismissRequest = { showLow = false }) {
+            LowStockCard(state.lowStock, onPick = { showLow = false; onGoToMeds() }, onClose = { showLow = false })
+        }
+    }
     Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
     Column(Modifier.fillMaxSize()) {
         // The title and the week strip stay in place while the list scrolls.
@@ -203,6 +211,7 @@ fun TodayContent(
                 Box(Modifier.weight(1f)) { Header(state.selectedDate, today, model, fmt) }
                 com.pillbox.ui.people.PeopleBarSwitcher(people)
             }
+            if (state.lowStock.isNotEmpty()) LowStockBar(state.lowStock.size) { showLow = true }
             WeekStrip(state.selectedDate, today, fmt, onSelectDate)
         }
     LazyColumn(
@@ -227,12 +236,6 @@ fun TodayContent(
         }
         if (state.selectedDate == today && state.asNeeded.isNotEmpty()) item { AsNeededCard(state.asNeeded, onTakeAsNeeded) }
     }
-    }
-    if (state.lowStock.isNotEmpty()) {
-        Column(
-            Modifier.align(Alignment.BottomCenter).padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S8),
-            verticalArrangement = Arrangement.spacedBy(Space.S8),
-        ) { state.lowStock.take(2).forEach { LowStockStrip(it, onGoToMeds) } }
     }
     }
 }
@@ -264,29 +267,65 @@ private fun AsNeededCard(items: List<AsNeededItem>, onTake: (Long) -> Unit) {
     }
 }
 
-/** "Metformin · 4 days left · Buy soon". Opens the Medicines tab. */
+/** One strip above the week days: "2 medicines are running low". Opens the list. */
 @Composable
-private fun LowStockStrip(item: LowStock, onClick: () -> Unit) {
+internal fun LowStockBar(count: Int, onClick: () -> Unit) {
     val c = PillBox.colors
-    val what = if (item.level == StockLevel.BUY_SOON && item.daysLeft != null)
-        pluralStringResource(R.plurals.stock_days_left, item.daysLeft.coerceAtLeast(0), com.pillbox.ui.components.isolate(rememberFormatter().number(item.daysLeft)))
-    else stringResource(R.string.stock_out)
-    val label = stringResource(if (item.level == StockLevel.OUT) R.string.out_update else R.string.stock_buy_soon)
-    val text = stringResourceIso(R.string.low_stock_strip, item.name, what)
+    val text = pluralStringResource(R.plurals.low_stock_count, count, com.pillbox.ui.components.isolate(rememberFormatter().number(count)))
+    val hint = stringResource(R.string.low_stock_see_list)
     Row(
         Modifier
             .fillMaxWidth()
             .heightIn(min = Dimens.TouchTargetMin)
             .background(c.warningContainer, MaterialTheme.shapes.medium)
             .clickable(role = Role.Button, onClick = onClick)
-            .semantics(mergeDescendants = true) { contentDescription = "$text. $label" }
-            .padding(horizontal = Space.S12, vertical = Space.S10),
+            .semantics(mergeDescendants = true) { contentDescription = "$text. $hint" }
+            .padding(horizontal = Space.S12, vertical = Space.S6),
         horizontalArrangement = Arrangement.spacedBy(Space.S10), verticalAlignment = Alignment.CenterVertically,
     ) {
-        PillIcon(item.unit, null, 26.dp)
+        Icon(com.pillbox.ui.components.DesignIcons.Warning, contentDescription = null, tint = c.warning, modifier = Modifier.size(22.dp))
         Text(text, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
-        Text(label, style = MaterialTheme.typography.labelMedium, color = c.warning)
         Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.warning, modifier = Modifier.size(18.dp))
+    }
+}
+
+/** The popup with every medicine that is running low: "Metformin · 4 days left" and "Buy soon" or "Update my stock". Tapping a row opens Medicines. */
+@Composable
+internal fun LowStockCard(items: List<LowStock>, onPick: () -> Unit, onClose: () -> Unit, modifier: Modifier = Modifier) {
+    val c = PillBox.colors
+    val fmt = rememberFormatter()
+    val maxHeight = (androidx.compose.ui.platform.LocalConfiguration.current.screenHeightDp * 0.8f).dp
+    Column(modifier.fillMaxWidth().heightIn(max = maxHeight).background(c.card, MaterialTheme.shapes.extraLarge).padding(vertical = Space.S16)) {
+        Text(
+            stringResource(R.string.low_stock_title), style = MaterialTheme.typography.titleMedium, color = c.text,
+            modifier = Modifier.padding(horizontal = Space.S16).padding(bottom = Space.S8).semantics { heading() },
+        )
+        Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()).padding(horizontal = Space.S8)) {
+            items.forEach { item ->
+                val what = if (item.level == StockLevel.BUY_SOON && item.daysLeft != null)
+                    pluralStringResource(R.plurals.stock_days_left, item.daysLeft.coerceAtLeast(0), com.pillbox.ui.components.isolate(fmt.number(item.daysLeft)))
+                else stringResource(R.string.stock_out)
+                val label = stringResource(if (item.level == StockLevel.OUT) R.string.out_update else R.string.stock_buy_soon)
+                val text = stringResourceIso(R.string.low_stock_strip, item.name, what)
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = Dimens.ListRowMinHeight)
+                        .clickable(role = Role.Button, onClick = onPick)
+                        .semantics(mergeDescendants = true) { contentDescription = "$text. $label" }
+                        .padding(horizontal = Space.S8, vertical = Space.S6),
+                    horizontalArrangement = Arrangement.spacedBy(Space.S12), verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PillIcon(item.unit, null, 36.dp)
+                    Column(Modifier.weight(1f)) {
+                        Text(text, style = MaterialTheme.typography.bodyLarge, color = c.text)
+                        Text(label, style = MaterialTheme.typography.labelMedium, color = c.warning)
+                    }
+                    Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.textMuted, modifier = Modifier.size(18.dp))
+                }
+            }
+        }
+        Box(Modifier.padding(horizontal = Space.S16).padding(top = Space.S8)) { com.pillbox.ui.components.LinkButton(stringResource(R.string.low_stock_close), onClose) }
     }
 }
 

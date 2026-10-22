@@ -1135,4 +1135,11 @@
     <string name="stock_tubes">عدد الأنابيب المشتراة</string>
     <string name="stock_inhalers">عدد البخاخات المشتراة</string>
     <string name="box_estimate_hint">يكفي رقم تقريبي. ويمكنك إيقاف تنبيهات إعادة الشراء للكريمات.</string>
+    <plurals name="low_stock_count">
+        <item quantity="zero">لا أدوية قاربت على النفاد</item><item quantity="one">دواء واحد قارب على النفاد</item><item quantity="two">دواءان قاربا على النفاد</item>
+        <item quantity="few">%1$s أدوية قاربت على النفاد</item><item quantity="many">%1$s دواءً قارب على النفاد</item><item quantity="other">%1$s دواء قارب على النفاد</item>
+    </plurals>
+    <string name="low_stock_title">أوشكت على النفاد</string>
+    <string name="low_stock_see_list">يفتح القائمة</string>
+    <string name="low_stock_close">إغلاق</string>
 </resources>
