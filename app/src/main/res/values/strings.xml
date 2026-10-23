@@ -1103,4 +1103,7 @@
     <string name="settings_updates">Check for updates</string>
     <string name="settings_updates_check">Tap to check</string>
     <string name="settings_updates_found">New version %1$s is ready</string>
+    <plurals name="week_summary">
+        <item quantity="one">This week: %1$s of %2$s dose taken</item><item quantity="other">This week: %1$s of %2$s doses taken</item>
+    </plurals>
 </resources>

@@ -1174,4 +1174,8 @@
     <string name="settings_updates">التحقق من التحديثات</string>
     <string name="settings_updates_check">انقر للتحقق</string>
     <string name="settings_updates_found">الإصدار الجديد %1$s جاهز</string>
+    <plurals name="week_summary">
+        <item quantity="zero">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="one">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="two">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item>
+        <item quantity="few">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="many">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="other">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item>
+    </plurals>
 </resources>
