@@ -156,8 +156,8 @@
     <!-- Today -->
     <string name="today">اليوم</string>
     <string name="tomorrow">غداً</string>
-    <string name="sub_taken">%1$s - (%2$s من %3$s مأخوذة)</string>
-    <string name="sub_planned">%1$s - (%2$s مخططة)</string>
+    <string name="sub_taken">%1$s · %2$s من %3$s مأخوذة</string>
+    <string name="sub_planned">%1$s · %2$s مخططة</string>
     <string name="back_to_today">العودة إلى اليوم</string>
     <string name="nothing_planned">لا توجد جرعات مخططة لهذا اليوم.</string>
     <string name="future_note">هذه جرعات مخططة. يمكنك تسجيلها في يومها.</string>
@@ -1162,5 +1162,13 @@
     <plurals name="notices_bell_new">
         <item quantity="zero">الإشعارات، لا جديد</item><item quantity="one">الإشعارات، واحد جديد</item><item quantity="two">الإشعارات، اثنان جديدان</item>
         <item quantity="few">الإشعارات، %1$s جديدة</item><item quantity="many">الإشعارات، %1$s جديداً</item><item quantity="other">الإشعارات، %1$s جديد</item>
+    </plurals>
+    <plurals name="switcher_unread">
+        <item quantity="zero">لا إشعارات جديدة</item><item quantity="one">إشعار جديد واحد</item><item quantity="two">إشعاران جديدان</item>
+        <item quantity="few">%1$s إشعارات جديدة</item><item quantity="many">%1$s إشعاراً جديداً</item><item quantity="other">%1$s إشعار جديد</item>
+    </plurals>
+    <plurals name="switcher_unread_elsewhere">
+        <item quantity="zero">لا إشعارات جديدة لغيرك.</item><item quantity="one">إشعار جديد واحد لشخص آخر.</item><item quantity="two">إشعاران جديدان لآخرين.</item>
+        <item quantity="few">%1$s إشعارات جديدة لآخرين.</item><item quantity="many">%1$s إشعاراً جديداً لآخرين.</item><item quantity="other">%1$s إشعار جديد لآخرين.</item>
     </plurals>
 </resources>

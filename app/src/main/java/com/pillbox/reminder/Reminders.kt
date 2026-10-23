@@ -162,7 +162,7 @@ class Reminders(
         val text = if (left == 0) context.getStringIso(R.string.expiry_today, month)
         else context.getStringIso(R.string.expiry_soon, res.getQuantityString(R.plurals.n_days, left, fmt.number(left)), month)
         val stage = if (left <= 0) 0 else if (left <= 7) 7 else 30
-        record(Notice("expiry:${m.id}:$ym:$stage", NoticeKind.EXPIRY, title, text, System.currentTimeMillis(), target = "medicine:${m.id}"))
+        record(Notice("expiry:${m.id}:$ym:$stage", NoticeKind.EXPIRY, title, text, System.currentTimeMillis(), target = "medicine:${m.id}", personId = m.personId))
         if (!nm.areNotificationsEnabled()) return
         val open = Intent(context, MainActivity::class.java)
             .putExtra(EXTRA_OPEN_MEDICINE, m.id)
@@ -206,7 +206,7 @@ class Reminders(
             val about = res.getQuantityString(R.plurals.n_days, days, fmt.number(days))
             big = text + "\n" + context.getString(R.string.refill_notif_about, about, a.runsOutOn?.let { com.pillbox.ui.shortDate(it, fmt) } ?: "")
         }
-        record(Notice("stock:${m.id}:$today", NoticeKind.STOCK, title, text, System.currentTimeMillis(), target = "medicine:${m.id}"))
+        record(Notice("stock:${m.id}:$today", NoticeKind.STOCK, title, text, System.currentTimeMillis(), target = "medicine:${m.id}", personId = m.personId))
         if (!nm.areNotificationsEnabled()) return
         val open = Intent(context, MainActivity::class.java)
             .putExtra(EXTRA_OPEN_MEDICINE, m.id)
@@ -360,7 +360,7 @@ class Reminders(
             owners[r.medicine.personId]?.let { context.getStringIso(R.string.notif_dose_for, it, line) } ?: line
         }
         // Saved for the notifications screen even when Android notifications are off, so a missed alert can still be seen there.
-        record(Notice("dose:${notificationId(at)}", NoticeKind.DOSE, title, text, at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), target = openFor?.let { "today:$it" } ?: "today"))
+        record(Notice("dose:${notificationId(at)}", NoticeKind.DOSE, title, text, at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), target = openFor?.let { "today:$it" } ?: "today", personId = openFor))
         if (!nm.areNotificationsEnabled()) return
         val builder = NotificationCompat.Builder(context, channelFor(LocalDateTime.now().toLocalTime()))
             .setSmallIcon(R.drawable.ic_stat_pill)

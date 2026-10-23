@@ -177,7 +177,8 @@ class MainActivity : PillBoxActivity() {
                 var settingsSaved by rememberSaveable { mutableStateOf(false) }
                 val peopleList by repo.observePeople().collectAsStateWithLifecycle(emptyList())
                 val activePersonId by repo.activePersonId.collectAsStateWithLifecycle()
-                val peopleBar = PeopleBar(peopleList, activePersonId, onSelect = { repo.selectPerson(it) })
+                val unreadByPerson = com.pillbox.domain.NoticeRules.unreadByPerson(notices, peopleList.firstOrNull { it.isMe }?.id)
+                val peopleBar = PeopleBar(peopleList, activePersonId, onSelect = { repo.selectPerson(it) }, unread = unreadByPerson)
                 // The update notification was tapped.
                 val wantUpdate = openUpdate.value
                 LaunchedEffect(wantUpdate) {

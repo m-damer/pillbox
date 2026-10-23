@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.semantics.heading
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.pluralStringResource
+import com.pillbox.ui.rememberFormatter
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -101,7 +103,7 @@ fun PeopleSwitcher(chips: List<PersonChip>, activeId: Long?, onSelect: (Long) ->
 }
 
 /** The people shown in the switcher and who is selected. Null on screens that have no switcher (and in screenshots of one person). */
-data class PeopleBar(val people: List<Person>, val activeId: Long?, val onSelect: (Long) -> Unit) {
+data class PeopleBar(val people: List<Person>, val activeId: Long?, val onSelect: (Long) -> Unit, val unread: Map<Long, Int> = emptyMap()) {
     val active: Person? get() = people.firstOrNull { it.id == activeId } ?: people.firstOrNull { it.isMe }
 }
 
@@ -115,24 +117,28 @@ fun PeopleBarSwitcher(bar: PeopleBar?, modifier: Modifier = Modifier) {
     val chips = rememberChips(bar.people)
     val active = chips.firstOrNull { it.person.id == bar.active?.id } ?: chips.first()
     var open by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
-    PersonPill(active.label, active.person.isMe, active.person.colorIndex, onClick = { open = true }, modifier = modifier)
+    // The red number on the pill counts new notifications of the people NOT on screen; the bell counts everyone.
+    val others = bar.unread.filterKeys { it != active.person.id }.values.sum()
+    PersonPill(active.label, active.person.isMe, active.person.colorIndex, others, onClick = { open = true }, modifier = modifier)
     if (open) {
         androidx.compose.ui.window.Dialog(onDismissRequest = { open = false }) {
-            PersonPickerCard(chips, active.person.id, onPick = { open = false; bar.onSelect(it) }, onCancel = { open = false })
+            PersonPickerCard(chips, active.person.id, bar.unread, onPick = { open = false; bar.onSelect(it) }, onCancel = { open = false })
         }
     }
 }
 
 /** The pill: the name of the person on screen and a down arrow. At large text the name wraps instead of being cut. */
 @Composable
-internal fun PersonPill(label: String, isMe: Boolean, colorIndex: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun PersonPill(label: String, isMe: Boolean, colorIndex: Int, unreadElsewhere: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val c = PillBox.colors
     val bg = if (isMe) c.primary else PillBox.illustration.avatars[PeopleRules.colorFor(colorIndex)]
     val fg = if (isMe) c.onPrimary else c.accent
-    val desc = stringResource(R.string.switcher_pill_a11y, label)
+    val base = stringResource(R.string.switcher_pill_a11y, label)
+    val desc = if (unreadElsewhere > 0) base + " " + pluralStringResource(R.plurals.switcher_unread_elsewhere, unreadElsewhere, rememberFormatter().number(unreadElsewhere)) else base
+    Box(modifier.widthIn(max = 176.dp)) {
     Row(
-        modifier
-            .widthIn(max = 168.dp)
+        Modifier
+            .padding(top = 6.dp, end = 6.dp)
             .heightIn(min = Dimens.TouchTargetMin)
             .clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp))
             .background(bg)
@@ -145,11 +151,23 @@ internal fun PersonPill(label: String, isMe: Boolean, colorIndex: Int, onClick: 
         Text(label, style = MaterialTheme.typography.labelLarge, color = fg, maxLines = 2, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis, modifier = Modifier.weight(1f, fill = false))
         Icon(com.pillbox.ui.components.DesignIcons.ChevronDown, contentDescription = null, tint = fg, modifier = Modifier.size(20.dp))
     }
+    if (unreadElsewhere > 0) CountBadge(unreadElsewhere, Modifier.align(Alignment.TopEnd))
+    }
+}
+
+/** The red circle with a number. The number is always written (never color alone); 99+ when large. */
+@Composable
+internal fun CountBadge(count: Int, modifier: Modifier = Modifier) {
+    val c = PillBox.colors
+    val fmt = rememberFormatter()
+    Box(modifier.heightIn(min = 22.dp).widthIn(min = 22.dp).background(c.danger, CircleShape).padding(horizontal = 6.dp), contentAlignment = Alignment.Center) {
+        Text(if (count > 99) fmt.number(99) + "+" else fmt.number(count), style = MaterialTheme.typography.labelSmall, color = c.onPrimary, maxLines = 1)
+    }
 }
 
 /** The popup list of everyone. One tap switches and closes. The person on screen has a check mark and is read as "showing now". */
 @Composable
-internal fun PersonPickerCard(chips: List<PersonChip>, activeId: Long, onPick: (Long) -> Unit, onCancel: () -> Unit, modifier: Modifier = Modifier) {
+internal fun PersonPickerCard(chips: List<PersonChip>, activeId: Long, unread: Map<Long, Int>, onPick: (Long) -> Unit, onCancel: () -> Unit, modifier: Modifier = Modifier) {
     val c = PillBox.colors
     val maxHeight = (androidx.compose.ui.platform.LocalConfiguration.current.screenHeightDp * 0.8f).dp
     val selectedText = stringResource(R.string.switcher_selected)
@@ -165,7 +183,9 @@ internal fun PersonPickerCard(chips: List<PersonChip>, activeId: Long, onPick: (
         ) {
             chips.forEach { chip ->
                 val on = chip.person.id == activeId
-                val desc = if (on) chip.label + ", " + selectedText else chip.label
+                val n = unread[chip.person.id] ?: 0
+                val newText = if (n > 0) pluralStringResource(R.plurals.switcher_unread, n, rememberFormatter().number(n)) else null
+                val desc = listOfNotNull(chip.label, if (on) selectedText else null, newText).joinToString(", ")
                 Row(
                     Modifier
                         .fillMaxWidth()
@@ -179,6 +199,7 @@ internal fun PersonPickerCard(chips: List<PersonChip>, activeId: Long, onPick: (
                     Avatar(chip.initials, chip.person.colorIndex, chip.person.isMe, size = 40.dp)
                     Text(chip.label, style = MaterialTheme.typography.bodyLarge, color = c.text, modifier = Modifier.weight(1f))
                     if (on) Icon(com.pillbox.ui.components.DesignIcons.Check, contentDescription = null, tint = c.primary, modifier = Modifier.size(24.dp))
+                    if (n > 0) CountBadge(n)
                 }
             }
         }

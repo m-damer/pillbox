@@ -15,6 +15,8 @@ data class Notice(
     val atMillis: Long,
     val read: Boolean = false,
     val target: String? = null,
+    /** Whose notice this is: the owner of the medicine. Null (app notices) means me. */
+    val personId: Long? = null,
 )
 
 /** Pure rules for the saved notices. Newest first; nothing is kept longer than 30 days or beyond 200 items. */
@@ -37,6 +39,10 @@ object NoticeRules {
     fun ofKind(list: List<Notice>, kind: NoticeKind?): List<Notice> = if (kind == null) list else list.filter { it.kind == kind }
 
     fun unread(list: List<Notice>, kind: NoticeKind? = null): Int = ofKind(list, kind).count { !it.read }
+
+    /** Unread notices per person; a notice without a person counts for [meId]. */
+    fun unreadByPerson(list: List<Notice>, meId: Long?): Map<Long, Int> =
+        list.filter { !it.read }.mapNotNull { it.personId ?: meId }.groupingBy { it }.eachCount()
 
     fun markRead(list: List<Notice>, key: String): List<Notice> = list.map { if (it.key == key) it.copy(read = true) else it }
 

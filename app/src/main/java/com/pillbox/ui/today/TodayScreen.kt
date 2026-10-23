@@ -213,10 +213,12 @@ fun TodayContent(
             verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
         ) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top) {
-                Box(Modifier.weight(1f)) { Header(state.selectedDate, today, model, fmt) }
+                Box(Modifier.weight(1f)) { HeaderTitle(state.selectedDate, today) }
                 com.pillbox.ui.people.PeopleBarSwitcher(people)
                 com.pillbox.ui.notices.NoticeBell(unreadNotices, onOpenNotices)
             }
+            // The date and how many doses are taken: its own line under the whole row, so it stays on one line.
+            HeaderSub(state.selectedDate, today, model, fmt)
             if (state.lowStock.isNotEmpty()) LowStockBar(state.lowStock.size) { showLow = true }
             WeekStrip(state.selectedDate, today, fmt, onSelectDate)
         }
@@ -348,30 +350,35 @@ private fun PeopleRow(people: com.pillbox.ui.people.PeopleBar?) {
 }
 
 @Composable
-private fun Header(selected: LocalDate, today: LocalDate, model: TodayModel?, fmt: Formatter) {
+private fun HeaderTitle(selected: LocalDate, today: LocalDate) {
     val c = PillBox.colors
     val title = when (selected) {
         today -> stringResource(R.string.today)
         today.plusDays(1) -> stringResource(R.string.tomorrow)
         else -> selected.dayOfWeek.getDisplayName(TextStyle.FULL, locale())
     }
+    Text(title, style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.padding(top = Space.S4).semantics { heading() })
+}
+
+/** "Thu 22 Oct · 0 of 2 taken": one line. The count is bold. It only shrinks a little (not below 13 sp) before it is cut. */
+@Composable
+private fun HeaderSub(selected: LocalDate, today: LocalDate, model: TodayModel?, fmt: Formatter) {
+    val c = PillBox.colors
     val date = fmt.digits(shortDate(selected))
     val subText = when {
         model == null -> date
         selected > today -> stringResourceIso(R.string.sub_planned, date, pluralStringResource(R.plurals.n_doses, model.total, fmt.number(model.total)))
         else -> stringResourceIso(R.string.sub_taken, date, fmt.number(model.taken), fmt.number(model.total))
     }
-    // "Wed 21 Oct - (0 of 2 taken)": the part in brackets is bold.
     val sub = androidx.compose.ui.text.buildAnnotatedString {
         append(subText)
-        val open = subText.indexOf('(')
-        val close = subText.lastIndexOf(')')
-        if (open >= 0 && close > open) addStyle(androidx.compose.ui.text.SpanStyle(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold), open, close + 1)
+        val dot = subText.indexOf('\u00B7')
+        if (dot >= 0) addStyle(androidx.compose.ui.text.SpanStyle(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold), dot + 1, subText.length)
     }
-    Column(Modifier.fillMaxWidth().padding(top = Space.S4)) {
-        Text(title, style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.semantics { heading() })
-        Text(sub, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
-    }
+    Text(
+        sub, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, maxLines = 1,
+        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis, modifier = Modifier.fillMaxWidth(),
+    )
 }
 
 /** Days shown in the strip: two weeks back to about two months ahead. Swipe sideways to see more. */

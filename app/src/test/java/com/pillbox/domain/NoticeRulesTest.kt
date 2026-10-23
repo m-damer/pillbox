@@ -50,4 +50,12 @@ class NoticeRulesTest {
         assertEquals(listOf("a", "c"), NoticeRules.clear(l, NoticeKind.STOCK).map { it.key })
         assertEquals(0, NoticeRules.clear(l, null).size)
     }
+
+    @Test fun unread_counts_per_person_and_app_notices_are_mine() {
+        val l = listOf(
+            n("a").copy(personId = 2), n("b").copy(personId = 2), n("c").copy(personId = 3), n("d").copy(personId = null),
+            n("e", read = true).copy(personId = 2),
+        )
+        assertEquals(mapOf(2L to 2, 3L to 1, 1L to 1), NoticeRules.unreadByPerson(l, meId = 1))
+    }
 }
