@@ -97,6 +97,8 @@ import kotlinx.coroutines.launch
 class MainActivity : PillBoxActivity() {
     /** A medicine to open, asked for by a refill notification. Taken once the screen shows it. */
     private val openMedicine = mutableStateOf<Long?>(null)
+    /** A dose notification for someone I care for was tapped: show that person's Today. */
+    private val openPerson = mutableStateOf<Long?>(null)
 
     /** The update notification was tapped: show the update screen. Taken once it shows. */
     private val openUpdate = mutableStateOf(false)
@@ -182,6 +184,15 @@ class MainActivity : PillBoxActivity() {
                     if (wantUpdate) {
                         showRefill = false; showHistory = false; showReport = false; adding = false; editItem = null; detailId = null
                         settingsScreen = 20; openUpdate.value = false
+                    }
+                }
+                // A dose notification asked for a person: switch to them and show Today, so their doses are right there.
+                val wantedPerson = openPerson.value
+                LaunchedEffect(wantedPerson) {
+                    if (wantedPerson != null) {
+                        showRefill = false; showHistory = false; showReport = false; adding = false; editItem = null; detailId = null; showNotices = false
+                        settingsScreen = 0; tab = Tab.TODAY
+                        repo.selectPerson(wantedPerson); openPerson.value = null
                     }
                 }
                 // A refill notification asked for a medicine.
@@ -272,6 +283,7 @@ class MainActivity : PillBoxActivity() {
                                     t.startsWith("medicine:") -> t.removePrefix("medicine:").toLongOrNull()?.let { detailId = it }
                                     t == "updates" -> settingsScreen = 20
                                     t == "backup" -> settingsScreen = 11
+                                    t.startsWith("today:") -> { t.removePrefix("today:").toLongOrNull()?.let { repo.selectPerson(it) }; tab = Tab.TODAY }
                                     else -> tab = Tab.TODAY
                                 }
                             },
@@ -528,6 +540,9 @@ class MainActivity : PillBoxActivity() {
     private fun readOpenMedicine() {
         val id = intent?.getLongExtra(Reminders.EXTRA_OPEN_MEDICINE, -1L) ?: -1L
         if (id > 0) openMedicine.value = id
+        val person = intent?.getLongExtra(Reminders.EXTRA_PERSON_ID, -1L) ?: -1L
+        if (person > 0) openPerson.value = person
+        intent?.removeExtra(Reminders.EXTRA_PERSON_ID)
         if (intent?.action == com.pillbox.update.UpdateManager.ACTION_OPEN_UPDATE) { openUpdate.value = true; intent?.action = null }
         intent?.removeExtra(Reminders.EXTRA_OPEN_MEDICINE)
     }
