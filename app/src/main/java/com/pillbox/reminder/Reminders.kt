@@ -57,6 +57,7 @@ class Reminders(
         NAG(2, "com.pillbox.action.DOSE_NAG"),
         SNOOZE(3, "com.pillbox.action.DOSE_SNOOZE"),
         REFILL(4, "com.pillbox.action.REFILL_DUE"),
+        FOLLOW(5, "com.pillbox.action.DOSE_FOLLOW"),
     }
 
     // ---------------------------------------------------------------- channels
@@ -272,9 +273,18 @@ class Reminders(
         if (rows.isEmpty()) { dismiss(at); return }
         show(rows, at)
         val settings = ReminderState.current
+        // One more reminder later, in case this one was missed too. The first ring and a snooze arm it; it only fires while doses are still waiting.
+        if (count == 0) ReminderPlanner.followUpAt(at, settings.followUpMinutes, LocalDateTime.now())?.let { schedule(Kind.FOLLOW, it, at, 0) }
         if (count < settings.maxRepeats) {
             schedule(Kind.NAG, LocalDateTime.now().plusMinutes(settings.repeatMinutes.toLong()), at, count + 1)
         }
+    }
+
+    /** The follow-up alarm fired: if doses are still waiting, remind once more, saying they are still waiting. */
+    suspend fun onFollowUp(at: LocalDateTime) {
+        val rows = pendingRows(at)
+        if (rows.isEmpty()) { dismiss(at); return }
+        show(rows, at, followUp = true)
     }
 
     /** Take all from the notification. */
@@ -295,6 +305,7 @@ class Reminders(
     /** Stops the repeat and removes the notification for [at]. */
     fun dismiss(at: LocalDateTime) {
         cancel(Kind.NAG, at)
+        cancel(Kind.FOLLOW, at)
         cancel(Kind.SNOOZE, at)
         notificationManager().cancel(notificationId(at))
     }
@@ -357,20 +368,21 @@ class Reminders(
     }
 
     @SuppressLint("MissingPermission")
-    private suspend fun show(rows: List<DoseRow>, at: LocalDateTime) {
+    private suspend fun show(rows: List<DoseRow>, at: LocalDateTime, followUp: Boolean = false) {
         val owners = repo.otherPeopleNames()
         val nm = notificationManager()
         // Opening the notification shows the person these doses are for: the one person, or me when it is mixed.
         val people = rows.map { it.medicine.personId }.distinct()
         val openFor = if (people.size == 1) people.first() else (repo.myPersonId()?.takeIf { it in people } ?: people.firstOrNull())
-        val title = context.getString(R.string.notif_title, context.getString(blockNameRes(blockOf(at.toLocalTime()))))
+        val block = context.getString(blockNameRes(blockOf(at.toLocalTime())))
+        val title = context.getString(if (followUp) R.string.notif_title_waiting else R.string.notif_title, block)
         // A dose for someone I care for says whose it is, so the wrong person never gets it.
         val text = rows.joinToString(" · ") { r ->
             val line = r.medicine.name + (com.pillbox.ui.localizedStrength(r.medicine.strength, context.resources)?.let { " $it" } ?: "")
             owners[r.medicine.personId]?.let { context.getStringIso(R.string.notif_dose_for, it, line) } ?: line
         }
         // Saved for the notifications screen even when Android notifications are off, so a missed alert can still be seen there.
-        record(Notice("dose:${notificationId(at)}", NoticeKind.DOSE, title, text, at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), target = openFor?.let { "today:$it" } ?: "today", personId = openFor))
+        record(Notice("dose:${notificationId(at)}" + (if (followUp) ":waiting" else ""), NoticeKind.DOSE, title, text, at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), target = openFor?.let { "today:$it" } ?: "today", personId = openFor))
         if (!nm.areNotificationsEnabled()) return
         val builder = NotificationCompat.Builder(context, channelFor(LocalDateTime.now().toLocalTime()))
             .setSmallIcon(R.drawable.ic_stat_pill)

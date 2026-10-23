@@ -1180,4 +1180,8 @@
         <item quantity="zero">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="one">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="two">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item>
         <item quantity="few">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="many">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="other">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item>
     </plurals>
+    <string name="notif_title_waiting">ما زالت بانتظارك: أدوية %1$s</string>
+    <string name="sound_follow_up">ذكّرني مرة أخيرة بعد</string>
+    <string name="sound_follow_up_off">إيقاف</string>
+    <string name="sound_follow_up_note">إذا بقيت الجرعة دون أخذ أو تخطٍّ بعد هذه المدة من موعدها، يصلك تذكير أخير.</string>
 </resources>

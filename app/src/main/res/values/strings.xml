@@ -1108,4 +1108,8 @@
     <plurals name="week_summary">
         <item quantity="one">This week: %1$s of %2$s dose taken</item><item quantity="other">This week: %1$s of %2$s doses taken</item>
     </plurals>
+    <string name="notif_title_waiting">Still waiting: your %1$s medicines</string>
+    <string name="sound_follow_up">Remind me once more after</string>
+    <string name="sound_follow_up_off">Off</string>
+    <string name="sound_follow_up_note">If a dose is still not taken or skipped this long after its time, you get one more reminder.</string>
 </resources>
