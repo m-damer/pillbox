@@ -1100,4 +1100,7 @@
     <plurals name="switcher_unread_elsewhere">
         <item quantity="one">%1$s new notification for someone else.</item><item quantity="other">%1$s new notifications for others.</item>
     </plurals>
+    <string name="settings_updates">Check for updates</string>
+    <string name="settings_updates_check">Tap to check</string>
+    <string name="settings_updates_found">New version %1$s is ready</string>
 </resources>

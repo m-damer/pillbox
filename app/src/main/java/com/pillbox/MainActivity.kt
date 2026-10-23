@@ -301,7 +301,7 @@ class MainActivity : PillBoxActivity() {
                                 aboutThanks, onBack = close,
                                 onPrivacy = { settingsScreen = 15 }, onTerms = { settingsScreen = 16 }, onFeedback = { settingsScreen = 17 }, onRate = { settingsScreen = 18 }, onUpdates = { settingsScreen = 20 },
                             )
-                            20 -> com.pillbox.ui.about.UpdateScreen(onBack = close)
+                            20, 21 -> com.pillbox.ui.about.UpdateScreen(onBack = close)
                             15 -> PrivacyPolicyContent(onBack = close, onDelete = { deleteFromPrivacy = true; settingsScreen = 11 }, onClose = close)
                             16 -> TermsContent(onBack = close, onDone = close)
                             19 -> com.pillbox.ui.about.DeveloperContent(onBack = close)
@@ -513,6 +513,7 @@ class MainActivity : PillBoxActivity() {
                                                 SettingsTarget.THEME -> settingsScreen = 3
                                                 SettingsTarget.REPORT -> showReport = true
                                                 SettingsTarget.DEVELOPER -> settingsScreen = 19
+                                                SettingsTarget.UPDATES -> settingsScreen = 21
                                             }
                                         },
                                         toast = if (settingsSaved) ListToast(stringResource(R.string.toast_setting_saved_title), null) else null,

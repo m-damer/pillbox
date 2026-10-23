@@ -1171,4 +1171,7 @@
         <item quantity="zero">لا إشعارات جديدة لغيرك.</item><item quantity="one">إشعار جديد واحد لشخص آخر.</item><item quantity="two">إشعاران جديدان لآخرين.</item>
         <item quantity="few">%1$s إشعارات جديدة لآخرين.</item><item quantity="many">%1$s إشعاراً جديداً لآخرين.</item><item quantity="other">%1$s إشعار جديد لآخرين.</item>
     </plurals>
+    <string name="settings_updates">التحقق من التحديثات</string>
+    <string name="settings_updates_check">انقر للتحقق</string>
+    <string name="settings_updates_found">الإصدار الجديد %1$s جاهز</string>
 </resources>
