@@ -423,7 +423,7 @@ private fun HeaderTitle(selected: LocalDate, today: LocalDate) {
     Text(title, style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.padding(top = Space.S4).semantics { heading() })
 }
 
-/** "Thu 22 Oct · 0 of 2 taken": one line. The count is bold. It only shrinks a little (not below 13 sp) before it is cut. */
+/** "Thu 22 Oct - (0 of 2 taken)": one line. The part in brackets is bold. It only shrinks a little (not below 13 sp) before it is cut. */
 @Composable
 private fun HeaderSub(selected: LocalDate, today: LocalDate, model: TodayModel?, fmt: Formatter) {
     val c = PillBox.colors
@@ -435,8 +435,9 @@ private fun HeaderSub(selected: LocalDate, today: LocalDate, model: TodayModel?,
     }
     val sub = androidx.compose.ui.text.buildAnnotatedString {
         append(subText)
-        val dot = subText.indexOf('\u00B7')
-        if (dot >= 0) addStyle(androidx.compose.ui.text.SpanStyle(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold), dot + 1, subText.length)
+        val open = subText.indexOf('(')
+        val close = subText.lastIndexOf(')')
+        if (open >= 0 && close > open) addStyle(androidx.compose.ui.text.SpanStyle(fontWeight = androidx.compose.ui.text.font.FontWeight.Bold), open, close + 1)
     }
     Text(
         sub, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, maxLines = 1,
