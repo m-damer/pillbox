@@ -328,6 +328,16 @@ class Reminders(
 
     private fun notificationManager() = NotificationManagerCompat.from(context)
 
+    /**
+     * "Take all" for my own doses; "Take all for Mom" when every dose is Mom's, so the button never takes someone else's
+     * doses by surprise. Doses for several people say "for everyone".
+     */
+    private fun takeAllLabel(people: List<Long>, owners: Map<Long, String>): String = when {
+        people.none { it in owners } -> context.getString(R.string.take_all)
+        people.size == 1 -> context.getStringIso(R.string.take_all_for, owners.getValue(people.first()))
+        else -> context.getString(R.string.take_all_everyone)
+    }
+
     private fun record(n: Notice) { (context.applicationContext as? com.pillbox.PillBoxApp)?.recordNotice(n) }
 
     private fun notificationId(at: LocalDateTime) = (at.atZone(ZoneId.systemDefault()).toEpochSecond() / 60).toInt()
@@ -374,7 +384,7 @@ class Reminders(
             .setWhen(at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
             .setContentIntent(activityPending(MainActivity::class.java, at, 20, openFor))
             // At most three buttons: Take all, Snooze, Open. Per-medicine Take and Skip are on the full-screen reminder.
-            .addAction(0, context.getString(R.string.take_all), actionPending(ACTION_TAKE_ALL, at))
+            .addAction(0, takeAllLabel(people, owners), actionPending(ACTION_TAKE_ALL, at))
             .addAction(0, context.getString(R.string.snooze_15), actionPending(ACTION_SNOOZE, at))
             .addAction(0, context.getString(R.string.open), activityPending(MainActivity::class.java, at, 21, openFor))
         // The notification above is the fallback when the full-screen screen is not allowed (Android 14+ may need approval).

@@ -53,6 +53,13 @@ fun ReminderScreen(
     val c = PillBox.colors
     val block = stringResource(Reminders.blockNameRes(blockOf(at.toLocalTime())))
     val big = LocalDensity.current.fontScale > 1.3f
+    // Same words as the notification button: for Mom, or for everyone when the doses belong to several people.
+    val people = rows.map { it.medicine.personId }.distinct()
+    val takeAllText = when {
+        people.none { it in owners } -> stringResource(R.string.take_all)
+        people.size == 1 -> stringResourceIso(R.string.take_all_for, owners.getValue(people.first()))
+        else -> stringResource(R.string.take_all_everyone)
+    }
     Column(
         modifier
             .fillMaxSize()
@@ -86,11 +93,11 @@ fun ReminderScreen(
         }
         if (rows.size > 1) {
             if (big) {
-                PrimaryButton(stringResource(R.string.take_all), onTakeAll)
+                PrimaryButton(takeAllText, onTakeAll)
                 OutlineButton(stringResource(R.string.skip_all), onSkipAll)
             } else {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
-                    PrimaryButton(stringResource(R.string.take_all), onTakeAll, Modifier.weight(1f))
+                    PrimaryButton(takeAllText, onTakeAll, Modifier.weight(1f))
                     OutlineButton(stringResource(R.string.skip_all), onSkipAll, Modifier.weight(1f))
                 }
             }

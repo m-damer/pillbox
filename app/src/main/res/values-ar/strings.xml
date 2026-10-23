@@ -1174,4 +1174,6 @@
     <string name="settings_updates">التحقق من التحديثات</string>
     <string name="settings_updates_check">انقر للتحقق</string>
     <string name="settings_updates_found">الإصدار الجديد %1$s جاهز</string>
+    <string name="take_all_for">خذ الكل لـ%1$s</string>
+    <string name="take_all_everyone">خذ الكل للجميع</string>
 </resources>

@@ -1103,4 +1103,6 @@
     <string name="settings_updates">Check for updates</string>
     <string name="settings_updates_check">Tap to check</string>
     <string name="settings_updates_found">New version %1$s is ready</string>
+    <string name="take_all_for">Take all for %1$s</string>
+    <string name="take_all_everyone">Take all for everyone</string>
 </resources>
