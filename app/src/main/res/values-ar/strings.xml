@@ -156,8 +156,8 @@
     <!-- Today -->
     <string name="today">اليوم</string>
     <string name="tomorrow">غداً</string>
-    <string name="sub_taken">%1$s · %2$s من %3$s مأخوذة</string>
-    <string name="sub_planned">%1$s · %2$s مخططة</string>
+    <string name="sub_taken">%1$s - (%2$s من %3$s مأخوذة)</string>
+    <string name="sub_planned">%1$s - (%2$s مخططة)</string>
     <string name="back_to_today">العودة إلى اليوم</string>
     <string name="nothing_planned">لا توجد جرعات مخططة لهذا اليوم.</string>
     <string name="future_note">هذه جرعات مخططة. يمكنك تسجيلها في يومها.</string>
