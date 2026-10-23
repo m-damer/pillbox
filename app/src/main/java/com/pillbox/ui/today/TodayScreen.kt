@@ -295,6 +295,7 @@ internal fun WeekSummaryCard(week: WeekSummary, modifier: Modifier = Modifier) {
             Box(Modifier.fillMaxWidth(week.taken.toFloat() / week.total.coerceAtLeast(1)).height(8.dp).background(c.success, CircleShape))
         }
     }
+}
 
 /** "Share this day's list": the doses of the day as plain text for a family member, a caregiver or a doctor. */
 @Composable
