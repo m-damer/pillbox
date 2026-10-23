@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,7 +59,7 @@ import com.pillbox.ui.theme.Space
 import com.pillbox.ui.theme.illustration
 
 /** Where a Settings row leads. */
-enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, THEME, LANGUAGE, REPORT, BACKUP, PRIVACY, DEVELOPER }
+enum class SettingsTarget { SOUND, LATE, REFILL, QUIET, MEALS, RINGING, ACCESSIBILITY, THEME, LANGUAGE, REPORT, BACKUP, PRIVACY, DEVELOPER, UPDATES }
 
 @Composable
 fun SettingsScreen(vm: SettingsViewModel, onOpen: (SettingsTarget) -> Unit, toast: ListToast?, onToastShown: () -> Unit, modifier: Modifier = Modifier, ringingIssues: Int = 0, backup: BackupSettings = BackupSettings(), scroll: androidx.compose.foundation.ScrollState = rememberScrollState()) {
@@ -155,6 +156,15 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                     stringResource(R.string.settings_ring),
                     if (ringingIssues > 0) pluralStringResource(R.plurals.settings_ring_fix, ringingIssues, fmt.number(ringingIssues)) else stringResource(R.string.settings_ring_ok),
                     tints[2], { RowIcon(com.pillbox.ui.components.DesignIcons.Alarm) }, { onOpen(SettingsTarget.RINGING) },
+                )
+                Divider()
+                val updateState by (androidx.compose.ui.platform.LocalContext.current.applicationContext as com.pillbox.PillBoxApp).updates.settings.flow
+                    .collectAsState(com.pillbox.domain.UpdateSettings())
+                val found = updateState.available
+                SettingsRow(
+                    stringResource(R.string.settings_updates),
+                    if (found != null) stringResourceIso(R.string.settings_updates_found, fmt.digits(found.versionName)) else stringResource(R.string.settings_updates_check),
+                    if (found != null) tints[1] else c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Refresh) }, { onOpen(SettingsTarget.UPDATES) },
                 )
                 Divider()
                 SettingsRow(

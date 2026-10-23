@@ -162,7 +162,7 @@ class Reminders(
         val text = if (left == 0) context.getStringIso(R.string.expiry_today, month)
         else context.getStringIso(R.string.expiry_soon, res.getQuantityString(R.plurals.n_days, left, fmt.number(left)), month)
         val stage = if (left <= 0) 0 else if (left <= 7) 7 else 30
-        record(Notice("expiry:${m.id}:$ym:$stage", NoticeKind.EXPIRY, title, text, System.currentTimeMillis(), target = "medicine:${m.id}"))
+        record(Notice("expiry:${m.id}:$ym:$stage", NoticeKind.EXPIRY, title, text, System.currentTimeMillis(), target = "medicine:${m.id}", personId = m.personId))
         if (!nm.areNotificationsEnabled()) return
         val open = Intent(context, MainActivity::class.java)
             .putExtra(EXTRA_OPEN_MEDICINE, m.id)
@@ -206,7 +206,7 @@ class Reminders(
             val about = res.getQuantityString(R.plurals.n_days, days, fmt.number(days))
             big = text + "\n" + context.getString(R.string.refill_notif_about, about, a.runsOutOn?.let { com.pillbox.ui.shortDate(it, fmt) } ?: "")
         }
-        record(Notice("stock:${m.id}:$today", NoticeKind.STOCK, title, text, System.currentTimeMillis(), target = "medicine:${m.id}"))
+        record(Notice("stock:${m.id}:$today", NoticeKind.STOCK, title, text, System.currentTimeMillis(), target = "medicine:${m.id}", personId = m.personId))
         if (!nm.areNotificationsEnabled()) return
         val open = Intent(context, MainActivity::class.java)
             .putExtra(EXTRA_OPEN_MEDICINE, m.id)
@@ -338,8 +338,9 @@ class Reminders(
         return PendingIntent.getBroadcast(context, 10, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
-    private fun activityPending(cls: Class<*>, at: LocalDateTime, code: Int): PendingIntent {
+    private fun activityPending(cls: Class<*>, at: LocalDateTime, code: Int, personId: Long? = null): PendingIntent {
         val intent = Intent(context, cls).putExtra(EXTRA_AT, Mappers.dt(at))
+            .apply { if (personId != null) putExtra(EXTRA_PERSON_ID, personId) }
             .setData(Uri.parse("pillbox://open/${cls.simpleName}/${Mappers.dt(at)}"))
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         return PendingIntent.getActivity(context, code, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
@@ -349,6 +350,9 @@ class Reminders(
     private suspend fun show(rows: List<DoseRow>, at: LocalDateTime) {
         val owners = repo.otherPeopleNames()
         val nm = notificationManager()
+        // Opening the notification shows the person these doses are for: the one person, or me when it is mixed.
+        val people = rows.map { it.medicine.personId }.distinct()
+        val openFor = if (people.size == 1) people.first() else (repo.myPersonId()?.takeIf { it in people } ?: people.firstOrNull())
         val title = context.getString(R.string.notif_title, context.getString(blockNameRes(blockOf(at.toLocalTime()))))
         // A dose for someone I care for says whose it is, so the wrong person never gets it.
         val text = rows.joinToString(" · ") { r ->
@@ -356,7 +360,7 @@ class Reminders(
             owners[r.medicine.personId]?.let { context.getStringIso(R.string.notif_dose_for, it, line) } ?: line
         }
         // Saved for the notifications screen even when Android notifications are off, so a missed alert can still be seen there.
-        record(Notice("dose:${notificationId(at)}", NoticeKind.DOSE, title, text, at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), target = "today"))
+        record(Notice("dose:${notificationId(at)}", NoticeKind.DOSE, title, text, at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), target = openFor?.let { "today:$it" } ?: "today", personId = openFor))
         if (!nm.areNotificationsEnabled()) return
         val builder = NotificationCompat.Builder(context, channelFor(LocalDateTime.now().toLocalTime()))
             .setSmallIcon(R.drawable.ic_stat_pill)
@@ -368,11 +372,11 @@ class Reminders(
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(false)
             .setWhen(at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-            .setContentIntent(activityPending(MainActivity::class.java, at, 20))
+            .setContentIntent(activityPending(MainActivity::class.java, at, 20, openFor))
             // At most three buttons: Take all, Snooze, Open. Per-medicine Take and Skip are on the full-screen reminder.
             .addAction(0, context.getString(R.string.take_all), actionPending(ACTION_TAKE_ALL, at))
             .addAction(0, context.getString(R.string.snooze_15), actionPending(ACTION_SNOOZE, at))
-            .addAction(0, context.getString(R.string.open), activityPending(MainActivity::class.java, at, 21))
+            .addAction(0, context.getString(R.string.open), activityPending(MainActivity::class.java, at, 21, openFor))
         // The notification above is the fallback when the full-screen screen is not allowed (Android 14+ may need approval).
         builder.setFullScreenIntent(activityPending(ReminderActivity::class.java, at, 22), true)
         runCatching { nm.notify(notificationId(at), builder.build()) }
@@ -435,6 +439,7 @@ class Reminders(
         const val ACTION_REFILL_TOMORROW = "com.pillbox.action.REFILL_TOMORROW"
         const val EXTRA_MEDICINE_ID = "medicine_id"
         const val EXTRA_OPEN_MEDICINE = "open_medicine"
+        const val EXTRA_PERSON_ID = "open_person"
         /** Refill notification ids start here so they never clash with dose notification ids (minutes since 1970). */
         private const val REFILL_ID_BASE = 1_000_000_000
         private const val EXPIRY_ID_BASE = 1_100_000_000

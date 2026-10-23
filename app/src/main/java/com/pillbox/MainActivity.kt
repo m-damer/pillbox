@@ -97,6 +97,8 @@ import kotlinx.coroutines.launch
 class MainActivity : PillBoxActivity() {
     /** A medicine to open, asked for by a refill notification. Taken once the screen shows it. */
     private val openMedicine = mutableStateOf<Long?>(null)
+    /** A dose notification for someone I care for was tapped: show that person's Today. */
+    private val openPerson = mutableStateOf<Long?>(null)
 
     /** The update notification was tapped: show the update screen. Taken once it shows. */
     private val openUpdate = mutableStateOf(false)
@@ -175,13 +177,23 @@ class MainActivity : PillBoxActivity() {
                 var settingsSaved by rememberSaveable { mutableStateOf(false) }
                 val peopleList by repo.observePeople().collectAsStateWithLifecycle(emptyList())
                 val activePersonId by repo.activePersonId.collectAsStateWithLifecycle()
-                val peopleBar = PeopleBar(peopleList, activePersonId, onSelect = { repo.selectPerson(it) })
+                val unreadByPerson = com.pillbox.domain.NoticeRules.unreadByPerson(notices, peopleList.firstOrNull { it.isMe }?.id)
+                val peopleBar = PeopleBar(peopleList, activePersonId, onSelect = { repo.selectPerson(it) }, unread = unreadByPerson)
                 // The update notification was tapped.
                 val wantUpdate = openUpdate.value
                 LaunchedEffect(wantUpdate) {
                     if (wantUpdate) {
                         showRefill = false; showHistory = false; showReport = false; adding = false; editItem = null; detailId = null
                         settingsScreen = 20; openUpdate.value = false
+                    }
+                }
+                // A dose notification asked for a person: switch to them and show Today, so their doses are right there.
+                val wantedPerson = openPerson.value
+                LaunchedEffect(wantedPerson) {
+                    if (wantedPerson != null) {
+                        showRefill = false; showHistory = false; showReport = false; adding = false; editItem = null; detailId = null; showNotices = false
+                        settingsScreen = 0; tab = Tab.TODAY
+                        repo.selectPerson(wantedPerson); openPerson.value = null
                     }
                 }
                 // A refill notification asked for a medicine.
@@ -272,6 +284,7 @@ class MainActivity : PillBoxActivity() {
                                     t.startsWith("medicine:") -> t.removePrefix("medicine:").toLongOrNull()?.let { detailId = it }
                                     t == "updates" -> settingsScreen = 20
                                     t == "backup" -> settingsScreen = 11
+                                    t.startsWith("today:") -> { t.removePrefix("today:").toLongOrNull()?.let { repo.selectPerson(it) }; tab = Tab.TODAY }
                                     else -> tab = Tab.TODAY
                                 }
                             },
@@ -288,7 +301,7 @@ class MainActivity : PillBoxActivity() {
                                 aboutThanks, onBack = close,
                                 onPrivacy = { settingsScreen = 15 }, onTerms = { settingsScreen = 16 }, onFeedback = { settingsScreen = 17 }, onRate = { settingsScreen = 18 }, onUpdates = { settingsScreen = 20 },
                             )
-                            20 -> com.pillbox.ui.about.UpdateScreen(onBack = close)
+                            20, 21 -> com.pillbox.ui.about.UpdateScreen(onBack = close)
                             15 -> PrivacyPolicyContent(onBack = close, onDelete = { deleteFromPrivacy = true; settingsScreen = 11 }, onClose = close)
                             16 -> TermsContent(onBack = close, onDone = close)
                             19 -> com.pillbox.ui.about.DeveloperContent(onBack = close)
@@ -500,6 +513,7 @@ class MainActivity : PillBoxActivity() {
                                                 SettingsTarget.THEME -> settingsScreen = 3
                                                 SettingsTarget.REPORT -> showReport = true
                                                 SettingsTarget.DEVELOPER -> settingsScreen = 19
+                                                SettingsTarget.UPDATES -> settingsScreen = 21
                                             }
                                         },
                                         toast = if (settingsSaved) ListToast(stringResource(R.string.toast_setting_saved_title), null) else null,
@@ -528,6 +542,9 @@ class MainActivity : PillBoxActivity() {
     private fun readOpenMedicine() {
         val id = intent?.getLongExtra(Reminders.EXTRA_OPEN_MEDICINE, -1L) ?: -1L
         if (id > 0) openMedicine.value = id
+        val person = intent?.getLongExtra(Reminders.EXTRA_PERSON_ID, -1L) ?: -1L
+        if (person > 0) openPerson.value = person
+        intent?.removeExtra(Reminders.EXTRA_PERSON_ID)
         if (intent?.action == com.pillbox.update.UpdateManager.ACTION_OPEN_UPDATE) { openUpdate.value = true; intent?.action = null }
         intent?.removeExtra(Reminders.EXTRA_OPEN_MEDICINE)
     }

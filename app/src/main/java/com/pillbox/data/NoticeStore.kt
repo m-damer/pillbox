@@ -36,7 +36,7 @@ class NoticeStore(private val context: Context) {
     companion object {
         fun encode(list: List<Notice>): String = JSONArray().also { a ->
             list.forEach { n ->
-                a.put(JSONObject().put("k", n.key).put("t", n.kind.name).put("h", n.title).put("x", n.text).put("a", n.atMillis).put("r", n.read).put("g", n.target ?: JSONObject.NULL))
+                a.put(JSONObject().put("k", n.key).put("t", n.kind.name).put("h", n.title).put("x", n.text).put("a", n.atMillis).put("r", n.read).put("g", n.target ?: JSONObject.NULL).put("p", n.personId ?: JSONObject.NULL))
             }
         }.toString()
 
@@ -50,6 +50,7 @@ class NoticeStore(private val context: Context) {
                     Notice(
                         key = o.getString("k"), kind = NoticeKind.valueOf(o.getString("t")), title = o.getString("h"), text = o.getString("x"),
                         atMillis = o.getLong("a"), read = o.optBoolean("r", false), target = if (o.isNull("g")) null else o.getString("g"),
+                        personId = if (o.isNull("p")) null else o.optLong("p"),
                     )
                 }.getOrNull()
             }

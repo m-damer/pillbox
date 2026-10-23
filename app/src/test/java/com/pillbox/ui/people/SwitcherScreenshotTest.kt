@@ -40,8 +40,11 @@ class SwitcherScreenshotTest {
 
     private val names = listOf("Me", "Abdullah", "Fatima Al-Hassan", "عبد الله", "Mom", "Dad", "Grandma Layla", "Grandpa", "Sara", "Omar", "Huda", "Yusuf")
     private fun people(n: Int) = names.take(n).mapIndexed { i, nm -> Person(id = i + 1L, name = nm, isMe = i == 0, colorIndex = i, ring = i != 2) }
-    private fun bar(n: Int, active: Long) = PeopleBar(people(n), active) {}
+    private val unread = mapOf(1L to 1, 2L to 3, 3L to 12, 5L to 120)
+    private fun bar(n: Int, active: Long, withUnread: Boolean = true) = PeopleBar(people(n), active, {}, if (withUnread) unread else emptyMap())
 
+    @Test fun header_no_badge_en() = shoot("header_no_badge_en", "en") { Header(bar(3, 2, withUnread = false)) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun header_badge_ar() = shoot("header_badge_ar", "ar") { Header(bar(3, 1)) }
     @Test fun header_me_en() = shoot("header_me_en", "en") { Header(bar(2, 1)) }
     @Test fun header_other_en() = shoot("header_other_en", "en") { Header(bar(2, 2)) }
     @Test fun header_arabic_name_in_en() = shoot("header_arabic_name_en", "en") { Header(bar(4, 4)) }
@@ -68,7 +71,7 @@ class SwitcherScreenshotTest {
 
     @Composable private fun Popup(n: Int, active: Long) {
         Box(Modifier.fillMaxSize().background(Color(0x99000000)).padding(horizontal = 24.dp, vertical = 16.dp), contentAlignment = Alignment.Center) {
-            PersonPickerCard(rememberChips(people(n)), active, {}, {})
+            PersonPickerCard(rememberChips(people(n)), active, unread, {}, {})
         }
     }
 
