@@ -144,6 +144,7 @@ fun MedicineDetailScreen(
             onEdit = onEdit,
             onSeeHistory = onSeeHistory,
             onTakeNow = onTakeNow, onOpenLog = onOpenLog,
+            onUsePack = vm::usePack, onPackExpiry = vm::setPackExpiry,
             onRestart = {
                 vm.restart { name ->
                     onDone(ListToast(res.getString(R.string.toast_restarted_title, name), res.getString(R.string.toast_restarted_body)), false)
@@ -191,8 +192,8 @@ fun MedicineDetailScreen(
     if (state.showStock) {
         AddStockSheet(
             medicine = m, schedule = item.schedule, fmt = fmt,
-            onSave = { boxes, perBox ->
-                vm.addStock(boxes, perBox) { result ->
+            onSave = { boxes, perBox, expiry ->
+                vm.addStock(boxes, perBox, expiry) { result ->
                     val (title, body) = stockToastText(res, fmt, m.unit, result)
                     scope.launch { snackbar.showToast(title, body) }
                 }
@@ -218,11 +219,13 @@ fun MedicineDetailContent(
     onSeeHistory: () -> Unit = {},
     onTakeNow: () -> Unit = {},
     onOpenLog: () -> Unit = {},
+    onUsePack: (Int) -> Unit = {},
+    onPackExpiry: (Int, java.time.YearMonth?) -> Unit = { _, _ -> },
     modifier: Modifier = Modifier,
 ) {
     val item = state.item ?: return
     Box(modifier) {
-        if (item.medicine.status == MedicineStatus.ACTIVE) ActiveDetail(state, item, fmt, onBack, onAddStock, onStop, onPause, onResume, onDelete, onEdit, onSeeHistory, onTakeNow, onOpenLog)
+        if (item.medicine.status == MedicineStatus.ACTIVE) ActiveDetail(state, item, fmt, onBack, onAddStock, onStop, onPause, onResume, onDelete, onEdit, onSeeHistory, onTakeNow, onOpenLog, onUsePack, onPackExpiry)
         else FinishedDetail(state, item, fmt, onBack, onRestart, onDelete)
     }
 }
@@ -312,6 +315,8 @@ private fun ActiveDetail(
     onSeeHistory: () -> Unit,
     onTakeNow: () -> Unit,
     onOpenLog: () -> Unit,
+    onUsePack: (Int) -> Unit,
+    onPackExpiry: (Int, java.time.YearMonth?) -> Unit,
 ) {
     val c = PillBox.colors
     val m = item.medicine
@@ -339,6 +344,7 @@ private fun ActiveDetail(
             if (paused != null) PausedBanner(paused, fmt)
             ExpiryBanner(m.expiry, java.time.LocalDate.now(), fmt)
             StatTiles(item, info?.daysLeft, info?.level ?: StockLevel.ENOUGH, fmt)
+            PacksCard(m, schedule, fmt, onUsePack, onPackExpiry)
             // Paused: the cards stay readable but fade, so it is clear nothing will ring.
             Column(Modifier.alpha(if (paused != null) 0.6f else 1f), verticalArrangement = Arrangement.spacedBy(Dimens.CardGap)) {
                 if (schedule?.frequency is com.pillbox.domain.Frequency.AsNeeded) {

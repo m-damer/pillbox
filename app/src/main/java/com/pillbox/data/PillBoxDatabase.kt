@@ -8,12 +8,12 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 /**
- * Version 7 (v7 added medicine.expiry, v6 added dose_event.loggedLater, v5 added schedule.shifts, v2 added schedule.startMinute, v3 added medicine.endedOn, v4 added person relation, color, ring and birth year). Every schema change needs a migration and a bumped version; schemas are exported to
+ * Version 8 (v8 added medicine.packs, v7 added medicine.expiry, v6 added dose_event.loggedLater, v5 added schedule.shifts, v2 added schedule.startMinute, v3 added medicine.endedOn, v4 added person relation, color, ring and birth year). Every schema change needs a migration and a bumped version; schemas are exported to
  * app/schemas so migrations can be checked. Backup files (M9) carry their own schema version.
  */
 @Database(
     entities = [PersonEntity::class, MedicineEntity::class, ScheduleEntity::class, PauseEntity::class, DoseEventEntity::class],
-    version = 7,
+    version = 8,
     exportSchema = true,
 )
 abstract class PillBoxDatabase : RoomDatabase() {
@@ -26,6 +26,13 @@ abstract class PillBoxDatabase : RoomDatabase() {
 
     companion object {
         const val FILE_NAME = "pillbox.db"
+
+        /** Version 8: boxes with their own expiry month. */
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE medicine ADD COLUMN packs TEXT")
+            }
+        }
 
         /** Version 7: the optional expiry month of a medicine. */
         val MIGRATION_6_7 = object : Migration(6, 7) {
@@ -75,7 +82,7 @@ abstract class PillBoxDatabase : RoomDatabase() {
 
         fun create(context: Context): PillBoxDatabase =
             Room.databaseBuilder(context.applicationContext, PillBoxDatabase::class.java, FILE_NAME)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
                 .build()
     }
 }

@@ -1199,4 +1199,20 @@
     <string name="photo_remove">إزالة الصورة</string>
     <string name="photo_failed">تعذّر حفظ الصورة. حاول مرة أخرى.</string>
     <string name="photo_note">تبقى الصورة على هذا الهاتف ولا تدخل في النسخ الاحتياطية.</string>
+    <!-- العلب وتواريخ الانتهاء (M30) -->
+    <string name="packs_title">العلب وتواريخ الانتهاء</string>
+    <string name="packs_hint">تؤخذ الجرعات من العلبة قيد الاستخدام. لاستخدام علبة أخرى أولاً، اضغط زرها.</string>
+    <string name="packs_name">العلبة %1$s</string>
+    <string name="packs_in_use">قيد الاستخدام</string>
+    <string name="packs_finished">انتهت</string>
+    <string name="packs_expires">تنتهي صلاحيتها %1$s</string>
+    <string name="packs_no_date">بلا تاريخ انتهاء</string>
+    <string name="packs_left">المتبقي %1$s</string>
+    <string name="packs_use_now">استخدم %1$s الآن</string>
+    <string name="packs_outlasts">ستستمر العلبة الحالية بعد تاريخ انتهاء العلبة التالية. قد تفضّل استخدام العلبة التالية أولاً.</string>
+    <string name="stock_expiry_note">اختياري. مع تاريخ كل علبة يوضّح التطبيق العلبة قيد الاستخدام وينتقل إلى التالية عند انتهائها.</string>
+    <string name="stock_expiry_note_packs">اختياري. يُحفظ التاريخ لهذه العلبة، وتعرض صفحة الدواء العلبة قيد الاستخدام.</string>
+    <string name="packs_next_title">%1$s: العلبة التالية قيد الاستخدام</string>
+    <string name="packs_next_date">%1$s قيد الاستخدام الآن. تنتهي صلاحيتها %2$s.</string>
+    <string name="packs_next_no_date">%1$s قيد الاستخدام الآن. بلا تاريخ انتهاء.</string>
 </resources>

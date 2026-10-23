@@ -6,6 +6,8 @@ import com.pillbox.domain.DoseEvent
 import com.pillbox.domain.DoseStatus
 import com.pillbox.domain.LateRules
 import com.pillbox.domain.Medicine
+import com.pillbox.domain.Pack
+import com.pillbox.domain.PackMath
 import com.pillbox.domain.MedicineStatus
 import com.pillbox.domain.Pause
 import com.pillbox.domain.Person
@@ -131,7 +133,15 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
     suspend fun isDuplicateName(personId: Long, name: String): Boolean = db.medicines().countActiveWithName(personId, name.trim()) > 0
 
     suspend fun updateMedicine(medicine: Medicine, schedule: Schedule) = db.withTransaction {
-        db.medicines().update(Mappers.toEntity(medicine))
+        // The edit form knows nothing about boxes: keep them, give the date field to the box in use, and fit a hand-edited stock.
+        val before = db.medicines().get(medicine.id)
+        val old = before?.let { Mappers.toDomain(it) }
+        var toSave = medicine
+        if (old != null && old.packs.isNotEmpty()) {
+            val packs = PackMath.fit(PackMath.setCurrentExpiry(old.packs, old.stock, medicine.expiry), medicine.stock)
+            toSave = medicine.copy(packs = packs, expiry = PackMath.currentExpiry(packs, medicine.stock))
+        }
+        db.medicines().update(Mappers.toEntity(toSave))
         val existing = db.schedules().forMedicine(medicine.id)
         db.schedules().upsert(Mappers.toEntity(medicine.id, schedule, existing?.id ?: 0))
     }
@@ -145,10 +155,35 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
     }
 
     /** Adds [amount] to stock. [packSize] (tablets per box) is remembered for next time when given. */
-    suspend fun addStock(medicineId: Long, amount: Double, packSize: Int? = null) {
+    suspend fun addStock(medicineId: Long, amount: Double, packSize: Int? = null, expiry: java.time.YearMonth? = null) {
         val m = db.medicines().get(medicineId) ?: return
-        db.medicines().update(m.copy(stock = m.stock + amount, packSize = packSize ?: m.packSize))
+        val old = Mappers.toDomain(m)
+        val packs = PackMath.afterAdd(old.packs, old.stock, old.expiry, amount, expiry)
+        val stock = m.stock + amount
+        db.medicines().update(m.copy(
+            stock = stock, packSize = packSize ?: m.packSize,
+            packs = PackMath.encode(packs), expiry = if (packs.isEmpty()) m.expiry else PackMath.currentExpiry(packs, stock)?.toString(),
+        ))
     }
+
+    /** The user says which box they are using now. */
+    suspend fun usePack(medicineId: Long, packId: Int) = db.withTransaction {
+        val m = db.medicines().get(medicineId) ?: return@withTransaction
+        val old = Mappers.toDomain(m)
+        val packs = PackMath.useNow(old.packs, old.stock, packId)
+        db.medicines().update(m.copy(packs = PackMath.encode(packs), expiry = PackMath.currentExpiry(packs, m.stock)?.toString()))
+    }
+
+    /** Changes the expiry month of one box (null removes it). */
+    suspend fun setPackExpiry(medicineId: Long, packId: Int, expiry: java.time.YearMonth?) = db.withTransaction {
+        val m = db.medicines().get(medicineId) ?: return@withTransaction
+        val old = Mappers.toDomain(m)
+        val packs = PackMath.setExpiry(old.packs, packId, expiry)
+        db.medicines().update(m.copy(packs = PackMath.encode(packs), expiry = PackMath.currentExpiry(packs, m.stock)?.toString()))
+    }
+
+    /** Called after a dose is taken when the box in use changed (the first one ran out). */
+    var onPackChange: ((Medicine, Pack) -> Unit)? = null
 
     /** Stop: reminders end and the medicine moves to Finished. History and stock are kept. */
     suspend fun stop(medicineId: Long, today: LocalDate) {
@@ -282,7 +317,14 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
     /** Marks a dose taken and takes it out of stock in one transaction. */
     suspend fun takeDose(medicine: Medicine, event: DoseEvent): Long = db.withTransaction {
         val id = db.doseEvents().insert(Mappers.toEntity(event.copy(id = 0, medicineId = medicine.id, status = DoseStatus.TAKEN)))
-        db.medicines().get(medicine.id)?.let { db.medicines().update(it.copy(stock = (it.stock - medicine.doseAmount).coerceAtLeast(0.0))) }
+        db.medicines().get(medicine.id)?.let {
+            val newStock = (it.stock - medicine.doseAmount).coerceAtLeast(0.0)
+            db.medicines().update(it.copy(stock = newStock))
+            val packs = PackMath.decode(it.packs)
+            val was = PackMath.current(packs, it.stock)
+            val now = PackMath.current(packs, newStock)
+            if (was != null && now != null && was.pack.id != now.pack.id) onPackChange?.invoke(Mappers.toDomain(it.copy(stock = newStock)), now.pack)
+        }
         id
     }
 

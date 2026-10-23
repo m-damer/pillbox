@@ -1127,4 +1127,20 @@
     <string name="photo_remove">Remove photo</string>
     <string name="photo_failed">The photo could not be saved. Please try again.</string>
     <string name="photo_note">The photo stays on this phone. It is not part of backups.</string>
+    <!-- Boxes and expiry dates (M30) -->
+    <string name="packs_title">Boxes and expiry dates</string>
+    <string name="packs_hint">Doses are taken from the box in use. To use another box first, tap its button.</string>
+    <string name="packs_name">Box %1$s</string>
+    <string name="packs_in_use">In use</string>
+    <string name="packs_finished">Finished</string>
+    <string name="packs_expires">Expires %1$s</string>
+    <string name="packs_no_date">No expiry date</string>
+    <string name="packs_left">%1$s left</string>
+    <string name="packs_use_now">Use %1$s now</string>
+    <string name="packs_outlasts">The box in use will last past the date of the next box. You may want to use the next box first.</string>
+    <string name="stock_expiry_note">Optional. With each box\'s date, the app shows which box is in use and moves to the next one when it is finished.</string>
+    <string name="stock_expiry_note_packs">Optional. The date is kept for this box. The medicine page shows which box is in use.</string>
+    <string name="packs_next_title">%1$s: next box in use</string>
+    <string name="packs_next_date">%1$s is now in use. Expires %2$s.</string>
+    <string name="packs_next_no_date">%1$s is now in use. No expiry date.</string>
 </resources>

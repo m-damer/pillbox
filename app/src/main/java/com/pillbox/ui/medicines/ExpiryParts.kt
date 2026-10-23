@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
@@ -154,4 +155,36 @@ private fun YearButton(label: String, description: String, enabled: Boolean, onC
             .semantics { contentDescription = description },
         contentAlignment = Alignment.Center,
     ) { Text(label, style = MaterialTheme.typography.titleLarge, color = if (enabled) c.accent else c.textMuted) }
+}
+
+/**
+ * The optional expiry of a box, used by Add stock and the Packs card: a button to add it, then the month with Change / Remove.
+ * [note] is a short line under it that says why it helps.
+ */
+@Composable
+fun OptionalExpiryField(expiry: YearMonth?, fmt: Formatter, note: String?, onChange: (YearMonth?) -> Unit) {
+    val c = PillBox.colors
+    var picking by remember { mutableStateOf(false) }
+    val today = remember { LocalDate.now() }
+    Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
+        Text(stringResource(R.string.expiry_label), style = MaterialTheme.typography.labelLarge, color = c.text)
+        if (expiry == null) {
+            com.pillbox.ui.components.OutlineButton(stringResource(R.string.expiry_add), { picking = true })
+        } else {
+            Row(
+                Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).border(Dimens.ChipBorder, c.border, MaterialTheme.shapes.large).padding(Space.S12),
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S8),
+            ) {
+                Text(expiryMonthText(expiry, fmt), style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
+                TextButton(onClick = { picking = true }, modifier = Modifier.heightIn(min = Dimens.TouchTargetMin)) {
+                    Text(stringResource(R.string.expiry_change), style = MaterialTheme.typography.labelLarge, color = c.accent)
+                }
+                TextButton(onClick = { onChange(null) }, modifier = Modifier.heightIn(min = Dimens.TouchTargetMin)) {
+                    Text(stringResource(R.string.expiry_remove), style = MaterialTheme.typography.labelLarge, color = c.danger)
+                }
+            }
+        }
+        if (note != null) Text(note, style = MaterialTheme.typography.bodySmall, color = c.textMuted)
+    }
+    if (picking) ExpiryPickerDialog(expiry, today, onDismiss = { picking = false }) { onChange(it); picking = false }
 }

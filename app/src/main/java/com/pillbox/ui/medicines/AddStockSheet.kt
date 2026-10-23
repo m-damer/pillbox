@@ -81,13 +81,15 @@ fun AddStockSheet(
     medicine: Medicine,
     schedule: Schedule?,
     fmt: Formatter,
-    onSave: (boxes: Int, perBox: Int) -> Unit,
+    onSave: (boxes: Int, perBox: Int, expiry: java.time.YearMonth?) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val c = PillBox.colors
     var boxes by rememberSaveable { mutableIntStateOf(1) }
     var perBoxText by rememberSaveable { mutableStateOf(medicine.packSize?.takeIf { it > 0 }?.toString() ?: "") }
     var showError by rememberSaveable { mutableStateOf(false) }
+    var expiryText by rememberSaveable { mutableStateOf<String?>(null) }
+    val newExpiry = com.pillbox.domain.ExpiryRules.parse(expiryText)
     val perBox = fmt.parseInt(perBoxText)?.takeIf { it > 0 }
     val total = StockMath.newTotal(medicine.stock, boxes, perBox ?: 0)
     val days = StockMath.daysFor(total, medicine, schedule)
@@ -166,8 +168,12 @@ fun AddStockSheet(
                 summary, style = MaterialTheme.typography.bodyMedium, color = c.accent,
                 modifier = Modifier.fillMaxWidth().background(c.primaryContainer, MaterialTheme.shapes.medium).padding(Space.S16),
             )
+            OptionalExpiryField(
+                newExpiry, fmt,
+                stringResource(if (medicine.packs.isEmpty() && medicine.expiry == null) R.string.stock_expiry_note else R.string.stock_expiry_note_packs),
+            ) { expiryText = it?.toString() }
             PrimaryButton(stringResource(R.string.stock_save), {
-                if (perBox == null) showError = true else onSave(boxes, perBox)
+                if (perBox == null) showError = true else onSave(boxes, perBox, newExpiry)
             })
             Box(Modifier.size(Space.S12))
         }

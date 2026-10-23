@@ -36,9 +36,13 @@ object Mappers {
     )
 
     // ---- medicine ----
-    fun toEntity(m: Medicine) = MedicineEntity(m.id, m.personId, m.name, m.strength, m.unit.name, m.doseAmount, m.stock, m.packSize, m.status.name, m.endedOn?.toEpochDay(), m.expiry?.toString())
-    fun toDomain(e: MedicineEntity) =
-        Medicine(e.id, e.personId, e.name, e.strength, DoseUnit.valueOf(e.unit), e.doseAmount, e.stock, e.packSize, MedicineStatus.valueOf(e.status), e.endedOn?.let { LocalDate.ofEpochDay(it) }, com.pillbox.domain.ExpiryRules.parse(e.expiry))
+    fun toEntity(m: Medicine) = MedicineEntity(m.id, m.personId, m.name, m.strength, m.unit.name, m.doseAmount, m.stock, m.packSize, m.status.name, m.endedOn?.toEpochDay(), m.expiry?.toString(), com.pillbox.domain.PackMath.encode(m.packs))
+    fun toDomain(e: MedicineEntity): Medicine {
+        val packs = com.pillbox.domain.PackMath.decode(e.packs)
+        // With boxes tracked, the date shown everywhere is the one of the box in use.
+        val expiry = if (packs.isEmpty()) com.pillbox.domain.ExpiryRules.parse(e.expiry) else com.pillbox.domain.PackMath.currentExpiry(packs, e.stock)
+        return Medicine(e.id, e.personId, e.name, e.strength, DoseUnit.valueOf(e.unit), e.doseAmount, e.stock, e.packSize, MedicineStatus.valueOf(e.status), e.endedOn?.let { LocalDate.ofEpochDay(it) }, expiry, packs)
+    }
 
     // ---- schedule ----
     fun toEntity(medicineId: Long, s: Schedule, id: Long = 0): ScheduleEntity {
