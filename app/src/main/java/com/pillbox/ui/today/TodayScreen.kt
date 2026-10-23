@@ -86,6 +86,7 @@ import com.pillbox.ui.components.OutlineButton
 import com.pillbox.ui.medicines.stockToastText
 import com.pillbox.ui.components.PrimaryButton
 import com.pillbox.ui.quantityFor
+import com.pillbox.ui.shareText
 import com.pillbox.ui.rememberFormatter
 import com.pillbox.ui.theme.Dimens
 import com.pillbox.ui.theme.PillBox
@@ -243,6 +244,7 @@ fun TodayContent(
             if (state.selectedDate > today && model.groups.isNotEmpty()) item { InfoNote(stringResource(R.string.future_note)) }
         }
         if (state.selectedDate == today && state.asNeeded.isNotEmpty()) item { AsNeededCard(state.asNeeded, onTakeAsNeeded) }
+        if (model != null && model.groups.isNotEmpty()) item { ShareDayButton(model, fmt, people?.active?.takeIf { !it.isMe }?.name) }
     }
     }
     }
@@ -273,6 +275,35 @@ private fun AsNeededCard(items: List<AsNeededItem>, onTake: (Long) -> Unit) {
             }
         }
     }
+}
+
+/** "Share this day's list": the doses of the day as plain text for a family member, a caregiver or a doctor. */
+@Composable
+private fun ShareDayButton(model: TodayModel, fmt: Formatter, forName: String?) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val res = context.resources
+    val title = stringResourceIso(R.string.share_day_title, fmt.digits(shortDate(model.date)))
+    val forLine = forName?.let { stringResourceIso(R.string.share_day_for, it) }
+    val skippedText = stringResource(R.string.skipped)
+    val missedText = stringResource(R.string.missed)
+    val notTakenText = stringResource(R.string.said_not_taken)
+    val lines = ArrayList<String>()
+    model.groups.forEach { g ->
+        lines.add(fmt.time(g.time.toLocalTime()))
+        g.rows.forEach { r ->
+            val m = r.medicine
+            val amount = fmt.amount(m.doseAmount) + " " + res.getQuantityString(unitPlural(m.unit), quantityFor(m.doseAmount))
+            val status = when (r.status) {
+                RowStatus.TAKEN -> context.getString(R.string.said_taken_at, fmt.time(r.event?.taken?.toLocalTime() ?: r.planned.toLocalTime()))
+                RowStatus.SKIPPED -> skippedText
+                RowStatus.PENDING -> if (r.missed) missedText else notTakenText
+            }
+            lines.add("\u2022 " + m.name + " \u00B7 " + amount + " \u2014 " + status)
+        }
+    }
+    val text = (listOfNotNull(title, forLine) + "" + lines).joinToString("\n")
+    val chooser = stringResource(R.string.share_chooser)
+    Box(Modifier.fillMaxWidth()) { com.pillbox.ui.components.OutlineButton(stringResource(R.string.share_day_button), { context.shareText(text, chooser) }) }
 }
 
 /** One strip above the week days: "2 medicines are running low". Opens the list. */
@@ -333,7 +364,19 @@ internal fun LowStockCard(items: List<LowStock>, onPick: () -> Unit, onClose: ()
                 }
             }
         }
-        Box(Modifier.padding(horizontal = Space.S16).padding(top = Space.S8)) { com.pillbox.ui.components.LinkButton(stringResource(R.string.low_stock_close), onClose) }
+        val context = androidx.compose.ui.platform.LocalContext.current
+        val shareTitle = stringResource(R.string.low_stock_share_title)
+        val chooser = stringResource(R.string.share_chooser)
+        val lines = items.map { item ->
+            val what = if (item.level == StockLevel.BUY_SOON && item.daysLeft != null)
+                context.resources.getQuantityString(R.plurals.stock_days_left, item.daysLeft.coerceAtLeast(0), fmt.number(item.daysLeft))
+            else context.getString(R.string.stock_out)
+            "\u2022 " + item.name + " \u2014 " + what
+        }
+        Column(Modifier.padding(horizontal = Space.S16).padding(top = Space.S8), verticalArrangement = Arrangement.spacedBy(Space.S4)) {
+            com.pillbox.ui.components.OutlineButton(stringResource(R.string.low_stock_share), { context.shareText((listOf(shareTitle, "") + lines).joinToString("\n"), chooser) })
+            com.pillbox.ui.components.LinkButton(stringResource(R.string.low_stock_close), onClose)
+        }
     }
 }
 

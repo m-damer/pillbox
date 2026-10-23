@@ -1103,4 +1103,10 @@
     <string name="settings_updates">Check for updates</string>
     <string name="settings_updates_check">Tap to check</string>
     <string name="settings_updates_found">New version %1$s is ready</string>
+    <string name="share_chooser">Share list</string>
+    <string name="share_day_button">Share this day\'s list</string>
+    <string name="share_day_title">Pill Box · %1$s</string>
+    <string name="share_day_for">For %1$s</string>
+    <string name="low_stock_share">Share this list</string>
+    <string name="low_stock_share_title">Medicines running low</string>
 </resources>
