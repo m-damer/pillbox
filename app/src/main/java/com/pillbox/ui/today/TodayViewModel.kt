@@ -272,12 +272,12 @@ class TodayViewModel(
         viewModelScope.launch { sheet.value = TodaySheet.AddStock(s.medicine, repo.getSchedule(s.medicine.id)) }
     }
 
-    fun saveStock(boxes: Int, perBox: Int) {
+    fun saveStock(boxes: Int, perBox: Int, expiry: java.time.YearMonth?) {
         val s = sheet.value as? TodaySheet.AddStock ?: return
         sheet.value = null
         viewModelScope.launch {
             val amount = boxes.toLong() * perBox
-            repo.addStock(s.medicine.id, amount.toDouble(), perBox)
+            repo.addStock(s.medicine.id, amount.toDouble(), perBox, expiry)
             val total = s.medicine.stock + amount
             val result = StockResult(s.medicine.name, total, StockMath.daysFor(total, s.medicine, s.schedule))
             toast.value = TodayToast(++toastCounter, ToastKind.StockUpdated(s.medicine.unit, result), emptyList())

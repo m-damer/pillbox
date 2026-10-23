@@ -113,6 +113,20 @@ class MedicinesScreenshotTest {
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar_list_expiry() = shoot("ar_list_expiry", "ar") { f -> MedicinesContent(expiryList, f, false, {}, {}, {}) }
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar_detail_expired() = shoot("ar_detail_expired", "ar") { f -> MedicineDetailContent(expiryDetailExpired, f) }
 
+    // Boxes with their own expiry: box 2 is in use by the user's choice, box 1 waits.
+    private val packsMetformin = metformin.copy(
+        stock = 40.0,
+        packs = listOf(
+            com.pillbox.domain.Pack(2, 10.0, java.time.YearMonth.now().plusMonths(14)),
+            com.pillbox.domain.Pack(1, 30.0, java.time.YearMonth.now().plusMonths(2)),
+        ),
+        expiry = java.time.YearMonth.now().plusMonths(14),
+    )
+    private val packsDetail = detail.copy(item = metformItem.copy(medicine = packsMetformin), info = StockMath.info(packsMetformin, metformSchedule, today))
+    @Test fun en_detail_packs() = shoot("en_detail_packs", "en") { f -> MedicineDetailContent(packsDetail, f) }
+    @Test fun en_dark_2x_detail_packs() = shoot("en_dark_2x_detail_packs", "en", ThemeMode.Dark, 2f) { f -> MedicineDetailContent(packsDetail, f) }
+    @Config(qualifiers = "+ar-ldrtl") @Test fun ar_detail_packs() = shoot("ar_detail_packs", "ar") { f -> MedicineDetailContent(packsDetail, f) }
+
     @Test fun en_list() = shoot("en_list", "en") { f -> MedicinesContent(listState, f, false, {}, {}, {}) }
     @Test fun en_list_finished() = shoot("en_list_finished", "en") { f -> MedicinesContent(listState, f, true, {}, {}, {}) }
     @Test fun en_detail() = shoot("en_detail", "en") { f -> MedicineDetailContent(detail, f) }

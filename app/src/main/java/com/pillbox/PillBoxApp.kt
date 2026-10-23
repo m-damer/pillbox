@@ -9,6 +9,7 @@ import com.pillbox.data.PillBoxRepository
 import com.pillbox.data.ReminderSettingsStore
 import com.pillbox.data.RefillSettingsStore
 import com.pillbox.reminder.Reminders
+import com.pillbox.ui.components.getStringIso
 import com.pillbox.ui.DisplayState
 import com.pillbox.ui.ReminderState
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,23 @@ class PillBoxApp : Application() {
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch { runCatching { notices.record(n) } }
     }
 
-    val repository: PillBoxRepository by lazy { PillBoxRepository(PillBoxDatabase.create(this)) }
+    val repository: PillBoxRepository by lazy {
+        PillBoxRepository(PillBoxDatabase.create(this)).also { it.onPackChange = { m, pack -> packChanged(m, pack) } }
+    }
+
+    /** The box in use ran out and the next one started: tell the person once, in the notifications screen and as a short message. */
+    private fun packChanged(m: com.pillbox.domain.Medicine, pack: com.pillbox.domain.Pack) {
+        val fmt = com.pillbox.ui.Formatter.from(this)
+        val box = getStringIso(R.string.packs_name, fmt.number(pack.id))
+        val name = m.name + (com.pillbox.ui.localizedStrength(m.strength, resources)?.let { " $it" } ?: "")
+        val title = getStringIso(R.string.packs_next_title, name)
+        val text = pack.expiry?.let {
+            val month = fmt.digits(it.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault()) + " " + it.year)
+            getStringIso(R.string.packs_next_date, box, month)
+        } ?: getStringIso(R.string.packs_next_no_date, box)
+        recordNotice(com.pillbox.domain.Notice("pack:${m.id}:${pack.id}", com.pillbox.domain.NoticeKind.EXPIRY, title, text, System.currentTimeMillis(), target = "medicine:${m.id}", personId = m.personId))
+        android.os.Handler(android.os.Looper.getMainLooper()).post { android.widget.Toast.makeText(this, "$title\n$text", android.widget.Toast.LENGTH_LONG).show() }
+    }
     val refillSettings: RefillSettingsStore by lazy { RefillSettingsStore(this) }
     val displaySettings: DisplaySettingsStore by lazy { DisplaySettingsStore(this) }
     val reminderSettings: ReminderSettingsStore by lazy { ReminderSettingsStore(this) }

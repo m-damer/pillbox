@@ -119,6 +119,8 @@ data class Medicine(
     val endedOn: LocalDate? = null,
     /** Optional printed expiry month of the box. The last day is the end of that month. */
     val expiry: java.time.YearMonth? = null,
+    /** Boxes bought, in the order they are used. Empty when the person does not track expiry per box. [expiry] is then the date of the box in use. */
+    val packs: List<Pack> = emptyList(),
 )
 
 enum class DoseStatus { PLANNED, TAKEN, SKIPPED, MISSED }

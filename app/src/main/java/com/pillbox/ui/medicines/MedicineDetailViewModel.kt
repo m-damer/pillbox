@@ -138,6 +138,16 @@ class MedicineDetailViewModel(
         }
     }
 
+    fun usePack(packId: Int) {
+        val m = state.value.item?.medicine ?: return
+        viewModelScope.launch { repo.usePack(m.id, packId); onChanged() }
+    }
+
+    fun setPackExpiry(packId: Int, expiry: java.time.YearMonth?) {
+        val m = state.value.item?.medicine ?: return
+        viewModelScope.launch { repo.setPackExpiry(m.id, packId, expiry); onChanged() }
+    }
+
     fun restart(done: (String) -> Unit) {
         val m = state.value.item?.medicine ?: return
         viewModelScope.launch {
@@ -147,12 +157,12 @@ class MedicineDetailViewModel(
         }
     }
 
-    fun addStock(boxes: Int, perBox: Int, done: (StockResult) -> Unit) {
+    fun addStock(boxes: Int, perBox: Int, expiry: java.time.YearMonth?, done: (StockResult) -> Unit) {
         val item = state.value.item ?: return
         dialogs.update { it.copy(stock = false) }
         viewModelScope.launch {
             val amount = boxes.toLong() * perBox
-            repo.addStock(item.medicine.id, amount.toDouble(), perBox)
+            repo.addStock(item.medicine.id, amount.toDouble(), perBox, expiry)
             val total = item.medicine.stock + amount
             done(StockResult(item.medicine.name, total, StockMath.daysFor(total, item.medicine, item.schedule)))
         }

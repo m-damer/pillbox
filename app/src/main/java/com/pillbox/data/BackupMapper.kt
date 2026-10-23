@@ -14,7 +14,7 @@ internal object BackupMapper {
         persons = e.persons.map { mapOf("id" to it.id, "name" to it.name, "isMe" to it.isMe, "sortOrder" to it.sortOrder, "relation" to it.relation, "colorIndex" to it.colorIndex, "ring" to it.ring, "birthYear" to it.birthYear) },
         medicines = e.medicines.map {
             mapOf("id" to it.id, "personId" to it.personId, "name" to it.name, "strength" to it.strength, "unit" to it.unit, "doseAmount" to it.doseAmount,
-                "stock" to it.stock, "packSize" to it.packSize, "status" to it.status, "endedOn" to it.endedOn, "expiry" to it.expiry)
+                "stock" to it.stock, "packSize" to it.packSize, "status" to it.status, "endedOn" to it.endedOn, "expiry" to it.expiry, "packs" to it.packs)
         },
         schedules = e.schedules.map {
             mapOf("id" to it.id, "medicineId" to it.medicineId, "startDate" to it.startDate, "endDate" to it.endDate, "kind" to it.kind, "timesCsv" to it.timesCsv,
@@ -33,7 +33,7 @@ internal object BackupMapper {
             PersonEntity(it.long("id"), it.str("name"), it.bool("isMe", false), it.int("sortOrder", 0), it.str("relation", "OTHER"), it.int("colorIndex", 0), it.bool("ring", true), it.intOrNull("birthYear"))
         },
         medicines = d.medicines.map {
-            MedicineEntity(it.long("id"), it.long("personId"), it.str("name"), it.strOrNull("strength"), it.str("unit"), it.dbl("doseAmount"), it.dbl("stock"), it.intOrNull("packSize"), it.str("status"), it.longOrNull("endedOn"), it.strOrNull("expiry"))
+            MedicineEntity(it.long("id"), it.long("personId"), it.str("name"), it.strOrNull("strength"), it.str("unit"), it.dbl("doseAmount"), it.dbl("stock"), it.intOrNull("packSize"), it.str("status"), it.longOrNull("endedOn"), it.strOrNull("expiry"), it.strOrNull("packs"))
         },
         schedules = d.schedules.map {
             ScheduleEntity(

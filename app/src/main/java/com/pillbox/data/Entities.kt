@@ -44,6 +44,8 @@ data class MedicineEntity(
     val endedOn: Long? = null,
     /** Printed expiry month, "yyyy-MM". Null when not set. */
     val expiry: String? = null,
+    /** Boxes with their own expiry, see [com.pillbox.domain.PackMath.encode]. Null when not tracked. */
+    val packs: String? = null,
 )
 
 @Entity(

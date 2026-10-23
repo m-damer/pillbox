@@ -224,4 +224,42 @@ class PillBoxRepositoryTest {
         assertEquals(68.0, m.stock, 0.0)
         assertEquals(60, m.packSize)
     }
+
+    @Test fun addStockWithoutDateTracksNoBoxes() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val id = repo.addMedicine(med(me.id, stock = 8.0), sched)
+        repo.addStock(id, 60.0, packSize = 60)
+        assertTrue(repo.getMedicine(id)!!.packs.isEmpty())
+    }
+
+    @Test fun boxesFollowTheDosesAndTheUsersChoice() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val id = repo.addMedicine(med(me.id, stock = 2.0).copy(expiry = java.time.YearMonth.of(2026, 12)), sched)
+        repo.addStock(id, 30.0, packSize = 30, expiry = java.time.YearMonth.of(2027, 8))
+        var m = repo.getMedicine(id)!!
+        assertEquals(2, m.packs.size)
+        assertEquals(java.time.YearMonth.of(2026, 12), m.expiry)
+        var changed: Int? = null
+        repo.onPackChange = { _, p -> changed = p.id }
+        repo.takeDose(m, com.pillbox.domain.DoseEvent(planned = day.atTime(8, 0)))
+        assertNull(changed)
+        m = repo.getMedicine(id)!!
+        repo.takeDose(m, com.pillbox.domain.DoseEvent(planned = day.atTime(20, 0)))
+        assertEquals(2, changed)
+        assertEquals(java.time.YearMonth.of(2027, 8), repo.getMedicine(id)!!.expiry)
+        repo.usePack(id, 1)
+        assertEquals(java.time.YearMonth.of(2027, 8), repo.getMedicine(id)!!.expiry)
+    }
+
+    @Test fun userCanPickTheBoxInUse() = runBlocking {
+        val me = repo.ensureMe("Me")
+        val id = repo.addMedicine(med(me.id, stock = 10.0).copy(expiry = java.time.YearMonth.of(2027, 8)), sched)
+        repo.addStock(id, 30.0, packSize = 30, expiry = java.time.YearMonth.of(2026, 12))
+        assertEquals(java.time.YearMonth.of(2027, 8), repo.getMedicine(id)!!.expiry)
+        repo.usePack(id, 2)
+        assertEquals(java.time.YearMonth.of(2026, 12), repo.getMedicine(id)!!.expiry)
+        repo.setPackExpiry(id, 2, java.time.YearMonth.of(2026, 10))
+        assertEquals(java.time.YearMonth.of(2026, 10), repo.getMedicine(id)!!.expiry)
+        assertEquals(1, repo.medicinesWithExpiry().size)
+    }
 }
