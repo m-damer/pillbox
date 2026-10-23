@@ -21,3 +21,5 @@
   - [x] A (#50) Soft alarm tones (7 new, played when chosen) and "I took it" to log a dose taken but not logged (choose the time, last 7 days, marked "Logged later"); untouched doses stay missed
   - [x] B (#51) Optional expiry month and year when adding or editing; shown on cards and detail; notices 30 days, 7 days and on the last day
   - [x] C (#52) 15 medicine types, chosen with one button that opens a popup list with an icon for each and a Choose button
+- [x] M17-M22 Edit/trash swap, person pill with popup, short viewing notice, notifications screen with bell, low-stock strip with popup, Check for updates under Help, red numbers on the person switcher, one-line date
+- [ ] M23-M28 (one PR) Take all names whose doses, weekly summary card, follow-up reminder (Off/15/30/60 min), share the day's list and the low-stock list as text, time zone notice, optional photo of the box or pill

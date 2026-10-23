@@ -299,6 +299,7 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
         settings.clear()
         File(context.cacheDir, "backups").deleteRecursively()
         File(context.cacheDir, "reports").deleteRecursively()
+        com.pillbox.ui.medicines.MedicinePhotos.deleteAll(context)
     }
 
     companion object {

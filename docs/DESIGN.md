@@ -283,3 +283,15 @@ Every success, warning and error message now has a designed screen in English an
 - **Type picker:** Step 1 shows one button with the chosen type, its icon and "Change". It opens a popup list (icon, name, radio mark) with Choose and Cancel. Nothing changes until Choose. Changing the type resets the dose and box size to that type's defaults.
 - **Tubes (cream, ointment, gel):** stock counts applications, which is an estimate; a hint says so.
 - **Drawings:** the new screens are drawn by the app itself with the real tokens (CI `screenshots` artifact: `type_*`, `log_*`, `expiry_*`), not hand-drawn in the canvas.
+
+## M17-M28 decisions (Oct 2026)
+- **Person pill:** one pill with the full name of the person on screen (Me for the owner) and an arrow; a popup lists everyone; one tap switches. A red number on the pill counts new notifications of the people not on screen; in the popup each name shows its own number at the far end. The bell counts everyone.
+- **Viewing notice:** "You're viewing **Name**'s medicines." Only the name is bold; one size smaller. "Reminders off." is added only when that person's reminders are off.
+- **Today header:** the date and taken count are one full-width line under the title row (Thu 22 Oct · 0 of 2 taken).
+- **Low stock:** one strip above the week days ("3 medicines are running low"); it opens a popup list that can be shared as text.
+- **Notifications screen:** tabs All, Doses, Stock, Expiry, App. Kept 30 days (200 at most) on the phone, not in backups, erased by Delete all my data. New ones are bold with a "New" label and count as read when the screen closes.
+- **Notification for someone I care for** opens that person's Today. Take all says whose doses ("Take all for Mom" / "for everyone").
+- **Weekly summary** on Today: taken on time or late out of all doses counted in the last 7 days.
+- **Follow-up reminder:** one more reminder at dose time plus 15, 30 or 60 minutes (default 30, can be Off) if the dose is still unanswered.
+- **Time zone:** doses keep the same clock time; a quiet notice says so when the zone changes. A "keep home time" mode is not built (it changes the schedule engine and needs care and real-phone testing).
+- **Photo of the box or pill:** optional, taken with the camera app or chosen; one small JPEG per medicine inside the app; shown on Today rows and on the full-screen reminder; not in backups.

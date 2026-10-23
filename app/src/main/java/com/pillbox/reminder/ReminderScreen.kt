@@ -34,6 +34,7 @@ import com.pillbox.ui.theme.Space
 import com.pillbox.ui.today.RowButton
 import com.pillbox.ui.today.foodText
 import com.pillbox.ui.unitPlural
+import androidx.compose.ui.unit.dp
 import java.time.LocalDateTime
 
 @Composable
@@ -53,6 +54,13 @@ fun ReminderScreen(
     val c = PillBox.colors
     val block = stringResource(Reminders.blockNameRes(blockOf(at.toLocalTime())))
     val big = LocalDensity.current.fontScale > 1.3f
+    // Same words as the notification button: for Mom, or for everyone when the doses belong to several people.
+    val people = rows.map { it.medicine.personId }.distinct()
+    val takeAllText = when {
+        people.none { it in owners } -> stringResource(R.string.take_all)
+        people.size == 1 -> stringResourceIso(R.string.take_all_for, owners.getValue(people.first()))
+        else -> stringResource(R.string.take_all_everyone)
+    }
     Column(
         modifier
             .fillMaxSize()
@@ -75,6 +83,7 @@ fun ReminderScreen(
                 Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S12),
                 verticalArrangement = Arrangement.spacedBy(Space.S8),
             ) {
+                com.pillbox.ui.medicines.MedicinePhotoLarge(med.id, height = 120.dp)
                 owners[med.personId]?.let { Text(stringResourceIso(R.string.reminder_for, it), style = MaterialTheme.typography.labelLarge, color = c.accent) }
                 Text(med.name + (com.pillbox.ui.strengthLabel(med.strength)?.let { " $it" } ?: ""), style = MaterialTheme.typography.titleMedium, color = c.text)
                 Text(line, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
@@ -86,11 +95,11 @@ fun ReminderScreen(
         }
         if (rows.size > 1) {
             if (big) {
-                PrimaryButton(stringResource(R.string.take_all), onTakeAll)
+                PrimaryButton(takeAllText, onTakeAll)
                 OutlineButton(stringResource(R.string.skip_all), onSkipAll)
             } else {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
-                    PrimaryButton(stringResource(R.string.take_all), onTakeAll, Modifier.weight(1f))
+                    PrimaryButton(takeAllText, onTakeAll, Modifier.weight(1f))
                     OutlineButton(stringResource(R.string.skip_all), onSkipAll, Modifier.weight(1f))
                 }
             }

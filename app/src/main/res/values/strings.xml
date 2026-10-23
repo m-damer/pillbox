@@ -1103,4 +1103,28 @@
     <string name="settings_updates">Check for updates</string>
     <string name="settings_updates_check">Tap to check</string>
     <string name="settings_updates_found">New version %1$s is ready</string>
+    <string name="take_all_for">Take all for %1$s</string>
+    <string name="take_all_everyone">Take all for everyone</string>
+    <plurals name="week_summary">
+        <item quantity="one">This week: %1$s of %2$s dose taken</item><item quantity="other">This week: %1$s of %2$s doses taken</item>
+    </plurals>
+    <string name="notif_title_waiting">Still waiting: your %1$s medicines</string>
+    <string name="sound_follow_up">Remind me once more after</string>
+    <string name="sound_follow_up_off">Off</string>
+    <string name="sound_follow_up_note">If a dose is still not taken or skipped this long after its time, you get one more reminder.</string>
+    <string name="share_chooser">Share list</string>
+    <string name="share_day_button">Share this day\'s list</string>
+    <string name="share_day_title">Pill Box · %1$s</string>
+    <string name="share_day_for">For %1$s</string>
+    <string name="low_stock_share">Share this list</string>
+    <string name="low_stock_share_title">Medicines running low</string>
+    <string name="tz_notif_title">Your time zone changed</string>
+    <string name="tz_notif_text">Now %1$s. Your reminders keep the same clock times here: 8:00 AM stays 8:00 AM. Change a medicine if you need different times.</string>
+    <string name="photo_title">Photo</string>
+    <string name="photo_hint">Add a photo of the box or the pill, so you can recognise it.</string>
+    <string name="photo_take">Take photo</string>
+    <string name="photo_choose">Choose photo</string>
+    <string name="photo_remove">Remove photo</string>
+    <string name="photo_failed">The photo could not be saved. Please try again.</string>
+    <string name="photo_note">The photo stays on this phone. It is not part of backups.</string>
 </resources>

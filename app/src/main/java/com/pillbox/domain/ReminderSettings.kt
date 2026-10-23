@@ -108,6 +108,8 @@ data class ReminderSettings(
     val repeatMinutes: Int = 5,
     /** Keep ringing (repeat) until the user answers. Off: ring once. */
     val keepRinging: Boolean = true,
+    /** Minutes after the dose time to remind once more about a dose nobody answered. 0 is off. */
+    val followUpMinutes: Int = 30,
     /** Say the medicine names out loud when a reminder rings. */
     val readAloud: Boolean = false,
     val quiet: QuietHours = QuietHours(),
@@ -119,5 +121,5 @@ data class ReminderSettings(
     /** How many repeats after the first ring. */
     val maxRepeats: Int get() = if (keepRinging) ReminderPlanner.MAX_NAGS else 0
 
-    companion object { val REPEAT_CHOICES = listOf(2, 5, 10) }
+    companion object { val REPEAT_CHOICES = listOf(2, 5, 10); val FOLLOW_UP_CHOICES = listOf(0, 15, 30, 60) }
 }

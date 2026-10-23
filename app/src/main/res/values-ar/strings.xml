@@ -1174,4 +1174,29 @@
     <string name="settings_updates">التحقق من التحديثات</string>
     <string name="settings_updates_check">انقر للتحقق</string>
     <string name="settings_updates_found">الإصدار الجديد %1$s جاهز</string>
+    <string name="take_all_for">خذ الكل لـ%1$s</string>
+    <string name="take_all_everyone">خذ الكل للجميع</string>
+    <plurals name="week_summary">
+        <item quantity="zero">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="one">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="two">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item>
+        <item quantity="few">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="many">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item><item quantity="other">هذا الأسبوع: %1$s من %2$s جرعة مأخوذة</item>
+    </plurals>
+    <string name="notif_title_waiting">ما زالت بانتظارك: أدوية %1$s</string>
+    <string name="sound_follow_up">ذكّرني مرة أخيرة بعد</string>
+    <string name="sound_follow_up_off">إيقاف</string>
+    <string name="sound_follow_up_note">إذا بقيت الجرعة دون أخذ أو تخطٍّ بعد هذه المدة من موعدها، يصلك تذكير أخير.</string>
+    <string name="share_chooser">مشاركة القائمة</string>
+    <string name="share_day_button">مشاركة قائمة هذا اليوم</string>
+    <string name="share_day_title">علبة الدواء · %1$s</string>
+    <string name="share_day_for">لـ%1$s</string>
+    <string name="low_stock_share">مشاركة هذه القائمة</string>
+    <string name="low_stock_share_title">أدوية أوشكت على النفاد</string>
+    <string name="tz_notif_title">تغيّرت المنطقة الزمنية</string>
+    <string name="tz_notif_text">الآن: %1$s. تبقى تذكيراتك في نفس الساعة هنا، فالثامنة صباحاً تبقى الثامنة صباحاً. عدّل الدواء إن احتجت أوقاتاً مختلفة.</string>
+    <string name="photo_title">الصورة</string>
+    <string name="photo_hint">أضف صورة للعلبة أو الحبة لتتعرّف عليها بسهولة.</string>
+    <string name="photo_take">التقاط صورة</string>
+    <string name="photo_choose">اختيار صورة</string>
+    <string name="photo_remove">إزالة الصورة</string>
+    <string name="photo_failed">تعذّر حفظ الصورة. حاول مرة أخرى.</string>
+    <string name="photo_note">تبقى الصورة على هذا الهاتف ولا تدخل في النسخ الاحتياطية.</string>
 </resources>

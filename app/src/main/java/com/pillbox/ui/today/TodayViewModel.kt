@@ -2,8 +2,10 @@ package com.pillbox.ui.today
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pillbox.data.MedicineWithSchedule
 import com.pillbox.data.PillBoxRepository
 import com.pillbox.domain.DoseEvent
+import com.pillbox.domain.HistoryBuilder
 import com.pillbox.domain.AllPaused
 import com.pillbox.domain.DoseRow
 import com.pillbox.domain.DoseStatus
@@ -102,6 +104,9 @@ data class LowStock(val name: String, val unit: DoseUnit, val daysLeft: Int?, va
 /** An as-needed medicine for the "As needed" card on Today. */
 data class AsNeededItem(val id: Long, val name: String, val unit: DoseUnit)
 
+/** The last 7 days (today included) of the person on screen: doses taken on time or late, out of all doses counted. */
+data class WeekSummary(val taken: Int, val total: Int)
+
 data class TodayUiState(
     val loaded: Boolean = false,
     val hasMedicines: Boolean = false,
@@ -114,6 +119,7 @@ data class TodayUiState(
     val allPaused: AllPaused? = null,
     val lowStock: List<LowStock> = emptyList(),
     val asNeeded: List<AsNeededItem> = emptyList(),
+    val week: WeekSummary? = null,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -134,22 +140,33 @@ class TodayViewModel(
 
     private val tick = flow { while (true) { emit(LocalDateTime.now()); delay(30_000) } }
 
+    private class TodayData(
+        val medicines: List<MedicineWithSchedule>, val events: List<DoseEvent>, val remind: Int,
+        val finished: List<MedicineWithSchedule>, val weekEvents: List<DoseEvent>,
+    )
+
     private val data = repo.observeActivePerson(meName).map { it.id }.distinctUntilChanged().flatMapLatest { personId ->
         selected.flatMapLatest { day ->
+            val weekStart = LocalDate.now().minusDays(6).atStartOfDay()
             combine(
                 repo.observeMedicines(personId),
                 repo.observeDoseEvents(personId, day.atStartOfDay(), day.plusDays(1).atStartOfDay()),
                 remindDays,
-            ) { medicines, events, remind -> Triple(medicines, events, remind) }
+                repo.observeFinished(personId),
+                repo.observeHistoryEvents(personId, weekStart, LocalDate.now().plusDays(1).atStartOfDay()),
+            ) { medicines, events, remind, finished, weekEvents -> TodayData(medicines, events, remind, finished, weekEvents) }
         }
     }
 
-    val state: StateFlow<TodayUiState> = combine(data, selected, tick, sheet, toast) { (medicines, events, remind), day, now, sheet, toast ->
+    val state: StateFlow<TodayUiState> = combine(data, selected, tick, sheet, toast) { d, day, now, sheet, toast ->
+        val medicines = d.medicines; val events = d.events; val remind = d.remind
         val items = medicines.mapNotNull { m -> m.schedule?.let { Triple(m.medicine, it, m.pauses) } }
         val allPaused = Pause.allPaused(medicines.map { it.pauses }, now)
         pausedIds = medicines.map { it.medicine.id }
         TodayUiState(
             loaded = true,
+            week = HistoryBuilder.build((medicines + d.finished).mapNotNull { m -> m.schedule?.let { Triple(m.medicine, it, m.pauses) } }, d.weekEvents, now, days = 7)
+                .let { h -> if (h.total == 0) null else WeekSummary(h.onTime + h.late, h.total) },
             allPaused = allPaused,
             lowStock = medicines
                 .filter { Pause.activeAt(it.pauses, now) == null }

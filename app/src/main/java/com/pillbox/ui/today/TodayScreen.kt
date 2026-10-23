@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.padding
@@ -86,6 +87,7 @@ import com.pillbox.ui.components.OutlineButton
 import com.pillbox.ui.medicines.stockToastText
 import com.pillbox.ui.components.PrimaryButton
 import com.pillbox.ui.quantityFor
+import com.pillbox.ui.shareText
 import com.pillbox.ui.rememberFormatter
 import com.pillbox.ui.theme.Dimens
 import com.pillbox.ui.theme.PillBox
@@ -232,6 +234,7 @@ fun TodayContent(
         if (people?.active?.isMe == false) item { com.pillbox.ui.people.ViewingBanner(people) }
         if (remindersOff) item { RemindersOffBanner(onFixReminders) }
         if (state.selectedDate != today) item { BackToToday(onBackToToday) }
+        if (state.selectedDate == today && state.week != null) item { WeekSummaryCard(state.week) }
         if (state.selectedDate == today && model != null && model.groups.isNotEmpty()) item { DayTimeline(model, fmt) }
         if (model != null) {
             if (model.groups.isEmpty() && state.loaded) {
@@ -243,6 +246,7 @@ fun TodayContent(
             if (state.selectedDate > today && model.groups.isNotEmpty()) item { InfoNote(stringResource(R.string.future_note)) }
         }
         if (state.selectedDate == today && state.asNeeded.isNotEmpty()) item { AsNeededCard(state.asNeeded, onTakeAsNeeded) }
+        if (model != null && model.groups.isNotEmpty()) item { ShareDayButton(model, fmt, people?.active?.takeIf { !it.isMe }?.name) }
     }
     }
     }
@@ -273,6 +277,53 @@ private fun AsNeededCard(items: List<AsNeededItem>, onTake: (Long) -> Unit) {
             }
         }
     }
+}
+
+/** "This week: 18 of 20 doses taken", with a thin bar. The words carry the meaning; the bar only repeats it. */
+@Composable
+internal fun WeekSummaryCard(week: WeekSummary, modifier: Modifier = Modifier) {
+    val c = PillBox.colors
+    val fmt = rememberFormatter()
+    val text = pluralStringResource(R.plurals.week_summary, week.total, fmt.number(week.taken), fmt.number(week.total))
+    Column(
+        modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(horizontal = Space.S16, vertical = Space.S12)
+            .semantics(mergeDescendants = true) { contentDescription = text },
+        verticalArrangement = Arrangement.spacedBy(Space.S8),
+    ) {
+        Text(text, style = MaterialTheme.typography.labelLarge, color = c.text)
+        Box(Modifier.fillMaxWidth().height(8.dp).background(c.divider, CircleShape)) {
+            Box(Modifier.fillMaxWidth(week.taken.toFloat() / week.total.coerceAtLeast(1)).height(8.dp).background(c.success, CircleShape))
+        }
+    }
+}
+
+/** "Share this day's list": the doses of the day as plain text for a family member, a caregiver or a doctor. */
+@Composable
+private fun ShareDayButton(model: TodayModel, fmt: Formatter, forName: String?) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val res = context.resources
+    val title = stringResourceIso(R.string.share_day_title, fmt.digits(shortDate(model.date)))
+    val forLine = forName?.let { stringResourceIso(R.string.share_day_for, it) }
+    val skippedText = stringResource(R.string.skipped)
+    val missedText = stringResource(R.string.missed)
+    val notTakenText = stringResource(R.string.said_not_taken)
+    val lines = ArrayList<String>()
+    model.groups.forEach { g ->
+        lines.add(fmt.time(g.time.toLocalTime()))
+        g.rows.forEach { r ->
+            val m = r.medicine
+            val amount = fmt.amount(m.doseAmount) + " " + res.getQuantityString(unitPlural(m.unit), quantityFor(m.doseAmount))
+            val status = when (r.status) {
+                RowStatus.TAKEN -> context.getString(R.string.said_taken_at, fmt.time(r.event?.taken?.toLocalTime() ?: r.planned.toLocalTime()))
+                RowStatus.SKIPPED -> skippedText
+                RowStatus.PENDING -> if (r.missed) missedText else notTakenText
+            }
+            lines.add("\u2022 " + m.name + " \u00B7 " + amount + " \u2014 " + status)
+        }
+    }
+    val text = (listOfNotNull(title, forLine) + "" + lines).joinToString("\n")
+    val chooser = stringResource(R.string.share_chooser)
+    Box(Modifier.fillMaxWidth()) { com.pillbox.ui.components.OutlineButton(stringResource(R.string.share_day_button), { context.shareText(text, chooser) }) }
 }
 
 /** One strip above the week days: "2 medicines are running low". Opens the list. */
@@ -333,7 +384,19 @@ internal fun LowStockCard(items: List<LowStock>, onPick: () -> Unit, onClose: ()
                 }
             }
         }
-        Box(Modifier.padding(horizontal = Space.S16).padding(top = Space.S8)) { com.pillbox.ui.components.LinkButton(stringResource(R.string.low_stock_close), onClose) }
+        val context = androidx.compose.ui.platform.LocalContext.current
+        val shareTitle = stringResource(R.string.low_stock_share_title)
+        val chooser = stringResource(R.string.share_chooser)
+        val lines = items.map { item ->
+            val what = if (item.level == StockLevel.BUY_SOON && item.daysLeft != null)
+                context.resources.getQuantityString(R.plurals.stock_days_left, item.daysLeft.coerceAtLeast(0), fmt.number(item.daysLeft))
+            else context.getString(R.string.stock_out)
+            "\u2022 " + item.name + " \u2014 " + what
+        }
+        Column(Modifier.padding(horizontal = Space.S16).padding(top = Space.S8), verticalArrangement = Arrangement.spacedBy(Space.S4)) {
+            com.pillbox.ui.components.OutlineButton(stringResource(R.string.low_stock_share), { context.shareText((listOf(shareTitle, "") + lines).joinToString("\n"), chooser) })
+            com.pillbox.ui.components.LinkButton(stringResource(R.string.low_stock_close), onClose)
+        }
     }
 }
 
@@ -753,7 +816,7 @@ private fun DoseRowItem(
 
     val text: @Composable (Modifier) -> Unit = { m ->
         Row(m.semantics(mergeDescendants = true) { contentDescription = sentence }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S10)) {
-            PillIcon(med.unit, if (status == RowStatus.TAKEN) c.textMuted else null, 36.dp)
+            com.pillbox.ui.medicines.MedicineThumb(med.id, med.unit, 36.dp, if (status == RowStatus.TAKEN) c.textMuted else null)
             Column(Modifier.weight(1f)) {
                 Text(med.name, style = MaterialTheme.typography.labelLarge, color = c.text)
                 Text(subline, style = MaterialTheme.typography.bodySmall, color = c.textMuted)

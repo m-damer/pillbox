@@ -57,6 +57,7 @@ class Reminders(
         NAG(2, "com.pillbox.action.DOSE_NAG"),
         SNOOZE(3, "com.pillbox.action.DOSE_SNOOZE"),
         REFILL(4, "com.pillbox.action.REFILL_DUE"),
+        FOLLOW(5, "com.pillbox.action.DOSE_FOLLOW"),
     }
 
     // ---------------------------------------------------------------- channels
@@ -272,9 +273,44 @@ class Reminders(
         if (rows.isEmpty()) { dismiss(at); return }
         show(rows, at)
         val settings = ReminderState.current
+        // One more reminder later, in case this one was missed too. The first ring and a snooze arm it; it only fires while doses are still waiting.
+        if (count == 0) ReminderPlanner.followUpAt(at, settings.followUpMinutes, LocalDateTime.now())?.let { schedule(Kind.FOLLOW, it, at, 0) }
         if (count < settings.maxRepeats) {
             schedule(Kind.NAG, LocalDateTime.now().plusMinutes(settings.repeatMinutes.toLong()), at, count + 1)
         }
+    }
+
+    /**
+     * The phone's time zone changed (a trip). Doses keep their clock time here, so 8:00 AM is still 8:00 AM. This tells the
+     * user so, quietly, and keeps the same words on the Notifications screen. It never changes a time by itself.
+     */
+    @SuppressLint("MissingPermission")
+    fun onTimeZoneChanged() {
+        val zone = java.util.TimeZone.getDefault()
+        val place = zone.getDisplayName(zone.inDaylightTime(java.util.Date()), java.util.TimeZone.LONG, java.util.Locale.getDefault())
+        val title = context.getString(R.string.tz_notif_title)
+        val text = context.getStringIso(R.string.tz_notif_text, place)
+        val now = System.currentTimeMillis()
+        record(Notice("app:tz:${zone.id}:${now / 3_600_000}", NoticeKind.APP, title, text, now))
+        val nm = notificationManager()
+        if (!nm.areNotificationsEnabled()) return
+        val open = PendingIntent.getActivity(
+            context, 33, Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        val n = NotificationCompat.Builder(context, CHANNEL_REFILLS)
+            .setSmallIcon(R.drawable.ic_stat_pill).setContentTitle(title).setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setCategory(NotificationCompat.CATEGORY_STATUS).setPriority(NotificationCompat.PRIORITY_LOW)
+            .setAutoCancel(true).setContentIntent(open).build()
+        runCatching { nm.notify(TZ_ID, n) }
+    }
+
+    /** The follow-up alarm fired: if doses are still waiting, remind once more, saying they are still waiting. */
+    suspend fun onFollowUp(at: LocalDateTime) {
+        val rows = pendingRows(at)
+        if (rows.isEmpty()) { dismiss(at); return }
+        show(rows, at, followUp = true)
     }
 
     /** Take all from the notification. */
@@ -295,6 +331,7 @@ class Reminders(
     /** Stops the repeat and removes the notification for [at]. */
     fun dismiss(at: LocalDateTime) {
         cancel(Kind.NAG, at)
+        cancel(Kind.FOLLOW, at)
         cancel(Kind.SNOOZE, at)
         notificationManager().cancel(notificationId(at))
     }
@@ -328,6 +365,16 @@ class Reminders(
 
     private fun notificationManager() = NotificationManagerCompat.from(context)
 
+    /**
+     * "Take all" for my own doses; "Take all for Mom" when every dose is Mom's, so the button never takes someone else's
+     * doses by surprise. Doses for several people say "for everyone".
+     */
+    private fun takeAllLabel(people: List<Long>, owners: Map<Long, String>): String = when {
+        people.none { it in owners } -> context.getString(R.string.take_all)
+        people.size == 1 -> context.getStringIso(R.string.take_all_for, owners.getValue(people.first()))
+        else -> context.getString(R.string.take_all_everyone)
+    }
+
     private fun record(n: Notice) { (context.applicationContext as? com.pillbox.PillBoxApp)?.recordNotice(n) }
 
     private fun notificationId(at: LocalDateTime) = (at.atZone(ZoneId.systemDefault()).toEpochSecond() / 60).toInt()
@@ -347,20 +394,21 @@ class Reminders(
     }
 
     @SuppressLint("MissingPermission")
-    private suspend fun show(rows: List<DoseRow>, at: LocalDateTime) {
+    private suspend fun show(rows: List<DoseRow>, at: LocalDateTime, followUp: Boolean = false) {
         val owners = repo.otherPeopleNames()
         val nm = notificationManager()
         // Opening the notification shows the person these doses are for: the one person, or me when it is mixed.
         val people = rows.map { it.medicine.personId }.distinct()
         val openFor = if (people.size == 1) people.first() else (repo.myPersonId()?.takeIf { it in people } ?: people.firstOrNull())
-        val title = context.getString(R.string.notif_title, context.getString(blockNameRes(blockOf(at.toLocalTime()))))
+        val block = context.getString(blockNameRes(blockOf(at.toLocalTime())))
+        val title = context.getString(if (followUp) R.string.notif_title_waiting else R.string.notif_title, block)
         // A dose for someone I care for says whose it is, so the wrong person never gets it.
         val text = rows.joinToString(" · ") { r ->
             val line = r.medicine.name + (com.pillbox.ui.localizedStrength(r.medicine.strength, context.resources)?.let { " $it" } ?: "")
             owners[r.medicine.personId]?.let { context.getStringIso(R.string.notif_dose_for, it, line) } ?: line
         }
         // Saved for the notifications screen even when Android notifications are off, so a missed alert can still be seen there.
-        record(Notice("dose:${notificationId(at)}", NoticeKind.DOSE, title, text, at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), target = openFor?.let { "today:$it" } ?: "today", personId = openFor))
+        record(Notice("dose:${notificationId(at)}" + (if (followUp) ":waiting" else ""), NoticeKind.DOSE, title, text, at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), target = openFor?.let { "today:$it" } ?: "today", personId = openFor))
         if (!nm.areNotificationsEnabled()) return
         val builder = NotificationCompat.Builder(context, channelFor(LocalDateTime.now().toLocalTime()))
             .setSmallIcon(R.drawable.ic_stat_pill)
@@ -374,7 +422,7 @@ class Reminders(
             .setWhen(at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
             .setContentIntent(activityPending(MainActivity::class.java, at, 20, openFor))
             // At most three buttons: Take all, Snooze, Open. Per-medicine Take and Skip are on the full-screen reminder.
-            .addAction(0, context.getString(R.string.take_all), actionPending(ACTION_TAKE_ALL, at))
+            .addAction(0, takeAllLabel(people, owners), actionPending(ACTION_TAKE_ALL, at))
             .addAction(0, context.getString(R.string.snooze_15), actionPending(ACTION_SNOOZE, at))
             .addAction(0, context.getString(R.string.open), activityPending(MainActivity::class.java, at, 21, openFor))
         // The notification above is the fallback when the full-screen screen is not allowed (Android 14+ may need approval).
@@ -432,6 +480,7 @@ class Reminders(
         }
         const val CHANNEL_REFILLS = "refills"
         private const val TEST_ID = 999_999_999
+        private const val TZ_ID = 7402
         const val EXTRA_AT = "at"
         const val EXTRA_COUNT = "count"
         const val ACTION_TAKE_ALL = "com.pillbox.action.TAKE_ALL"

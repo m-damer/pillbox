@@ -87,7 +87,7 @@ fun SoundScreen(vm: SettingsViewModel, onBack: () -> Unit) {
         SoundContent(
             state.reminder, rememberFormatter(), onBack,
             onTone = { vm.setTone(it); player.play(it); changes++ }, onVibration = { vm.setVibration(it); changes++ },
-            onRepeat = { vm.setRepeat(it); changes++ }, onTest = { player.play(state.reminder.tone) },
+            onRepeat = { vm.setRepeat(it); changes++ }, onFollowUp = { vm.setFollowUp(it); changes++ }, onTest = { player.play(state.reminder.tone) },
         )
         ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
     }
@@ -102,6 +102,7 @@ fun SoundContent(
     onVibration: (Boolean) -> Unit,
     onRepeat: (Int) -> Unit,
     onTest: () -> Unit,
+    onFollowUp: (Int) -> Unit = {},
 ) {
     val c = PillBox.colors
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -125,6 +126,15 @@ fun SoundContent(
                     choices.map { stringResourceIso(R.string.min_short, fmt.number(it)) },
                     choices.indexOf(s.repeatMinutes).coerceAtLeast(0), { onRepeat(choices[it]) }, stackWhenLarge = true,
                 )
+            }
+            Column(Modifier.padding(top = Space.S12).fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S16), verticalArrangement = Arrangement.spacedBy(Space.S12)) {
+                Text(stringResource(R.string.sound_follow_up), style = MaterialTheme.typography.labelLarge, color = c.text)
+                val follow = ReminderSettings.FOLLOW_UP_CHOICES
+                Segmented(
+                    follow.map { if (it == 0) stringResource(R.string.sound_follow_up_off) else stringResourceIso(R.string.min_short, fmt.number(it)) },
+                    follow.indexOf(s.followUpMinutes).coerceAtLeast(0), { onFollowUp(follow[it]) }, stackWhenLarge = true,
+                )
+                Text(stringResource(R.string.sound_follow_up_note), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
             }
             Note(stringResource(R.string.sound_volume_note))
             Box(Modifier.size(96.dp))
