@@ -1184,4 +1184,10 @@
     <string name="sound_follow_up">ذكّرني مرة أخيرة بعد</string>
     <string name="sound_follow_up_off">إيقاف</string>
     <string name="sound_follow_up_note">إذا بقيت الجرعة دون أخذ أو تخطٍّ بعد هذه المدة من موعدها، يصلك تذكير أخير.</string>
+    <string name="share_chooser">مشاركة القائمة</string>
+    <string name="share_day_button">مشاركة قائمة هذا اليوم</string>
+    <string name="share_day_title">علبة الدواء · %1$s</string>
+    <string name="share_day_for">لـ%1$s</string>
+    <string name="low_stock_share">مشاركة هذه القائمة</string>
+    <string name="low_stock_share_title">أدوية أوشكت على النفاد</string>
 </resources>

@@ -1112,4 +1112,10 @@
     <string name="sound_follow_up">Remind me once more after</string>
     <string name="sound_follow_up_off">Off</string>
     <string name="sound_follow_up_note">If a dose is still not taken or skipped this long after its time, you get one more reminder.</string>
+    <string name="share_chooser">Share list</string>
+    <string name="share_day_button">Share this day\'s list</string>
+    <string name="share_day_title">Pill Box · %1$s</string>
+    <string name="share_day_for">For %1$s</string>
+    <string name="low_stock_share">Share this list</string>
+    <string name="low_stock_share_title">Medicines running low</string>
 </resources>
