@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.padding
@@ -232,6 +233,7 @@ fun TodayContent(
         if (people?.active?.isMe == false) item { com.pillbox.ui.people.ViewingBanner(people) }
         if (remindersOff) item { RemindersOffBanner(onFixReminders) }
         if (state.selectedDate != today) item { BackToToday(onBackToToday) }
+        if (state.selectedDate == today && state.week != null) item { WeekSummaryCard(state.week) }
         if (state.selectedDate == today && model != null && model.groups.isNotEmpty()) item { DayTimeline(model, fmt) }
         if (model != null) {
             if (model.groups.isEmpty() && state.loaded) {
@@ -271,6 +273,24 @@ private fun AsNeededCard(items: List<AsNeededItem>, onTake: (Long) -> Unit) {
                     com.pillbox.ui.components.OutlineButton(label, { onTake(item.id) })
                 }
             }
+        }
+    }
+}
+
+/** "This week: 18 of 20 doses taken", with a thin bar. The words carry the meaning; the bar only repeats it. */
+@Composable
+internal fun WeekSummaryCard(week: WeekSummary, modifier: Modifier = Modifier) {
+    val c = PillBox.colors
+    val fmt = rememberFormatter()
+    val text = pluralStringResource(R.plurals.week_summary, week.total, fmt.number(week.taken), fmt.number(week.total))
+    Column(
+        modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(horizontal = Space.S16, vertical = Space.S12)
+            .semantics(mergeDescendants = true) { contentDescription = text },
+        verticalArrangement = Arrangement.spacedBy(Space.S8),
+    ) {
+        Text(text, style = MaterialTheme.typography.labelLarge, color = c.text)
+        Box(Modifier.fillMaxWidth().height(8.dp).background(c.divider, CircleShape)) {
+            Box(Modifier.fillMaxWidth(week.taken.toFloat() / week.total.coerceAtLeast(1)).height(8.dp).background(c.success, CircleShape))
         }
     }
 }

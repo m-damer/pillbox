@@ -1105,4 +1105,7 @@
     <string name="settings_updates_found">New version %1$s is ready</string>
     <string name="take_all_for">Take all for %1$s</string>
     <string name="take_all_everyone">Take all for everyone</string>
+    <plurals name="week_summary">
+        <item quantity="one">This week: %1$s of %2$s dose taken</item><item quantity="other">This week: %1$s of %2$s doses taken</item>
+    </plurals>
 </resources>
