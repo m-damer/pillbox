@@ -54,4 +54,16 @@ class ReminderPlannerTest {
         assertEquals(sat.plusDays(1).atTime(4, 0), ReminderPlanner.nextDue(listOf(night), sat.atTime(21, 0)))
         assertEquals(1, ReminderPlanner.dueRows(listOf(night), emptyList(), sat.plusDays(1).atTime(4, 0)).size)
     }
+
+    @Test fun follow_up_is_the_dose_time_plus_minutes() {
+        val at = java.time.LocalDateTime.of(2026, 10, 23, 8, 0)
+        assertEquals(at.plusMinutes(30), ReminderPlanner.followUpAt(at, 30, at))
+    }
+
+    @Test fun follow_up_off_or_already_passed_gives_nothing() {
+        val at = java.time.LocalDateTime.of(2026, 10, 23, 8, 0)
+        assertEquals(null, ReminderPlanner.followUpAt(at, 0, at))
+        assertEquals(null, ReminderPlanner.followUpAt(at, 30, at.plusMinutes(30)))
+        assertEquals(null, ReminderPlanner.followUpAt(at, 30, at.plusHours(2)))
+    }
 }

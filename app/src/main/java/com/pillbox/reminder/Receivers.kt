@@ -32,6 +32,7 @@ class DoseAlarmReceiver : BroadcastReceiver() {
                 "com.pillbox.action.DOSE_DUE" -> if (at != null) reminders.onDue(at) else reminders.rearm()
                 "com.pillbox.action.DOSE_NAG" -> if (at != null) reminders.onRepeat(at, intent.getIntExtra(Reminders.EXTRA_COUNT, 1))
                 "com.pillbox.action.DOSE_SNOOZE" -> if (at != null) reminders.onSnoozeEnded(at)
+                "com.pillbox.action.DOSE_FOLLOW" -> if (at != null) reminders.onFollowUp(at)
                 "com.pillbox.action.REFILL_DUE" -> reminders.onRefillDue()
             }
         }

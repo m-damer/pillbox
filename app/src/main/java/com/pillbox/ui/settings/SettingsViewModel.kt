@@ -56,6 +56,7 @@ class SettingsViewModel(
     fun setTone(tone: Tone) = remind({ it.copy(tone = tone) })
     fun setVibration(on: Boolean) = remind({ it.copy(vibration = on) })
     fun setRepeat(minutes: Int) = remind({ it.copy(repeatMinutes = minutes) })
+    fun setFollowUp(minutes: Int) = remind({ it.copy(followUpMinutes = minutes) })
     fun setKeepRinging(on: Boolean) = remind({ it.copy(keepRinging = on) })
     fun saveLate(setting: LateSetting, threshold: LateThreshold, onSaved: () -> Unit) = remind({ it.copy(late = setting, lateThreshold = threshold) }, onSaved)
     fun saveQuiet(q: QuietHours, onSaved: () -> Unit) = remind({ it.copy(quiet = q) }, onSaved)

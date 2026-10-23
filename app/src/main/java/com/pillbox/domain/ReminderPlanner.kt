@@ -12,6 +12,16 @@ object ReminderPlanner {
     fun dueRows(items: List<Triple<Medicine, Schedule, List<Pause>>>, events: List<DoseEvent>, at: LocalDateTime): List<DoseRow> =
         TodayBuilder.build(items, events, at.toLocalDate(), at).groups.firstOrNull { it.time == at }?.pending.orEmpty()
 
+    /**
+     * When to remind once more about a dose nobody answered: [minutes] after the dose time. Null when the follow-up is off (0)
+     * or that moment has already passed.
+     */
+    fun followUpAt(at: LocalDateTime, minutes: Int, now: LocalDateTime): LocalDateTime? {
+        if (minutes <= 0) return null
+        val t = at.plusMinutes(minutes.toLong())
+        return t.takeIf { it.isAfter(now) }
+    }
+
     const val SNOOZE_MINUTES = 15L
     const val MAX_NAGS = 3
 }

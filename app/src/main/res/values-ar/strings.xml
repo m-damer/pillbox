@@ -1174,4 +1174,8 @@
     <string name="settings_updates">التحقق من التحديثات</string>
     <string name="settings_updates_check">انقر للتحقق</string>
     <string name="settings_updates_found">الإصدار الجديد %1$s جاهز</string>
+    <string name="notif_title_waiting">ما زالت بانتظارك: أدوية %1$s</string>
+    <string name="sound_follow_up">ذكّرني مرة أخيرة بعد</string>
+    <string name="sound_follow_up_off">إيقاف</string>
+    <string name="sound_follow_up_note">إذا بقيت الجرعة دون أخذ أو تخطٍّ بعد هذه المدة من موعدها، يصلك تذكير أخير.</string>
 </resources>
