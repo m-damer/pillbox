@@ -815,7 +815,7 @@ private fun DoseRowItem(
 
     val text: @Composable (Modifier) -> Unit = { m ->
         Row(m.semantics(mergeDescendants = true) { contentDescription = sentence }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S10)) {
-            PillIcon(med.unit, if (status == RowStatus.TAKEN) c.textMuted else null, 36.dp)
+            com.pillbox.ui.medicines.MedicineThumb(med.id, med.unit, 36.dp, if (status == RowStatus.TAKEN) c.textMuted else null)
             Column(Modifier.weight(1f)) {
                 Text(med.name, style = MaterialTheme.typography.labelLarge, color = c.text)
                 Text(subline, style = MaterialTheme.typography.bodySmall, color = c.textMuted)

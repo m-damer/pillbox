@@ -175,10 +175,12 @@ fun MedicineDetailScreen(
             onDismiss = { vm.showPause(false) },
         )
     }
+    val photoContext = androidx.compose.ui.platform.LocalContext.current
     if (state.showDelete) {
         MessageDialog(DialogKind.Danger, stringResourceIso(R.string.delete_title, m.name), stringResource(R.string.delete_body), onDismiss = { vm.showDelete(false) }) {
             DangerButton(stringResourceIso(R.string.delete_confirm, m.name), {
                 vm.delete { name ->
+                    MedicinePhotos.delete(photoContext, m.id)
                     onDone(ListToast(res.getString(R.string.toast_deleted_title, name), res.getString(R.string.toast_deleted_body)), !active)
                 }
             })
@@ -255,6 +257,44 @@ private fun TopBar(title: String, onBack: () -> Unit, onDelete: (() -> Unit)? = 
     }
 }
 
+/**
+ * Optional photo of the box or the pill. Take a photo or choose one; change or remove it. The picture stays on this phone.
+ * The camera app does the shooting, so Pill Box needs no camera permission.
+ */
+@Composable
+private fun PhotoCard(medicineId: Long) {
+    val c = PillBox.colors
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    var version by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(0) }
+    var has by androidx.compose.runtime.remember(version) { androidx.compose.runtime.mutableStateOf(MedicinePhotos.has(context, medicineId)) }
+    var failed by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    val capture = MedicinePhotos.captureFile(context)
+    val captureUri = androidx.core.content.FileProvider.getUriForFile(context, context.packageName + ".files", capture)
+    val saveFrom = { uri: android.net.Uri? ->
+        if (uri != null) scope.launch {
+            val ok = MedicinePhotos.save(context, medicineId, uri)
+            capture.delete()
+            failed = !ok
+            version++
+        }
+    }
+    val takePhoto = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.TakePicture()) { done -> if (done) saveFrom(captureUri) }
+    val pick = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri -> saveFrom(uri) }
+    Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S16), verticalArrangement = Arrangement.spacedBy(Space.S12)) {
+        Text(stringResource(R.string.photo_title), style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.semantics { heading() })
+        if (has) MedicinePhotoLarge(medicineId, height = 180.dp, version = version)
+        else Text(stringResource(R.string.photo_hint), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
+        if (failed) Text(stringResource(R.string.photo_failed), style = MaterialTheme.typography.bodyMedium, color = c.danger)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
+            Box(Modifier.weight(1f)) { OutlineButton(stringResource(R.string.photo_take), { takePhoto.launch(captureUri) }) }
+            Box(Modifier.weight(1f)) { OutlineButton(stringResource(R.string.photo_choose), { pick.launch("image/*") }) }
+        }
+        if (has) com.pillbox.ui.components.LinkButton(stringResource(R.string.photo_remove), { MedicinePhotos.delete(context, medicineId); version++ })
+        Text(stringResource(R.string.photo_note), style = MaterialTheme.typography.bodySmall, color = c.textMuted)
+    }
+}
+
 @Composable
 private fun ActiveDetail(
     state: DetailUiState,
@@ -293,6 +333,7 @@ private fun ActiveDetail(
                     )
                 }
             }
+            PhotoCard(m.id)
             if (paused != null) PausedBanner(paused, fmt)
             ExpiryBanner(m.expiry, java.time.LocalDate.now(), fmt)
             StatTiles(item, info?.daysLeft, info?.level ?: StockLevel.ENOUGH, fmt)

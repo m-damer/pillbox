@@ -1192,4 +1192,11 @@
     <string name="low_stock_share_title">أدوية أوشكت على النفاد</string>
     <string name="tz_notif_title">تغيّرت المنطقة الزمنية</string>
     <string name="tz_notif_text">الآن: %1$s. تبقى تذكيراتك في نفس الساعة هنا، فالثامنة صباحاً تبقى الثامنة صباحاً. عدّل الدواء إن احتجت أوقاتاً مختلفة.</string>
+    <string name="photo_title">الصورة</string>
+    <string name="photo_hint">أضف صورة للعلبة أو الحبة لتتعرّف عليها بسهولة.</string>
+    <string name="photo_take">التقاط صورة</string>
+    <string name="photo_choose">اختيار صورة</string>
+    <string name="photo_remove">إزالة الصورة</string>
+    <string name="photo_failed">تعذّر حفظ الصورة. حاول مرة أخرى.</string>
+    <string name="photo_note">تبقى الصورة على هذا الهاتف ولا تدخل في النسخ الاحتياطية.</string>
 </resources>

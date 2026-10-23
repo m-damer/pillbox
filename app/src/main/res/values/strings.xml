@@ -1120,4 +1120,11 @@
     <string name="low_stock_share_title">Medicines running low</string>
     <string name="tz_notif_title">Your time zone changed</string>
     <string name="tz_notif_text">Now %1$s. Your reminders keep the same clock times here: 8:00 AM stays 8:00 AM. Change a medicine if you need different times.</string>
+    <string name="photo_title">Photo</string>
+    <string name="photo_hint">Add a photo of the box or the pill, so you can recognise it.</string>
+    <string name="photo_take">Take photo</string>
+    <string name="photo_choose">Choose photo</string>
+    <string name="photo_remove">Remove photo</string>
+    <string name="photo_failed">The photo could not be saved. Please try again.</string>
+    <string name="photo_note">The photo stays on this phone. It is not part of backups.</string>
 </resources>

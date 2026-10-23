@@ -34,6 +34,7 @@ import com.pillbox.ui.theme.Space
 import com.pillbox.ui.today.RowButton
 import com.pillbox.ui.today.foodText
 import com.pillbox.ui.unitPlural
+import androidx.compose.ui.unit.dp
 import java.time.LocalDateTime
 
 @Composable
@@ -82,6 +83,7 @@ fun ReminderScreen(
                 Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S12),
                 verticalArrangement = Arrangement.spacedBy(Space.S8),
             ) {
+                com.pillbox.ui.medicines.MedicinePhotoLarge(med.id, height = 120.dp)
                 owners[med.personId]?.let { Text(stringResourceIso(R.string.reminder_for, it), style = MaterialTheme.typography.labelLarge, color = c.accent) }
                 Text(med.name + (com.pillbox.ui.strengthLabel(med.strength)?.let { " $it" } ?: ""), style = MaterialTheme.typography.titleMedium, color = c.text)
                 Text(line, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
