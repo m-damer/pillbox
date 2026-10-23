@@ -280,6 +280,32 @@ class Reminders(
         }
     }
 
+    /**
+     * The phone's time zone changed (a trip). Doses keep their clock time here, so 8:00 AM is still 8:00 AM. This tells the
+     * user so, quietly, and keeps the same words on the Notifications screen. It never changes a time by itself.
+     */
+    @SuppressLint("MissingPermission")
+    fun onTimeZoneChanged() {
+        val zone = java.util.TimeZone.getDefault()
+        val place = zone.getDisplayName(zone.inDaylightTime(java.util.Date()), java.util.TimeZone.LONG, java.util.Locale.getDefault())
+        val title = context.getString(R.string.tz_notif_title)
+        val text = context.getStringIso(R.string.tz_notif_text, place)
+        val now = System.currentTimeMillis()
+        record(Notice("app:tz:${zone.id}:${now / 3_600_000}", NoticeKind.APP, title, text, now))
+        val nm = notificationManager()
+        if (!nm.areNotificationsEnabled()) return
+        val open = PendingIntent.getActivity(
+            context, 33, Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        val n = NotificationCompat.Builder(context, CHANNEL_REFILLS)
+            .setSmallIcon(R.drawable.ic_stat_pill).setContentTitle(title).setContentText(text)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setCategory(NotificationCompat.CATEGORY_STATUS).setPriority(NotificationCompat.PRIORITY_LOW)
+            .setAutoCancel(true).setContentIntent(open).build()
+        runCatching { nm.notify(TZ_ID, n) }
+    }
+
     /** The follow-up alarm fired: if doses are still waiting, remind once more, saying they are still waiting. */
     suspend fun onFollowUp(at: LocalDateTime) {
         val rows = pendingRows(at)
@@ -454,6 +480,7 @@ class Reminders(
         }
         const val CHANNEL_REFILLS = "refills"
         private const val TEST_ID = 999_999_999
+        private const val TZ_ID = 7402
         const val EXTRA_AT = "at"
         const val EXTRA_COUNT = "count"
         const val ACTION_TAKE_ALL = "com.pillbox.action.TAKE_ALL"

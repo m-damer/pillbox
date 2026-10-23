@@ -1190,4 +1190,6 @@
     <string name="share_day_for">لـ%1$s</string>
     <string name="low_stock_share">مشاركة هذه القائمة</string>
     <string name="low_stock_share_title">أدوية أوشكت على النفاد</string>
+    <string name="tz_notif_title">تغيّرت المنطقة الزمنية</string>
+    <string name="tz_notif_text">الآن: %1$s. تبقى تذكيراتك في نفس الساعة هنا، فالثامنة صباحاً تبقى الثامنة صباحاً. عدّل الدواء إن احتجت أوقاتاً مختلفة.</string>
 </resources>

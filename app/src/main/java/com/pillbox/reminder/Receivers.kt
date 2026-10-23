@@ -62,6 +62,7 @@ class ReminderActionReceiver : BroadcastReceiver() {
 class RearmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val reminders = context.reminders()
+        if (intent.action == Intent.ACTION_TIMEZONE_CHANGED) reminders.onTimeZoneChanged()
         async { reminders.rearm() }
     }
 }
