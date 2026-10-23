@@ -271,7 +271,8 @@ private fun PhotoCard(medicineId: Long) {
     var has by androidx.compose.runtime.remember(version) { androidx.compose.runtime.mutableStateOf(MedicinePhotos.has(context, medicineId)) }
     var failed by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     val capture = MedicinePhotos.captureFile(context)
-    val captureUri = androidx.core.content.FileProvider.getUriForFile(context, context.packageName + ".files", capture)
+    // Made only when the camera is opened: it needs the app's FileProvider, which a preview does not have.
+    val captureUri = { androidx.core.content.FileProvider.getUriForFile(context, context.packageName + ".files", capture) }
     val saveFrom = { uri: android.net.Uri? ->
         if (uri != null) scope.launch {
             val ok = MedicinePhotos.save(context, medicineId, uri)
@@ -280,7 +281,7 @@ private fun PhotoCard(medicineId: Long) {
             version++
         }
     }
-    val takePhoto = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.TakePicture()) { done -> if (done) saveFrom(captureUri) }
+    val takePhoto = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.TakePicture()) { done -> if (done) saveFrom(captureUri()) }
     val pick = androidx.activity.compose.rememberLauncherForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri -> saveFrom(uri) }
     Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S16), verticalArrangement = Arrangement.spacedBy(Space.S12)) {
         Text(stringResource(R.string.photo_title), style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.semantics { heading() })
@@ -288,7 +289,7 @@ private fun PhotoCard(medicineId: Long) {
         else Text(stringResource(R.string.photo_hint), style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
         if (failed) Text(stringResource(R.string.photo_failed), style = MaterialTheme.typography.bodyMedium, color = c.danger)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.S8)) {
-            Box(Modifier.weight(1f)) { OutlineButton(stringResource(R.string.photo_take), { takePhoto.launch(captureUri) }) }
+            Box(Modifier.weight(1f)) { OutlineButton(stringResource(R.string.photo_take), { takePhoto.launch(captureUri()) }) }
             Box(Modifier.weight(1f)) { OutlineButton(stringResource(R.string.photo_choose), { pick.launch("image/*") }) }
         }
         if (has) com.pillbox.ui.components.LinkButton(stringResource(R.string.photo_remove), { MedicinePhotos.delete(context, medicineId); version++ })
