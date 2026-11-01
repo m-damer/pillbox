@@ -1,5 +1,6 @@
 package com.pillbox.ui.history
 
+import com.pillbox.domain.AppClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.PillBoxRepository
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.stateIn
 data class HistoryUiState(
     val loaded: Boolean = false,
     val personName: String = "",
-    val today: LocalDate = LocalDate.now(),
+    val today: LocalDate = AppClock.today(),
     val history: History? = null,
 )
 
@@ -27,7 +28,7 @@ data class HistoryUiState(
 class HistoryViewModel(repo: PillBoxRepository, meName: String) : ViewModel() {
     val state: StateFlow<HistoryUiState> = flow { emit(repo.activePerson(meName)) }
         .flatMapLatest { me ->
-            val now = LocalDateTime.now()
+            val now = AppClock.now()
             val start = now.toLocalDate().minusDays((HistoryBuilder.DEFAULT_DAYS - 1).toLong())
             combine(
                 repo.observeMedicines(me.id),
@@ -35,7 +36,7 @@ class HistoryViewModel(repo: PillBoxRepository, meName: String) : ViewModel() {
                 repo.observeHistoryEvents(me.id, start.atStartOfDay(), now.toLocalDate().plusDays(1).atStartOfDay()),
             ) { active, finished, events ->
                 val items = (active + finished).mapNotNull { m -> m.schedule?.let { Triple(m.medicine, it, m.pauses) } }
-                val at = LocalDateTime.now()
+                val at = AppClock.now()
                 HistoryUiState(true, me.name, at.toLocalDate(), HistoryBuilder.build(items, events, at))
             }
         }

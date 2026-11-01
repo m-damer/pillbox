@@ -1,5 +1,6 @@
 package com.pillbox.ui.settings
 
+import com.pillbox.domain.AppClock
 import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -187,7 +188,7 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
 @Composable
 private fun backupValue(b: BackupSettings, fmt: Formatter): String {
     val at = b.lastSuccessAt?.toLocalDate()
-    val today = java.time.LocalDate.now()
+    val today = AppClock.today()
     return when {
         b.failing -> stringResource(R.string.bk_failed_tag)
         at == null -> stringResource(R.string.bk_never)

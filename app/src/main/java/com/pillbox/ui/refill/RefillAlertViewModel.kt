@@ -1,5 +1,6 @@
 package com.pillbox.ui.refill
 
+import com.pillbox.domain.AppClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.PillBoxRepository
@@ -76,6 +77,6 @@ class RefillAlertViewModel(
     }
 
     /** First day the preview alert would ring, for the sentence under the example medicine. */
-    fun firstAlertDate(today: LocalDate = LocalDate.now()): LocalDate? =
+    fun firstAlertDate(today: LocalDate = AppClock.today()): LocalDate? =
         _state.value.preview?.let { com.pillbox.domain.RefillPlanner.firstAlertDate(today, it.daysLeft, _state.value.settings.daysBefore) }
 }

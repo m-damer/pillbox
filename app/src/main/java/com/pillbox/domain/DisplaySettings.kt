@@ -28,6 +28,8 @@ data class DisplaySettings(
     val simpleMode: Boolean = false,
     val simpleOnlyTabs: Boolean = true,
     val simpleLargeText: Boolean = true,
+    /** "Keep my home time": the zone id kept as home while it is on (see [AppClock]); null follows the phone. */
+    val homeZone: String? = null,
 ) {
     /** Text size in use: Simple mode with extra large text overrides the chosen size. */
     val effectiveTextSize: TextSize get() = if (simpleMode && simpleLargeText) TextSize.LARGEST else textSize

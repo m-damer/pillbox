@@ -16,6 +16,10 @@ data class BackupData(
     val schedules: List<Row>,
     val pauses: List<Row>,
     val doseEvents: List<Row>,
+    /** Optional (added after format 1 shipped, so older files simply have none): one row per photo, {medicineId, jpeg as base64}. */
+    val photos: List<Row> = emptyList(),
+    /** Optional: the Notifications screen history, rows as the notice store writes them. */
+    val notices: List<Row> = emptyList(),
 ) {
     val summary get() = BackupSummary(persons.size, medicines.size, doseEvents.size)
 }
@@ -44,6 +48,8 @@ object BackupCodec {
             "persons" to data.persons, "medicines" to data.medicines, "schedules" to data.schedules,
             "pauses" to data.pauses, "doseEvents" to data.doseEvents,
         )
+        if (data.photos.isNotEmpty()) root["photos"] = data.photos
+        if (data.notices.isNotEmpty()) root["notices"] = data.notices
         return MiniJson.write(root)
     }
 
@@ -61,10 +67,21 @@ object BackupCodec {
             rows("persons") ?: return BackupResult.Invalid, rows("medicines") ?: return BackupResult.Invalid,
             rows("schedules") ?: return BackupResult.Invalid, rows("pauses") ?: return BackupResult.Invalid,
             rows("doseEvents") ?: return BackupResult.Invalid,
-        )
+            // Photos and notices are extras: a damaged one is left out, it never makes the whole backup unusable.
+            photos = rows("photos").orEmpty(), notices = rows("notices").orEmpty(),
+        ).let { d -> d.copy(photos = usablePhotos(d)) }
         if (!consistent(data)) return BackupResult.Invalid
         val savedAt = (root["savedAt"] as? String)?.let { runCatching { LocalDateTime.parse(it) }.getOrNull() }
         return BackupResult.Ok(data, savedAt)
+    }
+
+    /** Photos of medicines that exist, with picture data that is real base64. Anything else is dropped. */
+    internal fun usablePhotos(d: BackupData): List<Row> {
+        val meds = d.medicines.mapNotNull { (it["id"] as? Number)?.toLong() }.toSet()
+        return d.photos.filter { p ->
+            (p["medicineId"] as? Number)?.toLong() in meds &&
+                (p["jpeg"] as? String)?.let { runCatching { java.util.Base64.getDecoder().decode(it).isNotEmpty() }.getOrDefault(false) } == true
+        }
     }
 
     /** Every row points at a row that exists, and ids are unique, so the restore cannot half-fail. */

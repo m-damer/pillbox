@@ -1,5 +1,6 @@
 package com.pillbox.ui.today
 
+import com.pillbox.domain.AppClock
 import com.pillbox.ui.components.stringResourceIso
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -134,7 +135,7 @@ private fun SkipSheet(sheet: TodaySheet.Skip, vm: TodayViewModel) {
 @Composable
 internal fun LogTakenSheet(
     sheet: TodaySheet.LogTaken, fmt: Formatter, onSave: (java.time.LocalTime) -> Unit, onCancel: () -> Unit,
-    now: LocalDateTime = LocalDateTime.now(),
+    now: LocalDateTime = AppClock.now(),
 ) {
     val c = PillBox.colors
     val row = sheet.row
@@ -183,7 +184,7 @@ private fun durationText(minutes: Long, fmt: Formatter): String =
 
 @Composable
 private fun TooSoonSheet(sheet: TodaySheet.TooSoon, vm: TodayViewModel, fmt: Formatter) {
-    val ago = Duration.between(sheet.lastTaken, LocalDateTime.now()).toMinutes()
+    val ago = Duration.between(sheet.lastTaken, AppClock.now()).toMinutes()
     SheetTitle(
         stringResource(R.string.too_soon_title),
         stringResource(

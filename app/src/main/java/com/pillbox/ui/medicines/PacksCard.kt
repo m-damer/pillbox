@@ -1,5 +1,6 @@
 package com.pillbox.ui.medicines
 
+import com.pillbox.domain.AppClock
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -52,7 +53,7 @@ fun PacksCard(
     onUse: (Int) -> Unit,
     onExpiry: (Int, YearMonth?) -> Unit,
     modifier: Modifier = Modifier,
-    today: LocalDate = LocalDate.now(),
+    today: LocalDate = AppClock.today(),
 ) {
     if (medicine.packs.isEmpty()) return
     val c = PillBox.colors

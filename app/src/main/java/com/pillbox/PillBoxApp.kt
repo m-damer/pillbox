@@ -1,6 +1,7 @@
 package com.pillbox
 
 import android.app.Application
+import com.pillbox.domain.AppClock
 import com.pillbox.backup.BackupManager
 import com.pillbox.data.BackupSettingsStore
 import com.pillbox.data.DisplaySettingsStore
@@ -57,7 +58,16 @@ class PillBoxApp : Application() {
         CrashReporter.install(this)
         // A small read, done once before any screen exists, so the first frame already has the right language and digits.
         DisplayState.current = runBlocking { displaySettings.flow.first() }
-        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch { displaySettings.flow.collect { DisplayState.current = it } }
+        AppClock.home = AppClock.parse(DisplayState.current.homeZone)
+        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+            displaySettings.flow.collect {
+                DisplayState.current = it
+                val before = AppClock.home
+                AppClock.home = AppClock.parse(it.homeZone)
+                // Turning home time on or off moves every clock time to another moment, so the next alarm is set again.
+                if (before != AppClock.home) runCatching { reminders.rearm() }
+            }
+        }
         ReminderState.current = runBlocking { reminderSettings.flow.first() }
         reminders.createChannels()
         // The weekly job survives restarts; this only makes sure it exists (KEEP leaves a running one alone).

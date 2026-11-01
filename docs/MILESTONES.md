@@ -28,3 +28,4 @@
 - [ ] M32 Arabic wording and counting: units follow Arabic counting (قرص واحد، قرصان، ٣ أقراص، ١١ قرص، نصف قرص، قرص ونصف), fixed numbers follow the digits setting, grammar and word-choice fixes
 - [ ] M33 English wording: "Tap" instead of "Press", "recognize", 12-hour/24-hour, clearer meal-time and daily-limit text, no 12-hour example in the time zone notice, no promise of update notices, "Resume in Medicines"; Arabic matches (time zone notice, expiry hint, update check).
 - [ ] M34 "I took it" for a late dose today asks Move next doses or Keep my times when a later dose has not come yet (same sheet and Late setting as taking it late now).
+- [ ] M36 "Keep my home time" travel mode (one app clock, switch on Language and numbers); photos and notification history now travel inside the backup file (optional keys, format stays 1, damaged extras are dropped, never fatal). Tests: AppClockTest, BackupTest.

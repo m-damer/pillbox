@@ -6,6 +6,7 @@ import com.pillbox.data.DisplaySettingsStore
 import com.pillbox.data.PillBoxRepository
 import com.pillbox.data.RefillSettingsStore
 import com.pillbox.data.ReminderSettingsStore
+import com.pillbox.domain.AppClock
 import com.pillbox.domain.LateSetting
 import com.pillbox.domain.LateThreshold
 import com.pillbox.domain.MealTimes
@@ -33,7 +34,7 @@ data class SettingsUiState(
 )
 
 /** What the Language and numbers screen saves in one go. */
-data class LanguageChoice(val language: String, val arabicDigits: Boolean, val timeFormat: TimeFormat, val firstDay: DayOfWeek)
+data class LanguageChoice(val language: String, val arabicDigits: Boolean, val timeFormat: TimeFormat, val firstDay: DayOfWeek, val keepHome: Boolean = false)
 
 class SettingsViewModel(
     private val display: DisplaySettingsStore,
@@ -82,9 +83,11 @@ class SettingsViewModel(
                     arabicDigits = if (choice.arabicDigits == (choice.language == "ar")) null else choice.arabicDigits,
                     timeFormat = choice.timeFormat,
                     firstDay = choice.firstDay,
+                    homeZone = if (choice.keepHome) AppClock.homeToKeep(it.homeZone) else null,
                 )
             }
             DisplayState.current = display.current()
+            AppClock.home = AppClock.parse(DisplayState.current.homeZone)
             onSaved()
         }
     }

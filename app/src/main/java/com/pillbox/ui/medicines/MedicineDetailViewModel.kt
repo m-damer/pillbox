@@ -1,5 +1,6 @@
 package com.pillbox.ui.medicines
 
+import com.pillbox.domain.AppClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.MedicineWithSchedule
@@ -57,7 +58,7 @@ class MedicineDetailViewModel(
     private val dialogs = MutableStateFlow(Dialogs())
 
     val state: StateFlow<DetailUiState> = combine(repo.observeMedicine(id), remindDays) { i, r -> i to r }.flatMapLatest { (item, remind) ->
-        val today = LocalDate.now()
+        val today = AppClock.today()
         val active = item?.medicine?.status == MedicineStatus.ACTIVE
         val from: LocalDateTime
         val to: LocalDateTime
@@ -75,7 +76,7 @@ class MedicineDetailViewModel(
                 DetailUiState(
                     true, item, info, WeekSummary.build(schedule, item.pauses, events, today),
                     showStop = d.stop, showStock = d.stock, showPause = d.pause, showDelete = d.delete,
-                    pause = Pause.activeAt(item.pauses, LocalDateTime.now()),
+                    pause = Pause.activeAt(item.pauses, AppClock.now()),
                 )
             } else {
                 val taken = events.count { it.status == DoseStatus.TAKEN }
@@ -99,7 +100,7 @@ class MedicineDetailViewModel(
         val m = state.value.item?.medicine ?: return
         dialogs.update { it.copy(stop = false) }
         viewModelScope.launch {
-            repo.stop(m.id, LocalDate.now())
+            repo.stop(m.id, AppClock.today())
             onChanged()
             done(m.name)
         }
@@ -110,7 +111,7 @@ class MedicineDetailViewModel(
         val m = state.value.item?.medicine ?: return
         dialogs.update { it.copy(pause = false) }
         viewModelScope.launch {
-            val now = LocalDateTime.now()
+            val now = AppClock.now()
             val pause = if (days == null) Pause.untilResumed(now) else Pause.forDays(now, days)
             repo.pause(m.id, pause)
             onChanged()
@@ -121,7 +122,7 @@ class MedicineDetailViewModel(
     fun resume(done: (String) -> Unit) {
         val m = state.value.item?.medicine ?: return
         viewModelScope.launch {
-            repo.resume(m.id, LocalDateTime.now())
+            repo.resume(m.id, AppClock.now())
             onChanged()
             done(m.name)
         }
@@ -151,7 +152,7 @@ class MedicineDetailViewModel(
     fun restart(done: (String) -> Unit) {
         val m = state.value.item?.medicine ?: return
         viewModelScope.launch {
-            repo.restart(m.id, LocalDateTime.now())
+            repo.restart(m.id, AppClock.now())
             onChanged()
             done(m.name)
         }

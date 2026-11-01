@@ -1,5 +1,6 @@
 package com.pillbox.ui.medicines
 
+import com.pillbox.domain.AppClock
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -165,7 +166,7 @@ private fun YearButton(label: String, description: String, enabled: Boolean, onC
 fun OptionalExpiryField(expiry: YearMonth?, fmt: Formatter, note: String?, onChange: (YearMonth?) -> Unit) {
     val c = PillBox.colors
     var picking by remember { mutableStateOf(false) }
-    val today = remember { LocalDate.now() }
+    val today = remember { AppClock.today() }
     Column(verticalArrangement = Arrangement.spacedBy(Space.S8)) {
         Text(stringResource(R.string.expiry_label), style = MaterialTheme.typography.labelLarge, color = c.text)
         if (expiry == null) {

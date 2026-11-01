@@ -1,5 +1,6 @@
 package com.pillbox
 
+import com.pillbox.domain.AppClock
 import com.pillbox.ui.components.getStringIso
 import android.content.Context
 import android.os.Bundle
@@ -214,7 +215,7 @@ class MainActivity : PillBoxActivity() {
                 LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
                     permissions = ReminderPermissions.state(context)
                     scope.launch {
-                        repo.finishEndedCourses(java.time.LocalDate.now())
+                        repo.finishEndedCourses(AppClock.today())
                         reminders.rearm()
                     }
                 }
