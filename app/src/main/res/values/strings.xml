@@ -349,7 +349,7 @@
     <string name="paused_tap">Tap to resume</string>
     <string name="meds_sub_paused">Me · %1$s active · %2$s paused</string>
     <string name="today_paused_banner">All your medicines are paused. No reminders will ring.</string>
-    <string name="today_paused_link">Resume in Meds</string>
+    <string name="today_paused_link">Resume in Medicines</string>
     <string name="today_paused_title">All medicines paused</string>
     <string name="today_paused_sub">Paused until %1$s. Doses will start again at %2$s</string>
     <string name="today_paused_sub_open">Paused until you resume.</string>
@@ -569,8 +569,8 @@
     <string name="lang_numbers">Numbers</string>
     <string name="lang_time">Time format</string>
     <string name="lang_time_phone">Phone</string>
-    <string name="lang_time_12">12 hour</string>
-    <string name="lang_time_24">24 hour</string>
+    <string name="lang_time_12">12-hour</string>
+    <string name="lang_time_24">24-hour</string>
     <string name="lang_week">Week starts on</string>
     <string name="lang_note">Arabic flips the whole app to right-to-left.</string>
     <string name="acc_title">Accessibility</string>
@@ -625,7 +625,7 @@
     <string name="quiet_note_silent">Dose reminders will be silent during quiet hours. They still show on the screen.</string>
     <string name="meals_title">Meal times</string>
     <string name="meals_sub">Used for before, with and after meal reminders</string>
-    <string name="meals_note">Add medicine starts the dose times at these meals. After a meal is 30 minutes later, before a meal 30 minutes earlier.</string>
+    <string name="meals_note">Add medicine starts the dose times at these meals. Doses after a meal start 30 minutes later. Doses before a meal start 30 minutes earlier.</string>
     <string name="meal_breakfast">Breakfast</string>
     <string name="meal_lunch">Lunch</string>
     <string name="meal_dinner">Dinner</string>
@@ -839,7 +839,7 @@
     <string name="ab_updates">Check for updates</string>
     <string name="ab_disclaimer">This app helps you remember your medicine. It does not replace advice from your doctor or pharmacist.</string>
     <string name="ab_thanks_title">Thank you</string>
-    <string name="ab_thanks_body">Your email app is open. Press Send there.</string>
+    <string name="ab_thanks_body">Your email app is open. Tap Send there.</string>
     <string name="legal_updated">Last updated 21 Oct 2026</string>
     <string name="pp_title">Privacy policy</string>
     <string name="pp_1_title">Your data stays on your phone</string>
@@ -854,17 +854,17 @@
     <string name="upd_title">Updates</string>
     <string name="upd_checking">Looking for a new version…</string>
     <string name="upd_uptodate_title">You have the latest version</string>
-    <string name="upd_uptodate_body">Nothing to download right now. We will tell you when a new version is ready.</string>
+    <string name="upd_uptodate_body">Nothing to download right now.</string>
     <string name="upd_found_title">Version %1$s is available</string>
     <string name="upd_whats_new">What\'s new</string>
     <string name="upd_download">Download and install</string>
     <string name="upd_downloading">Downloading the new version…</string>
     <string name="upd_percent">%1$s%%</string>
     <string name="upd_allow_title">Allow Pill Box to install updates</string>
-    <string name="upd_allow_body">Android asks you to allow this once. Press the button, turn on “Allow from this source”, then come back. Your medicines and history are not touched.</string>
+    <string name="upd_allow_body">Android asks you to allow this once. Tap the button, turn on “Allow from this source”, then come back. Your medicines and history are not touched.</string>
     <string name="upd_allow_button">Open Android settings</string>
     <string name="upd_ready_title">Ready to install</string>
-    <string name="upd_ready_body">Android will ask you to confirm. Press Install there. If nothing appears, press the button below.</string>
+    <string name="upd_ready_body">Android will ask you to confirm. Tap Install there. If nothing appears, tap the button below.</string>
     <string name="upd_install">Install now</string>
     <string name="upd_failed_title">Could not get the update</string>
     <string name="upd_failed_body">Check your internet connection and try again. Your medicines and reminders keep working.</string>
@@ -903,13 +903,13 @@
     <string name="fb_only_reply">Used only to reply to you.</string>
     <string name="fb_info">Include app info</string>
     <string name="fb_info_sub">Version and phone model. Never your medicines.</string>
-    <string name="fb_note">Pill Box works offline, so it cannot send by itself. The button opens your email app with your message ready. Press Send there. The developer receives your message, your email, and your phone number if you typed it.</string>
+    <string name="fb_note">Pill Box works offline, so it cannot send by itself. The button opens your email app with your message ready. Tap Send there. The developer receives your message, your email, and your phone number if you typed it.</string>
     <string name="fb_open_mail">Open my email app</string>
     <string name="fb_no_mail_title">No email app found</string>
     <string name="fb_no_mail_body">Install an email app, or write to %1$s.</string>
     <string name="rt_title">Rate the app</string>
     <string name="rt_question">Is the app helping you?</string>
-    <string name="rt_body">Tap the stars. Pill Box works offline, so your email app opens with your rating ready. Press Send there.</string>
+    <string name="rt_body">Tap the stars. Pill Box works offline, so your email app opens with your rating ready. Tap Send there.</string>
     <string name="rt_tap">Tap a star</string>
     <string name="rt_1">Bad</string>
     <string name="rt_2">Not good</string>
@@ -923,7 +923,7 @@
     <string name="rt_share_text">Pill Box is a free medicine reminder that works without internet. No ads, no account.</string>
     <string name="rt_not_now">Not now</string>
     <string name="cr_title">Pill Box closed unexpectedly</string>
-    <string name="cr_body">Do you want to send a report to the developer so he can fix it? Pill Box has no internet, so your email app opens with the report ready. Press Send there. The report has only the error text, app version and phone model, never your medicines.</string>
+    <string name="cr_body">Do you want to send a report to the developer so it can be fixed? Pill Box works offline, so your email app opens with the report ready. Tap Send there. The report has only the error text, app version and phone model, never your medicines.</string>
     <string name="cr_open_mail">Open email app</string>
     <string name="cr_skip">Do not send</string>
     <!-- M11 Widget -->
@@ -986,7 +986,7 @@
     <string name="prn_count_a11y">Taken today: %1$s of %2$s allowed.</string>
     <string name="prn_count_a11y_nomax">Taken today: %1$s.</string>
     <string name="prn_next_allowed">Next dose is allowed from %1$s (%2$s after the last one).</string>
-    <string name="prn_limit_body">You reached the most for today (%1$s). Next dose is allowed %2$s. Taking more can be dangerous. If you still have pain, call your doctor or pharmacist.</string>
+    <string name="prn_limit_body">You have reached today\'s limit (%1$s). Next dose is allowed %2$s. Taking more can be dangerous. If you still have pain, call your doctor or pharmacist.</string>
     <string name="prn_tomorrow">tomorrow</string>
     <string name="prn_tomorrow_at">tomorrow at %1$s</string>
     <string name="prn_today">Today</string>
@@ -1029,7 +1029,7 @@
     <string name="expiry_add">Add expiry date</string>
     <string name="expiry_change">Change</string>
     <string name="expiry_remove">Remove</string>
-    <string name="expiry_hint">Copy the month and year printed on the box. You will be told before it expires.</string>
+    <string name="expiry_hint">Type the month and year printed on the box. You will be told before it expires.</string>
     <string name="expiry_dialog_title">Expiry date</string>
     <string name="expiry_year_less">Previous year</string>
     <string name="expiry_year_more">Next year</string>
@@ -1119,9 +1119,9 @@
     <string name="low_stock_share">Share this list</string>
     <string name="low_stock_share_title">Medicines running low</string>
     <string name="tz_notif_title">Your time zone changed</string>
-    <string name="tz_notif_text">Now %1$s. Your reminders keep the same clock times here: 8:00 AM stays 8:00 AM. Change a medicine if you need different times.</string>
+    <string name="tz_notif_text">Now %1$s. Your reminders keep the same clock times here. Change a medicine if you need different times.</string>
     <string name="photo_title">Photo</string>
-    <string name="photo_hint">Add a photo of the box or the pill, so you can recognise it.</string>
+    <string name="photo_hint">Add a photo of the box or the pill, so you can recognize it.</string>
     <string name="photo_take">Take photo</string>
     <string name="photo_choose">Choose photo</string>
     <string name="photo_remove">Remove photo</string>

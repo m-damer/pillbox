@@ -945,7 +945,7 @@
     <string name="upd_title">التحديثات</string>
     <string name="upd_checking">جارٍ البحث عن إصدار جديد…</string>
     <string name="upd_uptodate_title">لديك أحدث إصدار</string>
-    <string name="upd_uptodate_body">لا شيء لتنزيله الآن. سنخبرك عندما يصبح إصدار جديد جاهزاً.</string>
+    <string name="upd_uptodate_body">لا شيء لتنزيله الآن.</string>
     <string name="upd_found_title">الإصدار %1$s متاح</string>
     <string name="upd_whats_new">ما الجديد</string>
     <string name="upd_download">تنزيل وتثبيت</string>
@@ -1126,7 +1126,7 @@
     <string name="expiry_add">أضف تاريخ الانتهاء</string>
     <string name="expiry_change">تغيير</string>
     <string name="expiry_remove">حذف</string>
-    <string name="expiry_hint">انسخ الشهر والسنة المطبوعين على العلبة. وسننبّهك قبل أن تنتهي صلاحيته.</string>
+    <string name="expiry_hint">اكتب الشهر والسنة المطبوعين على العلبة. وسننبّهك قبل أن تنتهي صلاحيته.</string>
     <string name="expiry_dialog_title">تاريخ الانتهاء</string>
     <string name="expiry_year_less">السنة السابقة</string>
     <string name="expiry_year_more">السنة التالية</string>
@@ -1239,7 +1239,7 @@
     <string name="low_stock_share">مشاركة هذه القائمة</string>
     <string name="low_stock_share_title">أدوية أوشكت على النفاد</string>
     <string name="tz_notif_title">تغيّرت المنطقة الزمنية</string>
-    <string name="tz_notif_text">الآن: %1$s. تبقى تذكيراتك في نفس الساعة هنا، فالثامنة صباحاً تبقى الثامنة صباحاً. عدّل الدواء إن احتجت أوقاتاً مختلفة.</string>
+    <string name="tz_notif_text">الآن: %1$s. تبقى تذكيراتك في نفس الساعة هنا. عدّل الدواء إن احتجت أوقاتاً مختلفة.</string>
     <string name="photo_title">الصورة</string>
     <string name="photo_hint">أضف صورة للعلبة أو الحبة لتتعرّف عليها بسهولة.</string>
     <string name="photo_take">التقاط صورة</string>
