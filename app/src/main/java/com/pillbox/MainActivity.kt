@@ -215,7 +215,7 @@ class MainActivity : PillBoxActivity() {
                 LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
                     permissions = ReminderPermissions.state(context)
                     scope.launch {
-                        repo.finishEndedCourses(java.time.AppClock.today())
+                        repo.finishEndedCourses(AppClock.today())
                         reminders.rearm()
                     }
                 }

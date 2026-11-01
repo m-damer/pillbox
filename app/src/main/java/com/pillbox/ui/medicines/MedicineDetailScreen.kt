@@ -168,7 +168,7 @@ fun MedicineDetailScreen(
     }
     if (state.showPause) {
         PauseSheet(
-            medicineName = m.name, today = java.time.AppClock.today(), fmt = fmt,
+            medicineName = m.name, today = AppClock.today(), fmt = fmt,
             onPause = { days ->
                 vm.pause(days) { name, until ->
                     val body = if (until == null) res.getString(R.string.toast_paused_body_open)
@@ -344,7 +344,7 @@ private fun ActiveDetail(
             }
             PhotoCard(m.id)
             if (paused != null) PausedBanner(paused, fmt)
-            ExpiryBanner(m.expiry, java.time.AppClock.today(), fmt)
+            ExpiryBanner(m.expiry, AppClock.today(), fmt)
             StatTiles(item, info?.daysLeft, info?.level ?: StockLevel.ENOUGH, fmt)
             PacksCard(m, schedule, fmt, onUsePack, onPackExpiry)
             // Paused: the cards stay readable but fade, so it is clear nothing will ring.
@@ -695,7 +695,7 @@ private fun FinishedDetail(
                     style = MaterialTheme.typography.bodyMedium, color = c.success, modifier = Modifier.weight(1f),
                 )
             }
-            if (m.stock > 0.0) ExpiryBanner(m.expiry, java.time.AppClock.today(), fmt)
+            if (m.stock > 0.0) ExpiryBanner(m.expiry, AppClock.today(), fmt)
             Column(Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(horizontal = Space.S16)) {
                 FactRow(stringResource(R.string.fin_dose), doseText(m, fmt))
                 HorizontalDivider(color = c.divider)

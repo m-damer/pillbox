@@ -188,7 +188,7 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
 @Composable
 private fun backupValue(b: BackupSettings, fmt: Formatter): String {
     val at = b.lastSuccessAt?.toLocalDate()
-    val today = java.time.AppClock.today()
+    val today = AppClock.today()
     return when {
         b.failing -> stringResource(R.string.bk_failed_tag)
         at == null -> stringResource(R.string.bk_never)

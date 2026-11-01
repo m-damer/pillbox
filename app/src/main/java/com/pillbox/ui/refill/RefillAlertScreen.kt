@@ -177,7 +177,7 @@ fun RefillAlertContent(
                         val daysText = pluralStringResource(R.plurals.n_days, s.daysBefore, fmt.number(s.daysBefore))
                         val dateText = date?.let { shortDate(it, fmt) } ?: ""
                         Text(
-                            if (date == java.time.AppClock.today()) stringResourceIso(R.string.refill_preview_today, daysText, dateText)
+                            if (date == AppClock.today()) stringResourceIso(R.string.refill_preview_today, daysText, dateText)
                             else stringResourceIso(R.string.refill_preview_later, daysText, dateText),
                             style = MaterialTheme.typography.bodyMedium, color = c.textMuted,
                         )

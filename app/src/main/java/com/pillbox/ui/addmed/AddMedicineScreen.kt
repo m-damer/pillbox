@@ -371,7 +371,7 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
 private fun ExpiryField(expiry: java.time.YearMonth?, fmt: Formatter, onChange: (java.time.YearMonth?) -> Unit) {
     val c = PillBox.colors
     var picking by remember { mutableStateOf(false) }
-    val today = remember { java.time.AppClock.today() }
+    val today = remember { AppClock.today() }
     FieldLabel(stringResource(R.string.expiry_label))
     if (expiry == null) {
         com.pillbox.ui.components.OutlineButton(stringResource(R.string.expiry_add), { picking = true })

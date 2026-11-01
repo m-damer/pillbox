@@ -189,7 +189,7 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
     }
     val right = if (end != null && info.level != StockLevel.OUT) stringResourceIso(R.string.ends_on, shortDate(end, fmt)) else stockAmountText(m, fmt)
     val fraction = com.pillbox.domain.StockMath.barFraction(m)
-    val expiryInfo = com.pillbox.domain.ExpiryRules.info(m.expiry, java.time.AppClock.today())
+    val expiryInfo = com.pillbox.domain.ExpiryRules.info(m.expiry, AppClock.today())
     val expiryText = expiryLineText(m.expiry, expiryInfo, fmt)
     val sentence = listOfNotNull(m.name, sub, left, right, expiryText).joinToString(", ")
 
@@ -219,7 +219,7 @@ private fun ActiveCard(row: MedRow, fmt: Formatter, onClick: () -> Unit) {
             Spacer4()
             Text(right, style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.End)
         }
-        ExpiryLine(m.expiry, java.time.AppClock.today(), fmt)
+        ExpiryLine(m.expiry, AppClock.today(), fmt)
     }
 }
 
@@ -288,7 +288,7 @@ private fun FinishedCard(item: MedicineWithSchedule, fmt: Formatter, onClick: ()
         if (course) add(lengthText(item.schedule, fmt))
     }.joinToString(sep)
     val tag = stringResource(if (course) R.string.tag_course_done else R.string.tag_stopped)
-    val expiryText = if (m.stock > 0.0) expiryLineText(m.expiry, com.pillbox.domain.ExpiryRules.info(m.expiry, java.time.AppClock.today()), fmt) else null
+    val expiryText = if (m.stock > 0.0) expiryLineText(m.expiry, com.pillbox.domain.ExpiryRules.info(m.expiry, AppClock.today()), fmt) else null
     val description = listOfNotNull(title, sub, tag, expiryText).joinToString(", ")
     Row(
         Modifier
@@ -307,7 +307,7 @@ private fun FinishedCard(item: MedicineWithSchedule, fmt: Formatter, onClick: ()
             Text(title, style = MaterialTheme.typography.titleMedium, color = c.text)
             if (sub.isNotEmpty()) Text(sub, style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
             // A stopped box can still have tablets left: its date matters until they are gone.
-            if (m.stock > 0.0) ExpiryLine(m.expiry, java.time.AppClock.today(), fmt)
+            if (m.stock > 0.0) ExpiryLine(m.expiry, AppClock.today(), fmt)
         }
         Text(
             tag, style = MaterialTheme.typography.labelMedium, color = c.textMuted,
