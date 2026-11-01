@@ -64,6 +64,8 @@ sealed interface TodaySheet {
      */
     data class Late(
         val rows: List<DoseRow>, val early: Set<Long>, val askRows: List<DoseRow>, val takenAt: LocalDateTime,
+        /** True when the dose was logged after the fact ("I took it"), so it is saved as logged later. */
+        val loggedLater: Boolean = false,
         val minutesLate: Int, val duePlanned: LocalDateTime,
         /** Every few hours: the gap in hours. Null for fixed times. */
         val gapHours: Int?,
@@ -235,15 +237,14 @@ class TodayViewModel(
     }
 
     /** Taken late: when a late dose needs an answer, ask before committing. */
-    private fun askLateThenCommit(rows: List<DoseRow>, early: Set<Long>) {
+    private fun askLateThenCommit(rows: List<DoseRow>, early: Set<Long>, takenAt: LocalDateTime = AppClock.now(), loggedLater: Boolean = false) {
         val settings = ReminderState.current
-        val takenAt = AppClock.now()
         val ask = rows.filter {
             val late = LateRules.lateMinutes(it.planned, takenAt, settings.lateThreshold)
             late != null && LateRules.lateAction(it.schedule.frequency, settings.late) == LateAction.ShowSheet
         }
         val first = ask.firstOrNull()
-        if (first == null) { commitTake(rows, early, null, takenAt); return }
+        if (first == null) { commitTake(rows, early, null, takenAt, loggedLater); return }
         val f = first.schedule.frequency
         val entries = LateRules.moveEntries(first.schedule, first.planned, takenAt)
         val moveTimes = if (f is Frequency.EveryNHours) entries.values.filterNotNull().sorted().take(2)
@@ -251,7 +252,7 @@ class TodayViewModel(
         val today = ScheduleEngine.plannedDoses(first.schedule, first.planned.toLocalDate())
         val next = (today + ScheduleEngine.plannedDoses(first.schedule, first.planned.toLocalDate().plusDays(1))).firstOrNull { it.isAfter(first.planned) }
         sheet.value = TodaySheet.Late(
-            rows = rows, early = early, askRows = ask, takenAt = takenAt,
+            rows = rows, early = early, askRows = ask, takenAt = takenAt, loggedLater = loggedLater,
             minutesLate = Duration.between(first.planned, takenAt).toMinutes().toInt(), duePlanned = first.planned,
             gapHours = (f as? Frequency.EveryNHours)?.hours, moveTimes = moveTimes,
             delayMinutes = Duration.between(first.planned, takenAt).toMinutes().toInt(),
@@ -264,7 +265,7 @@ class TodayViewModel(
         val s = sheet.value as? TodaySheet.Late ?: return
         sheet.value = null
         if (always) viewModelScope.launch { saveLateSetting(if (choice == LateChoice.MOVE) LateSetting.MOVE_NEXT else LateSetting.KEEP) }
-        commitTake(s.rows, s.early, choice, s.takenAt)
+        commitTake(s.rows, s.early, choice, s.takenAt, s.loggedLater)
     }
 
     /** "Update my stock" on the out-of-stock sheet. */
@@ -291,7 +292,7 @@ class TodayViewModel(
         askLateThenCommit(s.rows, s.earlyMedicineIds)
     }
 
-    private fun commitTake(rows: List<DoseRow>, early: Set<Long>, asked: LateChoice?, takenAt: LocalDateTime) {
+    private fun commitTake(rows: List<DoseRow>, early: Set<Long>, asked: LateChoice?, takenAt: LocalDateTime, loggedLater: Boolean = false) {
         viewModelScope.launch {
             val settings = ReminderState.current
             var moved = false
@@ -299,7 +300,7 @@ class TodayViewModel(
                 val late = LateRules.lateMinutes(r.planned, takenAt, settings.lateThreshold)
                 val id = repo.takeDose(
                     r.medicine,
-                    DoseEvent(planned = r.planned, taken = takenAt, status = DoseStatus.TAKEN, early = r.medicine.id in early, lateMinutes = late),
+                    DoseEvent(planned = r.planned, taken = takenAt, status = DoseStatus.TAKEN, early = r.medicine.id in early, lateMinutes = late, loggedLater = loggedLater),
                 )
                 var before: Map<LocalDateTime, LocalDateTime?>? = null
                 if (LateRules.effectiveChoice(r.schedule.frequency, settings.late, late, asked) == LateChoice.MOVE) {
@@ -332,6 +333,10 @@ class TodayViewModel(
             if (s.edit && existing != null) {
                 repo.updateDose(existing.copy(taken = takenAt, lateMinutes = late, early = false))
                 toast.value = TodayToast(++toastCounter, ToastKind.Taken(listOf(r.medicine.name)), emptyList())
+            } else if (late != null && LateLog.movesApply(r.planned, ScheduleEngine.plannedDoses(r.schedule, r.planned.toLocalDate()), now)) {
+                // A dose logged today with later doses still to come: the same Move / Keep question as taking it late now.
+                askLateThenCommit(listOf(r), emptySet(), takenAt, loggedLater = true)
+                return@launch
             } else {
                 val id = repo.takeDose(r.medicine, DoseEvent(planned = r.planned, taken = takenAt, status = DoseStatus.TAKEN, lateMinutes = late, loggedLater = true))
                 toast.value = TodayToast(++toastCounter, ToastKind.Taken(listOf(r.medicine.name)), listOf(Undo(r.medicine, id, wasTake = true, restore = minOf(r.medicine.doseAmount, r.medicine.stock))))
