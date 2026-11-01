@@ -121,9 +121,12 @@ fun MedicinesContent(
                     stringResource(R.string.medicines_title), style = MaterialTheme.typography.titleLarge, color = c.text,
                     modifier = Modifier.semantics { heading() },
                 )
+                // Whose medicines these are follows the person chosen in the switcher: "My medicines" or "<name>'s medicines".
+                val owner = people?.active?.takeIf { !it.isMe }
+                val whose = if (owner == null) stringResource(R.string.meds_of_me) else stringResourceIso(R.string.meds_of_person, owner.name)
                 Text(
-                    if (state.pausedCount > 0) stringResourceIso(R.string.meds_sub_paused, fmt.number(state.active.size - state.pausedCount), fmt.number(state.pausedCount))
-                    else stringResourceIso(R.string.meds_sub, fmt.number(state.active.size)),
+                    if (state.pausedCount > 0) stringResourceIso(R.string.meds_sub_paused, whose, fmt.number(state.active.size - state.pausedCount), fmt.number(state.pausedCount))
+                    else stringResourceIso(R.string.meds_sub, whose, fmt.number(state.active.size)),
                     style = MaterialTheme.typography.bodyMedium, color = c.textMuted)
             }
             com.pillbox.ui.people.PeopleBarSwitcher(people)
