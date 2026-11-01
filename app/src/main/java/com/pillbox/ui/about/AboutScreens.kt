@@ -70,6 +70,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import kotlinx.coroutines.launch
 import com.pillbox.domain.Contact
 import com.pillbox.domain.EmailCheck
@@ -441,7 +442,7 @@ fun RateContent(stars: Int, onStars: (Int) -> Unit, onBack: () -> Unit, onWriteF
             Text(stringResource(R.string.rt_body), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.S8))
             Row(Modifier.padding(top = Space.S16).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(Space.S4)) {
                 for (i in 1..5) {
-                    val label = stringResourceIso(R.string.rt_star_a11y, i, stringResource(starLabels[i - 1]))
+                    val label = digitsStringResource(R.string.rt_star_a11y, i, stringResource(starLabels[i - 1]))
                     Box(
                         Modifier.size(Dimens.TouchTargetMin + Space.S4).selectable(selected = stars == i, role = Role.RadioButton, onClick = { onStars(i) }).semantics { contentDescription = label },
                         contentAlignment = Alignment.Center,

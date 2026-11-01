@@ -42,6 +42,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import com.pillbox.domain.LateChoice
 import com.pillbox.ui.Formatter
 import com.pillbox.ui.components.LinkButton
@@ -286,8 +287,8 @@ private fun LateOption(title: String, body: String, selected: Boolean, onClick: 
 
 @Composable
 private fun OutOfStockSheet(sheet: TodaySheet.OutOfStock, vm: TodayViewModel, fmt: Formatter) {
-    val unit = pluralStringResource(unitPlural(sheet.medicine.unit), quantityFor(2.0))
-    SheetTitle(stringResourceIso(R.string.out_title, unit), stringResourceIso(R.string.out_body, sheet.medicine.name))
+    val unit = com.pillbox.ui.pluralUnitWord(sheet.medicine.unit)
+    SheetTitle(stringResourceIso(R.string.out_title, unit), digitsStringResource(R.string.out_body, sheet.medicine.name))
     PrimaryButton(stringResource(R.string.take_anyway), vm::takeWithoutStock)
     OutlineButton(stringResource(R.string.out_update), vm::updateStock)
     LinkButton(stringResource(R.string.cancel), vm::dismissSheet)

@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import com.pillbox.domain.DoseOutcome
 import com.pillbox.domain.DoseRecord
 import com.pillbox.domain.HistoryDay
@@ -138,7 +139,7 @@ fun HistoryContent(
 private fun PercentCard(percent: Int, missed: Int, fmt: Formatter) {
     val c = PillBox.colors
     val pct = stringResourceIso(R.string.history_percent, fmt.number(percent))
-    val sub = if (missed == 0) stringResource(R.string.history_sub_none) else pluralStringResource(R.plurals.history_sub_missed, missed, fmt.number(missed))
+    val sub = if (missed == 0) digitsStringResource(R.string.history_sub_none) else fmt.localizeDigits(pluralStringResource(R.plurals.history_sub_missed, missed, fmt.number(missed)))
     Row(
         Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S16),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.S16),
@@ -276,7 +277,7 @@ private fun EmptyHistory(onGoToToday: () -> Unit, modifier: Modifier = Modifier)
             Spacer(Modifier.size(Space.S16))
             Text(stringResource(R.string.history_empty_title), style = MaterialTheme.typography.titleLarge, color = c.text, textAlign = TextAlign.Center)
             Spacer(Modifier.size(Space.S8))
-            Text(stringResource(R.string.history_empty_body), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.Center)
+            Text(digitsStringResource(R.string.history_empty_body), style = MaterialTheme.typography.bodyMedium, color = c.textMuted, textAlign = TextAlign.Center)
         }
         Box(Modifier.padding(horizontal = Dimens.ScreenPaddingH, vertical = Dimens.ScreenPaddingBottom)) {
             com.pillbox.ui.components.PrimaryButton(stringResource(R.string.history_go_today), onGoToToday)

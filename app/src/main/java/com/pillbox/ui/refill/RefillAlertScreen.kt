@@ -171,7 +171,7 @@ fun RefillAlertContent(
                     PillIcon(p.unit, size = 32.dp)
                     Column(Modifier.weight(1f)) {
                         val res = androidx.compose.ui.platform.LocalContext.current.resources
-                        val amount = fmt.amount(p.stock) + " " + res.getQuantityString(unitPlural(p.unit), quantityFor(p.stock))
+                        val amount = com.pillbox.ui.amountText(res, fmt, p.stock, p.unit)
                         Text(stringResourceIso(R.string.refill_preview_title, p.name, amount), style = MaterialTheme.typography.labelLarge, color = c.text)
                         val daysText = pluralStringResource(R.plurals.n_days, s.daysBefore, fmt.number(s.daysBefore))
                         val dateText = date?.let { shortDate(it, fmt) } ?: ""

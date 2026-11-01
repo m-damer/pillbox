@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import com.pillbox.domain.Notice
 import com.pillbox.domain.NoticeKind
 import com.pillbox.domain.NoticeRules
@@ -113,7 +114,7 @@ fun NoticesScreen(
                     Text(stringResource(R.string.notices_empty), style = MaterialTheme.typography.bodyLarge, color = c.textMuted, modifier = Modifier.padding(top = Space.S20))
                 } else {
                     shown.forEach { NoticeRow(it, fmt, now, onClick = { onOpen(it) }) }
-                    Text(stringResource(R.string.notices_kept), style = MaterialTheme.typography.bodySmall, color = c.textMuted, modifier = Modifier.padding(top = Space.S4))
+                    Text(digitsStringResource(R.string.notices_kept), style = MaterialTheme.typography.bodySmall, color = c.textMuted, modifier = Modifier.padding(top = Space.S4))
                 }
             }
             if (shown.isNotEmpty()) {

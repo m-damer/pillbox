@@ -33,6 +33,10 @@ class Formatter(val arabicDigits: Boolean, val is24Hour: Boolean, private val am
 
     fun number(n: Int): String = digits(n.toString())
 
+    /** Turns the digits 0 to 9 inside a ready-made sentence into the user's digits. Dots and everything else stay as they are. */
+    fun localizeDigits(text: String): String =
+        if (!arabicDigits) text else buildString(text.length) { for (ch in text) append(if (ch in '0'..'9') '٠' + (ch - '0') else ch) }
+
     /** Reads digits typed in either numeral system. Empty or too long gives null. */
     fun parseInt(text: String): Int? {
         val ascii = text.map { if (it in '\u0660'..'\u0669') '0' + (it - '\u0660') else it }.filter { it in '0'..'9' }
@@ -106,3 +110,8 @@ fun rememberFormatter(): Formatter {
         )
     }
 }
+
+/** A string resource with fixed numbers in it ("Last 7 days", "3 times a day") shown in the user's digits. */
+@Composable
+fun digitsStringResource(id: Int, vararg args: Any?): String =
+    rememberFormatter().localizeDigits(com.pillbox.ui.components.stringResourceIso(id, *args))

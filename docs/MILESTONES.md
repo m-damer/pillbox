@@ -25,3 +25,4 @@
 - [ ] M23-M28 (one PR) Take all names whose doses, weekly summary card, follow-up reminder (Off/15/30/60 min), share the day's list and the low-stock list as text, time zone notice, optional photo of the box or pill
 - [ ] M30 Boxes with their own expiry dates (DB v8, optional)
 - [ ] M31 Bottom bar without the plus button; floating "+ Add medicine" on Medicines (list leaves room for it); Add on Today in Simple mode with only Today and Settings; Arabic "Snooze" is now تأجيل
+- [ ] M32 Arabic wording and counting: units follow Arabic counting (قرص واحد، قرصان، ٣ أقراص، ١١ قرص، نصف قرص، قرص ونصف), fixed numbers follow the digits setting, grammar and word-choice fixes

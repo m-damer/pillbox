@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import com.pillbox.domain.MealTimes
 import com.pillbox.domain.QuietHours
 import com.pillbox.domain.ReminderSettings
@@ -328,7 +329,7 @@ fun MealTimesContent(meals: MealTimes, fmt: Formatter, onBack: () -> Unit, onCha
                     }
                 }
             }
-            Note(stringResource(R.string.meals_note))
+            Note(digitsStringResource(R.string.meals_note))
         }
         Box(Modifier.padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) { PrimaryButton(stringResource(R.string.save_changes), onSave) }
     }
@@ -409,7 +410,7 @@ fun LateSettingContent(
                     )
                 }
             }
-            Note(stringResource(R.string.late_setting_note))
+            Note(digitsStringResource(R.string.late_setting_note))
         }
         Box(Modifier.padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12)) { PrimaryButton(stringResource(R.string.save_changes), onSave) }
     }

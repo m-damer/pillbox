@@ -62,6 +62,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import com.pillbox.domain.AddMedicineForm
 import com.pillbox.domain.DaysChoice
 import com.pillbox.domain.DoseUnit
@@ -188,8 +189,8 @@ fun AddMedicineContent(
         Column(Modifier.padding(start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Dimens.ScreenPaddingTop)) {
             StepHeader(
                 title = stringResource(if (state.isEdit) R.string.edit_title else R.string.add_medicine),
-                subtitle = if (state.isEdit) stringResourceIso(R.string.edit_med_step, state.editingName.orEmpty(), fmt.number(state.step))
-                else stringResourceIso(R.string.add_med_step, fmt.number(state.step), stringResource(subtitles[state.step - 1])),
+                subtitle = if (state.isEdit) digitsStringResource(R.string.edit_med_step, state.editingName.orEmpty(), fmt.number(state.step))
+                else digitsStringResource(R.string.add_med_step, fmt.number(state.step), stringResource(subtitles[state.step - 1])),
                 step = state.step, steps = 3, backLabel = stringResource(R.string.back), onBack = onBack,
             )
         }
@@ -322,8 +323,8 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
     FieldLabel(doseLabel)
     val step = AddMedicineForm.doseStep(form.type)
     Stepper(
-        valueText = fmt.amount(form.dose),
-        unit = pluralStringResource(unitPlural(form.type), quantityFor(form.dose)),
+        valueText = com.pillbox.ui.amountText(fmt, form.dose, form.type),
+        unit = "",
         label = doseLabel,
         onMinus = { edit { it.copy(dose = (it.dose - step).coerceAtLeast(step)) } },
         onPlus = { edit { it.copy(dose = (it.dose + step).coerceAtMost(99.0)) } },
@@ -407,7 +408,7 @@ private fun Step2(
         FreqChoice.HOURS to R.string.freq_hours, FreqChoice.AS_NEEDED to R.string.freq_prn,
     )
     ChipGroup {
-        freqs.forEach { (f, label) -> PBChip(stringResource(label), form.freq == f, { edit { it.withFreq(f) } }) }
+        freqs.forEach { (f, label) -> PBChip(digitsStringResource(label), form.freq == f, { edit { it.withFreq(f) } }) }
     }
 
     when (form.freq) {
@@ -430,7 +431,7 @@ private fun Step2(
                         times.forEachIndexed { i, t -> DoseChip(t, fmt, Modifier.weight(1f)) { openTimePicker(i) } }
                     }
                 }
-                HelperText(stringResource(if (form.freq == FreqChoice.TWICE) R.string.twice_hint else R.string.three_hint))
+                HelperText(digitsStringResource(if (form.freq == FreqChoice.TWICE) R.string.twice_hint else R.string.three_hint))
             }
         }
 
@@ -445,7 +446,7 @@ private fun Step2(
                 onPlus = { edit { it.copy(hours = (it.hours + 1).coerceAtMost(24)) } },
                 minusEnabled = form.hours > 1, plusEnabled = form.hours < 24,
             )
-            HelperText(stringResource(R.string.hours_hint))
+            HelperText(digitsStringResource(R.string.hours_hint))
             val first = stringResource(R.string.first_dose)
             FieldLabel(first)
             TimeCard(first, fmt.time(form.firstDose)) { openTimePicker(-1) }
@@ -704,7 +705,7 @@ private fun Step3(
 
     FieldLabel(stringResource(R.string.how_long))
     Segmented(
-        options = listOf(R.string.len_ongoing, R.string.len_7, R.string.len_other).map { stringResource(it) },
+        options = listOf(R.string.len_ongoing, R.string.len_7, R.string.len_other).map { digitsStringResource(it) },
         selectedIndex = form.length.ordinal,
         onSelect = { i -> edit { it.copy(length = LengthChoice.values()[i]) } },
     )
@@ -763,7 +764,7 @@ private fun summaryText(form: AddMedicineForm, fmt: Formatter): String {
     val freq = when (form.freq) {
         FreqChoice.ONCE -> stringResource(R.string.freq_once)
         FreqChoice.TWICE -> stringResource(R.string.freq_twice)
-        FreqChoice.THREE -> stringResource(R.string.freq_three)
+        FreqChoice.THREE -> digitsStringResource(R.string.freq_three)
         FreqChoice.HOURS -> stringResource(
             R.string.sum_hours, pluralStringResource(R.plurals.n_hours, form.hours, fmt.number(form.hours)), fmt.time(form.firstDose),
             pluralStringResource(R.plurals.n_doses, 24 / form.hours, fmt.number(24 / form.hours)),

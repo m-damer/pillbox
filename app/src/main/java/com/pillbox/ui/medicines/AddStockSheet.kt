@@ -96,8 +96,8 @@ fun AddStockSheet(
 
     val boxesLabel = stringResource(com.pillbox.ui.boughtLabel(medicine.unit))
     val perLabel = stringResource(com.pillbox.ui.perPackLabel(medicine.unit))
-    val unitWord = pluralStringResource(unitPlural(medicine.unit), quantityFor(2.0))
-    val totalText = fmt.amount(total) + " " + pluralStringResource(unitPlural(medicine.unit), quantityFor(total))
+    val unitWord = com.pillbox.ui.pluralUnitWord(medicine.unit)
+    val totalText = com.pillbox.ui.amountText(fmt, total, medicine.unit)
     val summary = if (days != null) {
         boldTokens(
             stringResource(R.string.stock_new_total), 

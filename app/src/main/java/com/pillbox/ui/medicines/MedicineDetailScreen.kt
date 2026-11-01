@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import com.pillbox.data.MedicineWithSchedule
 import com.pillbox.domain.DayMark
 import com.pillbox.domain.Frequency
@@ -179,7 +180,7 @@ fun MedicineDetailScreen(
     }
     val photoContext = androidx.compose.ui.platform.LocalContext.current
     if (state.showDelete) {
-        MessageDialog(DialogKind.Danger, stringResourceIso(R.string.delete_title, m.name), stringResource(R.string.delete_body), onDismiss = { vm.showDelete(false) }) {
+        MessageDialog(DialogKind.Danger, stringResourceIso(R.string.delete_title, m.name), digitsStringResource(R.string.delete_body), onDismiss = { vm.showDelete(false) }) {
             DangerButton(stringResourceIso(R.string.delete_confirm, m.name), {
                 vm.delete { name ->
                     MedicinePhotos.delete(photoContext, m.id)
@@ -592,7 +593,7 @@ private fun WeekCard(week: WeekSummary?, fmt: Formatter, onSeeHistory: () -> Uni
         verticalArrangement = Arrangement.spacedBy(Space.S10),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(R.string.week_title), style = MaterialTheme.typography.labelMedium, color = c.accent, modifier = Modifier.semantics { heading() })
+            Text(digitsStringResource(R.string.week_title), style = MaterialTheme.typography.labelMedium, color = c.accent, modifier = Modifier.semantics { heading() })
             Text(stringResource(R.string.dot_sep), style = MaterialTheme.typography.labelMedium, color = c.textMuted)
             Box(Modifier.heightIn(min = Dimens.TouchTargetMin).clickable(role = Role.Button, onClick = onSeeHistory), contentAlignment = Alignment.CenterStart) {
                 Text(stringResource(R.string.history_link), style = MaterialTheme.typography.labelMedium, color = c.accent)
@@ -612,7 +613,7 @@ private fun WeekCard(week: WeekSummary?, fmt: Formatter, onSeeHistory: () -> Uni
                 }
             }
             val text = if (week.counted == 0) stringResource(R.string.week_none) else buildString {
-                append(stringResourceIso(R.string.week_taken, fmt.number(week.taken), fmt.number(week.counted)))
+                append(pluralStringResource(R.plurals.week_taken, week.counted, fmt.number(week.taken), fmt.number(week.counted)))
                 if (week.missedDays.isNotEmpty()) {
                     val n = week.missedDays.size
                     val dayName = week.missedDays.first().dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())

@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import com.pillbox.domain.DoseRow
 import com.pillbox.ui.Formatter
 import com.pillbox.ui.blockOf
@@ -77,7 +78,7 @@ fun ReminderScreen(
         )
         rows.forEach { row ->
             val med = row.medicine
-            val amount = fmt.amount(med.doseAmount) + " " + pluralStringResource(unitPlural(med.unit), quantityFor(med.doseAmount))
+            val amount = com.pillbox.ui.amountText(fmt, med.doseAmount, med.unit)
             val line = listOfNotNull(amount, foodText(row.schedule.withFood)).joinToString(stringResource(R.string.dot_sep))
             Column(
                 Modifier.fillMaxWidth().background(c.card, MaterialTheme.shapes.large).padding(Space.S12),
@@ -104,7 +105,7 @@ fun ReminderScreen(
                 }
             }
         }
-        LinkButton(stringResource(R.string.snooze_15), onSnooze)
-        Text(stringResource(R.string.reminder_nag), style = MaterialTheme.typography.bodySmall, color = c.textMuted)
+        LinkButton(digitsStringResource(R.string.snooze_15), onSnooze)
+        Text(digitsStringResource(R.string.reminder_nag), style = MaterialTheme.typography.bodySmall, color = c.textMuted)
     }
 }
