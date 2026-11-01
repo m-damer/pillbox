@@ -9,7 +9,7 @@ import com.pillbox.ui.unitPlural
 
 /** "Stock updated" + "Metformin: 68 tablets, about 34 days left." Used by Medicine detail and Today. */
 fun stockToastText(res: Resources, fmt: Formatter, unit: DoseUnit, r: StockResult): Pair<String, String> {
-    val amount = fmt.amount(r.total) + " " + res.getQuantityString(unitPlural(unit), quantityFor(r.total))
+    val amount = com.pillbox.ui.amountText(res, fmt, r.total, unit)
     val body = if (r.days != null) {
         res.getString(R.string.toast_stock_body, r.name, amount, res.getQuantityString(R.plurals.n_days, r.days.coerceAtLeast(0), fmt.number(r.days)))
     } else {

@@ -28,7 +28,7 @@
     <string name="add_med_step">الخطوة %1$s من 3 · %2$s</string>
     <string name="step1_sub">ما هو؟</string>
     <string name="step2_sub">متى تأخذه؟</string>
-    <string name="step3_sub">لكم من الوقت؟</string>
+    <string name="step3_sub">ما مدة العلاج؟</string>
     <string name="save_medicine">حفظ الدواء</string>
 
     <string name="medicine_name">اسم الدواء</string>
@@ -40,7 +40,7 @@
     <string name="type_syrup">شراب</string>
     <string name="type_injection">حقنة (أمبولة أو قارورة)</string>
     <string name="type_drops">قطرات (للعين أو الأذن أو الأنف)</string>
-    <string name="type_other">آخر</string>
+    <string name="type_other">نوع آخر</string>
     <string name="strength_label">التركيز</string>
     <string name="unit_mg">ملغ</string>
     <string name="unit_g">غ</string>
@@ -60,17 +60,17 @@
     <string name="freq_prn">عند الحاجة فقط</string>
     <string name="first_dose">وقت الجرعة الأولى</string>
     <string name="one_dose">وقت الجرعة</string>
-    <string name="tap_to_change">المس لتغيير الوقت</string>
+    <string name="tap_to_change">اضغط لتغيير الوقت</string>
     <string name="doses_auto">جرعاتك (تلقائي)</string>
-    <string name="once_hint">مرة في اليوم، كل يوم في هذا الوقت. المس لتغييره.</string>
-    <string name="twice_hint">كل 12 ساعة. المس جرعة لتغيير وقتها.</string>
-    <string name="three_hint">كل 8 ساعات على مدار اليوم. المس جرعة لتغيير وقتها.</string>
+    <string name="once_hint">مرة في اليوم، كل يوم في هذا الوقت. اضغط لتغييره.</string>
+    <string name="twice_hint">كل 12 ساعة. اضغط على جرعة لتغيير وقتها.</string>
+    <string name="three_hint">كل 8 ساعات على مدار اليوم. اضغط على جرعة لتغيير وقتها.</string>
     <string name="hours_label">كل كم ساعة؟</string>
     <string name="hours_hint">اختر من 1 إلى 24 ساعة.</string>
     <string name="hours_summary">تبدأ عند جرعتك الأولى (%1$s)، ثم كل %2$s، ليلاً ونهاراً: %3$s في اليوم.</string>
     <string name="prn_max">أقصى عدد جرعات في اليوم</string>
     <string name="prn_gap">أقل مدة بين الجرعات</string>
-    <string name="prn_info">لا تنبيهات لهذا الدواء. المس «خذها الآن» عندما تأخذه. نحذرك إن كان الوقت مبكراً.</string>
+    <string name="prn_info">لا تذكيرات لهذا الدواء. اضغط «خذها الآن» عندما تأخذه. نحذرك إن كان الوقت مبكراً.</string>
     <string name="with_food">مع الأكل؟</string>
     <string name="food_before">قبل</string>
     <string name="food_with">مع</string>
@@ -94,10 +94,10 @@
     <string name="start_today">اليوم</string>
     <string name="start_tomorrow">غداً</string>
     <string name="start_pick">اختر تاريخاً</string>
-    <string name="how_long">لكم من الوقت؟</string>
+    <string name="how_long">ما مدة العلاج؟</string>
     <string name="len_ongoing">مستمر</string>
     <string name="len_7">7 أيام</string>
-    <string name="len_other">آخر</string>
+    <string name="len_other">مدة أخرى</string>
     <string name="select_time">اختر الوقت</string>
 
     <string name="sum_full">%1$s، %2$s، %3$s.</string>
@@ -112,11 +112,11 @@
 
     <!-- Messages -->
     <string name="added_title">تمت إضافة %1$s</string>
-    <string name="added_body_today">التنبيهات تعمل. أول تنبيه اليوم عند %1$s. يمكنك تغيير أي شيء من الأدوية.</string>
-    <string name="added_body_tomorrow">التنبيهات تعمل. أول تنبيه غداً عند %1$s. يمكنك تغيير أي شيء من الأدوية.</string>
-    <string name="added_body_date">التنبيهات تعمل. أول تنبيه في %1$s عند %2$s. يمكنك تغيير أي شيء من الأدوية.</string>
-    <string name="added_body_prn">لا تنبيهات لهذا الدواء. المس «خذها الآن» عندما تحتاجه. يمكنك تغيير أي شيء من الأدوية.</string>
-    <string name="added_body_none">تم حفظ الدواء. يمكنك تغيير أي شيء من الأدوية.</string>
+    <string name="added_body_today">التذكيرات تعمل. أول تذكير اليوم عند %1$s. يمكنك تعديله من الأدوية.</string>
+    <string name="added_body_tomorrow">التذكيرات تعمل. أول تذكير غداً عند %1$s. يمكنك تعديله من الأدوية.</string>
+    <string name="added_body_date">التذكيرات تعمل. أول تذكير في %1$s عند %2$s. يمكنك تعديله من الأدوية.</string>
+    <string name="added_body_prn">لا تذكيرات لهذا الدواء. اضغط «خذها الآن» عندما تحتاجه. يمكنك تعديله من الأدوية.</string>
+    <string name="added_body_none">تم حفظ الدواء. يمكنك تعديله من الأدوية.</string>
     <string name="go_today">الذهاب إلى اليوم</string>
     <string name="add_another">إضافة دواء آخر</string>
     <string name="dup_title">%1$s موجود في قائمتك</string>
@@ -131,15 +131,42 @@
     <string name="save_failed_body">قد تكون مساحة الهاتف ممتلئة. وفّر بعض المساحة وحاول مجدداً. لم يضع شيء.</string>
     <string name="try_again">حاول مجدداً</string>
 
-    <plurals name="unit_tablet"><item quantity="one">قرص</item><item quantity="other">أقراص</item></plurals>
-    <plurals name="unit_capsule"><item quantity="one">كبسولة</item><item quantity="other">كبسولات</item></plurals>
-    <plurals name="unit_ml"><item quantity="one">مل</item><item quantity="other">مل</item></plurals>
-    <plurals name="unit_drops"><item quantity="one">قطرة</item><item quantity="other">قطرات</item></plurals>
-    <plurals name="unit_injection"><item quantity="one">حقنة</item><item quantity="other">حقن</item></plurals>
-    <plurals name="unit_other"><item quantity="one">جرعة</item><item quantity="other">جرعات</item></plurals>
-    <plurals name="unit_dose"><item quantity="one">جرعة</item><item quantity="other">جرعات</item></plurals>
-    <plurals name="unit_hours"><item quantity="one">ساعة</item><item quantity="other">ساعات</item></plurals>
-    <plurals name="unit_days"><item quantity="one">يوم</item><item quantity="other">أيام</item></plurals>
+    <plurals name="unit_tablet">
+        <item quantity="zero">قرص</item><item quantity="one">قرص</item><item quantity="two">قرصان</item>
+        <item quantity="few">أقراص</item><item quantity="many">قرص</item><item quantity="other">قرص</item>
+    </plurals>
+    <plurals name="unit_capsule">
+        <item quantity="zero">كبسولة</item><item quantity="one">كبسولة</item><item quantity="two">كبسولتان</item>
+        <item quantity="few">كبسولات</item><item quantity="many">كبسولة</item><item quantity="other">كبسولة</item>
+    </plurals>
+    <plurals name="unit_ml">
+        <item quantity="zero">مل</item><item quantity="one">مل</item><item quantity="two">مل</item>
+        <item quantity="few">مل</item><item quantity="many">مل</item><item quantity="other">مل</item>
+    </plurals>
+    <plurals name="unit_drops">
+        <item quantity="zero">قطرة</item><item quantity="one">قطرة</item><item quantity="two">قطرتان</item>
+        <item quantity="few">قطرات</item><item quantity="many">قطرة</item><item quantity="other">قطرة</item>
+    </plurals>
+    <plurals name="unit_injection">
+        <item quantity="zero">حقنة</item><item quantity="one">حقنة</item><item quantity="two">حقنتان</item>
+        <item quantity="few">حقن</item><item quantity="many">حقنة</item><item quantity="other">حقنة</item>
+    </plurals>
+    <plurals name="unit_other">
+        <item quantity="zero">جرعة</item><item quantity="one">جرعة</item><item quantity="two">جرعتان</item>
+        <item quantity="few">جرعات</item><item quantity="many">جرعة</item><item quantity="other">جرعة</item>
+    </plurals>
+    <plurals name="unit_dose">
+        <item quantity="zero">جرعة</item><item quantity="one">جرعة</item><item quantity="two">جرعتان</item>
+        <item quantity="few">جرعات</item><item quantity="many">جرعة</item><item quantity="other">جرعة</item>
+    </plurals>
+    <plurals name="unit_hours">
+        <item quantity="zero">ساعة</item><item quantity="one">ساعة</item><item quantity="two">ساعتان</item>
+        <item quantity="few">ساعات</item><item quantity="many">ساعة</item><item quantity="other">ساعة</item>
+    </plurals>
+    <plurals name="unit_days">
+        <item quantity="zero">يوم</item><item quantity="one">يوم</item><item quantity="two">يومان</item>
+        <item quantity="few">أيام</item><item quantity="many">يوم</item><item quantity="other">يوم</item>
+    </plurals>
     <plurals name="n_hours">
         <item quantity="zero">%1$s ساعة</item><item quantity="one">ساعة واحدة</item><item quantity="two">ساعتين</item>
         <item quantity="few">%1$s ساعات</item><item quantity="many">%1$s ساعة</item><item quantity="other">%1$s ساعة</item>
@@ -157,20 +184,20 @@
     <string name="today">اليوم</string>
     <string name="tomorrow">غداً</string>
     <string name="sub_taken">%1$s - (%2$s من %3$s مأخوذة)</string>
-    <string name="sub_planned">%1$s - (%2$s مخططة)</string>
+    <string name="sub_planned">%1$s - (%2$s مجدولة)</string>
     <string name="back_to_today">العودة إلى اليوم</string>
-    <string name="nothing_planned">لا توجد جرعات مخططة لهذا اليوم.</string>
-    <string name="future_note">هذه جرعات مخططة. يمكنك تسجيلها في يومها.</string>
+    <string name="nothing_planned">لا توجد جرعات مجدولة لهذا اليوم.</string>
+    <string name="future_note">هذه جرعات مجدولة. يمكنك تسجيلها في يومها.</string>
     <string name="group_next">التالية</string>
     <string name="late_h">متأخرة %1$s س</string>
     <string name="late_min">متأخرة %1$s د</string>
     <string name="late_banner">هل أخذت هذه الجرعات؟ كان موعدها %1$s.</string>
     <string name="take">خذها</string>
-    <string name="skip">تخطَّ</string>
+    <string name="skip">تخطي</string>
     <string name="take_all">خذ الكل</string>
-    <string name="skip_all">تخطَّ الكل</string>
+    <string name="skip_all">تخطي الكل</string>
     <string name="take_med">خذ %1$s</string>
-    <string name="skip_med">تخطَّ %1$s</string>
+    <string name="skip_med">تخطي %1$s</string>
     <string name="skipped">تم التخطي</string>
     <string name="missed">فائتة</string>
     <string name="said_taken_at">أُخذت عند %1$s</string>
@@ -214,15 +241,15 @@
     <string name="skip_dose">تخطي الجرعة</string>
     <string name="reason_not_well">لا أشعر أنني بخير</string>
     <string name="reason_side_effects">آثار جانبية</string>
-    <string name="reason_ran_out">نفدت الأقراص</string>
+    <string name="reason_ran_out">نفد الدواء</string>
     <string name="reason_doctor">قال طبيبي ذلك</string>
     <string name="reason_other">سبب آخر</string>
     <string name="too_soon_title">الوقت مبكر لهذه الجرعة؟</string>
     <string name="too_soon_body">آخر مرة أخذت فيها %1$s كانت قبل %2$s. أقل فاصل هو %3$s. أخذها الآن قد يكون كثيراً.</string>
     <string name="wait_dont_take">انتظر، لا تأخذها</string>
     <string name="take_anyway_long">سآخذها على أي حال</string>
-    <string name="out_title">لا توجد %1$s متبقية</string>
-    <string name="out_body">%1$s يظهر 0 متبقٍ. يمكنك مع ذلك تسجيل هذه الجرعة كمأخوذة.</string>
+    <string name="out_title">انتهى المخزون</string>
+    <string name="out_body">المتبقي من %1$s هو 0. يمكنك مع ذلك تسجيل هذه الجرعة كمأخوذة.</string>
     <string name="take_anyway">خذها على أي حال</string>
 
     <!-- Navigation -->
@@ -233,28 +260,28 @@
     <string name="coming_soon">قريباً.</string>
     <string name="channel_doses">تذكيرات الدواء</string>
     <string name="channel_doses_desc">يرنّ عندما يحين موعد أدويتك.</string>
-    <string name="channel_refills">تنبيهات إعادة التعبئة</string>
+    <string name="channel_refills">تنبيهات إعادة الشراء</string>
     <string name="channel_refills_desc">يخبرك عندما يوشك دواء على النفاد.</string>
     <string name="notif_title">حان موعد أدوية %1$s</string>
-    <string name="snooze_15">غفوة ١٥ دقيقة</string>
+    <string name="snooze_15">غفوة 15 دقيقة</string>
     <string name="open">فتح</string>
-    <string name="reminder_nag">إن لم تردّ، سنذكّرك مرة أخرى بعد ٥ دقائق.</string>
+    <string name="reminder_nag">إن لم تردّ، سنذكّرك مرة أخرى بعد 5 دقائق.</string>
     <string name="continue_label">متابعة</string>
     <string name="set_up_later">إعداد لاحقاً</string>
     <string name="perm_title">دع التذكيرات ترنّ</string>
-    <string name="perm_sub">يحتاج علبة الدواء إلى ثلاثة أشياء من هاتفك ليذكّرك في وقته، حتى والشاشة مطفأة.</string>
+    <string name="perm_sub">تحتاج علبة الدواء إلى ثلاثة أشياء من هاتفك ليذكّرك في وقته، حتى والشاشة مطفأة.</string>
     <string name="perm_notif">الإشعارات</string>
     <string name="perm_notif_sub">يعرض التذكير على شاشتك.</string>
     <string name="perm_exact">المنبّهات والتذكيرات</string>
     <string name="perm_exact_sub">يجعل التذكير يرنّ في الدقيقة المحددة.</string>
     <string name="perm_battery">البطارية</string>
     <string name="perm_battery_sub">تأكد أن هاتفك لا يوقف علبة الدواء في الخلفية.</string>
-    <string name="perm_later_info">يمكنك الإعداد لاحقاً. حتى ذلك الحين لن يستطيع علبة الدواء تذكيرك.</string>
+    <string name="perm_later_info">يمكنك الإعداد لاحقاً. حتى ذلك الحين لن تستطيع علبة الدواء تذكيرك.</string>
     <string name="perm_allow">سماح</string>
     <string name="perm_allow_desc">السماح لـ%1$s</string>
     <string name="perm_allowed">مسموح</string>
     <string name="off_title">التذكيرات متوقفة</string>
-    <string name="off_body">لن يرنّ علبة الدواء حتى تسمح بالإشعارات والمنبّهات. أدويتك ما زالت محفوظة.</string>
+    <string name="off_body">لن ترنّ علبة الدواء حتى تسمح بالإشعارات والمنبّهات. أدويتك ما زالت محفوظة.</string>
     <string name="off_open_settings">فتح الإعدادات</string>
     <string name="off_continue">المتابعة بدون تذكيرات</string>
     <string name="banner_off_title">التذكيرات متوقفة</string>
@@ -263,7 +290,7 @@
     <!-- M5a: Medicines list, detail, stock -->
     <string name="meds_sub">أنا · %1$s نشطة</string>
     <string name="tab_active">النشطة</string>
-    <string name="tab_finished">المنتهية</string>
+    <string name="tab_finished">السابقة</string>
     <string name="meds_ongoing">مستمر</string>
     <plurals name="stock_days_left">
         <item quantity="zero">لم يتبقَّ أي يوم</item><item quantity="one">بقي يوم واحد</item><item quantity="two">بقي يومان</item>
@@ -274,12 +301,12 @@
     <string name="stock_out">لا يوجد</string>
     <string name="stock_left">المتبقي %1$s</string>
     <string name="ends_on">ينتهي %1$s</string>
-    <string name="meds_finished_empty">لا توجد أدوية منتهية بعد.</string>
+    <string name="meds_finished_empty">لا توجد أدوية سابقة بعد.</string>
     <string name="finished_on">انتهى %1$s</string>
     <string name="stopped_on">أُوقف %1$s</string>
     <string name="tag_course_done">انتهت الكمية</string>
     <string name="tag_stopped">متوقف</string>
-    <string name="finished_info">يبقى السجل محفوظاً. أعد تشغيل الدواء لاستخدام التفاصيل نفسها.</string>
+    <string name="finished_info">يبقى السجل محفوظاً. أعد بدء الدواء لاستخدام التفاصيل نفسها.</string>
     <string name="open_medicine">فتح %1$s</string>
     <string name="detail_title">الدواء</string>
     <plurals name="tile_days_left">
@@ -290,12 +317,15 @@
     <string name="tile_per_day">%1$s/يوم</string>
     <string name="tile_as_needed">عند الحاجة</string>
     <string name="sched_title">الجدول</string>
-    <string name="sched_prn">عند الحاجة فقط. لا تنبيهات.</string>
+    <string name="sched_prn">عند الحاجة فقط. لا تذكيرات.</string>
     <string name="sched_every_hours">كل %1$s</string>
     <string name="sched_legend">الألوان تبيّن جزء اليوم</string>
     <string name="week_title">آخر 7 أيام</string>
     <string name="week_none">لا توجد جرعات لعرضها بعد.</string>
-    <string name="week_taken">تم أخذ %1$s من %2$s جرعات.</string>
+    <plurals name="week_taken">
+        <item quantity="zero">تم أخذ %1$s من %2$s جرعة.</item><item quantity="one">تم أخذ %1$s من جرعة واحدة.</item><item quantity="two">تم أخذ %1$s من جرعتين.</item>
+        <item quantity="few">تم أخذ %1$s من %2$s جرعات.</item><item quantity="many">تم أخذ %1$s من %2$s جرعة.</item><item quantity="other">تم أخذ %1$s من %2$s جرعة.</item>
+    </plurals>
     <plurals name="week_missed">
         <item quantity="zero">فاتتك %1$s جرعة.</item><item quantity="one">فاتتك جرعة واحدة يوم %2$s.</item><item quantity="two">فاتتك جرعتان.</item>
         <item quantity="few">فاتتك %1$s جرعات.</item><item quantity="many">فاتتك %1$s جرعة.</item><item quantity="other">فاتتك %1$s جرعة.</item>
@@ -307,12 +337,12 @@
     <string name="btn_add_stock">إضافة مخزون</string>
     <string name="btn_stop">إيقاف</string>
     <string name="stop_title">إيقاف %1$s؟</string>
-    <string name="stop_body">ستتوقف التذكيرات وينتقل إلى المنتهية. يمكنك إعادة تشغيله في أي وقت.</string>
+    <string name="stop_body">ستتوقف التذكيرات وينتقل إلى السابقة. يمكنك إعادة بدئه في أي وقت.</string>
     <string name="stop_confirm">إيقاف الدواء</string>
     <string name="stop_keep">متابعة الأخذ</string>
     <string name="toast_stopped_title">تم إيقاف %1$s</string>
-    <string name="toast_stopped_body">تجده في المنتهية ويمكنك إعادة تشغيله في أي وقت.</string>
-    <string name="toast_restarted_title">تمت إعادة تشغيل %1$s</string>
+    <string name="toast_stopped_body">تجده في السابقة ويمكنك إعادة بدئه في أي وقت.</string>
+    <string name="toast_restarted_title">تمت إعادة بدء %1$s</string>
     <string name="toast_restarted_body">عاد إلى قائمة النشطة والتذكيرات تعمل.</string>
     <string name="fin_banner_course">انتهت هذه الكمية. لن ترنّ تذكيرات.</string>
     <string name="fin_banner_stopped">هذا الدواء متوقف. لن ترنّ تذكيرات.</string>
@@ -320,7 +350,7 @@
     <string name="fin_schedule">الجدول</string>
     <string name="fin_taken">المأخوذ</string>
     <string name="fin_taken_value">%1$s من %2$s</string>
-    <string name="btn_restart">إعادة تشغيل هذا الدواء</string>
+    <string name="btn_restart">إعادة بدء هذا الدواء</string>
     <string name="stock_title">إضافة مخزون</string>
     <string name="stock_boxes">عدد العلب المشتراة</string>
     <string name="stock_bottles">عدد القوارير المشتراة</string>
@@ -367,7 +397,7 @@
     <string name="toast_resumed_body">عادت التذكيرات للعمل.</string>
     <string name="delete_a11y">حذف هذا الدواء</string>
     <string name="delete_title">حذف %1$s؟</string>
-    <string name="delete_body">سيُحذف سجله من هذا الهاتف ومن تقرير الطبيب لآخر ٣٠ يوماً. لا يمكن التراجع عن ذلك.</string>
+    <string name="delete_body">سيُحذف سجله من هذا الهاتف ومن تقرير الطبيب لآخر 30 يوماً. لا يمكن التراجع عن ذلك.</string>
     <string name="delete_confirm">حذف %1$s</string>
     <string name="delete_keep">إبقاء %1$s</string>
     <string name="btn_delete_history">حذف من السجل</string>
@@ -393,7 +423,7 @@
     <!-- M5d: edit medicine -->
     <string name="btn_edit">تعديل</string>
     <string name="edit_title">تعديل الدواء</string>
-    <string name="edit_med_step">%1$s · الخطوة %2$s من ٣</string>
+    <string name="edit_med_step">%1$s · الخطوة %2$s من 3</string>
     <string name="box_label_now">كم لديك الآن؟</string>
     <string name="started_label">بدأ</string>
     <string name="start_fixed">لا يمكن تغيير تاريخ البدء.</string>
@@ -427,10 +457,10 @@
     <string name="history_sub">%1$s · %2$s</string>
     <string name="history_percent">%1$s٪</string>
     <string name="history_percent_title">في الوقت المحدد</string>
-    <string name="history_sub_none">آخر ٣٠ يوماً · لا جرعات فائتة</string>
+    <string name="history_sub_none">آخر 30 يوماً · لا جرعات فائتة</string>
     <plurals name="history_sub_missed">
-        <item quantity="zero">آخر ٣٠ يوماً · %1$s جرعة فائتة</item><item quantity="one">آخر ٣٠ يوماً · جرعة واحدة فائتة</item><item quantity="two">آخر ٣٠ يوماً · جرعتان فائتتان</item>
-        <item quantity="few">آخر ٣٠ يوماً · %1$s جرعات فائتة</item><item quantity="many">آخر ٣٠ يوماً · %1$s جرعة فائتة</item><item quantity="other">آخر ٣٠ يوماً · %1$s جرعة فائتة</item>
+        <item quantity="zero">آخر 30 يوماً · %1$s جرعة فائتة</item><item quantity="one">آخر 30 يوماً · جرعة واحدة فائتة</item><item quantity="two">آخر 30 يوماً · جرعتان فائتتان</item>
+        <item quantity="few">آخر 30 يوماً · %1$s جرعات فائتة</item><item quantity="many">آخر 30 يوماً · %1$s جرعة فائتة</item><item quantity="other">آخر 30 يوماً · %1$s جرعة فائتة</item>
     </plurals>
     <string name="history_as_needed">عند الحاجة</string>
     <plurals name="history_as_needed_row">
@@ -456,7 +486,7 @@
     <string name="history_badge_missed">فائتة</string>
     <string name="history_badge_late">متأخرة</string>
     <string name="history_empty_title">لا يوجد سجل بعد</string>
-    <string name="history_empty_body">بعد يومك الأول، تظهر الجرعات المأخوذة والفائتة هنا كتقويم ونسبة مئوية لآخر ٣٠ يوماً.</string>
+    <string name="history_empty_body">بعد يومك الأول، تظهر الجرعات المأخوذة والفائتة هنا كتقويم ونسبة مئوية لآخر 30 يوماً.</string>
     <string name="history_go_today">الذهاب إلى اليوم</string>
     <!-- M6b: تقرير الطبيب -->
     <string name="history_share">مشاركة تقرير لطبيبي</string>
@@ -536,8 +566,8 @@
     <string name="people_open_a11y">%1$s. %2$s. اضغط لعرض الأدوية.</string>
     <string name="people_add">إضافة شخص</string>
     <string name="people_ring_all">رنين لـ %1$s أيضاً</string>
-    <string name="people_ring_sub">تنبيهاتهم تعمل على هذا الهاتف.</string>
-    <string name="people_note">تنبيهاتهم تعمل على هذا الهاتف، لذا أبقِ الهاتف معك. لا شيء يُشارَك مع أحد.</string>
+    <string name="people_ring_sub">تذكيراتهم تعمل على هذا الهاتف.</string>
+    <string name="people_note">تذكيراتهم تعمل على هذا الهاتف، لذا أبقِ الهاتف معك. لا شيء يُشارَك مع أحد.</string>
     <string name="person_add_title">إضافة شخص</string>
     <string name="person_edit_title">تعديل الشخص</string>
     <string name="person_name">الاسم</string>
@@ -546,9 +576,9 @@
     <string name="rel_parent">أحد الوالدين</string>
     <string name="rel_child">طفل</string>
     <string name="rel_partner">شريك</string>
-    <string name="rel_other">آخر</string>
-    <string name="person_ring">تنبيه لجرعاته</string>
-    <string name="person_ring_sub">التنبيهات تعمل على هذا الهاتف</string>
+    <string name="rel_other">شخص آخر</string>
+    <string name="person_ring">تذكير بجرعاته</string>
+    <string name="person_ring_sub">التذكيرات تعمل على هذا الهاتف</string>
     <string name="person_type_name">اكتب اسماً للحفظ</string>
     <string name="person_save">حفظ الشخص</string>
     <string name="person_remove">حذف %1$s</string>
@@ -563,7 +593,7 @@
     <string name="person_remove_title">حذف %1$s؟</string>
     <string name="person_remove_body">ستُحذف الأدوية والسجل من هذا الهاتف. لا يمكن التراجع عن ذلك.</string>
     <string name="toast_person_added_title">تمت إضافة %1$s</string>
-    <string name="toast_person_added_body">التنبيهات تعمل على هذا الهاتف.</string>
+    <string name="toast_person_added_body">التذكيرات تعمل على هذا الهاتف.</string>
     <string name="toast_person_removed_title">تم حذف %1$s</string>
     <string name="toast_person_removed_body">حُذفت الأدوية والسجل من هذا الهاتف.</string>
     <string name="toast_person_saved_title">تم الحفظ</string>
@@ -573,23 +603,23 @@
     <string name="profile_note">يظهر هذا الاسم في تقرير الطبيب. ويبقى على هذا الهاتف.</string>
     <string name="profile_birth">سنة الميلاد (اختياري)</string>
     <string name="profile_birth_help">تظهر في التقرير بجانب اسمك.</string>
-    <string name="profile_birth_error">اكتب سنة مثل ١٩٥٨</string>
+    <string name="profile_birth_error">اكتب سنة مثل 1958</string>
     <string name="switcher_a11y">%1$s</string>
     <string name="switcher_selected">معروض الآن</string>
     <string name="switcher_title">أدوية مَن؟</string>
-    <string name="switcher_pill_a11y">تعرض %1$s. انقر مرتين لتغيير الشخص.</string>
-    <string name="viewing_banner">تعرض أدوية %1$s.</string>
-    <string name="viewing_banner_off">تعرض أدوية %1$s. التنبيهات متوقفة.</string>
+    <string name="switcher_pill_a11y">تعرض %1$s. اضغط مرتين لتغيير الشخص.</string>
+    <string name="viewing_banner">عرض أدوية %1$s.</string>
+    <string name="viewing_banner_off">عرض أدوية %1$s. التذكيرات متوقفة.</string>
     <string name="notif_dose_for">%1$s: %2$s</string>
     <string name="reminder_for">لـ %1$s</string>
     <!-- Settings (M8a) -->
     <string name="settings_title">الإعدادات</string>
-    <string name="settings_sec_reminders">التنبيهات</string>
+    <string name="settings_sec_reminders">التذكيرات</string>
     <string name="settings_sec_display">العرض</string>
     <string name="settings_report">تقرير الطبيب</string>
-    <string name="settings_report_value">ملف PDF لآخر ٣٠ يوماً</string>
+    <string name="settings_report_value">ملف PDF لآخر 30 يوماً</string>
     <string name="settings_sec_data">بياناتك</string>
-    <string name="settings_refill">تنبيه التجديد</string>
+    <string name="settings_refill">تنبيه إعادة الشراء</string>
     <string name="settings_accessibility">سهولة الاستخدام</string>
     <string name="settings_language">اللغة والأرقام</string>
     <string name="settings_people">الأشخاص الذين أعتني بهم</string>
@@ -600,8 +630,8 @@
     <string name="dev_title">عن المطوّر</string>
     <string name="dev_name">محمود دامر</string>
     <string name="dev_role">مصمم تجربة وواجهة مستخدم</string>
-    <string name="dev_body">ستجدون هنا قريباً نبذة قصيرة عني.</string>
-    <string name="settings_made_with">صنعهُ محمود دامر لكم بكل حب ❤️</string>
+    <string name="dev_body">ستجد هنا قريباً نبذة قصيرة عني.</string>
+    <string name="settings_made_with">صنعه محمود دامر من أجلك بكل حب ❤️</string>
     <string name="settings_row_a11y">%1$s، %2$s</string>
     <string name="lang_title">اللغة والأرقام</string>
     <string name="lang_language">اللغة</string>
@@ -612,8 +642,8 @@
     <string name="lang_numbers">الأرقام</string>
     <string name="lang_time">نظام الوقت</string>
     <string name="lang_time_phone">الهاتف</string>
-    <string name="lang_time_12">١٢ ساعة</string>
-    <string name="lang_time_24">٢٤ ساعة</string>
+    <string name="lang_time_12">12 ساعة</string>
+    <string name="lang_time_24">24 ساعة</string>
     <string name="lang_week">يبدأ الأسبوع يوم</string>
     <string name="lang_note">اللغة العربية تقلب التطبيق كله من اليمين إلى اليسار.</string>
     <string name="acc_title">سهولة الاستخدام</string>
@@ -647,14 +677,14 @@
     <string name="tone_morning_chime">رنين الصباح</string>
     <string name="tone_loud_alarm">منبه عالٍ</string>
     <string name="sound_title">الصوت والتكرار</string>
-    <string name="sound_tone">نغمة التنبيه</string>
+    <string name="sound_tone">نغمة التذكير</string>
     <string name="sound_vibration">الاهتزاز</string>
     <string name="sound_unanswered">إذا لم أرد</string>
     <string name="sound_repeat_every">ذكّرني مرة أخرى كل</string>
     <string name="min_short">%1$s د</string>
     <string name="sound_test">تشغيل صوت تجريبي</string>
     <string name="sound_volume_note">يتبع الصوت أزرار مستوى الصوت في هاتفك.</string>
-    <string name="acc_keep">استمر في التنبيه حتى أرد</string>
+    <string name="acc_keep">استمر في التذكير حتى أرد</string>
     <string name="acc_keep_sub">يتكرر كل %1$s</string>
     <string name="acc_keep_off_sub">يرن مرة واحدة</string>
     <string name="quiet_title">ساعات الهدوء</string>
@@ -663,15 +693,15 @@
     <string name="quiet_from">من</string>
     <string name="quiet_until">إلى</string>
     <string name="quiet_bar_a11y">هدوء من %1$s إلى %2$s</string>
-    <string name="quiet_dose_rings">تنبيهات الأدوية تبقى تعمل</string>
+    <string name="quiet_dose_rings">تذكيرات الأدوية تبقى تعمل</string>
     <string name="quiet_dose_rings_sub">لا تُكتم الجرعات أبداً</string>
-    <string name="quiet_mute_refill">كتم تنبيهات التجديد</string>
+    <string name="quiet_mute_refill">كتم تنبيهات إعادة الشراء</string>
     <string name="quiet_mute_refill_sub">خلال ساعات الهدوء فقط</string>
-    <string name="quiet_note">آمن افتراضياً: تنبيه الجرعة يرن دائماً، حتى في الليل.</string>
-    <string name="quiet_note_silent">ستكون تنبيهات الجرعات صامتة خلال ساعات الهدوء. وتبقى ظاهرة على الشاشة.</string>
+    <string name="quiet_note">آمن افتراضياً: تذكير الجرعة يرن دائماً، حتى في الليل.</string>
+    <string name="quiet_note_silent">ستكون تذكيرات الجرعات صامتة خلال ساعات الهدوء. وتبقى ظاهرة على الشاشة.</string>
     <string name="meals_title">أوقات الوجبات</string>
-    <string name="meals_sub">تُستخدم لتنبيهات ما قبل الوجبة ومعها وبعدها</string>
-    <string name="meals_note">تبدأ إضافة الدواء بأوقات الجرعات عند هذه الوجبات. بعد الوجبة يعني بعدها بـ ٣٠ دقيقة، وقبلها بـ ٣٠ دقيقة.</string>
+    <string name="meals_sub">تُستخدم لتذكيرات ما قبل الوجبة ومعها وبعدها</string>
+    <string name="meals_note">تبدأ إضافة الدواء بأوقات الجرعات عند هذه الوجبات. بعد الوجبة يعني بعدها بـ 30 دقيقة، وقبلها بـ 30 دقيقة.</string>
     <string name="meal_breakfast">الفطور</string>
     <string name="meal_lunch">الغداء</string>
     <string name="meal_dinner">العشاء</string>
@@ -681,8 +711,8 @@
     <string name="meal_dinner_sub">أدوية المساء</string>
     <string name="meal_bedtime_sub">أدوية الليل</string>
     <string name="meal_time_a11y">%1$s، %2$s. تغيير الوقت.</string>
-    <string name="channel_doses_quiet">تنبيهات الأدوية (ساعات الهدوء)</string>
-    <string name="channel_doses_quiet_desc">تنبيهات صامتة تُستخدم في ساعات الهدوء عندما تختار ألا ترن.</string>
+    <string name="channel_doses_quiet">تذكيرات الأدوية (ساعات الهدوء)</string>
+    <string name="channel_doses_quiet_desc">تذكيرات صامتة تُستخدم في ساعات الهدوء عندما تختار ألا ترن.</string>
     <!-- Late dose -->
     <string name="late_title_one">أخذت هذه الجرعة متأخراً %1$s</string>
     <string name="late_title_many">أخذت هذه الجرعات متأخراً %1$s</string>
@@ -694,7 +724,7 @@
     <string name="late_move_none">لا توجد جرعات متبقية اليوم. يبقى الغد كما هو.</string>
     <string name="late_keep">إبقاء المواعيد الأصلية</string>
     <string name="late_keep_gap">تبقى الجرعة التالية عند %1$s (الفاصل %2$s)</string>
-    <string name="late_keep_fixed">تبقى الجرعات التالية كما خُطط لها. تُسجَّل هذه الجرعة كمتأخرة.</string>
+    <string name="late_keep_fixed">تبقى الجرعات التالية كما هي مجدولة. تُسجَّل هذه الجرعة كمتأخرة.</string>
     <string name="late_always">افعل هذا دائماً. لا تسأل مرة أخرى.</string>
     <string name="late_choose">اختر واحداً للمتابعة</string>
     <string name="late_continue">متابعة</string>
@@ -717,38 +747,38 @@
     <string name="late_setting_note">الأدوية التي تحتاج فاصلاً ثابتاً، مثل كل 8 ساعات، تسألك دائماً أولاً.</string>
     <!-- M8c -->
     <string name="tts_time_to_take">حان وقت أخذ %1$s.</string>
-    <string name="test_notif_title">تنبيه تجريبي</string>
-    <string name="test_notif_text">إذا رأيت هذا وسمعته، فتنبيهات جرعاتك ستعمل.</string>
+    <string name="test_notif_title">تذكير تجريبي</string>
+    <string name="test_notif_text">إذا رأيت هذا وسمعته، فتذكيرات جرعاتك ستعمل.</string>
     <string name="test_tts_name">دواءك</string>
     <string name="settings_sec_help">مساعدة</string>
-    <string name="settings_ring">التنبيهات لا ترنّ؟</string>
+    <string name="settings_ring">التذكيرات لا ترنّ؟</string>
     <plurals name="settings_ring_fix">
         <item quantity="zero">%1$s للإصلاح</item><item quantity="one">%1$s للإصلاح</item><item quantity="two">%1$s للإصلاح</item>
         <item quantity="few">%1$s للإصلاح</item><item quantity="many">%1$s للإصلاح</item><item quantity="other">%1$s للإصلاح</item>
     </plurals>
     <string name="settings_ring_ok">كل شيء سليم</string>
-    <string name="ring_title">التنبيهات لا ترنّ؟</string>
+    <string name="ring_title">التذكيرات لا ترنّ؟</string>
     <plurals name="ring_banner_fix">
         <item quantity="zero">%1$s أشياء للإصلاح حتى لا تفوتك جرعة.</item><item quantity="one">شيء واحد للإصلاح حتى لا تفوتك جرعة.</item><item quantity="two">شيئان للإصلاح حتى لا تفوتك جرعة.</item>
         <item quantity="few">%1$s أشياء للإصلاح حتى لا تفوتك جرعة.</item><item quantity="many">%1$s شيئاً للإصلاح حتى لا تفوتك جرعة.</item><item quantity="other">%1$s شيء للإصلاح حتى لا تفوتك جرعة.</item>
     </plurals>
-    <string name="ring_banner_ok">كل شيء جاهز. يجب أن ترنّ التنبيهات في وقتها.</string>
+    <string name="ring_banner_ok">كل شيء جاهز. يجب أن ترنّ التذكيرات في وقتها.</string>
     <string name="ring_notif">الإشعارات</string>
-    <string name="ring_notif_sub">مطلوبة لإظهار التنبيهات</string>
+    <string name="ring_notif_sub">مطلوبة لإظهار التذكيرات</string>
     <string name="ring_exact">المنبّهات الدقيقة</string>
     <string name="ring_exact_sub">يرنّ في الدقيقة المحددة</string>
     <string name="ring_battery">توفير البطارية</string>
     <string name="ring_battery_sub">قد يوقف الهاتف التطبيق ليلاً</string>
     <string name="ring_dnd">عدم الإزعاج</string>
-    <string name="ring_dnd_sub">اسمح بمرور تنبيهات الجرعات</string>
+    <string name="ring_dnd_sub">اسمح بمرور تذكيرات الجرعات</string>
     <string name="ring_fix">إصلاح</string>
     <string name="ring_fix_desc">إصلاح %1$s</string>
-    <string name="ring_test">إرسال تنبيه تجريبي</string>
+    <string name="ring_test">إرسال تذكير تجريبي</string>
     <string name="ring_done">تم</string>
     <string name="acc_simple">الوضع البسيط</string>
     <string name="acc_simple_sub">أماكن أقل وخط أكبر</string>
-    <string name="acc_read">قراءة التنبيهات بصوت عالٍ</string>
-    <string name="acc_read_sub">ينطق اسم الدواء عند رنين التنبيه</string>
+    <string name="acc_read">قراءة التذكيرات بصوت عالٍ</string>
+    <string name="acc_read_sub">ينطق اسم الدواء عند رنين التذكير</string>
     <string name="acc_simple_row_sub">أزرار كبيرة وخيارات أقل</string>
     <string name="acc_hc_preview">معاينة التباين العالي</string>
     <string name="acc_hc_preview_sub">شاهد شكل شاشة اليوم</string>
@@ -776,7 +806,7 @@
     <string name="bk_save_now">احفظ نسخة احتياطية الآن</string>
     <string name="bk_sec_more">المزيد</string>
     <string name="bk_report">مشاركة تقرير لطبيبي</string>
-    <string name="bk_report_sub">ملف PDF لآخر ٣٠ يوماً</string>
+    <string name="bk_report_sub">ملف PDF لآخر 30 يوماً</string>
     <string name="bk_share">مشاركة ملف النسخة</string>
     <string name="bk_share_sub">أرسله إلى هاتف جديد أو بريدك</string>
     <string name="bk_share_chooser">مشاركة ملف النسخة</string>
@@ -837,7 +867,7 @@
     <string name="rs_failed_title">تعذّرت الاستعادة</string>
     <string name="rs_failed_body">حدث خطأ ولم يتغير أي شيء. حاول مجدداً.</string>
     <string name="rs_newer_title">هذه النسخة من إصدار أحدث</string>
-    <string name="rs_newer_body">حدّث علبة الدواء من Google Play ثم حاول مجدداً. لم يتغير أي شيء.</string>
+    <string name="rs_newer_body">حدّث علبة الدواء من «التحقق من التحديثات» في الإعدادات ثم حاول مجدداً. لم يتغير أي شيء.</string>
     <string name="rs_ok">حسناً</string>
     <string name="da_title">حذف كل بياناتي؟</string>
     <string name="da_body">ستُمحى كل الأشخاص والأدوية والسجل والإعدادات من هذا الهاتف. النسخ التي حفظتها في مكان آخر لا تُحذف.</string>
@@ -970,8 +1000,8 @@
     <string name="fb_no_mail_body">ثبّت تطبيق بريد، أو اكتب إلى %1$s.</string>
     <string name="rt_title">قيّم التطبيق</string>
     <string name="rt_question">هل يساعدك التطبيق؟</string>
-    <string name="rt_body">المس النجوم. التطبيق يعمل بدون إنترنت فيفتح تطبيق البريد وتقييمك جاهز. اضغط إرسال هناك.</string>
-    <string name="rt_tap">المس نجمة</string>
+    <string name="rt_body">اضغط على النجوم. التطبيق يعمل بدون إنترنت فيفتح تطبيق البريد وتقييمك جاهز. اضغط إرسال هناك.</string>
+    <string name="rt_tap">اضغط على نجمة</string>
     <string name="rt_1">سيئ</string>
     <string name="rt_2">ليس جيداً</string>
     <string name="rt_3">مقبول</string>
@@ -1003,7 +1033,7 @@
     <string name="w_none">لا جرعات اليوم</string>
     <string name="w_next_tomorrow">التالية: غداً، %1$s</string>
     <string name="w_next_at">التالية: %1$s</string>
-    <string name="w_error">تعذّر تحميل علبة الدواء. المس للفتح.</string>
+    <string name="w_error">تعذّر تحميل علبة الدواء. اضغط للفتح.</string>
     <string name="w_next_a11y">الجرعة التالية الساعة %1$s</string>
     <plurals name="w_more">
         <item quantity="zero">+%1$s أخرى</item><item quantity="one">+١ أخرى</item><item quantity="two">+٢ أخريان</item>
@@ -1081,7 +1111,7 @@
     <string name="log_change_title">غيّر الوقت</string>
     <string name="log_sub">%1$s · الموعد %2$s، %3$s</string>
     <string name="log_pick_time">اختر الوقت</string>
-    <string name="log_time_desc">وقت الأخذ: %1$s. انقر مرتين للتغيير.</string>
+    <string name="log_time_desc">وقت الأخذ: %1$s. اضغط مرتين للتغيير.</string>
     <string name="log_change">تغيير</string>
     <string name="log_future">هذا الوقت لم يحن بعد. اختر وقتاً مضى.</string>
     <string name="log_note">يمكنك تسجيل جرعات آخر سبعة أيام. الجرعة التي لا تسجّلها تبقى فائتة.</string>
@@ -1108,12 +1138,30 @@
     <string name="expiry_soon_note">راجع التاريخ المطبوع قبل الاستخدام. اسأل الصيدلاني إن لم تكن متأكداً.</string>
     <string name="expiry_expired_note">لا تستخدم الدواء بعد تاريخ انتهاء صلاحيته. اسأل الصيدلاني كيف تتخلص منه.</string>
     <string name="expiry_notif_title">%1$s: راجع تاريخ الانتهاء</string>
-    <plurals name="unit_powder"><item quantity="one">كيس</item><item quantity="other">أكياس</item></plurals>
-    <plurals name="unit_spray"><item quantity="one">بخّة</item><item quantity="other">بخّات</item></plurals>
-    <plurals name="unit_inhaler"><item quantity="one">نفخة</item><item quantity="other">نفخات</item></plurals>
-    <plurals name="unit_suppository"><item quantity="one">تحميلة</item><item quantity="other">تحاميل</item></plurals>
-    <plurals name="unit_application"><item quantity="one">دهنة</item><item quantity="other">دهنات</item></plurals>
-    <plurals name="unit_patch"><item quantity="one">لصقة</item><item quantity="other">لصقات</item></plurals>
+    <plurals name="unit_powder">
+        <item quantity="zero">كيس</item><item quantity="one">كيس</item><item quantity="two">كيسان</item>
+        <item quantity="few">أكياس</item><item quantity="many">كيس</item><item quantity="other">كيس</item>
+    </plurals>
+    <plurals name="unit_spray">
+        <item quantity="zero">بخّة</item><item quantity="one">بخّة</item><item quantity="two">بخّتان</item>
+        <item quantity="few">بخّات</item><item quantity="many">بخّة</item><item quantity="other">بخّة</item>
+    </plurals>
+    <plurals name="unit_inhaler">
+        <item quantity="zero">نفخة</item><item quantity="one">نفخة</item><item quantity="two">نفختان</item>
+        <item quantity="few">نفخات</item><item quantity="many">نفخة</item><item quantity="other">نفخة</item>
+    </plurals>
+    <plurals name="unit_suppository">
+        <item quantity="zero">تحميلة</item><item quantity="one">تحميلة</item><item quantity="two">تحميلتان</item>
+        <item quantity="few">تحاميل</item><item quantity="many">تحميلة</item><item quantity="other">تحميلة</item>
+    </plurals>
+    <plurals name="unit_application">
+        <item quantity="zero">دهنة</item><item quantity="one">دهنة</item><item quantity="two">دهنتان</item>
+        <item quantity="few">دهنات</item><item quantity="many">دهنة</item><item quantity="other">دهنة</item>
+    </plurals>
+    <plurals name="unit_patch">
+        <item quantity="zero">لصقة</item><item quantity="one">لصقة</item><item quantity="two">لصقتان</item>
+        <item quantity="few">لصقات</item><item quantity="many">لصقة</item><item quantity="other">لصقة</item>
+    </plurals>
     <string name="type_powder">مسحوق أو حبيبات</string>
     <string name="type_solution">محلول</string>
     <string name="type_spray">بخاخ (للأنف أو الحلق)</string>
@@ -1125,7 +1173,7 @@
     <string name="type_patch">لصقة طبية</string>
     <string name="type_choose_title">اختر النوع</string>
     <string name="type_choose">اختيار</string>
-    <string name="type_button_desc">نوع الدواء: %1$s. انقر مرتين للتغيير.</string>
+    <string name="type_button_desc">نوع الدواء: %1$s. اضغط مرتين للتغيير.</string>
     <string name="per_powder">عدد الأكياس في العلبة</string>
     <string name="per_spray">عدد البخّات في القارورة</string>
     <string name="per_inhaler">عدد النفخات في البخاخ</string>
@@ -1149,7 +1197,7 @@
     <string name="notices_tab_expiry">الصلاحية</string>
     <string name="notices_tab_app">التطبيق</string>
     <string name="notices_empty">لا شيء هنا بعد. ستظهر هنا التذكيرات والتنبيهات.</string>
-    <string name="notices_kept">تُحفظ على هذا الهاتف ٣٠ يوماً.</string>
+    <string name="notices_kept">تُحفظ على هذا الهاتف 30 يوماً.</string>
     <string name="notices_new">جديد</string>
     <string name="notices_yesterday">أمس</string>
     <string name="notices_clear_all">مسح الكل</string>
@@ -1172,7 +1220,7 @@
         <item quantity="few">%1$s إشعارات جديدة لآخرين.</item><item quantity="many">%1$s إشعاراً جديداً لآخرين.</item><item quantity="other">%1$s إشعار جديد لآخرين.</item>
     </plurals>
     <string name="settings_updates">التحقق من التحديثات</string>
-    <string name="settings_updates_check">انقر للتحقق</string>
+    <string name="settings_updates_check">اضغط للتحقق</string>
     <string name="settings_updates_found">الإصدار الجديد %1$s جاهز</string>
     <string name="take_all_for">خذ الكل لـ%1$s</string>
     <string name="take_all_everyone">خذ الكل للجميع</string>
@@ -1215,4 +1263,56 @@
     <string name="packs_next_title">%1$s: العلبة التالية قيد الاستخدام</string>
     <string name="packs_next_date">%1$s قيد الاستخدام الآن. تنتهي صلاحيتها %2$s.</string>
     <string name="packs_next_no_date">%1$s قيد الاستخدام الآن. بلا تاريخ انتهاء.</string>
+    <!-- المقادير: الرقم والوحدة عبارة واحدة (M32) -->
+    <plurals name="amount_tablet">
+        <item quantity="zero">%1$s قرص</item><item quantity="one">قرص واحد</item><item quantity="two">قرصان</item>
+        <item quantity="few">%1$s أقراص</item><item quantity="many">%1$s قرص</item><item quantity="other">%1$s قرص</item>
+    </plurals>
+    <plurals name="amount_capsule">
+        <item quantity="zero">%1$s كبسولة</item><item quantity="one">كبسولة واحدة</item><item quantity="two">كبسولتان</item>
+        <item quantity="few">%1$s كبسولات</item><item quantity="many">%1$s كبسولة</item><item quantity="other">%1$s كبسولة</item>
+    </plurals>
+    <plurals name="amount_ml">
+        <item quantity="zero">%1$s مل</item><item quantity="one">%1$s مل</item><item quantity="two">%1$s مل</item>
+        <item quantity="few">%1$s مل</item><item quantity="many">%1$s مل</item><item quantity="other">%1$s مل</item>
+    </plurals>
+    <plurals name="amount_drops">
+        <item quantity="zero">%1$s قطرة</item><item quantity="one">قطرة واحدة</item><item quantity="two">قطرتان</item>
+        <item quantity="few">%1$s قطرات</item><item quantity="many">%1$s قطرة</item><item quantity="other">%1$s قطرة</item>
+    </plurals>
+    <plurals name="amount_injection">
+        <item quantity="zero">%1$s حقنة</item><item quantity="one">حقنة واحدة</item><item quantity="two">حقنتان</item>
+        <item quantity="few">%1$s حقن</item><item quantity="many">%1$s حقنة</item><item quantity="other">%1$s حقنة</item>
+    </plurals>
+    <plurals name="amount_other">
+        <item quantity="zero">%1$s جرعة</item><item quantity="one">جرعة واحدة</item><item quantity="two">جرعتان</item>
+        <item quantity="few">%1$s جرعات</item><item quantity="many">%1$s جرعة</item><item quantity="other">%1$s جرعة</item>
+    </plurals>
+    <plurals name="amount_powder">
+        <item quantity="zero">%1$s كيس</item><item quantity="one">كيس واحد</item><item quantity="two">كيسان</item>
+        <item quantity="few">%1$s أكياس</item><item quantity="many">%1$s كيس</item><item quantity="other">%1$s كيس</item>
+    </plurals>
+    <plurals name="amount_spray">
+        <item quantity="zero">%1$s بخّة</item><item quantity="one">بخّة واحدة</item><item quantity="two">بخّتان</item>
+        <item quantity="few">%1$s بخّات</item><item quantity="many">%1$s بخّة</item><item quantity="other">%1$s بخّة</item>
+    </plurals>
+    <plurals name="amount_inhaler">
+        <item quantity="zero">%1$s نفخة</item><item quantity="one">نفخة واحدة</item><item quantity="two">نفختان</item>
+        <item quantity="few">%1$s نفخات</item><item quantity="many">%1$s نفخة</item><item quantity="other">%1$s نفخة</item>
+    </plurals>
+    <plurals name="amount_suppository">
+        <item quantity="zero">%1$s تحميلة</item><item quantity="one">تحميلة واحدة</item><item quantity="two">تحميلتان</item>
+        <item quantity="few">%1$s تحاميل</item><item quantity="many">%1$s تحميلة</item><item quantity="other">%1$s تحميلة</item>
+    </plurals>
+    <plurals name="amount_application">
+        <item quantity="zero">%1$s دهنة</item><item quantity="one">دهنة واحدة</item><item quantity="two">دهنتان</item>
+        <item quantity="few">%1$s دهنات</item><item quantity="many">%1$s دهنة</item><item quantity="other">%1$s دهنة</item>
+    </plurals>
+    <plurals name="amount_patch">
+        <item quantity="zero">%1$s لصقة</item><item quantity="one">لصقة واحدة</item><item quantity="two">لصقتان</item>
+        <item quantity="few">%1$s لصقات</item><item quantity="many">%1$s لصقة</item><item quantity="other">%1$s لصقة</item>
+    </plurals>
+    <bool name="amount_half_words">true</bool>
+    <string name="amount_half">نصف %1$s</string>
+    <string name="amount_one_and_half">%1$s ونصف</string>
 </resources>

@@ -200,7 +200,7 @@ class Reminders(
             text = context.getString(R.string.refill_notif_out_text)
             big = text
         } else {
-            val amount = fmt.amount(m.stock) + " " + res.getQuantityString(com.pillbox.ui.unitPlural(m.unit), com.pillbox.ui.quantityFor(m.stock))
+            val amount = com.pillbox.ui.amountText(res, fmt, m.stock, m.unit)
             title = context.getStringIso(R.string.refill_notif_title, name)
             text = context.getString(R.string.refill_notif_left, amount)
             val days = a.daysLeft ?: 0
@@ -423,7 +423,7 @@ class Reminders(
             .setContentIntent(activityPending(MainActivity::class.java, at, 20, openFor))
             // At most three buttons: Take all, Snooze, Open. Per-medicine Take and Skip are on the full-screen reminder.
             .addAction(0, takeAllLabel(people, owners), actionPending(ACTION_TAKE_ALL, at))
-            .addAction(0, context.getString(R.string.snooze_15), actionPending(ACTION_SNOOZE, at))
+            .addAction(0, Formatter.from(context).localizeDigits(context.getString(R.string.snooze_15)), actionPending(ACTION_SNOOZE, at))
             .addAction(0, context.getString(R.string.open), activityPending(MainActivity::class.java, at, 21, openFor))
         // The notification above is the fallback when the full-screen screen is not allowed (Android 14+ may need approval).
         builder.setFullScreenIntent(activityPending(ReminderActivity::class.java, at, 22), true)

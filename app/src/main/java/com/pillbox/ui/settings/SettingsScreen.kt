@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import com.pillbox.domain.BackupSettings
 import com.pillbox.domain.TextSize
 import com.pillbox.ui.Formatter
@@ -141,7 +142,7 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
             Section(stringResource(R.string.settings_sec_data))
             Group {
                 SettingsRow(
-                    stringResource(R.string.settings_report), stringResource(R.string.settings_report_value),
+                    stringResource(R.string.settings_report), digitsStringResource(R.string.settings_report_value),
                     tints[1], { RowIcon(com.pillbox.ui.components.DesignIcons.Doc) }, { onOpen(SettingsTarget.REPORT) },
                 )
                 Divider()

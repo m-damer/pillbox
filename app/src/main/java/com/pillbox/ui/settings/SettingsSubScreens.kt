@@ -42,6 +42,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import com.pillbox.domain.DisplaySettings
 import com.pillbox.domain.DoseUnit
 import com.pillbox.domain.TextSize
@@ -274,7 +275,7 @@ fun LanguageContent(
                 }
             }
             Caption(stringResource(R.string.lang_time))
-            Card { Box(Modifier.padding(Space.S8)) { Segmented(times.map { stringResource(it.second) }, times.indexOfFirst { it.first == time }, { onTime(times[it].first) }, stackWhenLarge = true) } }
+            Card { Box(Modifier.padding(Space.S8)) { Segmented(times.map { digitsStringResource(it.second) }, times.indexOfFirst { it.first == time }, { onTime(times[it].first) }, stackWhenLarge = true) } }
             Caption(stringResource(R.string.lang_week))
             Card {
                 Box(Modifier.padding(Space.S8)) {

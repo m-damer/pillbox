@@ -178,8 +178,7 @@ class ReportPdf(context: Context, private val fmt: Formatter) {
         val rows = m.medicines.map { r ->
             val med = r.medicine
             val strength = localizedStrength(med.strength, res)
-            val dose = (if (strength != null) "$strength, " else "") + fmt.amount(med.doseAmount) + " " +
-                res.getQuantityString(unitPlural(med.unit), quantityFor(med.doseAmount))
+            val dose = (if (strength != null) "$strength, " else "") + com.pillbox.ui.amountText(res, fmt, med.doseAmount, med.unit)
             listOf(med.name, dose, whenCell(r), fmt.number(r.onTime), fmt.number(r.late), fmt.number(r.missed))
         }
         table(headers, listOf(2.6f, 2.4f, 3f, 1.2f, 1f, 1.2f), setOf(3, 4, 5), rows)

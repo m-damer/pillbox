@@ -46,6 +46,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pillbox.R
+import com.pillbox.ui.digitsStringResource
 import com.pillbox.domain.PeopleRules
 import com.pillbox.domain.Relation
 import com.pillbox.ui.addmed.fieldColors
@@ -141,7 +142,7 @@ fun PersonEditContent(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     modifier = Modifier.widthIn(min = 140.dp).heightIn(min = Dimens.StepperButton),
                 )
-                if (state.birthYearError) ErrorText(stringResource(R.string.profile_birth_error)) else HelperText(stringResource(R.string.profile_birth_help))
+                if (state.birthYearError) ErrorText(digitsStringResource(R.string.profile_birth_error)) else HelperText(stringResource(R.string.profile_birth_help))
             } else {
                 FieldLabel(stringResource(R.string.person_who))
                 ChipGroup {

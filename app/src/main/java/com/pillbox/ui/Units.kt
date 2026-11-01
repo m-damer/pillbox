@@ -71,8 +71,49 @@ fun boughtLabel(t: DoseUnit) = when (com.pillbox.domain.MedicineTypes.packKind(t
     com.pillbox.domain.PackKind.INHALER -> R.string.stock_inhalers
 }
 
-/** 1 is singular; whole numbers use themselves; halves count as plural. */
-fun quantityFor(v: Double): Int = if (v == 1.0) 1 else if (v == floor(v)) v.toInt() else 2
+/** Whole numbers use themselves (so Arabic gets one, two, few, many); fractions count as "other". See [com.pillbox.domain.AmountRules]. */
+fun quantityFor(v: Double): Int = com.pillbox.domain.AmountRules.quantity(v)
+
+/** Plural resource whose items are whole phrases with the number in them: "%1$s tablets", "قرصان", "٣ أقراص". */
+fun amountPlural(t: DoseUnit) = when (t) {
+    DoseUnit.TABLET -> R.plurals.amount_tablet
+    DoseUnit.CAPSULE -> R.plurals.amount_capsule
+    DoseUnit.ML, DoseUnit.SOLUTION -> R.plurals.amount_ml
+    DoseUnit.DROPS -> R.plurals.amount_drops
+    DoseUnit.INJECTION -> R.plurals.amount_injection
+    DoseUnit.OTHER -> R.plurals.amount_other
+    DoseUnit.POWDER -> R.plurals.amount_powder
+    DoseUnit.SPRAY -> R.plurals.amount_spray
+    DoseUnit.INHALER -> R.plurals.amount_inhaler
+    DoseUnit.SUPPOSITORY -> R.plurals.amount_suppository
+    DoseUnit.CREAM, DoseUnit.OINTMENT, DoseUnit.GEL -> R.plurals.amount_application
+    DoseUnit.PATCH -> R.plurals.amount_patch
+}
+
+/**
+ * An amount with its unit as one phrase, right for the language: "1 tablet", "2.5 tablets"; in Arabic
+ * "قرص واحد", "قرصان", "٣ أقراص", "١١ قرص", "نصف قرص", "قرص ونصف".
+ */
+fun amountText(res: android.content.res.Resources, fmt: Formatter, value: Double, unit: DoseUnit): String {
+    val words = res.getBoolean(R.bool.amount_half_words)
+    return when (com.pillbox.domain.AmountRules.shape(value, words, com.pillbox.domain.AmountRules.supportsHalf(unit))) {
+        com.pillbox.domain.AmountRules.Shape.HALF -> res.getString(R.string.amount_half, res.getQuantityString(unitPlural(unit), 1))
+        com.pillbox.domain.AmountRules.Shape.ONE_AND_HALF -> res.getString(R.string.amount_one_and_half, res.getQuantityString(unitPlural(unit), 1))
+        com.pillbox.domain.AmountRules.Shape.PLURAL -> res.getQuantityString(amountPlural(unit), quantityFor(value), fmt.amount(value))
+    }
+}
+
+/** The plural noun alone ("tablets", "أقراص"): for sentences like "Enter the number of tablets in the box". */
+fun pluralUnitWord(res: android.content.res.Resources, unit: DoseUnit): String = res.getQuantityString(unitPlural(unit), 5)
+
+@Composable
+@ReadOnlyComposable
+fun pluralUnitWord(unit: DoseUnit): String = pluralUnitWord(androidx.compose.ui.platform.LocalContext.current.resources, unit)
+
+@Composable
+@ReadOnlyComposable
+fun amountText(fmt: Formatter, value: Double, unit: DoseUnit): String =
+    amountText(androidx.compose.ui.platform.LocalContext.current.resources, fmt, value, unit)
 
 /** The four parts of the day that group doses, with their token colors. */
 enum class Block { MORNING, NOON, EVENING, NIGHT }

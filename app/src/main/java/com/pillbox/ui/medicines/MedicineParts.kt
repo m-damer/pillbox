@@ -57,12 +57,12 @@ fun PauseGlyph(color: androidx.compose.ui.graphics.Color, modifier: Modifier = M
 /** "850 mg" style strength is stored as text; this is "1 tablet", "0.5 tablets". */
 @Composable
 fun doseText(m: Medicine, fmt: Formatter): String =
-    fmt.amount(m.doseAmount) + " " + pluralStringResource(unitPlural(m.unit), quantityFor(m.doseAmount))
+    com.pillbox.ui.amountText(fmt, m.doseAmount, m.unit)
 
 /** "8 tablets" for a stock amount. */
 @Composable
 fun stockAmountText(m: Medicine, fmt: Formatter): String =
-    fmt.amount(m.stock) + " " + pluralStringResource(unitPlural(m.unit), quantityFor(m.stock))
+    com.pillbox.ui.amountText(fmt, m.stock, m.unit)
 
 /** "ongoing" or "7 days". */
 @Composable
@@ -99,9 +99,9 @@ fun scheduleSummaryText(res: android.content.res.Resources, schedule: Schedule, 
     val parts = mutableListOf<String>()
     val days: DayPattern? = when (val f = schedule.frequency) {
         is Frequency.FixedTimes -> {
-            parts += res.getString(
+            parts += fmt.localizeDigits(res.getString(
                 when (f.times.size) { 1 -> R.string.freq_once; 2 -> R.string.freq_twice; 3 -> R.string.freq_three; else -> R.string.freq_hours },
-            )
+            ))
             f.days
         }
         is Frequency.EveryNHours -> {

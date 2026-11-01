@@ -229,8 +229,8 @@ fun Stepper(
             } else {
                 Text(valueText, style = MaterialTheme.typography.headlineSmall, color = colors.text)
             }
-            Spacer(Modifier.width(Space.S8))
-            Text(unit, style = MaterialTheme.typography.bodyMedium, color = colors.textMuted, modifier = Modifier.weight(1f, fill = false))
+            if (unit.isNotEmpty()) Spacer(Modifier.width(Space.S8))
+            if (unit.isNotEmpty()) Text(unit, style = MaterialTheme.typography.bodyMedium, color = colors.textMuted, modifier = Modifier.weight(1f, fill = false))
         }
         RoundStepButton("+", stringResourceIso(R.string.stepper_increase, label), plusEnabled, onPlus)
     }

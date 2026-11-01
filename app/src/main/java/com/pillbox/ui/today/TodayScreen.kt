@@ -312,7 +312,7 @@ private fun ShareDayButton(model: TodayModel, fmt: Formatter, forName: String?) 
         lines.add(fmt.time(g.time.toLocalTime()))
         g.rows.forEach { r ->
             val m = r.medicine
-            val amount = fmt.amount(m.doseAmount) + " " + res.getQuantityString(unitPlural(m.unit), quantityFor(m.doseAmount))
+            val amount = com.pillbox.ui.amountText(res, fmt, m.doseAmount, m.unit)
             val status = when (r.status) {
                 RowStatus.TAKEN -> context.getString(R.string.said_taken_at, fmt.time(r.event?.taken?.toLocalTime() ?: r.planned.toLocalTime()))
                 RowStatus.SKIPPED -> skippedText
@@ -788,7 +788,7 @@ private fun DoseRowItem(
 ) {
     val c = PillBox.colors
     val med = row.medicine
-    val amount = fmt.amount(med.doseAmount) + " " + pluralStringResource(unitPlural(med.unit), quantityFor(med.doseAmount))
+    val amount = com.pillbox.ui.amountText(fmt, med.doseAmount, med.unit)
     val sep = stringResource(R.string.dot_sep)
     val status = row.status
     val skipped = status == RowStatus.SKIPPED

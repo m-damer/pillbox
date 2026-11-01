@@ -212,7 +212,7 @@ private fun Empty(p: Palette, model: WidgetModel, fmt: Formatter) {
 private fun DoseLine(p: Palette, row: DoseRow, settings: WidgetSettings, fmt: Formatter, showTime: Boolean) {
     val context = LocalContext.current
     val med = row.medicine
-    val amount = fmt.amount(med.doseAmount) + " " + context.resources.getQuantityString(unitPlural(med.unit), quantityFor(med.doseAmount))
+    val amount = com.pillbox.ui.amountText(context.resources, fmt, med.doseAmount, med.unit)
     val food = when (row.schedule.withFood) {
         WithFood.ANY -> null
         WithFood.BEFORE_MEAL -> context.getString(R.string.food_line_before)

@@ -273,7 +273,7 @@
     <string name="sched_legend">Colors show the part of the day</string>
     <string name="week_title">Last 7 days</string>
     <string name="week_none">No doses to show yet.</string>
-    <string name="week_taken">%1$s of %2$s doses taken.</string>
+    <plurals name="week_taken"><item quantity="one">%1$s of %2$s dose taken.</item><item quantity="other">%1$s of %2$s doses taken.</item></plurals>
     <plurals name="week_missed"><item quantity="one">One missed on %2$s.</item><item quantity="other">%1$s missed.</item></plurals>
     <string name="week_day_taken">%1$s: all doses taken</string>
     <string name="week_day_missed">%1$s: a dose was missed</string>
@@ -776,7 +776,7 @@
     <string name="rs_failed_title">Could not restore</string>
     <string name="rs_failed_body">Something went wrong and nothing was changed. Try again.</string>
     <string name="rs_newer_title">This backup is from a newer Pill Box</string>
-    <string name="rs_newer_body">Update Pill Box from Google Play, then try again. Nothing was changed.</string>
+    <string name="rs_newer_body">Update Pill Box from Settings, Check for updates, then try again. Nothing was changed.</string>
     <string name="rs_ok">OK</string>
     <string name="da_title">Delete all my data?</string>
     <string name="da_body">All people, medicines, history and settings will be erased from this phone. Backups you saved elsewhere are not deleted.</string>
@@ -1143,4 +1143,20 @@
     <string name="packs_next_title">%1$s: next box in use</string>
     <string name="packs_next_date">%1$s is now in use. Expires %2$s.</string>
     <string name="packs_next_no_date">%1$s is now in use. No expiry date.</string>
+    <!-- Amounts: number and unit as one phrase (M32) -->
+    <plurals name="amount_tablet"><item quantity="one">%1$s tablet</item><item quantity="other">%1$s tablets</item></plurals>
+    <plurals name="amount_capsule"><item quantity="one">%1$s capsule</item><item quantity="other">%1$s capsules</item></plurals>
+    <plurals name="amount_ml"><item quantity="one">%1$s ml</item><item quantity="other">%1$s ml</item></plurals>
+    <plurals name="amount_drops"><item quantity="one">%1$s drop</item><item quantity="other">%1$s drops</item></plurals>
+    <plurals name="amount_injection"><item quantity="one">%1$s injection</item><item quantity="other">%1$s injections</item></plurals>
+    <plurals name="amount_other"><item quantity="one">%1$s dose</item><item quantity="other">%1$s doses</item></plurals>
+    <plurals name="amount_powder"><item quantity="one">%1$s sachet</item><item quantity="other">%1$s sachets</item></plurals>
+    <plurals name="amount_spray"><item quantity="one">%1$s spray</item><item quantity="other">%1$s sprays</item></plurals>
+    <plurals name="amount_inhaler"><item quantity="one">%1$s puff</item><item quantity="other">%1$s puffs</item></plurals>
+    <plurals name="amount_suppository"><item quantity="one">%1$s suppository</item><item quantity="other">%1$s suppositories</item></plurals>
+    <plurals name="amount_application"><item quantity="one">%1$s application</item><item quantity="other">%1$s applications</item></plurals>
+    <plurals name="amount_patch"><item quantity="one">%1$s patch</item><item quantity="other">%1$s patches</item></plurals>
+    <bool name="amount_half_words">false</bool>
+    <string name="amount_half">%1$s</string>
+    <string name="amount_one_and_half">%1$s</string>
 </resources>
