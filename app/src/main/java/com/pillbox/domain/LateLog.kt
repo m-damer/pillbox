@@ -15,6 +15,13 @@ object LateLog {
         !planned.isAfter(now) && !planned.toLocalDate().isBefore(now.toLocalDate().minusDays(WINDOW_DAYS))
 
     /**
+     * A dose logged afterwards can move the next doses only when it belongs to today and a later dose of the medicine
+     * has not come yet. Older days are history: nothing moves.
+     */
+    fun movesApply(planned: LocalDateTime, dosesThatDay: List<LocalDateTime>, now: LocalDateTime): Boolean =
+        planned.toLocalDate() == now.toLocalDate() && dosesThatDay.any { it.isAfter(planned) && it.isAfter(now) }
+
+    /**
      * The moment the person says they took it: the chosen clock time on the dose's day. A time more than 6 hours before the
      * planned time means after midnight (planned 11:30 PM, taken 12:10 AM). Null when that moment has not happened yet.
      */

@@ -27,3 +27,4 @@
 - [ ] M31 Bottom bar without the plus button; floating "+ Add medicine" on Medicines (list leaves room for it); Add on Today in Simple mode with only Today and Settings; Arabic "Snooze" is now تأجيل
 - [ ] M32 Arabic wording and counting: units follow Arabic counting (قرص واحد، قرصان، ٣ أقراص، ١١ قرص، نصف قرص، قرص ونصف), fixed numbers follow the digits setting, grammar and word-choice fixes
 - [ ] M33 English wording: "Tap" instead of "Press", "recognize", 12-hour/24-hour, clearer meal-time and daily-limit text, no 12-hour example in the time zone notice, no promise of update notices, "Resume in Medicines"; Arabic matches (time zone notice, expiry hint, update check).
+- [ ] M34 "I took it" for a late dose today asks Move next doses or Keep my times when a later dose has not come yet (same sheet and Late setting as taking it late now).

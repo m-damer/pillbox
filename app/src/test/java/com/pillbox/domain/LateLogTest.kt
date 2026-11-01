@@ -30,4 +30,15 @@ class LateLogTest {
     @Test fun timeThatHasNotComeIsRejected() {
         assertNull(LateLog.takenAt(at(22, 8), LocalTime.of(15, 0), now))
     }
+    @Test fun loggedDoseTodayWithLaterDoseToComeCanMove() {
+        val doses = listOf(at(22, 8), at(22, 20))
+        assertTrue(LateLog.movesApply(at(22, 8), doses, now))
+    }
+    @Test fun nothingMovesWhenNoLaterDoseIsLeftToday() {
+        assertFalse(LateLog.movesApply(at(22, 8), listOf(at(22, 8)), now))
+        assertFalse(LateLog.movesApply(at(22, 8), listOf(at(22, 8), at(22, 13)), now)) // the next dose has already passed
+    }
+    @Test fun olderDaysAreHistory() {
+        assertFalse(LateLog.movesApply(at(21, 8), listOf(at(21, 8), at(21, 20)), now))
+    }
 }
