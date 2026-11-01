@@ -303,3 +303,4 @@ Every success, warning and error message now has a designed screen in English an
   - **Tabs:** Active = النشطة, Finished = السابقة (avoids confusion with expired medicines). A medicine that is started again: إعادة بدء.
   - **Numbers in sentences** follow the Digits setting, including fixed numbers like 7 and 30.
   - **Agreement:** علبة الدواء is feminine (تحتاج، ترنّ، تستطيع).
+- **Settings order (M35):** grouped by what the person wants to do, safety first: Reminders, Doses and stock, Display and language, Your data, About. "Reminders not ringing?" is the first row and also a banner at the top while something needs fixing. The developer card moved to About. "Language and numbers" is now "Language and time" (it also holds time format, week start and Keep my home time).

@@ -85,16 +85,29 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
         Column(Modifier.weight(1f).verticalScroll(scroll).padding(horizontal = Dimens.ScreenPaddingH, vertical = Dimens.ScreenPaddingTop)) {
             Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall, color = c.text, modifier = Modifier.semantics { heading() })
             Spacer(Modifier.size(Space.S8))
-            Group {
-                SettingsRow(
-                    stringResource(R.string.dev_title), stringResource(R.string.dev_name),
-                    c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Person) }, { onOpen(SettingsTarget.DEVELOPER) },
-                )
-            }
+            val q = state.reminder.quiet
+            val updateState by (androidx.compose.ui.platform.LocalContext.current.applicationContext as com.pillbox.PillBoxApp).updates.settings.flow
+                .collectAsState(com.pillbox.domain.UpdateSettings())
+            val found = updateState.available
+            if (ringingIssues > 0) FixBanner(pluralStringResource(R.plurals.ring_banner_fix, ringingIssues, fmt.number(ringingIssues))) { onOpen(SettingsTarget.RINGING) }
             Section(stringResource(R.string.settings_sec_reminders))
             Group {
+                SettingsRow(
+                    stringResource(R.string.settings_ring),
+                    if (ringingIssues > 0) pluralStringResource(R.plurals.settings_ring_fix, ringingIssues, fmt.number(ringingIssues)) else stringResource(R.string.settings_ring_ok),
+                    tints[2], { RowIcon(com.pillbox.ui.components.DesignIcons.Alarm) }, { onOpen(SettingsTarget.RINGING) },
+                )
+                Divider()
                 SettingsRow(stringResource(R.string.settings_sound), stringResource(toneName(state.reminder.tone)), tints[4], { RowIcon(com.pillbox.ui.components.DesignIcons.Sound) }, { onOpen(SettingsTarget.SOUND) })
                 Divider()
+                SettingsRow(
+                    stringResource(R.string.settings_quiet),
+                    if (q.enabled) stringResourceIso(R.string.settings_quiet_range, fmt.time(q.from), fmt.time(q.until)) else stringResource(R.string.settings_off),
+                    tints[0], { RowIcon(com.pillbox.ui.components.DesignIcons.Moon) }, { onOpen(SettingsTarget.QUIET) },
+                )
+            }
+            Section(stringResource(R.string.settings_sec_doses))
+            Group {
                 SettingsRow(
                     stringResource(R.string.settings_late),
                     stringResource(when (state.reminder.late) {
@@ -106,21 +119,14 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                 )
                 Divider()
                 SettingsRow(
+                    stringResource(R.string.settings_meals), pluralStringResource(R.plurals.meals_count, 4, fmt.number(4)),
+                    tints[3], { RowIcon(com.pillbox.ui.components.DesignIcons.Utensils) }, { onOpen(SettingsTarget.MEALS) },
+                )
+                Divider()
+                SettingsRow(
                     stringResource(R.string.settings_refill),
                     pluralStringResource(R.plurals.n_days, state.refillDays, fmt.number(state.refillDays)),
                     tints[1], { RowIcon(com.pillbox.ui.components.DesignIcons.Bell) }, { onOpen(SettingsTarget.REFILL) },
-                )
-                Divider()
-                val q = state.reminder.quiet
-                SettingsRow(
-                    stringResource(R.string.settings_quiet),
-                    if (q.enabled) stringResourceIso(R.string.settings_quiet_range, fmt.time(q.from), fmt.time(q.until)) else stringResource(R.string.settings_off),
-                    tints[0], { RowIcon(com.pillbox.ui.components.DesignIcons.Moon) }, { onOpen(SettingsTarget.QUIET) },
-                )
-                Divider()
-                SettingsRow(
-                    stringResource(R.string.settings_meals), pluralStringResource(R.plurals.meals_count, 4, fmt.number(4)),
-                    tints[3], { RowIcon(com.pillbox.ui.components.DesignIcons.Utensils) }, { onOpen(SettingsTarget.MEALS) },
                 )
             }
             Section(stringResource(R.string.settings_sec_display))
@@ -131,38 +137,29 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                 )
                 Divider()
                 SettingsRow(
-                    stringResource(R.string.settings_language), languageName(com.pillbox.ui.AppLocale.active(androidx.compose.ui.platform.LocalContext.current)),
-                    c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Globe) }, { onOpen(SettingsTarget.LANGUAGE) },
+                    stringResource(R.string.acc_dark), stringResource(themeLabel(state.display.theme)),
+                    tints[0], { RowIcon(com.pillbox.ui.components.DesignIcons.Moon) }, { onOpen(SettingsTarget.THEME) },
                 )
                 Divider()
                 SettingsRow(
-                    stringResource(R.string.acc_dark), stringResource(themeLabel(state.display.theme)),
-                    tints[0], { RowIcon(com.pillbox.ui.components.DesignIcons.Moon) }, { onOpen(SettingsTarget.THEME) },
+                    stringResource(R.string.settings_language), languageValue(state.display),
+                    c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Globe) }, { onOpen(SettingsTarget.LANGUAGE) },
                 )
             }
             Section(stringResource(R.string.settings_sec_data))
             Group {
                 SettingsRow(
-                    stringResource(R.string.settings_report), digitsStringResource(R.string.settings_report_value),
-                    tints[1], { RowIcon(com.pillbox.ui.components.DesignIcons.Doc) }, { onOpen(SettingsTarget.REPORT) },
-                )
-                Divider()
-                SettingsRow(
                     stringResource(R.string.settings_backup), backupValue(backup, fmt),
                     c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Cloud) }, { onOpen(SettingsTarget.BACKUP) },
                 )
-            }
-            Section(stringResource(R.string.settings_sec_help))
-            Group {
-                SettingsRow(
-                    stringResource(R.string.settings_ring),
-                    if (ringingIssues > 0) pluralStringResource(R.plurals.settings_ring_fix, ringingIssues, fmt.number(ringingIssues)) else stringResource(R.string.settings_ring_ok),
-                    tints[2], { RowIcon(com.pillbox.ui.components.DesignIcons.Alarm) }, { onOpen(SettingsTarget.RINGING) },
-                )
                 Divider()
-                val updateState by (androidx.compose.ui.platform.LocalContext.current.applicationContext as com.pillbox.PillBoxApp).updates.settings.flow
-                    .collectAsState(com.pillbox.domain.UpdateSettings())
-                val found = updateState.available
+                SettingsRow(
+                    stringResource(R.string.settings_report), digitsStringResource(R.string.settings_report_value),
+                    tints[1], { RowIcon(com.pillbox.ui.components.DesignIcons.Doc) }, { onOpen(SettingsTarget.REPORT) },
+                )
+            }
+            Section(stringResource(R.string.settings_sec_about))
+            Group {
                 SettingsRow(
                     stringResource(R.string.settings_updates),
                     if (found != null) stringResourceIso(R.string.settings_updates_found, fmt.digits(found.versionName)) else stringResource(R.string.settings_updates_check),
@@ -173,6 +170,11 @@ fun SettingsContent(state: SettingsUiState, fmt: Formatter, onOpen: (SettingsTar
                     stringResource(R.string.settings_privacy),
                     stringResourceIso(R.string.ab_version, fmt.digits(com.pillbox.ui.about.appVersion(androidx.compose.ui.platform.LocalContext.current))),
                     c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Info) }, { onOpen(SettingsTarget.PRIVACY) },
+                )
+                Divider()
+                SettingsRow(
+                    stringResource(R.string.dev_title), stringResource(R.string.dev_name),
+                    c.primaryContainer, { RowIcon(com.pillbox.ui.components.DesignIcons.Person) }, { onOpen(SettingsTarget.DEVELOPER) },
                 )
             }
             Spacer(Modifier.size(Space.S20))
@@ -219,6 +221,40 @@ internal fun toneName(t: com.pillbox.domain.Tone) = when (t) {
 private fun textSizeName(s: TextSize) = stringResource(
     when (s) { TextSize.STANDARD -> R.string.acc_size_standard; TextSize.LARGE -> R.string.acc_size_large; TextSize.LARGEST -> R.string.acc_size_largest },
 )
+
+/** "English · 24-hour": the language, and the time format when one is chosen. */
+@Composable
+internal fun languageValue(d: com.pillbox.domain.DisplaySettings): String {
+    val lang = languageName(com.pillbox.ui.AppLocale.active(androidx.compose.ui.platform.LocalContext.current))
+    val time = when (d.timeFormat) {
+        com.pillbox.domain.TimeFormat.H12 -> digitsStringResource(R.string.lang_time_12)
+        com.pillbox.domain.TimeFormat.H24 -> digitsStringResource(R.string.lang_time_24)
+        else -> null
+    }
+    return if (time == null) lang else "$lang · $time"
+}
+
+/** Shown at the very top of Settings only while something stops reminders from ringing. Text and an icon, never colour alone. */
+@Composable
+private fun FixBanner(text: String, onClick: () -> Unit) {
+    val c = PillBox.colors
+    Row(
+        Modifier
+            .padding(top = Space.S8)
+            .fillMaxWidth()
+            .background(c.dangerContainer, MaterialTheme.shapes.large)
+            .heightIn(min = Dimens.SettingsRowMinHeight)
+            .clickable(role = Role.Button, onClick = onClick)
+            .semantics(mergeDescendants = true) { contentDescription = text }
+            .padding(horizontal = Space.S12, vertical = Space.S8),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Space.S12),
+    ) {
+        Icon(com.pillbox.ui.components.DesignIcons.Alarm, contentDescription = null, tint = c.text, modifier = Modifier.size(22.dp))
+        Text(text, style = MaterialTheme.typography.labelLarge, color = c.text, modifier = Modifier.weight(1f))
+        Icon(com.pillbox.ui.components.DesignIcons.Chevron, contentDescription = null, tint = c.textMuted)
+    }
+}
 
 @Composable
 internal fun languageName(code: String) = stringResource(if (code == "ar") R.string.lang_ar else R.string.lang_en)
