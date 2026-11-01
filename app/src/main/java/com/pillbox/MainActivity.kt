@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -524,8 +525,14 @@ class MainActivity : PillBoxActivity() {
                                     )
                                 }
                             }
+                            // Simple mode with only Today and Settings hides the Medicines tab, so Today carries the Add button.
+                            if (display.onlyTodayAndSettings && tab == Tab.TODAY) {
+                                com.pillbox.ui.components.AddMedicineFab(
+                                    { adding = true }, Modifier.align(androidx.compose.ui.Alignment.BottomEnd).padding(com.pillbox.ui.theme.Space.S16),
+                                )
+                            }
                         }
-                        PillBoxBottomBar(tab, onSelect = { tab = it }, onAdd = { adding = true }, onlyTodayAndSettings = display.onlyTodayAndSettings)
+                        PillBoxBottomBar(tab, onSelect = { tab = it }, onlyTodayAndSettings = display.onlyTodayAndSettings)
                     }
                 }
             }
