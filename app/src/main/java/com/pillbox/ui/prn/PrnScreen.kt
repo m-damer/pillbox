@@ -1,5 +1,6 @@
 package com.pillbox.ui.prn
 
+import com.pillbox.domain.AppClock
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -211,7 +212,7 @@ private fun CountCard(day: PrnDay, fmt: Formatter) {
 @Composable
 private fun nextText(day: PrnDay, fmt: Formatter): String {
     val next = day.nextAllowed ?: return ""
-    val today = LocalDateTime.now().toLocalDate()
+    val today = AppClock.now().toLocalDate()
     return if (next.toLocalDate() == today) fmt.time(next.toLocalTime())
     else if (next.toLocalTime() == java.time.LocalTime.MIDNIGHT && next.toLocalDate() == today.plusDays(1)) stringResource(R.string.prn_tomorrow)
     else stringResourceIso(R.string.prn_tomorrow_at, fmt.time(next.toLocalTime()))
@@ -225,7 +226,7 @@ private fun hoursText(minutes: Int, fmt: Formatter): String =
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TooSoonSheet(m: Medicine, last: LocalDateTime, gapMinutes: Int, fmt: Formatter, onWait: () -> Unit, onAnyway: () -> Unit) {
-    val ago = Duration.between(last, LocalDateTime.now()).toMinutes().coerceAtLeast(0)
+    val ago = Duration.between(last, AppClock.now()).toMinutes().coerceAtLeast(0)
     val agoText = if (ago >= 60) pluralStringResource(R.plurals.n_hours, (ago / 60).toInt(), fmt.number((ago / 60).toInt()))
     else pluralStringResource(R.plurals.n_minutes, ago.toInt(), fmt.number(ago.toInt()))
     ModalBottomSheet(onDismissRequest = onWait, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true), containerColor = PillBox.colors.card) {

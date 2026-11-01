@@ -1,5 +1,6 @@
 package com.pillbox.ui.report
 
+import com.pillbox.domain.AppClock
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -63,7 +64,7 @@ class ReportViewModel(
         viewModelScope.launch {
             val me = repo.activePerson(meName)
             val patient = me.birthYear?.let { "${me.name} ($it)" } ?: me.name
-            val today = LocalDateTime.now().toLocalDate()
+            val today = AppClock.now().toLocalDate()
             val from = today.minusDays((ReportOptions.PERIODS.max() - 1).toLong()).atStartOfDay()
             val events = repo.observeHistoryEvents(me.id, from, today.plusDays(1).atStartOfDay()).first()
             val meds = repo.observeMedicines(me.id).first() + repo.observeFinished(me.id).first()
@@ -92,7 +93,7 @@ class ReportViewModel(
         job = viewModelScope.launch {
             try {
                 val result = withContext(Dispatchers.IO) {
-                    val model = ReportBuilder.build(d.patient, d.items, d.events, LocalDateTime.now(), options)
+                    val model = ReportBuilder.build(d.patient, d.items, d.events, AppClock.now(), options)
                     dir.listFiles()?.forEach { it.delete() }
                     val out = File(dir, "PillBox-report-${model.created}-${options.days}d.pdf")
                     val pages = out.outputStream().use { ReportPdf(context, Formatter.from(context)).write(model, it) }

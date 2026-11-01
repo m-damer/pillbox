@@ -1,5 +1,6 @@
 package com.pillbox.data
 
+import com.pillbox.domain.AppClock
 import androidx.room.withTransaction
 import com.pillbox.domain.BackupData
 import com.pillbox.domain.DoseEvent
@@ -335,7 +336,7 @@ class PillBoxRepository(private val db: PillBoxDatabase) {
     suspend fun moveDoses(medicineId: Long, entries: Map<LocalDateTime, LocalDateTime?>): Map<LocalDateTime, LocalDateTime?> = db.withTransaction {
         val e = db.schedules().forMedicine(medicineId) ?: return@withTransaction emptyMap()
         val s = Mappers.toDomain(e)
-        db.schedules().upsert(Mappers.toEntity(medicineId, s.copy(shifts = LateRules.mergeShifts(s.shifts, entries, LocalDateTime.now())), e.id))
+        db.schedules().upsert(Mappers.toEntity(medicineId, s.copy(shifts = LateRules.mergeShifts(s.shifts, entries, AppClock.now())), e.id))
         s.shifts
     }
 

@@ -1,5 +1,6 @@
 package com.pillbox.ui.settings
 
+import com.pillbox.domain.AppClock
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.runtime.CompositionLocalProvider
@@ -208,7 +209,7 @@ fun HighContrastPreviewContent(fmt: Formatter, on: Boolean, onBack: () -> Unit, 
 
 /** Example doses for the preview, on today's date. */
 internal fun sampleToday(): TodayUiState {
-    val day = LocalDate.now()
+    val day = AppClock.today()
     fun t(h: Int, m: Int = 0) = LocalTime.of(h, m)
     val amox = Medicine(id = 1, personId = 1, name = "Amoxicillin", strength = "500 mg", unit = DoseUnit.CAPSULE, stock = 20.0)
     val metf = Medicine(id = 2, personId = 1, name = "Metformin", strength = "850 mg", unit = DoseUnit.TABLET, stock = 20.0)

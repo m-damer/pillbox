@@ -1,5 +1,6 @@
 package com.pillbox.widget
 
+import com.pillbox.domain.AppClock
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
@@ -79,7 +80,7 @@ class PillBoxWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val app = context.applicationContext as PillBoxApp
         val settings = app.widgetSettings.current()
-        val now = LocalDateTime.now()
+        val now = AppClock.now()
         val model = runCatching { WidgetData.load(app, settings, now) }.getOrNull()
         provideContent { WidgetContent(settings, model, Formatter.from(context)) }
     }
@@ -98,7 +99,7 @@ class PillBoxWidgetReceiver : GlanceAppWidgetReceiver() {
 class TakeAllCallback : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
         val app = context.applicationContext as PillBoxApp
-        val now = LocalDateTime.now()
+        val now = AppClock.now()
         val model = WidgetData.load(app, app.widgetSettings.current(), now)
         val at = model.at
         if (at != null && model.nextRows.isNotEmpty()) {
@@ -202,7 +203,7 @@ private fun Empty(p: Palette, model: WidgetModel, fmt: Formatter) {
     val title = if (model.allDone) R.string.w_done else R.string.w_none
     Text(context.getString(title), style = TextStyle(color = p.text, fontSize = 20.sp, fontWeight = FontWeight.Bold))
     model.following?.let { f ->
-        val whenText = if (f.toLocalDate() == LocalDateTime.now().toLocalDate().plusDays(1)) context.getString(R.string.w_next_tomorrow, fmt.time(f.toLocalTime()))
+        val whenText = if (f.toLocalDate() == AppClock.now().toLocalDate().plusDays(1)) context.getString(R.string.w_next_tomorrow, fmt.time(f.toLocalTime()))
         else context.getString(R.string.w_next_at, fmt.time(f.toLocalTime()))
         Text(whenText, style = TextStyle(color = p.muted, fontSize = 14.sp))
     }

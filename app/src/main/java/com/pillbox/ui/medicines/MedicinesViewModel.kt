@@ -1,5 +1,6 @@
 package com.pillbox.ui.medicines
 
+import com.pillbox.domain.AppClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.MedicineWithSchedule
@@ -44,15 +45,15 @@ class MedicinesViewModel(
 
     init {
         // Courses whose last day has passed move to Finished.
-        viewModelScope.launch { repo.finishEndedCourses(LocalDate.now()) }
+        viewModelScope.launch { repo.finishEndedCourses(AppClock.today()) }
     }
 
     val state: StateFlow<MedicinesUiState> =
         repo.observeActivePerson(meName).map { it.id }.distinctUntilChanged()
             .flatMapLatest { personId ->
                 combine(repo.observeMedicines(personId), repo.observeFinished(personId), remindDays) { active, finished, remind ->
-                    val today = LocalDate.now()
-                    val now = LocalDateTime.now()
+                    val today = AppClock.today()
+                    val now = AppClock.now()
                     val rows = active.map { MedRow(it, StockMath.info(it.medicine, it.schedule, today, remind), Pause.activeAt(it.pauses, now)) }
                     MedicinesUiState(
                         loaded = true,

@@ -1,5 +1,6 @@
 package com.pillbox.ui.addmed
 
+import com.pillbox.domain.AppClock
 import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -118,7 +119,7 @@ fun AddMedicineScreen(vm: AddMedicineViewModel, onClose: () -> Unit, modifier: M
     androidx.compose.runtime.LaunchedEffect(state.saved) { if (state.saved) onClose() }
 
     AddMedicineContent(
-        state = state, fmt = fmt, today = LocalDate.now(),
+        state = state, fmt = fmt, today = AppClock.today(),
         edit = vm::edit, onBack = back, onNext = vm::next, onSave = vm::save, modifier = modifier, onEditMeals = onEditMeals,
     )
 
@@ -144,7 +145,7 @@ fun AddMedicineScreen(vm: AddMedicineViewModel, onClose: () -> Unit, modifier: M
         }
         is AddMedDialog.Added -> {
             val first = d.firstDose
-            val today = LocalDate.now()
+            val today = AppClock.today()
             val body = when {
                 d.asNeeded -> stringResource(R.string.added_body_prn)
                 first == null -> stringResource(R.string.added_body_none)
@@ -370,7 +371,7 @@ private fun Step1(form: AddMedicineForm, showErrors: Boolean, fmt: Formatter, ed
 private fun ExpiryField(expiry: java.time.YearMonth?, fmt: Formatter, onChange: (java.time.YearMonth?) -> Unit) {
     val c = PillBox.colors
     var picking by remember { mutableStateOf(false) }
-    val today = remember { java.time.LocalDate.now() }
+    val today = remember { java.time.AppClock.today() }
     FieldLabel(stringResource(R.string.expiry_label))
     if (expiry == null) {
         com.pillbox.ui.components.OutlineButton(stringResource(R.string.expiry_add), { picking = true })

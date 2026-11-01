@@ -235,10 +235,12 @@ fun LanguageScreen(vm: SettingsViewModel, activeLanguage: String, onBack: () -> 
     var arabicDigits by rememberSaveable { mutableStateOf(d.useArabicDigits(activeLanguage)) }
     var time by rememberSaveable { mutableStateOf(d.timeFormat) }
     var week by rememberSaveable { mutableStateOf(firstDay) }
+    var keepHome by rememberSaveable { mutableStateOf(d.homeZone != null) }
     LanguageContent(
         language, arabicDigits, time, week, onBack,
         onLanguage = { language = it }, onDigits = { arabicDigits = it }, onTime = { time = it }, onWeek = { week = it },
-        onSave = { onSave(LanguageChoice(language, arabicDigits, time, week)) },
+        onSave = { onSave(LanguageChoice(language, arabicDigits, time, week, keepHome)) },
+        keepHome = keepHome, homeZone = d.homeZone, onKeepHome = { keepHome = it },
     )
 }
 
@@ -254,6 +256,10 @@ fun LanguageContent(
     onTime: (TimeFormat) -> Unit,
     onWeek: (DayOfWeek) -> Unit,
     onSave: () -> Unit,
+    keepHome: Boolean = false,
+    /** The zone id already kept as home, if any; shown so the person knows which time is meant. */
+    homeZone: String? = null,
+    onKeepHome: (Boolean) -> Unit = {},
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val times = listOf(TimeFormat.PHONE to R.string.lang_time_phone, TimeFormat.H12 to R.string.lang_time_12, TimeFormat.H24 to R.string.lang_time_24)
@@ -282,6 +288,14 @@ fun LanguageContent(
                     val days = DisplaySettings.WEEK_STARTS
                     Segmented(days.map { it.getDisplayName(TextStyle.SHORT, locale) }, days.indexOf(week).coerceAtLeast(0), { onWeek(days[it]) }, stackWhenLarge = true)
                 }
+            }
+            Caption(stringResource(R.string.lang_travel))
+            Card {
+                val place = (homeZone ?: java.time.ZoneId.systemDefault().id).let { id -> java.util.TimeZone.getTimeZone(id).getDisplayName(false, java.util.TimeZone.LONG, locale) }
+                SwitchRow(
+                    stringResource(R.string.lang_keep_home), keepHome, onKeepHome,
+                    subtitle = if (keepHome) stringResource(R.string.lang_keep_home_on, place) else stringResource(R.string.lang_keep_home_off),
+                )
             }
             Note(stringResource(R.string.lang_note))
             Box(Modifier.size(Space.S16))

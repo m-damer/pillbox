@@ -30,6 +30,7 @@ class DisplaySettingsStore(private val context: Context) {
     private val simpleMode = booleanPreferencesKey("simple_mode")
     private val simpleOnlyTabs = booleanPreferencesKey("simple_only_tabs")
     private val simpleLargeText = booleanPreferencesKey("simple_large_text")
+    private val homeZone = stringPreferencesKey("home_zone")
 
     val flow: Flow<DisplaySettings> = context.displayStore.data.map(::read)
 
@@ -50,6 +51,7 @@ class DisplaySettingsStore(private val context: Context) {
         simpleMode = p[simpleMode] ?: false,
         simpleOnlyTabs = p[simpleOnlyTabs] ?: true,
         simpleLargeText = p[simpleLargeText] ?: true,
+        homeZone = p[homeZone],
     )
 
     private fun write(p: androidx.datastore.preferences.core.MutablePreferences, s: DisplaySettings) {
@@ -63,6 +65,7 @@ class DisplaySettingsStore(private val context: Context) {
         p[simpleMode] = s.simpleMode
         p[simpleOnlyTabs] = s.simpleOnlyTabs
         p[simpleLargeText] = s.simpleLargeText
+        if (s.homeZone == null) p.remove(homeZone) else p[homeZone] = s.homeZone
     }
 
     private inline fun <reified E : Enum<E>> enumOr(name: String?, default: E): E =

@@ -31,7 +31,7 @@ import kotlinx.coroutines.withContext
 
 /**
  * An optional photo of the box or the pill, so a medicine can be recognised by its look. It is saved inside the app
- * (one small JPEG per medicine) and never leaves the phone. It is not part of backups. No database change: the file name is the medicine id.
+ * (one small JPEG per medicine) and never leaves the phone. It travels inside the backup file (base64). No database change: the file name is the medicine id.
  */
 object MedicinePhotos {
     private const val MAX_SIDE = 1024

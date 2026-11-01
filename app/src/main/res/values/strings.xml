@@ -573,6 +573,10 @@
     <string name="lang_time_24">24-hour</string>
     <string name="lang_week">Week starts on</string>
     <string name="lang_note">Arabic flips the whole app to right-to-left.</string>
+    <string name="lang_travel">Travel</string>
+    <string name="lang_keep_home">Keep my home time</string>
+    <string name="lang_keep_home_off">Reminders follow the time zone of your phone.</string>
+    <string name="lang_keep_home_on">Doses and reminders stay on home time (%1$s) when you travel.</string>
     <string name="acc_title">Accessibility</string>
     <string name="acc_text_size">Text size</string>
     <string name="acc_size_standard">Standard</string>
@@ -1126,7 +1130,7 @@
     <string name="photo_choose">Choose photo</string>
     <string name="photo_remove">Remove photo</string>
     <string name="photo_failed">The photo could not be saved. Please try again.</string>
-    <string name="photo_note">The photo stays on this phone. It is not part of backups.</string>
+    <string name="photo_note">The photo is kept on this phone and saved inside your backups, so it comes back when you restore.</string>
     <!-- Boxes and expiry dates (M30) -->
     <string name="packs_title">Boxes and expiry dates</string>
     <string name="packs_hint">Doses are taken from the box in use. To use another box first, tap its button.</string>

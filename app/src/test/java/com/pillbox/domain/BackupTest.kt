@@ -84,6 +84,42 @@ class BackupTest {
         assertTrue(BackupSettings(lastProblem = BackupProblem.OTHER, lastProblemAt = ok).failing)
         assertEquals(false, BackupSettings().failing)
     }
+
+    private val jpeg = java.util.Base64.getEncoder().encodeToString(byteArrayOf(1, 2, 3, 4, 5))
+
+    @Test fun photosAndNoticesTravelInTheBackup() {
+        val withExtras = sample().copy(
+            photos = listOf(mapOf("medicineId" to 7L, "jpeg" to jpeg)),
+            notices = listOf(mapOf("key" to "k1", "kind" to "DOSE", "title" to "t", "text" to "x", "at" to 1000L, "read" to true, "target" to null, "personId" to null)),
+        )
+        val back = (BackupCodec.decode(BackupCodec.encode(withExtras, at)) as BackupResult.Ok).data
+        assertEquals(withExtras, back)
+    }
+
+    @Test fun aBackupWithoutExtrasHasNoPhotosOrNoticesKeys() {
+        val text = BackupCodec.encode(sample(), at)
+        assertTrue(!text.contains("photos") && !text.contains("notices"))
+        val back = (BackupCodec.decode(text) as BackupResult.Ok).data
+        assertTrue(back.photos.isEmpty() && back.notices.isEmpty())
+    }
+
+    @Test fun aPhotoForAMissingMedicineOrWithBrokenDataIsDroppedNotFatal() {
+        val d = sample().copy(photos = listOf(
+            mapOf("medicineId" to 7L, "jpeg" to jpeg),
+            mapOf("medicineId" to 99L, "jpeg" to jpeg),
+            mapOf("medicineId" to 7L, "jpeg" to "!!not base64!!"),
+        ))
+        val back = (BackupCodec.decode(BackupCodec.encode(d, at)) as BackupResult.Ok).data
+        assertEquals(1, back.photos.size)
+        assertEquals(7L, (back.photos[0]["medicineId"] as Number).toLong())
+    }
+
+    @Test fun aDamagedPhotosListDoesNotSpoilTheBackup() {
+        val text = BackupCodec.encode(sample(), at).dropLast(1) + ",\"photos\":\"oops\"}"
+        val back = BackupCodec.decode(text) as BackupResult.Ok
+        assertTrue(back.data.photos.isEmpty())
+        assertEquals(sample().medicines, back.data.medicines)
+    }
 }
 
 class BackupFoldersTest {
@@ -135,4 +171,5 @@ class DriveApiTest {
         assertEquals(DriveProblem.SIGN_IN, DriveApi.problemFor(401, false))
         assertEquals(DriveProblem.OTHER, DriveApi.problemFor(500, false))
     }
+
 }

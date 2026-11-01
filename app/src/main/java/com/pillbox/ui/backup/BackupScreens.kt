@@ -1,5 +1,6 @@
 package com.pillbox.ui.backup
 
+import com.pillbox.domain.AppClock
 import com.pillbox.ui.components.stringResourceIso
 import android.content.ClipData
 import android.content.Intent
@@ -133,10 +134,10 @@ fun BackupScreen(vm: BackupViewModel, onBack: () -> Unit, onRestore: () -> Unit,
 
     val settings = state.settings
     if (settings.failing && settings.lastProblem != BackupProblem.FOLDER_UNAVAILABLE && !failureHidden) {
-        BackupFailedContent(settings, fmt, LocalDate.now(), state.busy, onBack, onTryAgain = { vm.saveNow() }, onLater = { failureHidden = true })
+        BackupFailedContent(settings, fmt, AppClock.today(), state.busy, onBack, onTryAgain = { vm.saveNow() }, onLater = { failureHidden = true })
     } else {
         BackupContent(
-            settings, fmt, LocalDate.now(), host, onBack,
+            settings, fmt, AppClock.today(), host, onBack,
             onDrive = { on -> if (on) askDrive = true else stopDrive = true },
             onToggleAuto = vm::setAuto, onFrequency = vm::setFrequency, onNotify = vm::setNotify, onSaveNow = vm::saveNow, onShare = vm::share, onRestore = onRestore, onDelete = { confirmDelete = true },
             busy = state.busy,
@@ -438,7 +439,7 @@ fun RestoreScreen(vm: BackupViewModel, onBack: () -> Unit, onSetUpReminders: () 
     }
     when (val s = state) {
         RestoreState.Intro, RestoreState.Checking, RestoreState.Restoring -> RestoreIntroContent(onBack, choose, busy = s != RestoreState.Intro, onDrive = vm::startDriveRestore)
-        is RestoreState.Confirm -> RestoreConfirmContent(s, fmt, LocalDate.now(), onBack, onRestore = vm::restoreNow, onAnother = choose)
+        is RestoreState.Confirm -> RestoreConfirmContent(s, fmt, AppClock.today(), onBack, onRestore = vm::restoreNow, onAnother = choose)
         is RestoreState.Done -> RestoreDoneContent(s.summary, fmt, onSetUpReminders, onGoToToday)
         RestoreState.Invalid -> RestoreErrorContent(onBack, onAnother = choose, body = R.string.rs_err_body, safe = R.string.rs_err_safe, title = R.string.rs_err_title)
         RestoreState.Failed -> RestoreErrorContent(onBack, onAnother = choose, body = R.string.rs_failed_body, safe = R.string.rs_err_safe, title = R.string.rs_failed_title)

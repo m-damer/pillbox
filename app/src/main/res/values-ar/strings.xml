@@ -646,6 +646,10 @@
     <string name="lang_time_24">24 ساعة</string>
     <string name="lang_week">يبدأ الأسبوع يوم</string>
     <string name="lang_note">اللغة العربية تقلب التطبيق كله من اليمين إلى اليسار.</string>
+    <string name="lang_travel">السفر</string>
+    <string name="lang_keep_home">إبقاء توقيت بلدي</string>
+    <string name="lang_keep_home_off">تتبع التذكيرات المنطقة الزمنية للهاتف.</string>
+    <string name="lang_keep_home_on">تبقى الجرعات والتذكيرات على توقيت بلدك (%1$s) عند السفر.</string>
     <string name="acc_title">سهولة الاستخدام</string>
     <string name="acc_text_size">حجم الخط</string>
     <string name="acc_size_standard">عادي</string>
@@ -1246,7 +1250,7 @@
     <string name="photo_choose">اختيار صورة</string>
     <string name="photo_remove">إزالة الصورة</string>
     <string name="photo_failed">تعذّر حفظ الصورة. حاول مرة أخرى.</string>
-    <string name="photo_note">تبقى الصورة على هذا الهاتف ولا تدخل في النسخ الاحتياطية.</string>
+    <string name="photo_note">تبقى الصورة على هذا الهاتف وتُحفظ ضمن نسخك الاحتياطية، فتعود عند الاستعادة.</string>
     <!-- العلب وتواريخ الانتهاء (M30) -->
     <string name="packs_title">العلب وتواريخ الانتهاء</string>
     <string name="packs_hint">تؤخذ الجرعات من العلبة قيد الاستخدام. لاستخدام علبة أخرى أولاً، اضغط زرها.</string>

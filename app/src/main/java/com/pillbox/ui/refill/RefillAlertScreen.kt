@@ -1,5 +1,6 @@
 package com.pillbox.ui.refill
 
+import com.pillbox.domain.AppClock
 import com.pillbox.ui.components.stringResourceIso
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -176,7 +177,7 @@ fun RefillAlertContent(
                         val daysText = pluralStringResource(R.plurals.n_days, s.daysBefore, fmt.number(s.daysBefore))
                         val dateText = date?.let { shortDate(it, fmt) } ?: ""
                         Text(
-                            if (date == java.time.LocalDate.now()) stringResourceIso(R.string.refill_preview_today, daysText, dateText)
+                            if (date == java.time.AppClock.today()) stringResourceIso(R.string.refill_preview_today, daysText, dateText)
                             else stringResourceIso(R.string.refill_preview_later, daysText, dateText),
                             style = MaterialTheme.typography.bodyMedium, color = c.textMuted,
                         )

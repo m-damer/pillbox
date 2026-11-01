@@ -1,5 +1,6 @@
 package com.pillbox.ui.prn
 
+import com.pillbox.domain.AppClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.PillBoxRepository
@@ -39,7 +40,7 @@ class PrnViewModel(
     private val medicineId: Long,
     private val autoLog: Boolean,
     private val onChanged: suspend () -> Unit = {},
-    private val now: () -> LocalDateTime = { LocalDateTime.now() },
+    private val now: () -> LocalDateTime = { AppClock.now() },
 ) : ViewModel() {
     private val _state = MutableStateFlow(PrnUiState())
     val state: StateFlow<PrnUiState> = _state.asStateFlow()

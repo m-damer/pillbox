@@ -1,5 +1,6 @@
 package com.pillbox.ui.people
 
+import com.pillbox.domain.AppClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.PillBoxRepository
@@ -40,12 +41,12 @@ class PeopleViewModel(
         .flatMapLatest { people ->
             if (people.isEmpty()) return@flatMapLatest flowOf(PeopleUiState(loaded = true))
             val perPerson = people.map { p ->
-                val today = LocalDateTime.now().toLocalDate()
+                val today = AppClock.now().toLocalDate()
                 combine(
                     repo.observeMedicines(p.id),
                     repo.observeDoseEvents(p.id, today.atStartOfDay(), today.plusDays(1).atStartOfDay()),
                 ) { meds, events ->
-                    val now = LocalDateTime.now()
+                    val now = AppClock.now()
                     val items = meds.mapNotNull { m -> m.schedule?.let { Triple(m.medicine, it, m.pauses) } }
                     PersonRow(p, PeopleRules.summarize(TodayBuilder.build(items, events, now.toLocalDate(), now)))
                 }

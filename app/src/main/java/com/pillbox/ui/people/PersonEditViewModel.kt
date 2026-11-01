@@ -1,5 +1,6 @@
 package com.pillbox.ui.people
 
+import com.pillbox.domain.AppClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.PillBoxRepository
@@ -89,7 +90,7 @@ class PersonEditViewModel(
         val s = _state.value
         if (!s.canSave) return
         val name = PeopleRules.cleanName(s.name)
-        val year = PeopleRules.parseBirthYear(s.birthYear, LocalDate.now().year)
+        val year = PeopleRules.parseBirthYear(s.birthYear, AppClock.today().year)
         if (s.isMe && year.isFailure) { _state.update { it.copy(birthYearError = true) }; return }
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {

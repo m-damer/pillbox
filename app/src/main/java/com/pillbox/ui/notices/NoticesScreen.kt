@@ -1,5 +1,6 @@
 package com.pillbox.ui.notices
 
+import com.pillbox.domain.AppClock
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -85,7 +86,7 @@ fun NoticesScreen(
     onClear: (NoticeKind?) -> Unit,
     modifier: Modifier = Modifier,
     initialTab: NoticeKind? = null,
-    now: LocalDateTime = LocalDateTime.now(),
+    now: LocalDateTime = AppClock.now(),
 ) {
     val c = PillBox.colors
     val fmt = rememberFormatter()
@@ -171,7 +172,7 @@ private fun NoticeRow(n: Notice, fmt: Formatter, now: LocalDateTime, onClick: ()
 /** "Today 8:00 AM", "Yesterday 8:00 AM" or "Mon 19 Oct 8:00 AM". */
 @Composable
 private fun whenText(atMillis: Long, fmt: Formatter, today: LocalDate): String {
-    val at = Instant.ofEpochMilli(atMillis).atZone(ZoneId.systemDefault()).toLocalDateTime()
+    val at = Instant.ofEpochMilli(atMillis).atZone(AppClock.zone()).toLocalDateTime()
     val day = when (at.toLocalDate()) {
         today -> stringResource(R.string.today)
         today.minusDays(1) -> stringResource(R.string.notices_yesterday)

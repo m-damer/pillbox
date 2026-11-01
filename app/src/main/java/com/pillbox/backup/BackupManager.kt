@@ -1,5 +1,6 @@
 package com.pillbox.backup
 
+import com.pillbox.domain.AppClock
 import android.content.Context
 import android.net.Uri
 import android.provider.DocumentsContract
@@ -40,10 +41,24 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
     private val resolver get() = context.contentResolver
     val driveClient by lazy { DriveClient(context) }
 
-    private suspend fun json(now: LocalDateTime) = BackupCodec.encode(repo.exportBackup(), now)
+    private val notices get() = (context.applicationContext as? com.pillbox.PillBoxApp)?.notices
+
+    /** The database, plus each medicine's photo and the notification history, so a new phone looks the same. */
+    private suspend fun snapshot(): com.pillbox.domain.BackupData {
+        val data = repo.exportBackup()
+        val photos = data.medicines.mapNotNull { m ->
+            val id = (m["id"] as? Number)?.toLong() ?: return@mapNotNull null
+            val f = com.pillbox.ui.medicines.MedicinePhotos.file(context, id)
+            if (!f.exists()) null else mapOf<String, Any?>("medicineId" to id, "jpeg" to java.util.Base64.getEncoder().encodeToString(f.readBytes()))
+        }
+        val history = notices?.let { com.pillbox.data.NoticeStore.toRows(it.all()) }.orEmpty()
+        return data.copy(photos = photos, notices = history)
+    }
+
+    private suspend fun json(now: LocalDateTime) = BackupCodec.encode(snapshot(), now)
 
     /** Saves a backup into the chosen folder and to Google Drive (each only if set up), and records how it went. */
-    suspend fun backupNow(now: LocalDateTime = LocalDateTime.now(), automatic: Boolean = false, attempt: Int = 0): Run = withContext(Dispatchers.IO) {
+    suspend fun backupNow(now: LocalDateTime = AppClock.now(), automatic: Boolean = false, attempt: Int = 0): Run = withContext(Dispatchers.IO) {
         val s = settings.current()
         val name = BackupCodec.fileName(now.toLocalDate())
         val folderTried = s.hasFolder && (!automatic || s.autoFolder)
@@ -251,7 +266,7 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
     fun cancelWeekly() { WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME) }
 
     /** A copy in the cache for the Share sheet. */
-    suspend fun fileForSharing(now: LocalDateTime = LocalDateTime.now()): Pair<File, Uri> = withContext(Dispatchers.IO) {
+    suspend fun fileForSharing(now: LocalDateTime = AppClock.now()): Pair<File, Uri> = withContext(Dispatchers.IO) {
         val dir = File(context.cacheDir, "backups").apply { mkdirs() }
         dir.listFiles()?.forEach { it.delete() }
         val file = File(dir, BackupCodec.fileName(now.toLocalDate()))
@@ -289,7 +304,18 @@ class BackupManager(private val context: Context, private val repo: PillBoxRepos
     }.getOrNull()
 
     /** Replaces everything on the phone with a backup that was already read and checked. */
-    suspend fun restore(data: com.pillbox.domain.BackupData) = withContext(Dispatchers.IO) { repo.restoreBackup(data) }
+    suspend fun restore(data: com.pillbox.domain.BackupData) = withContext(Dispatchers.IO) {
+        repo.restoreBackup(data)
+        // Photos and notices follow the medicines: the old ones go, the ones in the file come. A file without them leaves none.
+        com.pillbox.ui.medicines.MedicinePhotos.deleteAll(context)
+        data.photos.forEach { p ->
+            runCatching {
+                val id = (p["medicineId"] as Number).toLong()
+                com.pillbox.ui.medicines.MedicinePhotos.file(context, id).writeBytes(java.util.Base64.getDecoder().decode(p["jpeg"] as String))
+            }
+        }
+        notices?.replaceAll(com.pillbox.data.NoticeStore.fromRows(data.notices))
+    }
 
     /** "Delete all my data": the database, the settings and every alarm and notification. Backups saved elsewhere stay. */
     suspend fun deleteEverything() = withContext(Dispatchers.IO) {

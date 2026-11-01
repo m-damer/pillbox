@@ -1,5 +1,6 @@
 package com.pillbox.ui.addmed
 
+import com.pillbox.domain.AppClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.MedicineWithSchedule
@@ -46,7 +47,7 @@ class AddMedicineViewModel(
     private val repo: PillBoxRepository,
     private val meName: String,
     private val onChanged: suspend () -> Unit = {},
-    private val now: () -> LocalDateTime = { LocalDateTime.now() },
+    private val now: () -> LocalDateTime = { AppClock.now() },
     /** Set to edit this medicine instead of adding a new one. */
     private val editing: MedicineWithSchedule? = null,
     /** The user's meal times (Settings), used to suggest dose times when adding. */

@@ -1,5 +1,6 @@
 package com.pillbox.ui.today
 
+import com.pillbox.domain.AppClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pillbox.data.MedicineWithSchedule
@@ -111,8 +112,8 @@ data class TodayUiState(
     val loaded: Boolean = false,
     val hasMedicines: Boolean = false,
     val model: TodayModel? = null,
-    val selectedDate: LocalDate = LocalDate.now(),
-    val now: LocalDateTime = LocalDateTime.now(),
+    val selectedDate: LocalDate = AppClock.today(),
+    val now: LocalDateTime = AppClock.now(),
     val sheet: TodaySheet? = null,
     val toast: TodayToast? = null,
     /** Set when every medicine is paused: Today shows the "All medicines paused" screen. */
@@ -133,12 +134,12 @@ class TodayViewModel(
     private val saveLateSetting: suspend (LateSetting) -> Unit = {},
 ) : ViewModel() {
     private var pausedIds: List<Long> = emptyList()
-    private val selected = MutableStateFlow(LocalDate.now())
+    private val selected = MutableStateFlow(AppClock.today())
     private val sheet = MutableStateFlow<TodaySheet?>(null)
     private val toast = MutableStateFlow<TodayToast?>(null)
     private var toastCounter = 0
 
-    private val tick = flow { while (true) { emit(LocalDateTime.now()); delay(30_000) } }
+    private val tick = flow { while (true) { emit(AppClock.now()); delay(30_000) } }
 
     private class TodayData(
         val medicines: List<MedicineWithSchedule>, val events: List<DoseEvent>, val remind: Int,
@@ -147,13 +148,13 @@ class TodayViewModel(
 
     private val data = repo.observeActivePerson(meName).map { it.id }.distinctUntilChanged().flatMapLatest { personId ->
         selected.flatMapLatest { day ->
-            val weekStart = LocalDate.now().minusDays(6).atStartOfDay()
+            val weekStart = AppClock.today().minusDays(6).atStartOfDay()
             combine(
                 repo.observeMedicines(personId),
                 repo.observeDoseEvents(personId, day.atStartOfDay(), day.plusDays(1).atStartOfDay()),
                 remindDays,
                 repo.observeFinished(personId),
-                repo.observeHistoryEvents(personId, weekStart, LocalDate.now().plusDays(1).atStartOfDay()),
+                repo.observeHistoryEvents(personId, weekStart, AppClock.today().plusDays(1).atStartOfDay()),
             ) { medicines, events, remind, finished, weekEvents -> TodayData(medicines, events, remind, finished, weekEvents) }
         }
     }
@@ -189,14 +190,14 @@ class TodayViewModel(
     fun resumeAll() {
         val ids = pausedIds
         viewModelScope.launch {
-            val now = LocalDateTime.now()
+            val now = AppClock.now()
             ids.forEach { repo.resume(it, now) }
             onChanged()
         }
     }
 
     fun selectDate(day: LocalDate) { selected.value = day }
-    fun backToToday() { selected.value = LocalDate.now() }
+    fun backToToday() { selected.value = AppClock.today() }
     fun dismissSheet() { sheet.value = null }
     fun toastShown() { toast.value = null }
 
@@ -205,7 +206,7 @@ class TodayViewModel(
         val pending = rows.filter { it.status == RowStatus.PENDING }
         if (pending.isEmpty()) return
         viewModelScope.launch {
-            val now = LocalDateTime.now()
+            val now = AppClock.now()
             for (row in pending) {
                 val f = row.schedule.frequency as? Frequency.EveryNHours ?: continue
                 val last = repo.takenTimesSince(row.medicine.id, now.minusHours(48)).firstOrNull() ?: continue
@@ -236,7 +237,7 @@ class TodayViewModel(
     /** Taken late: when a late dose needs an answer, ask before committing. */
     private fun askLateThenCommit(rows: List<DoseRow>, early: Set<Long>) {
         val settings = ReminderState.current
-        val takenAt = LocalDateTime.now()
+        val takenAt = AppClock.now()
         val ask = rows.filter {
             val late = LateRules.lateMinutes(it.planned, takenAt, settings.lateThreshold)
             late != null && LateRules.lateAction(it.schedule.frequency, settings.late) == LateAction.ShowSheet
@@ -314,14 +315,14 @@ class TodayViewModel(
 
     // ---- log a dose taken earlier ----
     fun logTaken(row: DoseRow) {
-        if (!LateLog.canLog(row.planned, LocalDateTime.now())) return
+        if (!LateLog.canLog(row.planned, AppClock.now())) return
         sheet.value = TodaySheet.LogTaken(row, edit = row.status == RowStatus.TAKEN)
     }
 
     /** Save on the log sheet. [picked] is the clock time chosen; the sheet only enables Save for a time that has already passed. */
     fun confirmLog(picked: java.time.LocalTime) {
         val s = sheet.value as? TodaySheet.LogTaken ?: return
-        val now = LocalDateTime.now()
+        val now = AppClock.now()
         val takenAt = LateLog.takenAt(s.row.planned, picked, now) ?: return
         sheet.value = null
         val r = s.row

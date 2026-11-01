@@ -1,5 +1,6 @@
 package com.pillbox.reminder
 
+import com.pillbox.domain.AppClock
 import com.pillbox.ui.components.getStringIso
 import android.annotation.SuppressLint
 import android.app.AlarmManager
@@ -114,7 +115,7 @@ class Reminders(
     // ---------------------------------------------------------------- arming
 
     /** Arms the alarm for the next dose. Call after any change and on boot, app update, time and time zone change. */
-    suspend fun rearm(now: LocalDateTime = LocalDateTime.now()) {
+    suspend fun rearm(now: LocalDateTime = AppClock.now()) {
         val next = ReminderPlanner.nextDue(items(), now)
         if (next == null) cancel(Kind.DUE, null) else schedule(Kind.DUE, next, next, 0)
         rearmRefill(now)
@@ -125,15 +126,15 @@ class Reminders(
     // ---------------------------------------------------------------- refill alerts
 
     /** One alarm a day at the time chosen on the Refill alert screen. It does not need to be exact: a few minutes late is fine. */
-    suspend fun rearmRefill(now: LocalDateTime = LocalDateTime.now()) {
+    suspend fun rearmRefill(now: LocalDateTime = AppClock.now()) {
         val at = RefillPlanner.nextFire(refillSettings.current(), now)
-        val millis = at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val millis = at.atZone(AppClock.zone()).toInstant().toEpochMilli()
         alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, pending(Kind.REFILL, null, 0))
     }
 
     /** The daily refill alarm fired: one quiet notification per medicine that is low or out, then arm tomorrow's. */
     suspend fun onRefillDue() {
-        val now = LocalDateTime.now()
+        val now = AppClock.now()
         // Quiet hours can mute refill alerts. The alert for today is skipped; tomorrow's comes as usual.
         if (ReminderState.current.quiet.silencesRefillAt(now.toLocalTime())) { rearmRefill(now.plusMinutes(1)); return }
         val items = repo.allActiveWithSchedules().map { Triple(it.medicine, it.schedule, it.pauses) }
@@ -246,7 +247,7 @@ class Reminders(
 
     @SuppressLint("ScheduleExactAlarm")
     private fun schedule(kind: Kind, trigger: LocalDateTime, at: LocalDateTime, count: Int) {
-        val millis = trigger.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        val millis = trigger.atZone(AppClock.zone()).toInstant().toEpochMilli()
         val pi = pending(kind, at, count)
         if (canScheduleExact()) alarms.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, pi)
         else alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, pi)
@@ -261,7 +262,7 @@ class Reminders(
     /** The alarm for [at] fired. */
     suspend fun onDue(at: LocalDateTime) {
         notifyIfPending(at, count = 0)
-        val now = LocalDateTime.now()
+        val now = AppClock.now()
         rearm(if (now.isAfter(at)) now else at)
     }
 
@@ -274,9 +275,9 @@ class Reminders(
         show(rows, at)
         val settings = ReminderState.current
         // One more reminder later, in case this one was missed too. The first ring and a snooze arm it; it only fires while doses are still waiting.
-        if (count == 0) ReminderPlanner.followUpAt(at, settings.followUpMinutes, LocalDateTime.now())?.let { schedule(Kind.FOLLOW, it, at, 0) }
+        if (count == 0) ReminderPlanner.followUpAt(at, settings.followUpMinutes, AppClock.now())?.let { schedule(Kind.FOLLOW, it, at, 0) }
         if (count < settings.maxRepeats) {
-            schedule(Kind.NAG, LocalDateTime.now().plusMinutes(settings.repeatMinutes.toLong()), at, count + 1)
+            schedule(Kind.NAG, AppClock.now().plusMinutes(settings.repeatMinutes.toLong()), at, count + 1)
         }
     }
 
@@ -286,6 +287,8 @@ class Reminders(
      */
     @SuppressLint("MissingPermission")
     fun onTimeZoneChanged() {
+        // Keeping home time: nothing changes for the person, so there is nothing to say.
+        if (AppClock.keepsHome) return
         val zone = java.util.TimeZone.getDefault()
         val place = zone.getDisplayName(zone.inDaylightTime(java.util.Date()), java.util.TimeZone.LONG, java.util.Locale.getDefault())
         val title = context.getString(R.string.tz_notif_title)
@@ -322,7 +325,7 @@ class Reminders(
     suspend fun snooze(at: LocalDateTime) {
         cancel(Kind.NAG, at)
         notificationManager().cancel(notificationId(at))
-        schedule(Kind.SNOOZE, LocalDateTime.now().plusMinutes(ReminderPlanner.SNOOZE_MINUTES), at, 0)
+        schedule(Kind.SNOOZE, AppClock.now().plusMinutes(ReminderPlanner.SNOOZE_MINUTES), at, 0)
     }
 
     /** The snooze alarm fired. */
@@ -340,7 +343,7 @@ class Reminders(
     fun stopRepeat(at: LocalDateTime) = cancel(Kind.NAG, at)
 
     suspend fun take(rows: List<DoseRow>) {
-        val now = LocalDateTime.now()
+        val now = AppClock.now()
         val settings = ReminderState.current
         var moved = false
         rows.forEach { r ->
@@ -377,7 +380,7 @@ class Reminders(
 
     private fun record(n: Notice) { (context.applicationContext as? com.pillbox.PillBoxApp)?.recordNotice(n) }
 
-    private fun notificationId(at: LocalDateTime) = (at.atZone(ZoneId.systemDefault()).toEpochSecond() / 60).toInt()
+    private fun notificationId(at: LocalDateTime) = (at.atZone(AppClock.zone()).toEpochSecond() / 60).toInt()
 
     private fun actionPending(action: String, at: LocalDateTime): PendingIntent {
         val intent = Intent(context, ReminderActionReceiver::class.java).setAction(action)
@@ -408,9 +411,9 @@ class Reminders(
             owners[r.medicine.personId]?.let { context.getStringIso(R.string.notif_dose_for, it, line) } ?: line
         }
         // Saved for the notifications screen even when Android notifications are off, so a missed alert can still be seen there.
-        record(Notice("dose:${notificationId(at)}" + (if (followUp) ":waiting" else ""), NoticeKind.DOSE, title, text, at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), target = openFor?.let { "today:$it" } ?: "today", personId = openFor))
+        record(Notice("dose:${notificationId(at)}" + (if (followUp) ":waiting" else ""), NoticeKind.DOSE, title, text, at.atZone(AppClock.zone()).toInstant().toEpochMilli(), target = openFor?.let { "today:$it" } ?: "today", personId = openFor))
         if (!nm.areNotificationsEnabled()) return
-        val builder = NotificationCompat.Builder(context, channelFor(LocalDateTime.now().toLocalTime()))
+        val builder = NotificationCompat.Builder(context, channelFor(AppClock.now().toLocalTime()))
             .setSmallIcon(R.drawable.ic_stat_pill)
             .setContentTitle(title)
             .setContentText(text)
@@ -419,7 +422,7 @@ class Reminders(
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setAutoCancel(false)
-            .setWhen(at.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+            .setWhen(at.atZone(AppClock.zone()).toInstant().toEpochMilli())
             .setContentIntent(activityPending(MainActivity::class.java, at, 20, openFor))
             // At most three buttons: Take all, Snooze, Open. Per-medicine Take and Skip are on the full-screen reminder.
             .addAction(0, takeAllLabel(people, owners), actionPending(ACTION_TAKE_ALL, at))
@@ -429,7 +432,7 @@ class Reminders(
         builder.setFullScreenIntent(activityPending(ReminderActivity::class.java, at, 22), true)
         runCatching { nm.notify(notificationId(at), builder.build()) }
         val settings = ReminderState.current
-        if (settings.readAloud && !settings.quiet.silencesDoseAt(LocalDateTime.now().toLocalTime())) {
+        if (settings.readAloud && !settings.quiet.silencesDoseAt(AppClock.now().toLocalTime())) {
             ReminderSpeaker.speak(context, context.getString(R.string.tts_time_to_take, rows.joinToString(", ") { com.pillbox.ui.components.isolate(it.medicine.name) }))
         }
     }
@@ -441,7 +444,7 @@ class Reminders(
         if (!nm.areNotificationsEnabled()) return
         val title = context.getString(R.string.test_notif_title)
         val text = context.getString(R.string.test_notif_text)
-        val n = NotificationCompat.Builder(context, channelFor(LocalDateTime.now().toLocalTime()))
+        val n = NotificationCompat.Builder(context, channelFor(AppClock.now().toLocalTime()))
             .setSmallIcon(R.drawable.ic_stat_pill)
             .setContentTitle(title)
             .setContentText(text)
@@ -453,7 +456,7 @@ class Reminders(
             .build()
         runCatching { nm.notify(TEST_ID, n) }
         val s = ReminderState.current
-        if (s.readAloud && !s.quiet.silencesDoseAt(LocalDateTime.now().toLocalTime())) ReminderSpeaker.speak(context, context.getString(R.string.tts_time_to_take, context.getString(R.string.test_tts_name)))
+        if (s.readAloud && !s.quiet.silencesDoseAt(AppClock.now().toLocalTime())) ReminderSpeaker.speak(context, context.getString(R.string.tts_time_to_take, context.getString(R.string.test_tts_name)))
     }
 
     /** The channel a dose reminder uses now: silent during quiet hours only when the user turned "Medicine reminders still ring" off. */
