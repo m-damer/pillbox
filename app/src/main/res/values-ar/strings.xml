@@ -236,7 +236,7 @@
     <string name="channel_refills">تنبيهات إعادة التعبئة</string>
     <string name="channel_refills_desc">يخبرك عندما يوشك دواء على النفاد.</string>
     <string name="notif_title">حان موعد أدوية %1$s</string>
-    <string name="snooze_15">غفوة ١٥ دقيقة</string>
+    <string name="snooze_15">تأجيل ١٥ دقيقة</string>
     <string name="open">فتح</string>
     <string name="reminder_nag">إن لم تردّ، سنذكّرك مرة أخرى بعد ٥ دقائق.</string>
     <string name="continue_label">متابعة</string>

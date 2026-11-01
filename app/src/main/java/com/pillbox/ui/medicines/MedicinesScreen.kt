@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -92,7 +93,7 @@ fun MedicinesScreen(
     }
     Box(modifier.fillMaxSize()) {
         MedicinesContent(state, fmt, showFinished, onShowFinished, onOpen, onAddMedicine, onRefillAlert = onRefillAlert, people = people, listState = listState)
-        ToastHost(snackbar, Modifier.align(Alignment.BottomCenter))
+        ToastHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(bottom = if (showFinished) 0.dp else 80.dp))
     }
 }
 
@@ -110,7 +111,9 @@ fun MedicinesContent(
     listState: androidx.compose.foundation.lazy.LazyListState = androidx.compose.foundation.lazy.rememberLazyListState(),
 ) {
     val c = PillBox.colors
-    Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    var fabHeight by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(56.dp) }
+    Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    Column(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(horizontal = Dimens.ScreenPaddingH, vertical = Space.S12), horizontalArrangement = Arrangement.spacedBy(Space.S8), verticalAlignment = Alignment.Top) {
             Column(Modifier.weight(1f)) {
                 Text(
@@ -132,7 +135,7 @@ fun MedicinesContent(
         )
         LazyColumn(
             Modifier.weight(1f), state = listState,
-            contentPadding = PaddingValues(start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Space.S12, bottom = 48.dp),
+            contentPadding = PaddingValues(start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Space.S12, bottom = if (showFinished) 48.dp else fabHeight + Space.S16 * 2),
             verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
         ) {
             if (!showFinished) {
@@ -140,7 +143,6 @@ fun MedicinesContent(
                     if (row.pause != null) PausedCard(row, fmt) { onOpen(row.item.medicine.id) }
                     else ActiveCard(row, fmt) { onOpen(row.item.medicine.id) }
                 }
-                item { AddMedicineButton(onAddMedicine) }
                 item {
                     InfoNote(
                         pluralStringResource(R.plurals.meds_remind_note, state.remindDays, fmt.number(state.remindDays)),
@@ -156,6 +158,13 @@ fun MedicinesContent(
                 if (state.finished.isNotEmpty()) item { InfoNote(stringResource(R.string.finished_info)) }
             }
         }
+    }
+    // Floating Add button. The list ends with room for it (button height plus margins), so it never covers the last card.
+    if (!showFinished) {
+        com.pillbox.ui.components.AddMedicineFab(
+            onAddMedicine, Modifier.align(Alignment.BottomEnd).padding(Space.S16), onHeight = { fabHeight = it },
+        )
+    }
     }
 }
 
@@ -303,31 +312,6 @@ private fun FinishedCard(item: MedicineWithSchedule, fmt: Formatter, onClick: ()
             tag, style = MaterialTheme.typography.labelMedium, color = c.textMuted,
             modifier = Modifier.background(c.divider, MaterialTheme.shapes.small).padding(horizontal = Space.S10, vertical = Space.S6),
         )
-    }
-}
-
-@Composable
-private fun AddMedicineButton(onClick: () -> Unit) {
-    val c = PillBox.colors
-    val dash = c.placeholder
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .heightIn(min = Dimens.ListRowMinHeight)
-            .drawBehind {
-                drawRoundRect(
-                    dash, size = Size(size.width, size.height), cornerRadius = CornerRadius(16.dp.toPx()),
-                    style = Stroke(2.dp.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(14f, 10f))),
-                )
-            }
-            .clickable(role = Role.Button, onClick = onClick)
-            .padding(Space.S16),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ) {
-        Icon(com.pillbox.ui.components.DesignIcons.Plus, contentDescription = null, tint = c.accent, modifier = Modifier.size(24.dp))
-        Box(Modifier.width(Space.S8))
-        Text(stringResource(R.string.add_medicine), style = MaterialTheme.typography.labelLarge, color = c.accent)
     }
 }
 

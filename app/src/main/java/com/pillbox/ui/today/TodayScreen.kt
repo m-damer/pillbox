@@ -227,7 +227,7 @@ fun TodayContent(
     LazyColumn(
         Modifier.weight(1f).fillMaxWidth(),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(
-            start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Dimens.CardGap, bottom = 96.dp,
+            start = Dimens.ScreenPaddingH, end = Dimens.ScreenPaddingH, top = Dimens.CardGap, bottom = 120.dp,
         ),
         verticalArrangement = Arrangement.spacedBy(Dimens.CardGap),
     ) {
