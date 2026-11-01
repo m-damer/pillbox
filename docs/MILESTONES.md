@@ -24,3 +24,4 @@
 - [x] M17-M22 Edit/trash swap, person pill with popup, short viewing notice, notifications screen with bell, low-stock strip with popup, Check for updates under Help, red numbers on the person switcher, one-line date
 - [ ] M23-M28 (one PR) Take all names whose doses, weekly summary card, follow-up reminder (Off/15/30/60 min), share the day's list and the low-stock list as text, time zone notice, optional photo of the box or pill
 - [ ] M30 Boxes with their own expiry dates (DB v8, optional)
+- [ ] M31 Bottom bar without the plus button; floating "+ Add medicine" on Medicines (list leaves room for it); Add on Today in Simple mode with only Today and Settings; Arabic "Snooze" is now تأجيل

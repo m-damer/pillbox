@@ -43,9 +43,9 @@ import com.pillbox.ui.theme.Space
 
 enum class Tab { TODAY, MEDS, PEOPLE, SETTINGS }
 
-/** Today, Meds, [+], People, Settings. Labels wrap to two lines at large text instead of clipping. */
+/** Today, Meds, People, Settings. Labels wrap to two lines at large text instead of clipping. */
 @Composable
-fun PillBoxBottomBar(selected: Tab, onSelect: (Tab) -> Unit, onAdd: () -> Unit, modifier: Modifier = Modifier, onlyTodayAndSettings: Boolean = false) {
+fun PillBoxBottomBar(selected: Tab, onSelect: (Tab) -> Unit, modifier: Modifier = Modifier, onlyTodayAndSettings: Boolean = false) {
     val c = PillBox.colors
     Box(modifier.fillMaxWidth()) {
         Row(
@@ -60,22 +60,9 @@ fun PillBoxBottomBar(selected: Tab, onSelect: (Tab) -> Unit, onAdd: () -> Unit, 
         ) {
             NavItem(Tab.TODAY, com.pillbox.ui.components.DesignIcons.CalendarCheck, R.string.nav_today, selected, onSelect, Modifier.weight(1f))
             if (!onlyTodayAndSettings) NavItem(Tab.MEDS, com.pillbox.ui.components.DesignIcons.Pill, R.string.nav_meds, selected, onSelect, Modifier.weight(1f))
-            Box(Modifier.weight(0.9f))
             if (!onlyTodayAndSettings) NavItem(Tab.PEOPLE, com.pillbox.ui.components.DesignIcons.People, R.string.nav_people, selected, onSelect, Modifier.weight(1f))
             NavItem(Tab.SETTINGS, com.pillbox.ui.components.DesignIcons.Sliders, R.string.nav_settings, selected, onSelect, Modifier.weight(1f))
         }
-        val add = stringResource(R.string.add_medicine)
-        Box(
-            Modifier
-                .align(Alignment.TopCenter)
-                .offset(y = (-24).dp)
-                .size(Dimens.Fab)
-                .background(c.primary, CircleShape)
-                .border(4.dp, c.card, CircleShape)
-                .semantics { contentDescription = add; role = Role.Button }
-                .clickable(onClick = onAdd),
-            contentAlignment = Alignment.Center,
-        ) { Icon(com.pillbox.ui.components.DesignIcons.Plus, contentDescription = null, tint = c.onPrimary, modifier = Modifier.size(28.dp)) }
     }
 }
 
