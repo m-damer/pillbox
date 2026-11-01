@@ -288,7 +288,9 @@
     <string name="banner_off_body">اضغط للإصلاح حتى لا تفوتك جرعة.</string>
 
     <!-- M5a: Medicines list, detail, stock -->
-    <string name="meds_sub">أنا · %1$s نشطة</string>
+    <string name="meds_sub">%1$s · %2$s نشطة</string>
+    <string name="meds_of_me">أدويتي</string>
+    <string name="meds_of_person">أدوية %1$s</string>
     <string name="tab_active">النشطة</string>
     <string name="tab_finished">السابقة</string>
     <string name="meds_ongoing">مستمر</string>
@@ -405,7 +407,7 @@
     <string name="toast_deleted_body">حُذف سجله من هذا الهاتف.</string>
     <string name="tag_paused">متوقف مؤقتاً</string>
     <string name="paused_tap">اضغط للاستئناف</string>
-    <string name="meds_sub_paused">أنا · %1$s نشطة · %2$s متوقفة</string>
+    <string name="meds_sub_paused">%1$s · %2$s نشطة · %3$s متوقفة</string>
     <string name="today_paused_banner">كل أدويتك متوقفة مؤقتاً. لن تصلك تذكيرات.</string>
     <string name="today_paused_link">استئناف من أدويتي</string>
     <string name="today_paused_title">كل الأدوية متوقفة مؤقتاً</string>

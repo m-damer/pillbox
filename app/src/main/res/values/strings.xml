@@ -245,7 +245,9 @@
     <string name="banner_off_body">Tap to fix, so you don\'t miss a dose.</string>
 
     <!-- M5a: Medicines list, detail, stock -->
-    <string name="meds_sub">Me · %1$s active</string>
+    <string name="meds_sub">%1$s · %2$s active</string>
+    <string name="meds_of_me">My medicines</string>
+    <string name="meds_of_person">%1$s\'s medicines</string>
     <string name="tab_active">Active</string>
     <string name="tab_finished">Finished</string>
     <string name="meds_ongoing">ongoing</string>
@@ -347,7 +349,7 @@
     <string name="toast_deleted_body">Its history was deleted from this phone.</string>
     <string name="tag_paused">Paused</string>
     <string name="paused_tap">Tap to resume</string>
-    <string name="meds_sub_paused">Me · %1$s active · %2$s paused</string>
+    <string name="meds_sub_paused">%1$s · %2$s active · %3$s paused</string>
     <string name="today_paused_banner">All your medicines are paused. No reminders will ring.</string>
     <string name="today_paused_link">Resume in Medicines</string>
     <string name="today_paused_title">All medicines paused</string>
