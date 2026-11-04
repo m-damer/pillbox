@@ -31,3 +31,4 @@
 - [ ] M36 "Keep my home time" travel mode (one app clock, switch on Language and numbers); photos and notification history now travel inside the backup file (optional keys, format stays 1, damaged extras are dropped, never fatal). Tests: AppClockTest, BackupTest.
 - [ ] M37 Settings reordered by goal: Reminders (Reminders not ringing?, Sound and repeat, Quiet hours), Doses and stock (Late dose, Meal times, Refill alert), Display and language (Accessibility, Dark theme, Language and time), Your data (Backup, Doctor report), About (Updates, Privacy, Developer). A banner at the top shows only while reminders need fixing.
 - [ ] M37b Medicines subtitle follows the chosen person: "My medicines · 20 active" / "<name>'s medicines · 10 active" (Arabic: أدويتي / أدوية روان), instead of a fixed "Me".
+- [ ] M38 Website: WhatsApp and email buttons (Contact the developer) on Privacy and Terms and at the end of the landing page; "Source code" link removed from the footer.

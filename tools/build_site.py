@@ -28,14 +28,43 @@ RELEASES = REPO + "/releases/latest"
 DIRECT = REPO + "/releases/latest/download/PillBox.apk"
 E = html.escape
 
+import urllib.parse as _u
+WHATSAPP = "https://wa.me/963941874763?text="
+EMAIL = "damermahmoud@gmail.com"
+
+def contact(lang, intro=""):
+    """The two ways to reach the developer: WhatsApp and email. Used at the end of the landing page and on Privacy and Terms."""
+    if lang == "ar":
+        h, w, m = "تواصل مع المطوّر", "راسلني على واتساب", "راسلني بالبريد"
+        wl = WHATSAPP + _u.quote("مرحباً، لدي سؤال عن علبة الدواء"); ml = f"mailto:{EMAIL}?subject=" + _u.quote("علبة الدواء")
+        note = "إذا كتبت على واتساب فسأرى رقمك ورسالتك، وأستخدمهما للرد عليك فقط."
+    else:
+        h, w, m = "Contact the developer", "Message me on WhatsApp", "Email me"
+        wl = WHATSAPP + _u.quote("Hello, I have a question about Pill Box"); ml = f"mailto:{EMAIL}?subject=" + _u.quote("Pill Box")
+        note = "If you write on WhatsApp, I see your number and your message, and I use them only to reply to you."
+    return (f'<div class="contact"><h2>{h}</h2>' + (f"<p>{intro}</p>" if intro else "")
+            + f'<div class="row"><a class="btn" href="{wl}" target="_blank" rel="noopener">{w}</a><a class="btn alt" href="{ml}">{m}</a></div><p class="note">{note}</p></div>')
+
+REACH_AR = "عندك سؤال أو مشكلة أو فكرة؟ تستطيع التواصل مع المطوّر مباشرة عبر هذين الزرّين."
+REACH_EN = "Have a question, a problem or an idea? You can reach the developer directly with these two buttons."
+
 def bi(ar, en, tag="span", cls=""):
     c = (" " + cls) if cls else ""
     return f'<{tag} class="ar{c}" lang="ar">{ar}</{tag}><{tag} class="en{c}" lang="en">{en}</{tag}>'
 
+def _size(lang, name):
+    """The real pixel size of a screen image, so tall screens (large text, Add medicine) are never squeezed."""
+    try:
+        from PIL import Image
+        return Image.open(f"site/img/{lang}/{name}.webp").size
+    except Exception:
+        return (540, 1168)
+
 def img(name, ar_alt, en_alt, eager=False):
     lz = "" if eager else ' loading="lazy"'
-    return (f'<img class="ar" src="img/ar/{name}.webp" width="540" height="1168" alt="{E(ar_alt)}"{lz}>'
-            f'<img class="en" src="img/en/{name}.webp" width="540" height="1168" alt="{E(en_alt)}"{lz}>')
+    (aw, ah), (ew, eh) = _size("ar", name), _size("en", name)
+    return (f'<img class="ar" src="img/ar/{name}.webp" width="{aw}" height="{ah}" alt="{E(ar_alt)}"{lz}>'
+            f'<img class="en" src="img/en/{name}.webp" width="{ew}" height="{eh}" alt="{E(en_alt)}"{lz}>')
 
 def phone(name, ar_alt, en_alt, eager=False):
     return f'<div class="phone">{img(name, ar_alt, en_alt, eager)}</div>'
@@ -69,7 +98,7 @@ def head(title_ar, title_en, desc_ar, desc_en):
 def foot():
     made = f'<span class="ar" lang="ar">{E(AR["settings_made_with"])}</span><span class="en" lang="en">{E(EN["settings_made_with"])}</span>'
     return f"""<footer><div class="wrap">
-<nav>{bi("<a href='privacy.html'>سياسة الخصوصية</a>", "<a href='privacy.html'>Privacy policy</a>")}{bi("<a href='terms.html'>شروط الاستخدام</a>", "<a href='terms.html'>Terms of use</a>")}{bi(f"<a href='{REPO}'>الشفرة المصدرية</a>", f"<a href='{REPO}'>Source code</a>")}</nav>
+<nav>{bi("<a href='privacy.html'>سياسة الخصوصية</a>", "<a href='privacy.html'>Privacy policy</a>")}{bi("<a href='terms.html'>شروط الاستخدام</a>", "<a href='terms.html'>Terms of use</a>")}</nav>
 <div>{made}</div>
 </div></footer>
 <script src="site.js"></script>
@@ -153,15 +182,15 @@ def home():
 </div>
 {bi("<p class='note'>التطبيق يساعدك على التذكّر ولا يغني عن نصيحة طبيبك أو الصيدلاني.</p>", "<p class='note'>This app helps you remember. It does not replace advice from your doctor or pharmacist.</p>", "div")}
 </div></section>
-</main>
 """
+    out += '<section class="reach"><div class="wrap"><div class="ar" lang="ar">' + contact("ar", REACH_AR) + '</div><div class="en" lang="en">' + contact("en", REACH_EN) + '</div></div></section>\n</main>\n'
     return out + foot()
 
 def legal(titlekey, keys):
     out = head(AR[titlekey] + " - علبة الدواء", EN[titlekey] + " - Pill Box", AR[titlekey], EN[titlekey])
     def sec(D, lang):
         cards = "".join(f"<h2>{E(D[k+'_title'])}</h2><p>{E(D[k+'_body'])}</p>" for k in keys)
-        return f'<section class="{lang}" lang="{lang}"><h1>{E(D[titlekey])}</h1><p class="muted">{E(D["legal_updated"])}</p><div class="card">{cards}</div></section>'
+        return f'<section class="{lang}" lang="{lang}"><h1>{E(D[titlekey])}</h1><p class="muted">{E(D["legal_updated"])}</p><div class="card">{cards}</div>{contact(lang)}</section>'
     out += f'<main class="legal"><div class="wrap">{sec(AR, "ar")}{sec(EN, "en")}</div></main>'
     return out + foot()
 

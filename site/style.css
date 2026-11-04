@@ -35,6 +35,8 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:60px;padding:0 32px;border-radius:999px;background:var(--primary);color:var(--on-primary);font-weight:700;font-size:1.2rem;text-decoration:none;box-shadow:0 6px 0 #2E2699;transition:transform .12s,box-shadow .12s}
+.btn.alt{background:transparent;color:var(--primary);border:3px solid var(--primary);box-shadow:none}
+.btn.alt:hover,.btn.alt:active{box-shadow:none}
 .btn:hover{transform:translateY(2px);box-shadow:0 4px 0 #2E2699}
 .btn:active{transform:translateY(6px);box-shadow:0 0 0 #2E2699}
 .link{font-weight:700}
@@ -108,3 +110,9 @@ footer nav a{min-height:48px;display:inline-flex;align-items:center}
   .more ul{columns:1}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+
+.contact{margin-top:32px;max-width:46rem}
+.contact h2{font-size:1.3rem;margin:0 0 .3em}
+.contact .row{display:flex;flex-wrap:wrap;gap:20px 24px;margin:16px 0}
+.contact .note{color:var(--muted);font-size:.95rem;max-width:36em}
+.reach{padding-block:clamp(36px,6vw,72px);border-top:1px solid var(--line)}
