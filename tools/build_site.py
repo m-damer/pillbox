@@ -52,10 +52,19 @@ def bi(ar, en, tag="span", cls=""):
     c = (" " + cls) if cls else ""
     return f'<{tag} class="ar{c}" lang="ar">{ar}</{tag}><{tag} class="en{c}" lang="en">{en}</{tag}>'
 
+def _size(lang, name):
+    """The real pixel size of a screen image, so tall screens (large text, Add medicine) are never squeezed."""
+    try:
+        from PIL import Image
+        return Image.open(f"site/img/{lang}/{name}.webp").size
+    except Exception:
+        return (540, 1168)
+
 def img(name, ar_alt, en_alt, eager=False):
     lz = "" if eager else ' loading="lazy"'
-    return (f'<img class="ar" src="img/ar/{name}.webp" width="540" height="1168" alt="{E(ar_alt)}"{lz}>'
-            f'<img class="en" src="img/en/{name}.webp" width="540" height="1168" alt="{E(en_alt)}"{lz}>')
+    (aw, ah), (ew, eh) = _size("ar", name), _size("en", name)
+    return (f'<img class="ar" src="img/ar/{name}.webp" width="{aw}" height="{ah}" alt="{E(ar_alt)}"{lz}>'
+            f'<img class="en" src="img/en/{name}.webp" width="{ew}" height="{eh}" alt="{E(en_alt)}"{lz}>')
 
 def phone(name, ar_alt, en_alt, eager=False):
     return f'<div class="phone">{img(name, ar_alt, en_alt, eager)}</div>'
