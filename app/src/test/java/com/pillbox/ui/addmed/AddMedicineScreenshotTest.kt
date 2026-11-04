@@ -65,6 +65,10 @@ class AddMedicineScreenshotTest {
     @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun ar_review() = shoot("ar_review", review, "ar")
     @Config(qualifiers = "w360dp-h844dp-xxhdpi") @Test fun en_dark_2x_review() = shoot("en_dark_2x_review", review, "en", ThemeMode.Dark, 2f)
 
+    // Landing page images (site/img): taller phone so the whole screen shows. Picked up by the landing-shots workflow.
+    @Config(qualifiers = "w360dp-h844dp-xxhdpi") @Test fun landing_en() = shoot("landing_en", AddMedUiState(base, 1), "en")
+    @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun landing_ar() = shoot("landing_ar", AddMedUiState(base, 1), "ar")
+
     private fun shoot(name: String, state: AddMedUiState, lang: String, mode: ThemeMode = ThemeMode.Light, fontScale: Float = 1f) {
         val ar = lang == "ar"
         val fmt = Formatter(arabicDigits = ar, is24Hour = false, am = if (ar) "ص" else "AM", pm = if (ar) "م" else "PM", rtl = ar)

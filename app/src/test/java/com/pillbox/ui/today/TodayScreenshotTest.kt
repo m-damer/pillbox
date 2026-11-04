@@ -81,6 +81,14 @@ class TodayScreenshotTest {
     @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun ar_full() = shoot("ar_full", full(sat, nextNow), "ar")
     @Config(qualifiers = "+h844dp") @Test fun en_dark_2x_full() = shoot("en_dark_2x_full", full(sat, lateNow), "en", ThemeMode.Dark, 2f)
 
+    // Landing page images (site/img): taller phone so the whole screen shows. Picked up by the landing-shots workflow.
+    @Config(qualifiers = "+h844dp") @Test fun landing_en_today() = shoot("landing_en_today", full(sat, nextNow), "en")
+    @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun landing_ar_today() = shoot("landing_ar_today", full(sat, nextNow), "ar")
+    @Config(qualifiers = "+h844dp") @Test fun landing_en_today_dark() = shoot("landing_en_today_dark", full(sat, nextNow), "en", ThemeMode.Dark)
+    @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun landing_ar_today_dark() = shoot("landing_ar_today_dark", full(sat, nextNow), "ar", ThemeMode.Dark)
+    @Config(qualifiers = "+h1500dp") @Test fun landing_en_large() = shoot("landing_en_large", full(sat, nextNow), "en", ThemeMode.Light, 2f)
+    @Config(qualifiers = "+ar-ldrtl-h1500dp") @Test fun landing_ar_large() = shoot("landing_ar_large", full(sat, nextNow), "ar", ThemeMode.Light, 2f)
+
     private fun shoot(name: String, state: TodayUiState, lang: String, mode: ThemeMode = ThemeMode.Light, fontScale: Float = 1f) {
         val ar = lang == "ar"
         val fmt = Formatter(arabicDigits = ar, is24Hour = false, am = if (ar) "ص" else "AM", pm = if (ar) "م" else "PM", rtl = ar)

@@ -71,6 +71,10 @@ class HistoryScreenshotTest {
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar_empty() = shoot("ar_empty", "ar", empty)
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar_dark_2x() = shoot("ar_dark_2x", "ar", stateAr, ThemeMode.Dark, 2f)
 
+    // Landing page images (site/img): taller phone so the whole screen shows. Picked up by the landing-shots workflow.
+    @Config(qualifiers = "+h844dp") @Test fun landing_en() = shoot("landing_en", "en", state)
+    @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun landing_ar() = shoot("landing_ar", "ar", stateAr)
+
     private fun shoot(name: String, lang: String, s: HistoryUiState, mode: ThemeMode = ThemeMode.Light, fontScale: Float = 1f) {
         val ar = lang == "ar"
         val fmt = Formatter(arabicDigits = ar, is24Hour = false, am = if (ar) "ص" else "AM", pm = if (ar) "م" else "PM", rtl = ar)
