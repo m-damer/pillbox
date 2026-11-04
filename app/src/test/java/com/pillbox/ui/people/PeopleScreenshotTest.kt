@@ -74,6 +74,10 @@ class PeopleScreenshotTest {
 
     private fun fmt(ar: Boolean) = Formatter(arabicDigits = ar, is24Hour = false, am = if (ar) "ص" else "AM", pm = if (ar) "م" else "PM", rtl = ar)
 
+    // Landing page images (site/img): taller phone so the whole screen shows. Picked up by the landing-shots workflow.
+    @Config(qualifiers = "+h844dp") @Test fun landing_en() = shoot("landing_en", "en") { list(full) }
+    @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun landing_ar() = shoot("landing_ar", "ar") { list(full) }
+
     private fun shoot(name: String, lang: String, mode: ThemeMode = ThemeMode.Light, fontScale: Float = 1f, content: @androidx.compose.runtime.Composable () -> Unit) {
         compose.setContent {
             val density = LocalDensity.current

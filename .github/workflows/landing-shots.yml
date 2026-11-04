@@ -1,0 +1,35 @@
+name: Landing screenshots
+
+# Renders the landing page images from the real app (Compose + the app's own fonts)
+# and commits them to the same branch under site/shots/, so they can be reviewed.
+on:
+  push:
+    branches: ['claude/landing-shots*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Render the landing screenshots
+        run: ./gradlew testDebugUnitTest --tests '*ScreenshotTest.landing_*' -Proborazzi.test.record=true --stacktrace
+      - name: Commit the images
+        run: |
+          mkdir -p site/shots
+          find app/build/outputs/roborazzi -name '*landing_*.png' -exec cp {} site/shots/ \;
+          ls -la site/shots
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add site/shots
+          git diff --cached --quiet || git commit -m "Landing screenshots rendered from the app [skip ci]"
+          git push

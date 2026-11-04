@@ -44,6 +44,10 @@ class RefillAlertScreenshotTest {
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar() = shoot("ar", "ar")
     @Config(qualifiers = "+ar-ldrtl") @Test fun ar_dark_2x() = shoot("ar_dark_2x", "ar", ThemeMode.Dark, 2f)
 
+    // Landing page images (site/img): taller phone so the whole screen shows. Picked up by the landing-shots workflow.
+    @Config(qualifiers = "+h844dp") @Test fun landing_en() = shoot("landing_en", "en")
+    @Config(qualifiers = "+ar-ldrtl-h844dp") @Test fun landing_ar() = shoot("landing_ar", "ar")
+
     private fun shoot(name: String, lang: String, mode: ThemeMode = ThemeMode.Light, fontScale: Float = 1f, s: RefillUiState = state) {
         val ar = lang == "ar"
         val fmt = Formatter(arabicDigits = ar, is24Hour = false, am = if (ar) "ص" else "AM", pm = if (ar) "م" else "PM", rtl = ar)
