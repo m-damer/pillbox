@@ -33,3 +33,4 @@
 - [ ] M37b Medicines subtitle follows the chosen person: "My medicines · 20 active" / "<name>'s medicines · 10 active" (Arabic: أدويتي / أدوية روان), instead of a fixed "Me".
 - [ ] M38 Website: WhatsApp and email buttons (Contact the developer) on Privacy and Terms and at the end of the landing page; "Source code" link removed from the footer.
 - [ ] M39 Landing page screenshots rendered from the real app (Today, dark, large text, History, Family, Refill alert, Report, Add medicine, full-screen reminder; en and ar); Arabic isolate fix: an all-Arabic amount such as "٨ أقراص" and an all-Latin name now get an explicit direction, so "Metformin: بقيت ٨ أقراص" reads in the right order.
+- [ ] M40 Back button: from People, Medicines or Settings it returns to Today instead of leaving the app; on Today, pressing Back twice within 2 seconds exits (a short "Press Back again to exit" message shows after the first press). Screens open inside a tab still close first.

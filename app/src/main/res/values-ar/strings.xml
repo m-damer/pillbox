@@ -1322,4 +1322,5 @@
     <bool name="amount_half_words">true</bool>
     <string name="amount_half">نصف %1$s</string>
     <string name="amount_one_and_half">%1$s ونصف</string>
+    <string name="back_again_to_exit">اضغط رجوع مرة أخرى للخروج</string>
 </resources>

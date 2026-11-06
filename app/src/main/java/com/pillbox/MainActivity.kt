@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -460,6 +461,21 @@ class MainActivity : PillBoxActivity() {
                         )
                     }
                 } else {
+                    // Back from People, Medicines or Settings goes to Today; on Today, Back twice within two seconds leaves the app.
+                    // Declared before the tab content so a screen that is open inside a tab handles Back first.
+                    var lastBackAt by remember { mutableLongStateOf(0L) }
+                    BackHandler {
+                        if (tab != Tab.TODAY) {
+                            tab = Tab.TODAY
+                        } else {
+                            val now = android.os.SystemClock.elapsedRealtime()
+                            if (now - lastBackAt < 2000L) finish()
+                            else {
+                                lastBackAt = now
+                                android.widget.Toast.makeText(context, context.getString(R.string.back_again_to_exit), android.widget.Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
                     Column(Modifier.fillMaxSize()) {
                         Box(Modifier.weight(1f).statusBarsPadding()) {
                             when (tab) {
