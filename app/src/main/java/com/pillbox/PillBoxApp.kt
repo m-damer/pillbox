@@ -53,15 +53,23 @@ class PillBoxApp : Application() {
     val notices: com.pillbox.data.NoticeStore by lazy { com.pillbox.data.NoticeStore(this) }
     val reminders: Reminders by lazy { Reminders(this, repository, refillSettings) }
 
+    // The system hands the app a new configuration (rotation, font size, dark mode); put the chosen language back on top of it.
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        com.pillbox.ui.AppLocale.applyToApp(this)
+    }
+
     override fun onCreate() {
         super.onCreate()
         CrashReporter.install(this)
         // A small read, done once before any screen exists, so the first frame already has the right language and digits.
         DisplayState.current = runBlocking { displaySettings.flow.first() }
         AppClock.home = AppClock.parse(DisplayState.current.homeZone)
+        com.pillbox.ui.AppLocale.applyToApp(this)
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
             displaySettings.flow.collect {
                 DisplayState.current = it
+                com.pillbox.ui.AppLocale.applyToApp(this@PillBoxApp)
                 val before = AppClock.home
                 AppClock.home = AppClock.parse(it.homeZone)
                 // Turning home time on or off moves every clock time to another moment, so the next alarm is set again.
