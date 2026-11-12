@@ -25,6 +25,25 @@ object AppLocale {
         return base.createConfigurationContext(config)
     }
 
+    /**
+     * Notifications, alarms and the weekly backup run without a screen, so they read the app's own resources, not an activity's.
+     * On phones older than Android 13 those stay in the phone's language unless the chosen language is put on them too;
+     * without this, an Arabic app on an English phone sent English notifications.
+     */
+    @Suppress("DEPRECATION")
+    fun applyToApp(app: android.app.Application) {
+        if (Build.VERSION.SDK_INT >= 33) return
+        val code = DisplayState.current.language ?: return
+        val locale = Locale.forLanguageTag(code)
+        val res = app.resources
+        if (res.configuration.locales[0].language == code && Locale.getDefault().language == code) return
+        Locale.setDefault(locale)
+        val config = Configuration(res.configuration)
+        config.setLocales(LocaleList(locale))
+        config.setLayoutDirection(locale)
+        res.updateConfiguration(config, res.displayMetrics)
+    }
+
     /** Applies [code] to the whole app. The caller recreates the visible screen on phones older than Android 13. */
     fun set(context: Context, code: String) {
         if (Build.VERSION.SDK_INT >= 33) {
